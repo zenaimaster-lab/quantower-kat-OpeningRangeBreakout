@@ -14,7 +14,7 @@ extern int g_magic;
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1000
+#define PANEL_HEIGHT      1350
 #define PANEL_X           20
 #define PANEL_Y           20
 
