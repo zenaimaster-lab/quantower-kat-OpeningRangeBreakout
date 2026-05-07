@@ -164,15 +164,15 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    
    // --- MAIN TOGGLES ---
    int thw=(cw-4)/2;
-   MB(m_btnToggleM2,"bT2","Trade 2m: ON",cx,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS);
-   MB(m_btnToggleM5,"bT5","Trade 5m: ON",cx+thw+4,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   MB(m_btnToggleM2,"bT2","Trade 2m: ON",cx,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS);
+   MB(m_btnToggleM5,"bT5","Trade 5m: ON",cx+thw+4,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS); cy+=CTRL_HEIGHT+4+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // --- TABS ---
    int tcw=(cw-8)/3;
-   MB(m_btnTabMain,"bTmMain","MAIN",cx,cy,tcw,CTRL_HEIGHT+4,CLR_BTN_ON);
-   MB(m_btnTabM2,"bTmM2","2m CONF",cx+tcw+4,cy,tcw,CTRL_HEIGHT+4,CLR_BTN_OFF);
-   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+4,CLR_BTN_OFF); cy+=CTRL_HEIGHT+4+SEC_PAD;
+   MB(m_btnTabMain,"bTmMain","MAIN",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
+   MB(m_btnTabM2,"bTmM2","2m CONF",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
 
@@ -206,11 +206,11 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
    ML(m_lblTrTag,"lTr","Trailing mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnTrMode,"bTm","OFF",rx,cy,rw,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblTrTrig,"lTL","Trigger:",cx,cy,60,CTRL_HEIGHT);
+   ML(m_lblTrTrig,"lTL","Trigger",cx,cy,60,CTRL_HEIGHT);
    ME(m_edtTTr,"eTTr","30",cx+62,cy,35,CTRL_HEIGHT);
-   ML(m_lblTrDist,"lDi","Distance:",cx+100,cy,70,CTRL_HEIGHT);
+   ML(m_lblTrDist,"lDi","Distance",cx+100,cy,70,CTRL_HEIGHT);
    ME(m_edtTDi,"eTDi","20",cx+172,cy,35,CTRL_HEIGHT);
-   ML(m_lblTrStep,"lStp","Step:",cx+212,cy,40,CTRL_HEIGHT);
+   ML(m_lblTrStep,"lStp","Step",cx+212,cy,40,CTRL_HEIGHT);
    ME(m_edtTSt,"eTSt","5",cx+254,cy,35,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblBETag,"lBeT","Breakeven",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnBE,"bBE","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
