@@ -377,6 +377,14 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
    // So HandleDirectClick is the single source of truth.
    if(id == CHARTEVENT_OBJECT_CLICK)
    {
+      // v0.11: Intercept Close button — always minimize, never close
+      if(StringFind(sparam, "Close") >= 0) {
+         ObjectSetInteger(0, sparam, OBJPROP_STATE, false);
+         g_dashboard.Minimize();
+         ChartRedraw();
+         return;
+      }
+      
       if(g_dashboard.HandleDirectClick(sparam))
       {
          handled = true;

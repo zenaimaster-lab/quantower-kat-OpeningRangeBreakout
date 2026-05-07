@@ -185,8 +185,8 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
    
    ObjectCreate(0, nameE, OBJ_TREND, 0, t, entry, tEnd, entry);
    ObjectSetInteger(0, nameE, OBJPROP_COLOR, colEntry);
-   ObjectSetInteger(0, nameE, OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, nameE, OBJPROP_WIDTH, 2);
+   ObjectSetInteger(0, nameE, OBJPROP_STYLE, STYLE_DASH);
+   ObjectSetInteger(0, nameE, OBJPROP_WIDTH, 1);
    ObjectSetInteger(0, nameE, OBJPROP_RAY_RIGHT, false);
    ObjectSetInteger(0, nameE, OBJPROP_BACK, false);
    
