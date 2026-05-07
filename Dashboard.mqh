@@ -180,13 +180,14 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblClkTag,"lCk","NY Time",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT,FONT_SIZE_MED);
    ML(m_lblClkVal,"vCk","--:--:--",rx,cy,72,CTRL_HEIGHT,CLR_CLOCK_BLUE,FONT_SIZE_MED);
    ML(m_lblClkAmPm,"vCkAP","--",rx+74,cy,32,CTRL_HEIGHT,CLR_REVERSE,FONT_SIZE_MED);
-   ML(m_lblClkDate,"vCkD","(-- ---)",rx+108,cy,rw-108,CTRL_HEIGHT,CLR_TEXT_DIM,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ML(m_lblClkDate,"vCkD","(-- ---)",rx+108,cy,rw-108,CTRL_HEIGHT,CLR_TEXT_DIM,FONT_SIZE_MED); cy+=CTRL_HEIGHT+CTRL_GAP;
 
-   ML(m_lblNewsTag,"lNw","Next session:",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblNewsVal,"vNw","Loading...",rx,cy,rw,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblTimerTag,"lTm","Countdown",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblTimerVal,"vTm","--:--:--",rx,cy,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
+   ML(m_lblNewsTag,"lNw","Next session:",-100,-100,10,10); // Hidden
+   ML(m_lblNewsVal,"vNw","Loading...",-100,-100,10,10); // Hidden
+
+   ML(m_lblTimerTag,"lTm","Countdown",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT,FONT_SIZE_MED);
+   ML(m_lblTimerVal,"vTm","--:--:--",rx,cy,rw,CTRL_HEIGHT,CLR_WARNING,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
    
    // --- MAIN TOGGLES ---
    int thw=(cw-4)/2;
@@ -232,12 +233,12 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
    ML(m_lblTrTag,"lTr","Trailing mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnTrMode,"bTm","OFF",rx,cy,rw,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblTrTrig,"lTL","Trigger",cx,cy,45,CTRL_HEIGHT);
-   ME(m_edtTTr,"eTTr","30",cx+47,cy,50,CTRL_HEIGHT);
-   ML(m_lblTrDist,"lDi","Distance",cx+100,cy,52,CTRL_HEIGHT);
-   ME(m_edtTDi,"eTDi","20",cx+154,cy,50,CTRL_HEIGHT);
-   ML(m_lblTrStep,"lStp","Step",cx+207,cy,30,CTRL_HEIGHT);
-   ME(m_edtTSt,"eTSt","5",cx+239,cy,50,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblTrTrig,"lTL","Trigger",cx,cy,55,CTRL_HEIGHT);
+   ME(m_edtTTr,"eTTr","30",cx+55,cy,50,CTRL_HEIGHT);
+   ML(m_lblTrDist,"lDi","Distance",cx+108,cy,65,CTRL_HEIGHT);
+   ME(m_edtTDi,"eTDi","20",cx+173,cy,50,CTRL_HEIGHT);
+   ML(m_lblTrStep,"lStp","Step",cx+226,cy,35,CTRL_HEIGHT);
+   ME(m_edtTSt,"eTSt","5",cx+261,cy,50,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblBETag,"lBeT","Breakeven",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnBE,"bBE","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblBeLine,"lBL","BE Trigger",cx,cy,85,CTRL_HEIGHT);
