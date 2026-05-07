@@ -72,7 +72,7 @@ extern int g_magic;
 //--- Enums
 enum ENUM_ORDER_MODE    { MODE_BOTH=0, MODE_BUY_ONLY=1, MODE_SELL_ONLY=2 };
 enum ENUM_EA_MODE       { EA_AUTO=0, EA_MANUAL=1 };
-enum ENUM_TAB { TAB_MAIN=0, TAB_M2=1, TAB_M5=2 };
+enum ENUM_TAB { TAB_MAIN=0, TAB_M2=1, TAB_M5=2, TAB_STATS=3 };
 
 
 // Consolidated trail mode

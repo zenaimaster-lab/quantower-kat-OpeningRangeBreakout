@@ -1,7 +1,7 @@
 # Graph Report - mt5-kat-ORB  (2026-05-07)
 
 ## Corpus Check
-- 1 files · ~3,710 words
+- 1 files · ~3,873 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8722ee95`
+- Built from commit: `1c39288b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

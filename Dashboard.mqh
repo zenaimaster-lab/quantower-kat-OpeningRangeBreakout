@@ -18,7 +18,9 @@ private:
    
    CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
    CEdit m_lblGlobalTag;
-   CButton m_btnTabMain, m_btnTabM2, m_btnTabM5;
+   CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
+   CEdit m_lblGlobalTag;
+   CButton m_btnTabMain, m_btnTabM2, m_btnTabM5, m_btnTabStats;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
    CEdit m_lblBalTag, m_lblBalVal, m_lblRskTag, m_lblRPc;
@@ -78,6 +80,7 @@ private:
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
    bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum;
    int m_idxSepAfterPresets;
+   int m_statusSepStart, m_statusSepEnd;
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
@@ -148,6 +151,7 @@ private:
    void OnMaxLToggle(); void UpdMaxL();
    void OnBigMToggle(); void UpdBigM();
    
+   void OnTabStats();
    void OnA1(); void OnA2(); void OnA3();
 
 
@@ -210,11 +214,14 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // --- TABS ---
-   int tcw=(cw-8)/3;
-   MB(m_btnTabMain,"bTmMain","MAIN",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
+   int tcw=(cw-12)/4;
+   MB(m_btnTabMain,"bTmMain","Global",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
    MB(m_btnTabM2,"bTmM2","2m CONF",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
+   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabStats,"bTmSt","\xF0\x9F\x92\xB8",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+
+   int startCy = cy;
 
 
 
@@ -313,6 +320,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    m_idxSepAfterPresets = si;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
+   m_statusSepStart = si;
+   cy = startCy; // Rewind Y coordinate to render STATUS below TABS!
 
    // ── STATUS ──
    ML(m_lblOsTag,"lOs","Orders",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
@@ -335,6 +344,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblRtRrPft,"sRtP","+$0",rx+68,cy,65,CTRL_HEIGHT,CLR_MONEY_GREEN);
    ML(m_lblRtRrRiskPc,"sRtPc","{0.0%}",cx+cw-45,cy,45,CTRL_HEIGHT,CLR_ACCENT);
    cy+=CTRL_HEIGHT+CTRL_GAP;
+   
+   m_statusSepEnd = si - 1;
    
    return true;
    return true;
@@ -391,7 +402,7 @@ void CDashboard::CtrlHide(CWnd &obj) {
 // ── DATA SYNC ──
 SystemConfig CDashboard::GetParams()
 {
-   SaveTab(m_activeTab);
+   if(m_activeTab != TAB_STATS) SaveTab(m_activeTab);
    m_config.main.symbol = m_lblSym.Text();
    m_dirty = false;
    return m_config;
@@ -399,6 +410,7 @@ SystemConfig CDashboard::GetParams()
 
 void CDashboard::SaveTab(ENUM_TAB tab)
 {
+   if(tab == TAB_STATS) return;
    DashboardParams p;
    p.symbol = m_lblSym.Text();
    p.utcOffset = m_utcOff;
@@ -455,6 +467,7 @@ void CDashboard::SaveTab(ENUM_TAB tab)
 
 void CDashboard::LoadTab(ENUM_TAB tab)
 {
+   if(tab == TAB_STATS) return;
    DashboardParams p;
    if (tab == TAB_MAIN) p = m_config.main;
    else if (tab == TAB_M2) p = m_config.m2;
@@ -530,6 +543,7 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnTabMain.Name())       { OnTabMain(); return true; }
    if(objName == m_btnTabM2.Name())         { OnTabM2(); return true; }
    if(objName == m_btnTabM5.Name())         { OnTabM5(); return true; }
+   if(objName == m_btnTabStats.Name())      { OnTabStats(); return true; }
 
    if(objName == m_btnSLS.Name())           { OnSLS(); return true; }
    if(objName == m_btnBoth.Name())          { OnBoth(); return true; }
@@ -674,39 +688,88 @@ void CDashboard::UpdToggles() {
    m_btnToggleM5.ColorBackground(m_config.m5.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
 }
 
-void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); SaveTab(m_activeTab); m_activeTab=TAB_MAIN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
-void CDashboard::OnTabM2() { m_btnTabM2.Pressed(false); SaveTab(m_activeTab); m_activeTab=TAB_M2; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
-void CDashboard::OnTabM5() { m_btnTabM5.Pressed(false); SaveTab(m_activeTab); m_activeTab=TAB_M5; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_MAIN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabM2() { m_btnTabM2.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M2; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabM5() { m_btnTabM5.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M5; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabStats() { m_btnTabStats.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_STATS; UpdTabs(); MarkDirty(); }
 
 void CDashboard::UpdTabs() {
    m_btnTabMain.ColorBackground(m_activeTab==TAB_MAIN ? CLR_BTN_ON : CLR_BTN_OFF);
    m_btnTabM2.ColorBackground(m_activeTab==TAB_M2 ? CLR_BTN_ON : CLR_BTN_OFF);
    m_btnTabM5.ColorBackground(m_activeTab==TAB_M5 ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabStats.ColorBackground(m_activeTab==TAB_STATS ? CLR_BTN_ON : CLR_BTN_OFF);
    
-   if(m_activeTab==TAB_MAIN) {
-      m_btnA1.Text("Set mA"); m_btnA2.Text("Set mB"); m_btnA3.Text("Set mC");
+   bool isStats = (m_activeTab == TAB_STATS);
+   
+   if(isStats) {
       CtrlShow(m_lblOsTag); CtrlShow(m_lblOsVal); CtrlShow(m_lblStVal);
       CtrlShow(m_lblEqTag); CtrlShow(m_lblStatEquity); CtrlShow(m_lblPlTag); CtrlShow(m_lblStatPL);
       CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
       CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
-      CtrlShow(m_lblGlobalTag); CtrlShowBtn(m_btnGlobal);
-      CtrlShow(m_sep[m_idxSepAfterPresets]);
-   } else if(m_activeTab==TAB_M2) {
-      m_btnA1.Text("Set 2A"); m_btnA2.Text("Set 2B"); m_btnA3.Text("Set 2C");
-      CtrlHide(m_lblOsTag); CtrlHide(m_lblOsVal); CtrlHide(m_lblStVal);
-      CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
-      CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
-      CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
+      for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlShow(m_sep[i]);
+      
       CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal);
-      CtrlHide(m_sep[m_idxSepAfterPresets]);
+      CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
+      CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_lblRskTag); CtrlHide(m_edtRisk); CtrlHide(m_lblRPc);
+      CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
+      CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
+      CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
+      CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
+      CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
+      CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
+      CtrlHide(m_lblEntrySec); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
+      CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
+      CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
+      CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
+      CtrlHide(m_lblExpTag); CtrlHide(m_lblUfmTag); CtrlHide(m_edtUfmPts); CtrlHide(m_btnUfm);
+      CtrlHide(m_lblTmrTag); CtrlHide(m_btnTmr);
+      CtrlHide(m_lblAucTag); CtrlHide(m_edtAuc); CtrlHide(m_btnAuc);
+      CtrlHide(m_lblAamTag); CtrlHide(m_edtAam); CtrlHide(m_btnAam);
+      CtrlHide(m_lblEma1Tag); CtrlHide(m_edtEma1); CtrlHide(m_btnEma1);
+      CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
+      CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
+      CtrlHide(m_btnA1); CtrlHide(m_btnA2); CtrlHide(m_btnA3);
+      for(int i=5; i<=m_idxSepAfterPresets; i++) CtrlHide(m_sep[i]);
+      
    } else {
-      m_btnA1.Text("Set 5A"); m_btnA2.Text("Set 5B"); m_btnA3.Text("Set 5C");
       CtrlHide(m_lblOsTag); CtrlHide(m_lblOsVal); CtrlHide(m_lblStVal);
       CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
       CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
       CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
-      CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal);
-      CtrlHide(m_sep[m_idxSepAfterPresets]);
+      for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
+      
+      CtrlShow(m_lblMdTag); CtrlShowBtn(m_btnBoth); CtrlShowBtn(m_btnBuy); CtrlShowBtn(m_btnSell);
+      CtrlShow(m_lblBalTag); CtrlShow(m_lblBalVal); CtrlShow(m_lblRskTag); CtrlShowEdit(m_edtRisk); CtrlShow(m_lblRPc);
+      CtrlShow(m_lblRATag); CtrlShow(m_lblRAVal); CtrlShow(m_lblRwVal); CtrlShow(m_lblLtTag); CtrlShow(m_lblLtVal);
+      CtrlShow(m_lblSlTag); CtrlShowEdit(m_edtSL); CtrlShowEdit(m_edtTP); CtrlShowBtn(m_btnSLS);
+      CtrlShow(m_lblTrTag); CtrlShowBtn(m_btnTrMode);
+      CtrlShow(m_lblTrTrig); CtrlShowEdit(m_edtTTr); CtrlShow(m_lblTrDist); CtrlShowEdit(m_edtTDi); CtrlShow(m_lblTrStep); CtrlShowEdit(m_edtTSt);
+      CtrlShow(m_lblBETag); CtrlShowBtn(m_btnBE);
+      CtrlShow(m_lblBeLine); CtrlShowEdit(m_edtBEA); CtrlShow(m_lblBELock); CtrlShowEdit(m_edtBEL);
+      CtrlShow(m_lblEntrySec); CtrlShow(m_lblContTag); CtrlShowBtn(m_btnCont);
+      CtrlShow(m_lblMaxSTag); CtrlShowEdit(m_edtMaxS); CtrlShowBtn(m_btnMaxS);
+      CtrlShow(m_lblMaxLTag); CtrlShowEdit(m_edtMaxL); CtrlShowBtn(m_btnMaxL);
+      CtrlShow(m_lblBigMTag); CtrlShowBtn(m_btnBigM);
+      CtrlShow(m_lblExpTag); CtrlShow(m_lblUfmTag); CtrlShowEdit(m_edtUfmPts); CtrlShowBtn(m_btnUfm);
+      CtrlShow(m_lblTmrTag); CtrlShowBtn(m_btnTmr);
+      CtrlShow(m_lblAucTag); CtrlShowEdit(m_edtAuc); CtrlShowBtn(m_btnAuc);
+      CtrlShow(m_lblAamTag); CtrlShowEdit(m_edtAam); CtrlShowBtn(m_btnAam);
+      CtrlShow(m_lblEma1Tag); CtrlShowEdit(m_edtEma1); CtrlShowBtn(m_btnEma1);
+      CtrlShow(m_lblEma2Tag); CtrlShowEdit(m_edtEma2); CtrlShowBtn(m_btnEma2);
+      CtrlShow(m_lblEma3Tag); CtrlShowEdit(m_edtEma3); CtrlShowBtn(m_btnEma3);
+      CtrlShowBtn(m_btnA1); CtrlShowBtn(m_btnA2); CtrlShowBtn(m_btnA3);
+      for(int i=5; i<=m_idxSepAfterPresets; i++) CtrlShow(m_sep[i]);
+      
+      if(m_activeTab==TAB_MAIN) {
+         m_btnA1.Text("Set mA"); m_btnA2.Text("Set mB"); m_btnA3.Text("Set mC");
+         CtrlShow(m_lblGlobalTag); CtrlShowBtn(m_btnGlobal);
+      } else if(m_activeTab==TAB_M2) {
+         m_btnA1.Text("Set 2A"); m_btnA2.Text("Set 2B"); m_btnA3.Text("Set 2C");
+         CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal);
+      } else {
+         m_btnA1.Text("Set 5A"); m_btnA2.Text("Set 5B"); m_btnA3.Text("Set 5C");
+         CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal);
+      }
    }
 }
 
