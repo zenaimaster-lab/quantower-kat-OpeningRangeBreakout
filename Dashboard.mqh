@@ -161,7 +161,7 @@ public:
 
 };
 
-CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_MAIN;
+CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_STATS;
    m_ufmEnabled=false; m_tmrEnabled=false; m_aucEnabled=false; m_aamEnabled=false; m_utcOff=-4; m_beOn=false;
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
@@ -213,10 +213,10 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // --- TABS ---
    int tcw=(cw-12)/4;
-   MB(m_btnTabMain,"bTmMain","Global",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
-   MB(m_btnTabM2,"bTmM2","2m CONF",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabStats,"bTmSt","\xF0\x9F\x92\xB8",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
+   MB(m_btnTabStats,"bTmSt","\xF0\x9F\x92\xB8",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
+   MB(m_btnTabMain,"bTmMain","Global",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabM2,"bTmM2","2m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    int startCy = cy;
