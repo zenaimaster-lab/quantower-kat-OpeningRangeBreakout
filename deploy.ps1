@@ -1,5 +1,5 @@
 # Deploy to MetaTrader and compile
-$src = "c:\Users\kieuanhtuan\Documents\all. Coding\mt5-kat-Orb-Breakout"
+$src = "c:\Users\kieuanhtuan\Documents\all. Coding\mt5-kat-ORB"
 $dst = "C:\Users\kieuanhtuan\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Experts\KAT ORB Breakout"
 $mql5Root = "C:\Users\kieuanhtuan\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5"
 $compiler = "C:\Program Files\MetaTrader 5\MetaEditor64.exe"
@@ -11,7 +11,7 @@ Write-Host "[DEPLOY] Files copied to MetaTrader" -ForegroundColor Green
 
 # Step 2: Compile
 $logFile = "$dst\compile_log.txt"
-Start-Process -FilePath $compiler -ArgumentList "/compile:`"$dst\kat-Orb-Breakout.mq5`" /log:`"$logFile`" /include:`"$mql5Root`"" -Wait -NoNewWindow
+Start-Process -FilePath $compiler -ArgumentList "/compile:`"$dst\mt5-kat-ORB.mq5`" /log:`"$logFile`" /include:`"$mql5Root`"" -Wait -NoNewWindow
 Start-Sleep -Seconds 2
 
 # Step 3: Show result

@@ -73,6 +73,7 @@ private:
    void              CancelPendingByTag(string tag);
    int               CountPendingByTag(string tag);
    int               CountPositionsByTag(string tag);
+   double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
 };
 
 //+------------------------------------------------------------------+
@@ -454,6 +455,19 @@ int COrderManager::CountPositionsByTag(string tag)
 }
 
 //+------------------------------------------------------------------+
+double COrderManager::GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period)
+{
+   if(period <= 0) return 0;
+   int h = iMA(sym, tf, period, 0, MODE_EMA, PRICE_CLOSE);
+   if(h != INVALID_HANDLE)
+   {
+      double ema[1];
+      if(CopyBuffer(h, 0, 0, 1, ema) > 0) return ema[0];
+   }
+   return 0;
+}
+
+//+------------------------------------------------------------------+
 string COrderManager::GetStatus() const
 {
    if(m_ordersActive) {
@@ -547,6 +561,44 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
                   reason = "Touch Mid (SellStop)";
                   break;
                }
+            }
+         }
+      }
+   }
+   
+   // 4. EMA based Auto Cancel
+   if(!shouldCancel && (p.ema1On || p.ema2On || p.ema3On))
+   {
+      double bid = GetBid(symbol);
+      double ask = GetAsk(symbol);
+      double ema1 = 0, ema2 = 0, ema3 = 0;
+      if(p.ema1On) ema1 = GetEmaValue(symbol, p.timeframe, p.ema1Period);
+      if(p.ema2On) ema2 = GetEmaValue(symbol, p.timeframe, p.ema2Period);
+      if(p.ema3On) ema3 = GetEmaValue(symbol, p.timeframe, p.ema3Period);
+      
+      for(int i = OrdersTotal() - 1; i >= 0; i--)
+      {
+         ulong ticket = OrderGetTicket(i);
+         if(!OrderSelect(ticket)) continue;
+         if(OrderGetInteger(ORDER_MAGIC) != g_magic) continue;
+         if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
+         
+         string comment = OrderGetString(ORDER_COMMENT);
+         if(StringFind(comment, m_lastOcoTag) >= 0)
+         {
+            ENUM_ORDER_TYPE type = (ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
+            
+            if(type == ORDER_TYPE_BUY_STOP)
+            {
+               if(p.ema1On && ema1 > 0 && bid < ema1) { shouldCancel = true; reason = "Price < EMA1 (Buy)"; break; }
+               if(p.ema2On && ema2 > 0 && bid < ema2) { shouldCancel = true; reason = "Price < EMA2 (Buy)"; break; }
+               if(p.ema3On && ema3 > 0 && bid < ema3) { shouldCancel = true; reason = "Price < EMA3 (Buy)"; break; }
+            }
+            else if(type == ORDER_TYPE_SELL_STOP)
+            {
+               if(p.ema1On && ema1 > 0 && ask > ema1) { shouldCancel = true; reason = "Price > EMA1 (Sell)"; break; }
+               if(p.ema2On && ema2 > 0 && ask > ema2) { shouldCancel = true; reason = "Price > EMA2 (Sell)"; break; }
+               if(p.ema3On && ema3 > 0 && ask > ema3) { shouldCancel = true; reason = "Price > EMA3 (Sell)"; break; }
             }
          }
       }

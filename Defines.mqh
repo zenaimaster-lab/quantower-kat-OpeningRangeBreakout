@@ -6,8 +6,8 @@
 #ifndef __DEFINES_MQH__
 #define __DEFINES_MQH__
 
-#define EA_NAME           "KAT Orb Breakout"
-#define EA_VERSION        "0.06"
+#define EA_NAME           "KAT Opening Range Breakout"
+#define EA_VERSION        "0.07"
 #define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
@@ -125,6 +125,12 @@ struct DashboardParams
    bool   unfilledCandlesOn;
    int    afterMinutes;
    bool   afterMinutesOn;
+   bool   ema1On;
+   int    ema1Period;
+   bool   ema2On;
+   int    ema2Period;
+   bool   ema3On;
+   int    ema3Period;
    string comment;
    bool   isActive;
 
@@ -162,6 +168,12 @@ struct DashboardParams
       unfilledCandlesOn=false;
       afterMinutes=5;
       afterMinutesOn=false;
+      ema1On=false;
+      ema1Period=9;
+      ema2On=false;
+      ema2Period=21;
+      ema3On=false;
+      ema3Period=34;
       targetGrowthPercent = 50.0;
       customTiming      = false;
       targetDayOffset   = 0;

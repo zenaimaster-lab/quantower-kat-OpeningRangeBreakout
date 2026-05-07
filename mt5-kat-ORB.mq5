@@ -1,11 +1,11 @@
 //+------------------------------------------------------------------+
-//|                                              kat-Orb-Breakout.mq5  |
-//|                      KAT Orb Breakout — Mathematical Origami |
+//|                                                   mt5-kat-ORB.mq5  |
+//|                            KAT Opening Range Breakout              |
 //|                                                      Version 0.73 |
 //+------------------------------------------------------------------+
-#property copyright   "KAT Orb Breakout"
+#property copyright   "KAT Opening Range Breakout"
 #property link        ""
-#property description "KAT Orb Breakout"
+#property description "KAT Opening Range Breakout"
 #property description "Scaling into winners to hit % growth targets."
 
 #include "Defines.mqh"
