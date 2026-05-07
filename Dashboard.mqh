@@ -293,16 +293,16 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── TRAIL / BE ──
    ML(m_lblSlTag,"lSl","SL / TP",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","3000",rx+59,cy,55,CTRL_HEIGHT);
+   ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","1500",rx+59,cy,55,CTRL_HEIGHT);
    MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
    ML(m_lblTrTag,"lTr","Trailing mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnTrMode,"bTm","OFF",rx,cy,rw,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnTrMode,"bTm","ON",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblTrTrig,"lTL","Trigger",cx,cy,55,CTRL_HEIGHT);
-   ME(m_edtTTr,"eTTr","30",cx+55,cy,50,CTRL_HEIGHT);
+   ME(m_edtTTr,"eTTr","1500",cx+55,cy,50,CTRL_HEIGHT);
    ML(m_lblTrDist,"lDi","Distance",cx+108,cy,65,CTRL_HEIGHT);
-   ME(m_edtTDi,"eTDi","20",cx+173,cy,50,CTRL_HEIGHT);
+   ME(m_edtTDi,"eTDi","500",cx+173,cy,50,CTRL_HEIGHT);
    ML(m_lblTrStep,"lStp","Step",cx+226,cy,35,CTRL_HEIGHT);
-   ME(m_edtTSt,"eTSt","5",cx+261,cy,50,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ME(m_edtTSt,"eTSt","1",cx+261,cy,50,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblBETag,"lBeT","Breakeven",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnBE,"bBE","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblBeLine,"lBL","BE Trigger",cx,cy,85,CTRL_HEIGHT);
@@ -320,12 +320,12 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnCont,"bCo","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    
    ML(m_lblMaxSTag,"lMs","Max succesful order",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtMaxS,"eMs","5",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnMaxS,"bMs","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ME(m_edtMaxS,"eMs","2",cx+155,cy,50,CTRL_HEIGHT);
+   MB(m_btnMaxS,"bMs","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    
    ML(m_lblMaxLTag,"lMl","Max loss order",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtMaxL,"eMl","1",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnMaxL,"bMl","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnMaxL,"bMl","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    
    ML(m_lblBigMTag,"lBm","Big momentum only",cx,cy,180,CTRL_HEIGHT);
    MB(m_btnBigM,"bBm","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+SEC_PAD;
@@ -334,16 +334,16 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    // ── AUTO CANCEL PENDING ──
    ML(m_lblExpTag,"lExT","AUTO CANCEL PENDING ORDER",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8; // Thêm khoảng trống dưới title
    ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtUfmPts,"eUfm","100",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnUfm,"bUfm","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ME(m_edtUfmPts,"eUfm","8000",cx+155,cy,50,CTRL_HEIGHT);
+   MB(m_btnUfm,"bUfm","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblTmrTag,"lTmr","Touch middle range",cx,cy,150,CTRL_HEIGHT);
-   MB(m_btnTmr,"bTmr","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnTmr,"bTmr","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtAuc,"eAuc","2",cx+155,cy,50,CTRL_HEIGHT);
    MB(m_btnAuc,"bAuc","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblAamTag,"lAam","After minutes",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtAam,"eAam","5",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnAam,"bAam","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ME(m_edtAam,"eAam","60",cx+155,cy,50,CTRL_HEIGHT);
+   MB(m_btnAam,"bAam","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblEma1Tag,"lEm1","Unfavor EMA 1",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtEma1,"eEm1","9",cx+155,cy,50,CTRL_HEIGHT);
    MB(m_btnEma1,"bEm1","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
