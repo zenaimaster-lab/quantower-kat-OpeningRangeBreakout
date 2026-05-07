@@ -177,6 +177,54 @@ void OnTick()
 
 
 
+int g_winsToday = 0;
+int g_lossesToday = 0;
+
+void UpdateTradeStats()
+{
+   int wins = 0, losses = 0;
+   double netToday = 0, netWeek = 0, netMonth = 0;
+   
+   datetime now = TimeCurrent();
+   datetime d1Start = iTime(Symbol(), PERIOD_D1, 0);
+   datetime w1Start = iTime(Symbol(), PERIOD_W1, 0);
+   datetime mn1Start = iTime(Symbol(), PERIOD_MN1, 0);
+   
+   if(HistorySelect(0, now)) {
+      int total = HistoryDealsTotal();
+      for(int i = 0; i < total; i++) {
+         ulong ticket = HistoryDealGetTicket(i);
+         if(ticket <= 0) continue;
+         if(HistoryDealGetInteger(ticket, DEAL_MAGIC) != g_magic) continue;
+         if(HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_OUT) continue;
+         
+         double profit = HistoryDealGetDouble(ticket, DEAL_PROFIT) + HistoryDealGetDouble(ticket, DEAL_COMMISSION) + HistoryDealGetDouble(ticket, DEAL_SWAP);
+         datetime time = (datetime)HistoryDealGetInteger(ticket, DEAL_TIME);
+         
+         if(time >= d1Start) {
+            netToday += profit;
+            if(profit > 0) wins++;
+            else losses++;
+         }
+         if(time >= w1Start) netWeek += profit;
+         if(time >= mn1Start) netMonth += profit;
+      }
+   }
+   
+   g_winsToday = wins;
+   g_lossesToday = losses;
+   
+   string eR2 = g_orderMgr_M2.GetEntryReason();
+   string cR2 = g_orderMgr_M2.GetCancelReason();
+   string eR5 = g_orderMgr_M5.GetEntryReason();
+   string cR5 = g_orderMgr_M5.GetCancelReason();
+   
+   string entryR = (eR5 != "") ? eR5 : eR2;
+   string cancelR = (cR5 != "") ? cR5 : cR2;
+   
+   g_dashboard.UpdateStatsTab(entryR, cancelR, wins, losses, netToday, netWeek, netMonth);
+}
+
 void OnTimer()
 {
    if(!g_initialized) return;
@@ -187,6 +235,8 @@ void OnTimer()
    g_newsMgr.Update();
    g_dashboard.UpdateNews(g_newsMgr.GetNextEventString());
    g_dashboard.UpdateTimer(g_timeMgr.GetCountdownString());
+   UpdateTradeStats();
+   
    if(p.symbol!="")
    { double bal=0,rAmt=0,rwAmt=0,lot=0;
      int displaySlPoints = p.slPoints;

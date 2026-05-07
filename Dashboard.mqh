@@ -60,6 +60,13 @@ private:
    CEdit m_lblStatEquity, m_lblStatPL;
    CEdit m_lblTotExpTag, m_lblTotExpVal;
    CEdit m_lblRtRrTag, m_lblRtRrLoss, m_lblRtRrPft, m_lblRtRrRiskPc;
+   
+   CEdit m_lblEntryReasonTag, m_lblEntryReasonVal;
+   CEdit m_lblCancelReasonTag, m_lblCancelReasonVal;
+   CEdit m_lblWinLossTag, m_lblWinLossVal;
+   CEdit m_lblNetTodayTag, m_lblNetTodayVal;
+   CEdit m_lblNetWeekTag, m_lblNetWeekVal;
+   CEdit m_lblNetMonthTag, m_lblNetMonthVal;
    CPanel m_sep[20];
 
 
@@ -118,6 +125,7 @@ public:
    void UpdateTotalExposed(double lots, int type);
    void UpdateRealtimeRR(double profit, double loss, double theoreticalRisk);
    void UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc);
+   void UpdateStatsTab(string entryReason, string cancelReason, int wins, int losses, double netToday, double netWeek, double netMonth);
    string FormatMoneyRound(double value);
    // v2.0: Command queue API (replaces 13+ boolean flags)
    bool HasCommand() const { return m_cmdCount > 0; }
@@ -158,6 +166,9 @@ private:
 
 public:
    bool HandleDirectClick(const string &objName);
+   
+   virtual void Minimize(void);
+   virtual void Maximize(void);
 
 };
 
@@ -341,6 +352,32 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblRtRrLoss,"sRtL","-$0",rx,cy,65,CTRL_HEIGHT,CLR_MONEY_RED);
    ML(m_lblRtRrPft,"sRtP","+$0",rx+68,cy,65,CTRL_HEIGHT,CLR_MONEY_GREEN);
    ML(m_lblRtRrRiskPc,"sRtPc","{0.0%}",cx+cw-45,cy,45,CTRL_HEIGHT,CLR_ACCENT);
+   cy+=CTRL_HEIGHT+CTRL_GAP;
+   
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   
+   ML(m_lblEntryReasonTag,"lErT","Entry Reason:",cx,cy,100,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblEntryReasonVal,"sErV","--",cx+105,cy,rw,CTRL_HEIGHT,CLR_WARNING);
+   cy+=CTRL_HEIGHT+CTRL_GAP;
+   
+   ML(m_lblCancelReasonTag,"lCrT","Cancel Reason:",cx,cy,100,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblCancelReasonVal,"sCrV","--",cx+105,cy,rw,CTRL_HEIGHT,CLR_WARNING);
+   cy+=CTRL_HEIGHT+CTRL_GAP;
+   
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   
+   ML(m_lblWinLossTag,"lWlT","Win / Loss:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblWinLossVal,"sWlV","0 / 0",cx+85,cy,80,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   
+   ML(m_lblNetTodayTag,"lNtT","Net Today:",cx+170,cy,70,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetTodayVal,"sNtV","$0.00",cx+245,cy,60,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   cy+=CTRL_HEIGHT+CTRL_GAP;
+   
+   ML(m_lblNetWeekTag,"lNwT","Net Week:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetWeekVal,"sNwV","$0.00",cx+85,cy,80,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   
+   ML(m_lblNetMonthTag,"lNmT","Net Month:",cx+170,cy,70,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetMonthVal,"sNmV","$0.00",cx+245,cy,60,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    cy+=CTRL_HEIGHT+CTRL_GAP;
    
    m_statusSepEnd = si - 1;
@@ -623,9 +660,26 @@ void CDashboard::UpdateRealtimeRR(double profit, double loss, double theoretical
 void CDashboard::UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc)
 {
    m_lblRtRrRiskPc.Text(StringFormat("{%.1f%%}", riskPc));
-   if(riskPc > maxRiskPc + 0.01) m_lblRtRrRiskPc.Color(CLR_MONEY_RED);
+   if(riskPc > maxRiskPc) m_lblRtRrRiskPc.Color(CLR_MONEY_RED);
    else if(MathAbs(riskPc - maxRiskPc) <= 0.01) m_lblRtRrRiskPc.Color(CLR_WARNING);
    else m_lblRtRrRiskPc.Color(CLR_ACCENT);
+}
+
+void CDashboard::UpdateStatsTab(string entryReason, string cancelReason, int wins, int losses, double netToday, double netWeek, double netMonth)
+{
+   m_lblEntryReasonVal.Text(entryReason != "" ? entryReason : "--");
+   m_lblCancelReasonVal.Text(cancelReason != "" ? cancelReason : "--");
+   
+   m_lblWinLossVal.Text(IntegerToString(wins) + " / " + IntegerToString(losses));
+   
+   m_lblNetTodayVal.Text((netToday>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netToday)));
+   m_lblNetTodayVal.Color(netToday>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
+   
+   m_lblNetWeekVal.Text((netWeek>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netWeek)));
+   m_lblNetWeekVal.Color(netWeek>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
+   
+   m_lblNetMonthVal.Text((netMonth>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netMonth)));
+   m_lblNetMonthVal.Color(netMonth>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
 }
 
 // ── HANDLERS ── (v2.0: all handlers call MarkDirty + PushCmd)
@@ -704,6 +758,14 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblEqTag); CtrlShow(m_lblStatEquity); CtrlShow(m_lblPlTag); CtrlShow(m_lblStatPL);
       CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
       CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
+      
+      CtrlShow(m_lblEntryReasonTag); CtrlShow(m_lblEntryReasonVal);
+      CtrlShow(m_lblCancelReasonTag); CtrlShow(m_lblCancelReasonVal);
+      CtrlShow(m_lblWinLossTag); CtrlShow(m_lblWinLossVal);
+      CtrlShow(m_lblNetTodayTag); CtrlShow(m_lblNetTodayVal);
+      CtrlShow(m_lblNetWeekTag); CtrlShow(m_lblNetWeekVal);
+      CtrlShow(m_lblNetMonthTag); CtrlShow(m_lblNetMonthVal);
+      
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlShow(m_sep[i]);
       
       CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal);
@@ -775,9 +837,62 @@ void CDashboard::OnA1(){ m_btnA1.Pressed(false); PresetIndex=0; PushCmd(CMD_PRES
 void CDashboard::OnA2(){ m_btnA2.Pressed(false); PresetIndex=1; PushCmd(CMD_PRESET); }
 void CDashboard::OnA3(){ m_btnA3.Pressed(false); PresetIndex=2; PushCmd(CMD_PRESET); }
 
+void CDashboard::Minimize(void)
+{
+   CAppDialog::Minimize();
+   CtrlHide(m_lblVer); CtrlHide(m_lblSym); CtrlHide(m_lblMktStatus); CtrlHide(m_lblSpdVal);
+   CtrlHide(m_lblClkTag); CtrlHide(m_lblClkVal); CtrlHide(m_lblClkAmPm); CtrlHide(m_lblClkDate);
+   CtrlHide(m_lblTimerTag); CtrlHide(m_lblTimerVal);
+   CtrlHide(m_btnToggleM2); CtrlHide(m_btnToggleM5);
+   CtrlHide(m_btnTabMain); CtrlHide(m_btnTabM2); CtrlHide(m_btnTabM5); CtrlHide(m_btnTabStats);
+   
+   for(int i=0; i<=m_idxSepAfterPresets; i++) CtrlHide(m_sep[i]);
+   
+   CtrlHide(m_lblOsTag); CtrlHide(m_lblOsVal); CtrlHide(m_lblStVal);
+   CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
+   CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
+   CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
+   
+   CtrlHide(m_lblEntryReasonTag); CtrlHide(m_lblEntryReasonVal);
+   CtrlHide(m_lblCancelReasonTag); CtrlHide(m_lblCancelReasonVal);
+   CtrlHide(m_lblWinLossTag); CtrlHide(m_lblWinLossVal);
+   CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal);
+   CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal);
+   CtrlHide(m_lblNetMonthTag); CtrlHide(m_lblNetMonthVal);
+   
+   CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal);
+   CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
+   CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_lblRskTag); CtrlHide(m_edtRisk); CtrlHide(m_lblRPc);
+   CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
+   CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
+   CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
+   CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
+   CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
+   CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
+   CtrlHide(m_lblEntrySec); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
+   CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
+   CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
+   CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
+   CtrlHide(m_lblExpTag); CtrlHide(m_lblUfmTag); CtrlHide(m_edtUfmPts); CtrlHide(m_btnUfm);
+   CtrlHide(m_lblTmrTag); CtrlHide(m_btnTmr);
+   CtrlHide(m_lblAucTag); CtrlHide(m_edtAuc); CtrlHide(m_btnAuc);
+   CtrlHide(m_lblAamTag); CtrlHide(m_edtAam); CtrlHide(m_btnAam);
+   CtrlHide(m_lblEma1Tag); CtrlHide(m_edtEma1); CtrlHide(m_btnEma1);
+   CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
+   CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
+   CtrlHide(m_btnA1); CtrlHide(m_btnA2); CtrlHide(m_btnA3);
+}
 
-
-
-
+void CDashboard::Maximize(void)
+{
+   CAppDialog::Maximize();
+   CtrlShow(m_lblVer); CtrlShow(m_lblSym); CtrlShow(m_lblMktStatus); CtrlShow(m_lblSpdVal);
+   CtrlShow(m_lblClkTag); CtrlShow(m_lblClkVal); CtrlShow(m_lblClkAmPm); CtrlShow(m_lblClkDate);
+   CtrlShow(m_lblTimerTag); CtrlShow(m_lblTimerVal);
+   CtrlShow(m_btnToggleM2); CtrlShow(m_btnToggleM5);
+   CtrlShow(m_btnTabMain); CtrlShow(m_btnTabM2); CtrlShow(m_btnTabM5); CtrlShow(m_btnTabStats);
+   for(int i=0; i<5; i++) CtrlShow(m_sep[i]); 
+   UpdTabs(); 
+}
 
 #endif

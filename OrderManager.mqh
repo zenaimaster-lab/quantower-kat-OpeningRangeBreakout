@@ -19,6 +19,10 @@ enum ENUM_ORB_STATE {
    ORB_DONE = 5
 };
 
+extern int g_magic;
+extern int g_winsToday;
+extern int g_lossesToday;
+
 class COrderManager
 {
 private:
@@ -35,6 +39,9 @@ private:
    string            m_lastOcoTag;
    bool              m_ordersActive;
    datetime          m_placedTime;
+   
+   string            m_entryReason;
+   string            m_cancelReason;
    
    // Helper methods
    bool              GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low);
@@ -56,6 +63,8 @@ public:
    void              CancelAllPending(string symbol);
    
    string            GetStatus() const;
+   string            GetEntryReason() const { return m_entryReason; }
+   string            GetCancelReason() const { return m_cancelReason; }
 
    virtual double    GetPoint(string symbol) { return SymbolInfoDouble(symbol, SYMBOL_POINT); }
    virtual int       GetDigits(string symbol) { return (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS); }
@@ -91,6 +100,8 @@ void COrderManager::ResetState()
    m_lastOcoTag = "";
    m_ordersActive = false;
    m_placedTime = 0;
+   m_entryReason = "";
+   m_cancelReason = "";
 }
 
 //+------------------------------------------------------------------+
@@ -121,12 +132,13 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
 {
    string prefix = (tf == PERIOD_M2) ? "2m " : "5m ";
    color colHigh = (tf == PERIOD_M2) ? clrDodgerBlue : clrLimeGreen;
-   color colLow  = clrOrange; 
+   color colLow  = (tf == PERIOD_M2) ? clrOrange : clrRed; 
    
    string nameH = "ORB_H_" + EnumToString(tf);
    string nameL = "ORB_L_" + EnumToString(tf);
    
    datetime endTime = cTime + 3600; // 1 hour
+   datetime txtTime = (tf == PERIOD_M2) ? endTime : cTime;
    
    ObjectCreate(0, nameH, OBJ_TREND, 0, cTime, high, endTime, high);
    ObjectSetInteger(0, nameH, OBJPROP_COLOR, colHigh);
@@ -136,10 +148,10 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    ObjectSetInteger(0, nameH, OBJPROP_BACK, true);
    
    string textH = nameH + "_TXT";
-   ObjectCreate(0, textH, OBJ_TEXT, 0, cTime, high);
+   ObjectCreate(0, textH, OBJ_TEXT, 0, txtTime, high);
    ObjectSetString(0, textH, OBJPROP_TEXT, prefix + "H: " + DoubleToString(high, GetDigits(symbol)));
    ObjectSetInteger(0, textH, OBJPROP_COLOR, colHigh);
-   ObjectSetInteger(0, textH, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+   ObjectSetInteger(0, textH, OBJPROP_ANCHOR, (tf == PERIOD_M2) ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER);
    
    ObjectCreate(0, nameL, OBJ_TREND, 0, cTime, low, endTime, low);
    ObjectSetInteger(0, nameL, OBJPROP_COLOR, colLow);
@@ -149,10 +161,10 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    ObjectSetInteger(0, nameL, OBJPROP_BACK, true);
    
    string textL = nameL + "_TXT";
-   ObjectCreate(0, textL, OBJ_TEXT, 0, cTime, low);
+   ObjectCreate(0, textL, OBJ_TEXT, 0, txtTime, low);
    ObjectSetString(0, textL, OBJPROP_TEXT, prefix + "L: " + DoubleToString(low, GetDigits(symbol)));
    ObjectSetInteger(0, textL, OBJPROP_COLOR, colLow);
-   ObjectSetInteger(0, textL, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+   ObjectSetInteger(0, textL, OBJPROP_ANCHOR, (tf == PERIOD_M2) ? ANCHOR_LEFT_UPPER : ANCHOR_RIGHT_UPPER);
 }
 
 //+------------------------------------------------------------------+
@@ -248,6 +260,15 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
    }
    
    if(m_state == ORB_WAIT_RETEST) {
+       bool hasPos = false;
+       for(int i = PositionsTotal() - 1; i >= 0; i--) {
+           ulong ticket = PositionGetTicket(i);
+           if(PositionGetInteger(POSITION_MAGIC) == g_magic && PositionGetString(POSITION_SYMBOL) == symbol) {
+               hasPos = true; break;
+           }
+       }
+       if(hasPos) return;
+       
        int shift1 = 1;
        datetime t1 = iTime(symbol, tf, shift1);
        
@@ -274,6 +295,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                        m_state = ORB_WAIT_ENTRY;
                        m_ordersActive = true;
                        m_placedTime = TimeTradeServer();
+                       m_entryReason = "M" + IntegerToString(PeriodSeconds(tf)/60) + " Break UP Retest";
                        DrawTradeLines(symbol, tf, 1, entryPrice, tp);
                        PrintFormat("[%s] BUY STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
                    }
@@ -292,6 +314,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                        m_state = ORB_WAIT_ENTRY;
                        m_ordersActive = true;
                        m_placedTime = TimeTradeServer();
+                       m_entryReason = "M" + IntegerToString(PeriodSeconds(tf)/60) + " Break DOWN Retest";
                        DrawTradeLines(symbol, tf, -1, entryPrice, tp);
                        PrintFormat("[%s] SELL STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
                    }
@@ -473,9 +496,43 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
    
    if(shouldCancel)
    {
+      m_cancelReason = reason;
       PrintFormat("[OrderMgr] Auto Cancel Triggered: %s", reason);
       CancelAllPending(symbol);
       m_lastOcoTag = "";
+      
+      bool limitHit = false;
+      if(p.maxSuccessOn && g_winsToday >= p.maxSuccess) limitHit = true;
+      if(p.maxLossOn && g_lossesToday >= p.maxLoss) limitHit = true;
+      
+      if(p.contAfter1st && !limitHit) m_state = ORB_WAIT_BREAK;
+   }
+   else if(m_lastOcoTag != "")
+   {
+      bool exists = false;
+      for(int i = OrdersTotal() - 1; i >= 0; i--) {
+          ulong ticket = OrderGetTicket(i);
+          if(OrderSelect(ticket)) {
+              if(OrderGetString(ORDER_COMMENT) == m_lastOcoTag) {
+                  exists = true; break;
+              }
+          }
+      }
+      if(!exists) {
+          m_ordersActive = false;
+          m_lastOcoTag = "";
+          
+          bool limitHit = false;
+          if(p.maxSuccessOn && g_winsToday >= p.maxSuccess) limitHit = true;
+          if(p.maxLossOn && g_lossesToday >= p.maxLoss) limitHit = true;
+          
+          if(p.contAfter1st && !limitHit) {
+              m_state = ORB_WAIT_BREAK;
+              PrintFormat("[%s] Order triggered. Resuming WAIT_BREAK due to ContAfter1st.", symbol);
+          } else {
+              m_state = ORB_DONE;
+          }
+      }
    }
 }
 
