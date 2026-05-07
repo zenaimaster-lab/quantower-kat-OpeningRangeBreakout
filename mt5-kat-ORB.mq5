@@ -162,13 +162,18 @@ void OnTick()
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym,SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
    
-   g_orderMgr_M2.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m2, g_timeMgr.GetTargetTime());
-   g_orderMgr_M5.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m5, g_timeMgr.GetTargetTime());
+   // Build per-timeframe params with forced correct TF (same as OnTimer)
+   DashboardParams pm2 = cfg.globalOverride ? cfg.main : cfg.m2;
+   pm2.symbol = sym; pm2.timeframe = PERIOD_M2; pm2.comment = "orb-2m";
    
-   // Status is now updated via Update2mStatus/Update5mStatus in OnTimer
+   DashboardParams pm5 = cfg.globalOverride ? cfg.main : cfg.m5;
+   pm5.symbol = sym; pm5.timeframe = PERIOD_M5; pm5.comment = "orb-5m";
    
-   g_trailMgr_M2.Process(cfg.globalOverride ? cfg.main : cfg.m2);
-   g_trailMgr_M5.Process(cfg.globalOverride ? cfg.main : cfg.m5);
+   if(cfg.m2.isActive) g_orderMgr_M2.CheckAutoCancel(pm2, g_timeMgr.GetTargetTime());
+   if(cfg.m5.isActive) g_orderMgr_M5.CheckAutoCancel(pm5, g_timeMgr.GetTargetTime());
+   
+   if(cfg.m2.isActive) g_trailMgr_M2.Process(pm2);
+   if(cfg.m5.isActive) g_trailMgr_M5.Process(pm5);
 }
 
 

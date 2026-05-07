@@ -16,7 +16,8 @@ enum ENUM_ORB_STATE {
    ORB_WAIT_BREAK = 2,
    ORB_WAIT_RETEST = 3,
    ORB_WAIT_ENTRY = 4,
-   ORB_DONE = 5
+   ORB_STOPPED = 5,
+   ORB_DONE = 6
 };
 
 extern int g_magic;
@@ -313,7 +314,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
        int spread = GetSpread(symbol);
        int buffer = params.entryBufferPoints;
        
-       if(m_breakDir == 1) { // Break UP, waiting for RED candle touching High
+       if(m_breakDir == 1 && params.orderMode != MODE_SELL_ONLY) { // Break UP
            if(c < o && l <= m_rangeHigh) {
                double entryPrice = NormalizeDouble(h + (buffer + spread) * point, digits);
                double sl = params.slCandle ? NormalizeDouble(l - buffer * point, digits) : NormalizeDouble(entryPrice - params.slPoints * point, digits);
@@ -332,7 +333,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                    }
                }
            }
-       } else if(m_breakDir == -1) { // Break DOWN, waiting for GREEN candle touching Low
+       } else if(m_breakDir == -1 && params.orderMode != MODE_BUY_ONLY) { // Break DOWN
            if(c > o && h >= m_rangeLow) {
                double entryPrice = NormalizeDouble(l - buffer * point, digits);
                double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
@@ -364,6 +365,7 @@ string COrderManager::GetStatus() const
       case ORB_WAIT_BREAK: return "Wait Break";
       case ORB_WAIT_RETEST: return (m_breakDir == 1) ? "Break Out ▲" : "Break Down ▼";
       case ORB_WAIT_ENTRY: return "Wait Entry";
+      case ORB_STOPPED: return "Stop Trading";
       case ORB_DONE: return "Done";
    }
    return "Idle";
@@ -374,6 +376,7 @@ color COrderManager::GetStatusColor() const
    switch(m_state) {
       case ORB_WAIT_RETEST: return (m_breakDir == 1) ? CLR_MONEY_GREEN : CLR_MONEY_RED;
       case ORB_WAIT_ENTRY: return CLR_WARNING;
+      case ORB_STOPPED: return CLR_MONEY_RED;
       default: return CLR_TEXT_DIM;
    }
 }
@@ -541,11 +544,23 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       CancelAllPending(symbol);
       m_lastOrderTag = "";
       
-      bool limitHit = false;
-      if(p.maxSuccessOn && g_winsToday >= p.maxSuccess) limitHit = true;
-      if(p.maxLossOn && g_lossesToday >= p.maxLoss) limitHit = true;
-      
-      if(p.contAfter1st && !limitHit) m_state = ORB_WAIT_BREAK;
+      // afterMinutes is a hard stop — no continuation
+      if(p.afterMinutesOn && nyOpenTimeServer > 0 && 
+         TimeTradeServer() >= nyOpenTimeServer + p.afterMinutes * 60)
+      {
+         m_state = ORB_STOPPED;
+      }
+      else
+      {
+         bool limitHit = false;
+         if(p.maxSuccessOn && g_winsToday >= p.maxSuccess) limitHit = true;
+         if(p.maxLossOn && g_lossesToday >= p.maxLoss) limitHit = true;
+         
+         if(p.contAfter1st && !limitHit)
+            m_state = ORB_WAIT_BREAK;
+         else
+            m_state = ORB_DONE;
+      }
    }
    else if(m_lastOrderTag != "")
    {
