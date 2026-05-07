@@ -24,7 +24,7 @@ input int             InpUtcOffset         = -4;          // Broker UTC Offset (
 input group "------------- ORDER -------------"
 input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Timeframe
 input int             InpSlPoints          = 1500;        // Stop Loss (Points)
-input int             InpTpPoints          = 3000;        // Take Profit (Points)
+input int             InpTpPoints          = 1500;        // Take Profit (Points)
 input bool            InpSlCandle          = false;       // Use Candle Extremes for SL
 input ENUM_ORDER_MODE InpOrderMode         = MODE_BOTH;   // Allowed Trade Directions
 input int             InpEntryBufferPoints = 5;           // Entry/SL Buffer (Points)
@@ -33,10 +33,10 @@ input group "------------- RISK -------------"
 input double          InpRiskPercent       = 1.0;         // Risk per Trade (%)
 
 input group "------------- TRAIL -------------"
-input ENUM_TRAIL_MODE InpTrailMode         = TM_OFF;      // Trailing Stop Mode
-input int             InpTrailTrigger      = 30;          // Trailing Trigger (Points)
-input int             InpTrailDistance     = 20;          // Trailing Distance (Points)
-input int             InpTrailStep         = 5;           // Trailing Step (Points)
+input ENUM_TRAIL_MODE InpTrailMode         = TM_CHASE;    // Trailing Stop Mode
+input int             InpTrailTrigger      = 1500;        // Trailing Trigger (Points)
+input int             InpTrailDistance     = 500;         // Trailing Distance (Points)
+input int             InpTrailStep         = 1;           // Trailing Step (Points)
 input int             InpBeActivatePts     = 200;         // Breakeven Activation (Points)
 input int             InpBeLockPts         = 50;          // Breakeven Lock Profit (Points)
 input bool            InpBeEnabled         = false;       // Enable Breakeven
@@ -219,9 +219,7 @@ int OnInit()
    cfg.main.orderMode=InpOrderMode;cfg.main.trailMode=InpTrailMode;cfg.main.trailTrigger=InpTrailTrigger;
    cfg.main.trailDistance=InpTrailDistance;cfg.main.trailStep=InpTrailStep;
    cfg.main.beActivatePoints=InpBeActivatePts;cfg.main.beLockPoints=InpBeLockPts;cfg.main.beEnabled=InpBeEnabled;
-   cfg.main.unfavorMoveOn=false; cfg.main.unfavorMovePts=100;
-   cfg.main.touchMidOn=false;
-   cfg.main.unfilledCandlesOn=false; cfg.main.unfilledCandles=2;
+   // (Removed hardcoded overrides for unfavorMove, touchMid, etc. to use DashboardParams defaults)
    cfg.m2 = cfg.main; cfg.m2.timeframe = PERIOD_M2; cfg.m2.comment = "orb-2m";
    cfg.m5 = cfg.main; cfg.m5.timeframe = PERIOD_M5; cfg.m5.comment = "orb-5m";
 
