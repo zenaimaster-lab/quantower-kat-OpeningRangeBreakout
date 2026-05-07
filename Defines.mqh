@@ -58,6 +58,7 @@ extern int g_magic;
 #define CLR_MONEY_RED     C'240,90,90'
 #define CLR_FLATTEN       C'200,50,50'
 #define CLR_PRESET        C'70,50,120'
+#define CLR_PURPLE        C'110,40,160'
 #define CLR_NEWS_RED      C'255,70,70'
 #define CLR_MKT_OPEN      C'40,220,120'
 #define CLR_MKT_CLOSED    C'200,60,60'

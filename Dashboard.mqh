@@ -13,9 +13,7 @@ private:
    CEdit m_lblVer, m_lblSym, m_lblMktLine, m_lblSpdVal, m_lblMktStatus;
    CEdit m_lblClkTag, m_lblClkVal, m_lblClkAmPm, m_lblClkDate;
    CEdit m_lblNewsTag, m_lblNewsVal;
-   CEdit m_lblTfTag, m_lblSlTag, m_lblMdTag, m_lblCmtTag;
-   CEdit m_edtComment;
-   CButton m_btnTf;
+   CEdit m_lblSlTag, m_lblMdTag;
    
    CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
    CButton m_btnTabMain, m_btnTabM2, m_btnTabM5;
@@ -163,9 +161,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    
    // --- MAIN TOGGLES ---
    int thw=(cw-4)/2;
-   MB(m_btnGlobal,"bGb","GLOBAL OVERRIDE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   MB(m_btnToggleM2,"bT2","2m: ON",cx,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS);
-   MB(m_btnToggleM5,"bT5","5m: ON",cx+thw+4,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   MB(m_btnToggleM2,"bT2","Trade 2m: ON",cx,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS);
+   MB(m_btnToggleM5,"bT5","Trade 5m: ON",cx+thw+4,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // --- TABS ---
@@ -178,12 +175,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
 
    // ── ORDER ──
-   ML(m_lblTfTag,"lTf","Timeframe",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnTf,"bTf","M2",rx,cy,90,CTRL_HEIGHT,CLR_BTN_OFF);
-   cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblCmtTag,"lCm","Comment",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtComment,"eCm","orb-trade",rx,cy,rw,CTRL_HEIGHT);
-   cy+=CTRL_HEIGHT+CTRL_GAP;
+   MB(m_btnGlobal,"bGb","GLOBAL OVERRIDE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_PURPLE); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblSlTag,"lSl","SL / TP",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","3000",rx+59,cy,55,CTRL_HEIGHT);
    MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
@@ -321,13 +313,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    DashboardParams p;
    p.symbol = m_lblSym.Text();
    p.utcOffset = m_utcOff;
-   string tf = m_btnTf.Text();
-   if(tf=="M1") p.timeframe = PERIOD_M1;
-   else if(tf=="M5") p.timeframe = PERIOD_M5;
-   else if(tf=="M15") p.timeframe = PERIOD_M15;
-   else p.timeframe = PERIOD_M2;
-   
-   p.comment = m_edtComment.Text();
+   p.timeframe = (tab == TAB_M5) ? PERIOD_M5 : PERIOD_M2;
+   p.comment = (tab == TAB_M5) ? "orb-5m" : "orb-2m";
    p.slPoints = (int)StringToInteger(m_edtSL.Text());
    p.tpPoints=(int)StringToInteger(m_edtTP.Text());
    p.slCandle=m_slCandle;
@@ -369,13 +356,6 @@ void CDashboard::LoadTab(ENUM_TAB tab)
 
    m_slCandle = p.slCandle;
    m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
-   
-   if(p.timeframe == PERIOD_M1) m_btnTf.Text("M1");
-   else if(p.timeframe == PERIOD_M5) m_btnTf.Text("M5");
-   else if(p.timeframe == PERIOD_M15) m_btnTf.Text("M15");
-   else m_btnTf.Text("M2");
-
-   m_edtComment.Text(p.comment);
    m_edtSL.Text(IntegerToString(p.slPoints)); 
    m_utcOff=p.utcOffset;
    m_edtTP.Text(IntegerToString(p.tpPoints));
@@ -438,18 +418,6 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnA1.Name()) { OnA1(); return true; }
    if(objName == m_btnA2.Name()) { OnA2(); return true; }
    if(objName == m_btnA3.Name()) { OnA3(); return true; }
-   else if(objName == m_btnTf.Name())
-   {
-      string tf = m_btnTf.Text();
-      if(tf == "M1") m_btnTf.Text("M2");
-      else if(tf == "M2") m_btnTf.Text("M5");
-      else if(tf == "M5") m_btnTf.Text("M15");
-      else m_btnTf.Text("M1");
-      m_dirty = true;
-      m_btnTf.Pressed(false);
-      return true;
-   }
-
    return false;
 }
 
@@ -467,10 +435,6 @@ void CDashboard::ApplyPreset(const PresetParams &pr)
   m_edtRisk.Text(DoubleToString(pr.risk,1));
   m_edtTTr.Text(IntegerToString(pr.trailTrigger)); m_edtTDi.Text(IntegerToString(pr.trailDist));
   m_edtTSt.Text(IntegerToString(pr.trailStep)); 
-  if(pr.tf == PERIOD_M1) m_btnTf.Text("M1");
-  else if(pr.tf == PERIOD_M5) m_btnTf.Text("M5");
-  else if(pr.tf == PERIOD_M15) m_btnTf.Text("M15");
-  else m_btnTf.Text("M2");
   MarkDirty(); }
 string CDashboard::FormatMoneyRound(double value)
 {
