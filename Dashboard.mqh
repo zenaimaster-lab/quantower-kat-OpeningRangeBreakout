@@ -18,8 +18,6 @@ private:
    
    CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
    CEdit m_lblGlobalTag;
-   CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
-   CEdit m_lblGlobalTag;
    CButton m_btnTabMain, m_btnTabM2, m_btnTabM5, m_btnTabStats;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
