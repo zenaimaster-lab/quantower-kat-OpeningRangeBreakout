@@ -6,7 +6,7 @@
 #ifndef __DEFINES_MQH__
 #define __DEFINES_MQH__
 
-#define EA_NAME           "KAT Strike"
+#define EA_NAME           "KAT Orb Breakout"
 #define EA_VERSION        "1.56"
 #define EA_BUILD_DATE     "06 May 2026"
 extern int g_magic;

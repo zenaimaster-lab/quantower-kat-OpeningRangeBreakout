@@ -1,11 +1,11 @@
 //+------------------------------------------------------------------+
-//|                                              kat-Strike.mq5  |
-//|                      KAT Strike — Mathematical Origami |
+//|                                              kat-Orb-Breakout.mq5  |
+//|                      KAT Orb Breakout — Mathematical Origami |
 //|                                                      Version 0.73 |
 //+------------------------------------------------------------------+
-#property copyright   "KAT Strike"
+#property copyright   "KAT Orb Breakout"
 #property link        ""
-#property description "KAT Strike"
+#property description "KAT Orb Breakout"
 #property description "Scaling into winners to hit % growth targets."
 
 #include "Defines.mqh"
