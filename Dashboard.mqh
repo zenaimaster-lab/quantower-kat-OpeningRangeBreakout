@@ -796,6 +796,14 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
       CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
       CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
+      
+      CtrlHide(m_lblEntryReasonTag); CtrlHide(m_lblEntryReasonVal);
+      CtrlHide(m_lblCancelReasonTag); CtrlHide(m_lblCancelReasonVal);
+      CtrlHide(m_lblWinLossTag); CtrlHide(m_lblWinLossVal);
+      CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal);
+      CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal);
+      CtrlHide(m_lblNetMonthTag); CtrlHide(m_lblNetMonthVal);
+      
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
       
       CtrlShow(m_lblMdTag); CtrlShowBtn(m_btnBoth); CtrlShowBtn(m_btnBuy); CtrlShowBtn(m_btnSell);

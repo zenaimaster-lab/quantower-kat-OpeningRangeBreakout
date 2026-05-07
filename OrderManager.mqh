@@ -144,7 +144,7 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    ObjectSetInteger(0, nameH, OBJPROP_COLOR, colHigh);
    ObjectSetInteger(0, nameH, OBJPROP_RAY_RIGHT, false);
    ObjectSetInteger(0, nameH, OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, nameH, OBJPROP_WIDTH, 1);
+   ObjectSetInteger(0, nameH, OBJPROP_WIDTH, (tf == PERIOD_M5) ? 2 : 1);
    ObjectSetInteger(0, nameH, OBJPROP_BACK, true);
    
    string textH = nameH + "_TXT";
@@ -157,7 +157,7 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    ObjectSetInteger(0, nameL, OBJPROP_COLOR, colLow);
    ObjectSetInteger(0, nameL, OBJPROP_RAY_RIGHT, false);
    ObjectSetInteger(0, nameL, OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, nameL, OBJPROP_WIDTH, 1);
+   ObjectSetInteger(0, nameL, OBJPROP_WIDTH, (tf == PERIOD_M5) ? 2 : 1);
    ObjectSetInteger(0, nameL, OBJPROP_BACK, true);
    
    string textL = nameL + "_TXT";
@@ -175,7 +175,7 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
    color colTarget = clrRed;
    
    datetime t = TimeTradeServer();
-   datetime tEnd = t + 3600;
+   datetime tEnd = t + 5 * PeriodSeconds(tf);
    
    string nameE = "ORB_ENTRY_" + EnumToString(tf);
    string nameT = "ORB_TARGET_" + EnumToString(tf);
