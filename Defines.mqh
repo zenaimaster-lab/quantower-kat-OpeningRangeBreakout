@@ -7,14 +7,14 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "0.09"
+#define EA_VERSION        "0.10"
 #define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1420
+#define PANEL_HEIGHT      1550
 #define PANEL_X           20
 #define PANEL_Y           20
 
@@ -131,6 +131,14 @@ struct DashboardParams
    int    ema2Period;
    bool   ema3On;
    int    ema3Period;
+   
+   bool   contAfter1st;
+   bool   maxSuccessOn;
+   int    maxSuccess;
+   bool   maxLossOn;
+   int    maxLoss;
+   bool   bigMomentum;
+   
    string comment;
    bool   isActive;
 
@@ -174,6 +182,12 @@ struct DashboardParams
       ema2Period=21;
       ema3On=false;
       ema3Period=34;
+      contAfter1st=true;
+      maxSuccessOn=false;
+      maxSuccess=5;
+      maxLossOn=false;
+      maxLoss=1;
+      bigMomentum=false;
       targetGrowthPercent = 50.0;
       customTiming      = false;
       targetDayOffset   = 0;

@@ -41,6 +41,13 @@ private:
    CButton m_btnAuc;
    CEdit m_lblAamTag, m_edtAam;
    CButton m_btnAam;
+   
+   CEdit m_lblEntrySec;
+   CEdit m_lblContTag; CButton m_btnCont;
+   CEdit m_lblMaxSTag, m_edtMaxS; CButton m_btnMaxS;
+   CEdit m_lblMaxLTag, m_edtMaxL; CButton m_btnMaxL;
+   CEdit m_lblBigMTag; CButton m_btnBigM;
+   
    CEdit m_lblEma1Tag, m_edtEma1;
    CButton m_btnEma1;
    CEdit m_lblEma2Tag, m_edtEma2;
@@ -69,6 +76,7 @@ private:
    bool m_slCandle, m_beOn;
    bool m_ufmEnabled, m_tmrEnabled, m_aucEnabled, m_aamEnabled;
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
+   bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum;
    int m_idxSepAfterPresets;
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
@@ -134,6 +142,12 @@ private:
    void OnEma1Toggle(); void UpdEma1();
    void OnEma2Toggle(); void UpdEma2();
    void OnEma3Toggle(); void UpdEma3();
+   
+   void OnContToggle(); void UpdCont();
+   void OnMaxSToggle(); void UpdMaxS();
+   void OnMaxLToggle(); void UpdMaxL();
+   void OnBigMToggle(); void UpdBigM();
+   
    void OnA1(); void OnA2(); void OnA3();
 
 
@@ -247,9 +261,27 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ME(m_edtBEL,"eBL","50",cx+147,cy,42,CTRL_HEIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── AUTO CANCEL PENDING ──
+   // ── ENTRY ──
    int smallBtnW = rw / 3;
    int smallBtnX = rx + rw - smallBtnW;
+   ML(m_lblEntrySec,"lEnT","ENTRY",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8;
+   
+   ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cy,180,CTRL_HEIGHT);
+   MB(m_btnCont,"bCo","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   
+   ML(m_lblMaxSTag,"lMs","Max succesful order",cx,cy,150,CTRL_HEIGHT);
+   ME(m_edtMaxS,"eMs","5",cx+155,cy,50,CTRL_HEIGHT);
+   MB(m_btnMaxS,"bMs","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   
+   ML(m_lblMaxLTag,"lMl","Max loss order",cx,cy,150,CTRL_HEIGHT);
+   ME(m_edtMaxL,"eMl","1",cx+155,cy,50,CTRL_HEIGHT);
+   MB(m_btnMaxL,"bMl","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   
+   ML(m_lblBigMTag,"lBm","Big momentum only",cx,cy,180,CTRL_HEIGHT);
+   MB(m_btnBigM,"bBm","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+
+   // ── AUTO CANCEL PENDING ──
    ML(m_lblExpTag,"lExT","AUTO CANCEL PENDING ORDER",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8; // Thêm khoảng trống dưới title
    ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtUfmPts,"eUfm","100",cx+155,cy,50,CTRL_HEIGHT);
@@ -397,6 +429,12 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.ema2Period=(int)StringToInteger(m_edtEma2.Text());
    p.ema3On=m_ema3Enabled;
    p.ema3Period=(int)StringToInteger(m_edtEma3.Text());
+   p.contAfter1st=m_contAfter1st;
+   p.maxSuccessOn=m_maxSuccessOn;
+   p.maxSuccess=(int)StringToInteger(m_edtMaxS.Text());
+   p.maxLossOn=m_maxLossOn;
+   p.maxLoss=(int)StringToInteger(m_edtMaxL.Text());
+   p.bigMomentum=m_bigMomentum;
    p.customTiming=m_customTiming;
    p.targetDayOffset=m_dayOffset;
 
@@ -448,6 +486,12 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_edtEma2.Text(IntegerToString(p.ema2Period));
    m_ema3Enabled=p.ema3On; UpdEma3();
    m_edtEma3.Text(IntegerToString(p.ema3Period));
+   m_contAfter1st=p.contAfter1st; UpdCont();
+   m_maxSuccessOn=p.maxSuccessOn; UpdMaxS();
+   m_edtMaxS.Text(IntegerToString(p.maxSuccess));
+   m_maxLossOn=p.maxLossOn; UpdMaxL();
+   m_edtMaxL.Text(IntegerToString(p.maxLoss));
+   m_bigMomentum=p.bigMomentum; UpdBigM();
 }
 
 void CDashboard::SetInitialParams(const SystemConfig &cfg)
@@ -500,6 +544,10 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnEma1.Name())          { OnEma1Toggle(); return true; }
    if(objName == m_btnEma2.Name())          { OnEma2Toggle(); return true; }
    if(objName == m_btnEma3.Name())          { OnEma3Toggle(); return true; }
+   if(objName == m_btnCont.Name())          { OnContToggle(); return true; }
+   if(objName == m_btnMaxS.Name())          { OnMaxSToggle(); return true; }
+   if(objName == m_btnMaxL.Name())          { OnMaxLToggle(); return true; }
+   if(objName == m_btnBigM.Name())          { OnBigMToggle(); return true; }
    if(objName == m_btnA1.Name()) { OnA1(); return true; }
    if(objName == m_btnA2.Name()) { OnA2(); return true; }
    if(objName == m_btnA3.Name()) { OnA3(); return true; }
@@ -601,6 +649,18 @@ void CDashboard::OnEma2Toggle() { m_btnEma2.Pressed(false); m_ema2Enabled=!m_ema
 void CDashboard::UpdEma2() { m_btnEma2.Text(m_ema2Enabled?"ON":"OFF"); m_btnEma2.ColorBackground(m_ema2Enabled?CLR_WARNING:CLR_BTN_OFF); }
 void CDashboard::OnEma3Toggle() { m_btnEma3.Pressed(false); m_ema3Enabled=!m_ema3Enabled; UpdEma3(); MarkDirty(); }
 void CDashboard::UpdEma3() { m_btnEma3.Text(m_ema3Enabled?"ON":"OFF"); m_btnEma3.ColorBackground(m_ema3Enabled?CLR_WARNING:CLR_BTN_OFF); }
+
+void CDashboard::OnContToggle() { m_btnCont.Pressed(false); m_contAfter1st=!m_contAfter1st; UpdCont(); MarkDirty(); }
+void CDashboard::UpdCont() { m_btnCont.Text(m_contAfter1st?"ON":"OFF"); m_btnCont.ColorBackground(m_contAfter1st?CLR_WARNING:CLR_BTN_OFF); }
+
+void CDashboard::OnMaxSToggle() { m_btnMaxS.Pressed(false); m_maxSuccessOn=!m_maxSuccessOn; UpdMaxS(); MarkDirty(); }
+void CDashboard::UpdMaxS() { m_btnMaxS.Text(m_maxSuccessOn?"ON":"OFF"); m_btnMaxS.ColorBackground(m_maxSuccessOn?CLR_WARNING:CLR_BTN_OFF); }
+
+void CDashboard::OnMaxLToggle() { m_btnMaxL.Pressed(false); m_maxLossOn=!m_maxLossOn; UpdMaxL(); MarkDirty(); }
+void CDashboard::UpdMaxL() { m_btnMaxL.Text(m_maxLossOn?"ON":"OFF"); m_btnMaxL.ColorBackground(m_maxLossOn?CLR_WARNING:CLR_BTN_OFF); }
+
+void CDashboard::OnBigMToggle() { m_btnBigM.Pressed(false); m_bigMomentum=!m_bigMomentum; UpdBigM(); MarkDirty(); }
+void CDashboard::UpdBigM() { m_btnBigM.Text(m_bigMomentum?"ON":"OFF"); m_btnBigM.ColorBackground(m_bigMomentum?CLR_WARNING:CLR_BTN_OFF); }
 void CDashboard::OnToggleGlobal() { m_btnGlobal.Pressed(false); m_config.globalOverride=!m_config.globalOverride; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2.isActive=!m_config.m2.isActive; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5.isActive=!m_config.m5.isActive; UpdToggles(); MarkDirty(); }
