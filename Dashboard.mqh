@@ -221,7 +221,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── AUTO CANCEL PENDING ──
-   ML(m_lblExpTag,"lExT","Auto cancel pending",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   ML(m_lblExpTag,"lExT","Auto cancel",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnExpire,"bEx","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblExpCandles,"lExC","Candles limit",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ME(m_edtExpCandles,"eEx","2",rx,cy,rw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
@@ -503,13 +503,9 @@ void CDashboard::UpdMode(){ m_btnBoth.ColorBackground(m_om==MODE_BOTH?CLR_BTN_ON
    m_btnSell.ColorBackground(m_om==MODE_SELL_ONLY?CLR_SELL:CLR_BTN_OFF); }
 void CDashboard::OnTrM() {
    m_btnTrMode.Pressed(false);
-   switch(m_tm){case TM_OFF:m_tm=TM_CHASE;break;case TM_CHASE:m_tm=TM_CANDLE_1;break;
-   case TM_CANDLE_1:m_tm=TM_CANDLE_2;break;case TM_CANDLE_2:m_tm=TM_CANDLE_3;break;
-   case TM_CANDLE_3:m_tm=TM_OFF;break;} UpdTrail(); MarkDirty(); }
+   switch(m_tm){case TM_OFF:m_tm=TM_CHASE;break;default:m_tm=TM_OFF;break;} UpdTrail(); MarkDirty(); }
 void CDashboard::UpdTrail() { string t="OFF"; color c=CLR_BTN_OFF;
-   switch(m_tm){case TM_OFF:t="OFF";c=CLR_BTN_OFF;break;case TM_CHASE:t="CHASE";c=CLR_WARNING;break;
-   case TM_CANDLE_1:t="TRAIL CANDLE[1]";c=CLR_ACCENT;break;case TM_CANDLE_2:t="TRAIL CANDLE[2]";c=CLR_SUCCESS;break;
-   case TM_CANDLE_3:t="TRAIL CANDLE[3]";c=CLR_LOCK;break;}
+   switch(m_tm){case TM_OFF:t="OFF";c=CLR_BTN_OFF;break;default:t="ON";c=CLR_SUCCESS;break;}
    m_btnTrMode.Text(t); m_btnTrMode.ColorBackground(c); }
 void CDashboard::OnBEToggle() { m_btnBE.Pressed(false); m_beOn=!m_beOn; UpdBE(); MarkDirty(); }
 void CDashboard::UpdBE() { m_btnBE.Text(m_beOn?"ON":"OFF");
