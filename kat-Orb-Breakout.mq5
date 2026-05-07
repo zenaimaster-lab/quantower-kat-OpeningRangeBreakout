@@ -160,11 +160,10 @@ void OnTick()
    string sym=(p.symbol!="")?p.symbol:Symbol();
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym,SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
-   g_orderMgr.CheckOCO(); g_orderMgr.ProcessMissingOrders(); g_orderMgr.CheckExpire(p);
+   g_orderMgr.CheckOCO(); g_orderMgr.ProcessMissingOrders();
    g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus());
    g_trailMgr.Process(p);
-   
-
+}
 
 void ApplyNewsToTiming()
 {
@@ -247,7 +246,7 @@ void OnTimer()
      double absLoss = MathAbs(totalLossAtSL);
      g_dashboard.UpdateRealtimeRR(totalProfitAtTP, absLoss, rAmt);
      double riskPc = (bal > 0) ? (absLoss / bal) * 100.0 : 0.0;
-     g_dashboard.UpdateRealtimeRiskPercent(riskPc, p.origamiMaxRiskPercent);
+     g_dashboard.UpdateRealtimeRiskPercent(riskPc, p.riskPercent);
 
      // ── Aggregate BE line (always visible when positions exist) ──
       if(totalLots > 0)

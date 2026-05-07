@@ -1,0 +1,19 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "deploy.ps1",
+      "file_type": "code",
+      "source_file": "deploy.ps1",
+      "source_location": "L1",
+      "id": "deploy_ps1",
+      "community": 0,
+      "norm_label": "deploy.ps1"
+    }
+  ],
+  "links": [],
+  "hyperedges": [],
+  "built_at_commit": "d2df3291f70d862028fe5b2e76caa48501f86d40"
+}

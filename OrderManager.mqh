@@ -41,7 +41,7 @@ public:
    void              CheckOCO();
    void              ProcessMissingOrders();
    void              CancelAllPending(string symbol);
-   void              CheckExpire(const DashboardParams &params);
+
 
    
    //--- OCO handler — call from OnTradeTransaction

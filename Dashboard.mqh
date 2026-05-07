@@ -24,7 +24,9 @@ private:
    CEdit  m_edtRisk;
    CEdit m_lblTrTag, m_lblTrLine, m_lblBeLine;
    CEdit m_lblTrTrig, m_lblTrDist, m_lblTrStep;
+   CEdit m_edtTTr, m_edtTDi, m_edtTSt;
    CEdit m_lblBELock;
+   CEdit m_edtBEA, m_edtBEL;
    CButton m_btnTrMode;
    CButton m_btnBE;
    CEdit m_lblExpTag;
@@ -341,13 +343,7 @@ DashboardParams CDashboard::GetParams()
   p.candleSource=m_cs;
   p.expireEnabled=m_expEnabled;
   p.expireCandles=(int)StringToInteger(m_edtExpCandles.Text());
-  p.targetGrowthPercent=StringToDouble(m_edtOrigamiTarget.Text());
-  p.origamiSlMode=m_origamiSlMode;
-  p.addInPct1=StringToDouble(m_edtOrigamiAdd1.Text());
-  p.addInPct2=StringToDouble(m_edtOrigamiAdd2.Text());
-  p.addInPct3=StringToDouble(m_edtOrigamiAdd3.Text());
-  p.origamiEnabled=m_origamiEnabled;
-  p.origamiMaxRiskPercent=StringToDouble(m_edtOrigamiMaxRisk.Text());
+
   p.customTiming=m_customTiming;
   p.targetDayOffset=m_dayOffset;
   m_dirty = false;
@@ -473,43 +469,33 @@ string CDashboard::FormatMoneyRound(double value)
 void CDashboard::UpdateEquityPL(double equity, double profit) 
 { 
    m_lblStatEquity.Text(StringFormat("$%s", FormatMoneyRound(equity)));
-   m_lblO_StatEquity.Text(m_lblStatEquity.Text());
    string sign = (profit >= 0) ? "+" : "-";
    m_lblStatPL.Text(StringFormat("%s$%s", sign, FormatMoneyRound(MathAbs(profit))));
-   m_lblO_StatPL.Text(m_lblStatPL.Text());
    m_lblStatPL.Color((profit > 0) ? CLR_SUCCESS : ((profit < 0) ? CLR_NEWS_RED : CLR_TEXT_DIM));
-   m_lblO_StatPL.Color(m_lblStatPL.Color());
 }
 void CDashboard::UpdateTotalExposed(double lots, int type)
 {
    m_lblTotExpVal.Text(DoubleToString(lots, 2));
-   m_lblO_TotExpVal.Text(m_lblTotExpVal.Text());
    if(type == 0) m_lblTotExpVal.Color(CLR_BUY);
    else if(type == 1) m_lblTotExpVal.Color(CLR_SELL);
    else m_lblTotExpVal.Color(CLR_TEXT_DIM);
-   m_lblO_TotExpVal.Color(m_lblTotExpVal.Color());
 }
 void CDashboard::UpdateRealtimeRR(double profit, double loss, double theoreticalRisk)
 {
    m_lblRtRrLoss.Text(StringFormat("-$%s", FormatMoneyRound(loss)));
-   m_lblO_RtRrLoss.Text(m_lblRtRrLoss.Text());
    m_lblRtRrPft.Text(StringFormat("+$%s", FormatMoneyRound(profit)));
-   m_lblO_RtRrPft.Text(m_lblRtRrPft.Text());
    // Visual warning: actual risk exceeds theoretical — loss turns orange
    if(loss > 0 && theoreticalRisk > 0 && loss > theoreticalRisk * 1.2)
       m_lblRtRrLoss.Color(CLR_WARNING);
    else
       m_lblRtRrLoss.Color(CLR_MONEY_RED);
-   m_lblO_RtRrLoss.Color(m_lblRtRrLoss.Color());
 }
 void CDashboard::UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc)
 {
    m_lblRtRrRiskPc.Text(StringFormat("{%.1f%%}", riskPc));
-   m_lblO_RtRrRiskPc.Text(m_lblRtRrRiskPc.Text());
    if(riskPc > maxRiskPc + 0.01) m_lblRtRrRiskPc.Color(CLR_MONEY_RED);
    else if(MathAbs(riskPc - maxRiskPc) <= 0.01) m_lblRtRrRiskPc.Color(CLR_WARNING);
    else m_lblRtRrRiskPc.Color(CLR_ACCENT);
-   m_lblO_RtRrRiskPc.Color(m_lblRtRrRiskPc.Color());
 }
 
 // ── HANDLERS ── (v2.0: all handlers call MarkDirty + PushCmd)
@@ -582,33 +568,6 @@ void CDashboard::OnDayPicker()
    MarkDirty();
 }
 
-void CDashboard::UpdateOrigamiInfo(string s1, string s2, string s3, string s4)
-{
-   m_lblOrigamiInfo1.Text(s1);
-   m_lblOrigamiInfo2.Text(s2);
-   m_lblOrigamiInfo3.Text(s3);
-   m_lblOrigamiInfo4.Text(s4);
-}
 
-void CDashboard::UpdateOrigamiStatus(string s)
-{
-   m_lblOrigamiStatus.Text(s);
-   m_lblOrigamiStatusMain.Text(s);
-   if(StringFind(s, "ACTIVE") >= 0 || StringFind(s, "ON") >= 0) {
-      m_lblOrigamiStatus.Color(CLR_SUCCESS);
-      m_lblOrigamiStatusMain.Color(CLR_SUCCESS);
-   } else {
-      m_lblOrigamiStatus.Color(CLR_WARNING);
-      m_lblOrigamiStatusMain.Color(CLR_WARNING);
-   }
-}
-
-void CDashboard::UpdateDiadStatus(string s)
-{
-   m_lblDiadStatus.Text(s);
-   m_lblDiadStatus.Color(C'255,220,100');
-   m_lblDiadStatusMain.Text(s);
-   m_lblDiadStatusMain.Color(C'255,220,100');
-}
 
 #endif
