@@ -1,52 +1,100 @@
-# KAT Orb Breakout Architecture & Logic Reference
+# KAT-ORB Architecture & Logic Reference
 
-This document serves as the canonical reference for the KAT Orb Breakout EA, which has been refactored into a fully automated "Auto-Run" system. It records the core logic and architecture after the removal of manual trading interventions and the Origami module.
+## 1. Frontend UI Architecture
 
-## 1. Frontend UI Architecture (The "3 Pillars" Fix)
+The EA uses a `CAppDialog`-based dashboard with 4 tabs (Main, 2m, 5m, Stats) rendered on the MT5 chart.
 
-The EA retains a streamlined dashboard for configuring parameters natively on the MT5 chart. The core responsiveness optimizations remain:
+### Click Handling (The "3 Pillars" Fix)
+1. **Purged `EVENT_MAP`** — Eliminates MQL5's broken internal bounding-box hit testing.
+2. **Native `CHARTEVENT_OBJECT_CLICK`** — `OnChartEvent` intercepts clicks instantly.
+3. **`HandleDirectClick` + Debouncing** — 500ms debounce guard prevents double-fires.
 
-1.  **Purging `EVENT_MAP`:**
-    *   Eliminates MQL5's broken internal bounding-box hit testing.
-2.  **Native `CHARTEVENT_OBJECT_CLICK` Interception:**
-    *   `OnChartEvent` intercepts `CHARTEVENT_OBJECT_CLICK` instantly.
-3.  **`HandleDirectClick` & Debouncing:**
-    *   Button clicks route to `CDashboard::HandleDirectClick(const string &objName)` with a rigid 500ms debounce guard.
+### Tab Structure
+- **Main** — Symbol, schedule (NY Hour/Min/Sec), UTC offset, risk %, order mode, presets
+- **2m/5m** — Per-timeframe overrides for SL/TP, trail, auto-cancel, EMA filters
+- **Stats** — ORDERS status (2m/5m), LAST ENTRY reasons, TOTAL/2m/5m P/L
 
-*Note: All manual action buttons (Flatten, Lock, Reverse, Buy/Sell Market) and their handlers have been completely removed to enforce the Auto-Run architecture.*
+## 2. Data Flow
 
-## 2. Backend Engine & Data Synchronization
+```
+OnInit → SetInitialParams(SystemConfig) → Dashboard stores config
+                                          ↓
+OnTimer (1s) → GetParams() → SystemConfig{main, m2, m5}
+   ├─ CalculateTargetTime(p)     → NYO countdown
+   ├─ ProcessORB(pm2, nyoTime)   → 2m state machine
+   ├─ ProcessORB(pm5, nyoTime)   → 5m state machine
+   ├─ CheckAutoCancel(pm2/pm5)   → Pending order cancellation (also in OnTick)
+   ├─ UpdateTradeStats()         → Per-TF win/loss/PL from deal history
+   └─ Trail/BE updates           → From OnTick for tick-level precision
 
-The bridge between the Frontend UI and Backend execution is managed by the `DashboardParams` struct and the `GetParams()` method.
+OnTick → CheckAutoCancel(pm2, pm5) + TrailManager.Process(pm2, pm5)
+```
 
-**The Current Data Flow:**
-1.  **Initialization:** `OnInit` calls `SetInitialParams()` to establish baseline settings from the UI fields.
-2.  **Synchronization (`GetParams`):**
-    *   Extracts `symbol` and timing components (`nyHour`, `nyMinute`, `nySecond`, `utcOffset`, `triggerBeforeSec`).
-    *   Extracts trading parameters (SL, TP, Risk %, Timeframe, Trail settings).
-3.  **Consumption (`OnTimer` & `OnTick`):**
-    *   `OnTimer()` fires every 1 second, fetching the latest `DashboardParams` for auto-trading schedules.
-    *   Calculates Real-time Risk/Reward, Total Exposed Lots, and evaluates the `CTimeMgr`.
+### Global Override Logic
+When `globalOverride=true`, the main tab settings apply to both strategies.
+**Critical:** Both OnTick and OnTimer force `pm2.timeframe=PERIOD_M2` and `pm5.timeframe=PERIOD_M5` regardless of global override, ensuring EMA/candle calculations always use the correct timeframe.
 
-## 3. Core Logic Modules
+## 3. ORB State Machine (`COrderManager`)
 
-### Time Management & Auto-Trading (`CTimeMgr`)
-*   Manages the News timing and NYO (New York Open) schedules.
-*   Calculates the exact trigger time based on `targetDayOffset`, `nyHour:Minute:Second`, and `triggerBeforeSec`.
-*   Continuously feeds the Countdown string to the Dashboard.
-*   Executes `g_orderMgr.PlaceOCOOrders()` when the exact trigger second is hit.
+```
+ORB_WAIT_NYO → ORB_WAIT_CANDLE → ORB_WAIT_BREAK → ORB_WAIT_RETEST → ORB_WAIT_ENTRY → ORB_DONE
+                                       ↑                                    │
+                                       └──── contAfter1st ────────────────┘
+                                                                    ORB_STOPPED (afterMinutes timeout)
+```
 
-### Order Management (`COrderMgr`)
-*   Handles execution of Stop orders (OCO Breakout entries) automatically.
-*   Manages pending order expiration (`CheckExpire`).
-*   *Manual execution helpers have been deprecated and stripped from the codebase.*
+| State | Condition to advance |
+|-------|---------------------|
+| WAIT_NYO | `now >= nyOpenTimeServer` |
+| WAIT_CANDLE | First candle after NYO has closed |
+| WAIT_BREAK | Candle body closes outside range H/L |
+| WAIT_RETEST | Opposite-color candle touches range boundary |
+| WAIT_ENTRY | Pending stop placed, waiting for fill or cancel |
+| STOPPED | afterMinutes expired — hard stop, no continuation |
+| DONE | Trade cycle complete |
 
-### Risk & Reward Calculation
-*   **Static Risk:** Computed via `g_riskMgr.CalcRiskRewardInfo` before entering trades. Determines the correct lot size to risk X% of the balance over Y points.
-*   **Dynamic Risk:** `OnTimer` loops through open positions matching the Magic Number and Symbol. Computes `totalProfitAtTP` and `totalLossAtSL` based on current active order volumes to provide real-time portfolio exposure.
-*   **Breakeven (BE) Line:** Calculates a volume-weighted average entry price, adds/subtracts the spread, and draws a visual yellow line on the chart representing the true Breakeven point for the net position.
+### Order Mode Filtering
+- `MODE_BOTH` — Both Buy Stop and Sell Stop allowed
+- `MODE_BUY_ONLY` — Only Break UP retest → Buy Stop
+- `MODE_SELL_ONLY` — Only Break DOWN retest → Sell Stop
 
-## 4. Stability Guarantees
+## 4. Auto Cancel System
 
-*   **100% Reliable Execution:** The EA focuses purely on placing precision OCO orders at the defined breakout trigger without risking MT5 threading collisions from manual overrides.
-*   **Graceful Degradation:** If no symbol is detected, the EA safely returns early from core loops, preventing zero-divide or invalid handle errors.
+Evaluated on every tick via `CheckAutoCancel()`:
+
+| Condition | Logic |
+|-----------|-------|
+| Unfilled Candles | `iBarShift(sym, tf, placedTime) >= N` |
+| After Minutes | `now >= nyoTime + N*60` → sets ORB_STOPPED |
+| Unfavor Move | BuyStop: `bid <= entry - Npts` / SellStop: `ask >= entry + Npts` |
+| Touch Mid | Price reaches `(rangeHigh + rangeLow) / 2` |
+| EMA 1/2/3 | BuyStop: `bid < EMA` / SellStop: `ask > EMA` (each EMA computed on correct TF) |
+
+### Cancel → State Transition
+- afterMinutes → `ORB_STOPPED` (no continuation)
+- Other cancels + `contAfter1st=true` → `ORB_WAIT_BREAK` (re-enter)
+- Other cancels + `contAfter1st=false` → `ORB_DONE`
+- Max Success/Loss hit → `ORB_DONE`
+
+## 5. Trail & Breakeven
+
+| Mode | Logic |
+|------|-------|
+| OFF | No trailing |
+| CHASE | trigger→distance→step classic trailing |
+| CANDLE_1/2/3 | Trail SL to candle[N] low (buy) or high (sell) |
+| Breakeven | Aggregate weighted avg entry + lock offset |
+
+## 6. Risk Management
+
+- Lot size = `Balance * riskPercent / (SL_points * tickValue / tickSize)`
+- SL Candle mode: SL = retest candle extreme ± buffer
+- SL Points mode: SL = entry ± fixed points
+- Per-trade risk visualization in dashboard
+
+## 7. Chart Objects
+
+All ORB lines/labels use `OBJPROP_BACK=true` to render behind the dashboard:
+- Range H/L lines (blue for 2m, green/red for 5m)
+- Entry/Target short marks (dash style)
+- BE line (yellow)
