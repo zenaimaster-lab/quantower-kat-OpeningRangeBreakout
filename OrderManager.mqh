@@ -135,7 +135,7 @@ bool COrderManager::PlaceOCOOrders(const DashboardParams &params)
    
    //--- Get candle range
    double candleHigh = 0, candleLow = 0;
-   int shift = (params.candleSource == CANDLE_PREVIOUS) ? 1 : 0;
+   int shift = 0;
    if(!GetCandleRange(symbol, params.timeframe, shift, candleHigh, candleLow))
       return false;
    

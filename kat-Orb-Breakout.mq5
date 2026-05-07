@@ -23,7 +23,7 @@ input int             InpTriggerBefore   = 10;
 
 input group "=== ORDER ==="
 input ENUM_TIMEFRAMES InpTimeframe       = PERIOD_M2;
-input ENUM_CANDLE_SOURCE InpCandleSrc    = CANDLE_CURRENT;
+
 input int             InpSlPoints        = 1500;
 input int             InpTpPoints        = 3000;
 input bool            InpSlCandle        = false;
@@ -138,7 +138,7 @@ int OnInit()
    p.trailMode=InpTrailMode;p.trailTrigger=InpTrailTrigger;
    p.trailDistance=InpTrailDistance;p.trailStep=InpTrailStep;
    p.beActivatePoints=InpBeActivatePts;p.beLockPoints=InpBeLockPts;p.beEnabled=InpBeEnabled;
-   p.candleSource=InpCandleSrc;p.expireEnabled=InpExpireEnabled;p.expireCandles=InpExpireCandles;
+   p.expireEnabled=InpExpireEnabled;p.expireCandles=InpExpireCandles;
 
    g_dashboard.SetInitialParams(p);
    g_dashboard.Run(); EventSetTimer(1); g_initialized=true;
@@ -174,7 +174,7 @@ void OnTimer()
    { double bal=0,rAmt=0,rwAmt=0,lot=0;
      int displaySlPoints = p.slPoints;
      if (p.slCandle) {
-        int cIdx = (p.candleSource == CANDLE_CURRENT) ? 0 : 1;
+        int cIdx = 0;
         double candleHigh = iHigh(p.symbol, p.timeframe, cIdx);
         double candleLow = iLow(p.symbol, p.timeframe, cIdx);
         double point = SymbolInfoDouble(p.symbol, SYMBOL_POINT);

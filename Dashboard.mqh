@@ -13,10 +13,10 @@ private:
    CEdit m_lblVer, m_lblSym, m_lblMktLine, m_lblSpdVal, m_lblMktStatus;
    CEdit m_lblClkTag, m_lblClkVal, m_lblClkAmPm, m_lblClkDate;
    CEdit m_lblNewsTag, m_lblNewsVal;
-   CEdit m_lblTfTag, m_lblSlTag, m_lblMdTag, m_lblCsTag;
+   CEdit m_lblTfTag, m_lblSlTag, m_lblMdTag;
    CButton m_btnTf;
    CEdit  m_edtSL, m_edtTP;
-   CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell, m_btnCandleSrc;
+   CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
    CEdit m_lblBalTag, m_lblBalVal, m_lblRskTag, m_lblRPc;
    CEdit m_lblRATag, m_lblRAVal, m_lblRwVal, m_lblLtTag, m_lblLtVal;
    CEdit  m_edtRisk;
@@ -53,7 +53,6 @@ private:
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
-   ENUM_CANDLE_SOURCE m_cs;
    int m_dayOffset;              // v0.66: 0=Today, 1..6=next days
    bool m_customTiming;        // v0.2: user set custom timing
    bool m_dirty;                        // v2.0: dirty flag for cached GetParams
@@ -101,12 +100,12 @@ private:
    void MSep(int idx,int x,int y,int w);
    void OnSLS(); void OnBoth(); void OnBuyO(); void OnSellO();
    void OnTrM(); void OnAutoT(); void OnManP(); void OnCanA();
-   void OnBrkEv(); void OnCandleSrc();
+   void OnBrkEv();
    void OnExpire(); void OnBEToggle();
    void OnA1(); void OnA2(); void OnA3();
 
 
-   void UpdMode(); void UpdTrail(); void UpdCandleSrc(); void UpdExpire(); void UpdBE();
+   void UpdMode(); void UpdTrail(); void UpdExpire(); void UpdBE();
 
 public:
    bool HandleDirectClick(const string &objName);
@@ -114,7 +113,7 @@ public:
 };
 
 CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_auto=true;
-   m_cs=CANDLE_CURRENT; m_expEnabled=false; m_utcOff=-4; m_beOn=false;
+   m_expEnabled=false; m_utcOff=-4; m_beOn=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
    m_dayOffset=0; m_customTiming=false;
    m_lastClickMs=0; m_lastClickName=""; }
@@ -150,8 +149,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblClkDate,"vCkD","(-- ---)",rx+108,cy,rw-108,CTRL_HEIGHT,CLR_TEXT_DIM,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   ML(m_lblNewsTag,"lNw","Next session:",cx,cy,80,CTRL_HEIGHT);
-   ML(m_lblNewsVal,"vNw","Loading...",cx+84,cy,cw-84,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblNewsTag,"lNw","Next session:",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   ML(m_lblNewsVal,"vNw","Loading...",rx,cy,rw,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
    MB(m_btnAutoTrade,"bAt","AUTO TRADE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
@@ -168,9 +167,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int mb=(rw-6)/3;
    MB(m_btnBoth,"bBt","BOTH",rx,cy,mb,CTRL_HEIGHT+2,CLR_BTN_ON);
    MB(m_btnBuy,"bBy","BUY",rx+mb+3,cy,mb,CTRL_HEIGHT+2);
-   MB(m_btnSell,"bSe","SELL",rx+(mb+3)*2,cy,mb,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblCsTag,"lCs","Candle",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnCandleSrc,"bCs","CURRENT",rx,cy,rw,CTRL_HEIGHT,CLR_SUCCESS); cy+=CTRL_HEIGHT+8+SEC_PAD;
+   MB(m_btnSell,"bSe","SELL",rx+(mb+3)*2,cy,mb,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+8+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── RISK ──
@@ -312,7 +309,6 @@ DashboardParams CDashboard::GetParams()
   p.beActivatePoints=(int)StringToInteger(m_edtBEA.Text());
   p.beLockPoints=(int)StringToInteger(m_edtBEL.Text());
   p.beEnabled=m_beOn;
-  p.candleSource=m_cs;
   p.expireEnabled=m_expEnabled;
   p.expireCandles=(int)StringToInteger(m_edtExpCandles.Text());
 
@@ -338,7 +334,7 @@ void CDashboard::SetInitialParams(const DashboardParams &p)
    m_edtTP.Text(IntegerToString(p.tpPoints));
    m_slCandle=p.slCandle; m_btnSLS.Text(m_slCandle?"SL by Candle✓":"SL by Candle"); m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
    m_edtRisk.Text(DoubleToString(p.riskPercent,1));
-   m_om=p.orderMode; UpdMode(); m_cs=p.candleSource; UpdCandleSrc();
+   m_om=p.orderMode; UpdMode();
    m_tm=p.trailMode; UpdTrail();
    m_auto=(p.eaMode==EA_AUTO); m_btnAutoTrade.Text(m_auto?"AUTO TRADE: ON":"AUTO TRADE: OFF");
    m_btnAutoTrade.ColorBackground(m_auto?CLR_SUCCESS:CLR_BTN_OFF);
@@ -377,7 +373,6 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnBoth.Name())          { OnBoth(); return true; }
    if(objName == m_btnBuy.Name())           { OnBuyO(); return true; }
    if(objName == m_btnSell.Name())          { OnSellO(); return true; }
-   if(objName == m_btnCandleSrc.Name())     { OnCandleSrc(); return true; }
    if(objName == m_btnTrMode.Name())        { OnTrM(); return true; }
    if(objName == m_btnBE.Name())            { OnBEToggle(); return true; }
    if(objName == m_btnExpire.Name())        { OnExpire(); return true; }
@@ -473,9 +468,6 @@ void CDashboard::OnSellO(){ m_btnSell.Pressed(false); m_om=MODE_SELL_ONLY; UpdMo
 void CDashboard::UpdMode(){ m_btnBoth.ColorBackground(m_om==MODE_BOTH?CLR_BTN_ON:CLR_BTN_OFF);
    m_btnBuy.ColorBackground(m_om==MODE_BUY_ONLY?CLR_BUY:CLR_BTN_OFF);
    m_btnSell.ColorBackground(m_om==MODE_SELL_ONLY?CLR_SELL:CLR_BTN_OFF); }
-void CDashboard::OnCandleSrc() { m_btnCandleSrc.Pressed(false); m_cs=(m_cs==CANDLE_CURRENT)?CANDLE_PREVIOUS:CANDLE_CURRENT; UpdCandleSrc(); MarkDirty(); }
-void CDashboard::UpdCandleSrc() { m_btnCandleSrc.Text(m_cs==CANDLE_CURRENT?"CURRENT":"PREVIOUS");
-   m_btnCandleSrc.ColorBackground(m_cs==CANDLE_CURRENT?CLR_SUCCESS:CLR_ACCENT); }
 void CDashboard::OnTrM() {
    m_btnTrMode.Pressed(false);
    switch(m_tm){case TM_OFF:m_tm=TM_CHASE;break;case TM_CHASE:m_tm=TM_CANDLE_1;break;

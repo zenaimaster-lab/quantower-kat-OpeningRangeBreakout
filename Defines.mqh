@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Orb Breakout"
-#define EA_VERSION        "0.02"
+#define EA_VERSION        "0.03"
 #define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
@@ -71,7 +71,7 @@ extern int g_magic;
 //--- Enums
 enum ENUM_ORDER_MODE    { MODE_BOTH=0, MODE_BUY_ONLY=1, MODE_SELL_ONLY=2 };
 enum ENUM_EA_MODE       { EA_AUTO=0, EA_MANUAL=1 };
-enum ENUM_CANDLE_SOURCE { CANDLE_CURRENT=0, CANDLE_PREVIOUS=1 };
+
 
 // Consolidated trail mode
 enum ENUM_TRAIL_MODE
@@ -118,7 +118,7 @@ struct DashboardParams
    bool   beEnabled;
    int    expireCandles;
    bool   expireEnabled;
-   ENUM_CANDLE_SOURCE candleSource;
+
    double targetGrowthPercent;
    bool   customTiming;      // v0.2: true if user manually set timing (not from news)
    int    targetDayOffset;   // v0.66: 0=Today, 1..6=next days
@@ -148,7 +148,6 @@ struct DashboardParams
       beEnabled         = false;
       expireCandles     = 2;
       expireEnabled     = false;
-      candleSource      = CANDLE_CURRENT;
       targetGrowthPercent = 50.0;
       customTiming      = false;
       targetDayOffset   = 0;
