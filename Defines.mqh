@@ -7,14 +7,14 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "0.14"
+#define EA_VERSION        "1.0"
 #define EA_BUILD_DATE     "08 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1350
+#define PANEL_HEIGHT      1240
 #define PANEL_X           20
 #define PANEL_Y           20
 

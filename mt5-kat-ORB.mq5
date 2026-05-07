@@ -6,56 +6,129 @@
 #property copyright   "KAT Opening Range Breakout"
 #property link        ""
 #property description "KAT Opening Range Breakout"
-#property description "Break & Retest range strategy on 2m/5m NYO candles."
+#property description "Automated Break & Retest range strategy on 2m/5m NYO candles."
+#property description "Features: Auto-cancel pending, Global Trailing, Breakeven, Advanced Risk Management."
 
 #include "Defines.mqh"
 
-input group "=== INSTANCE ==="
-input int             InpMagicNumber     = 202605011;
-input ENUM_EA_MODE    InpEaMode          = EA_AUTO;
+input group "------------- INSTANCE -------------"
+input int             InpMagicNumber       = 202605011;   // Magic Number
+input ENUM_EA_MODE    InpEaMode            = EA_AUTO;     // EA Operating Mode
 
-input group "=== SCHEDULE ==="
-input int             InpNyHour          = 9;
-input int             InpNyMinute        = 30;
-input int             InpNySecond        = 0;
-input int             InpUtcOffset       = -4;
+input group "------------- SCHEDULE -------------"
+input int             InpNyHour            = 9;           // NY Open Hour (Broker Time)
+input int             InpNyMinute          = 30;          // NY Open Minute
+input int             InpNySecond          = 0;           // NY Open Second
+input int             InpUtcOffset         = -4;          // Broker UTC Offset (NY Time)
 
-input group "=== ORDER ==="
-input ENUM_TIMEFRAMES InpTimeframe       = PERIOD_M2;
+input group "------------- ORDER -------------"
+input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Timeframe
+input int             InpSlPoints          = 1500;        // Stop Loss (Points)
+input int             InpTpPoints          = 3000;        // Take Profit (Points)
+input bool            InpSlCandle          = false;       // Use Candle Extremes for SL
+input ENUM_ORDER_MODE InpOrderMode         = MODE_BOTH;   // Allowed Trade Directions
+input int             InpEntryBufferPoints = 5;           // Entry/SL Buffer (Points)
 
-input int             InpSlPoints        = 1500;
-input int             InpTpPoints        = 3000;
-input bool            InpSlCandle        = false;
-input ENUM_ORDER_MODE InpOrderMode       = MODE_BOTH;
-input int             InpEntryBufferPoints= 5;
+input group "------------- RISK -------------"
+input double          InpRiskPercent       = 1.0;         // Risk per Trade (%)
 
-input group "=== RISK ==="
-input double          InpRiskPercent     = 1.0;
+input group "------------- TRAIL -------------"
+input ENUM_TRAIL_MODE InpTrailMode         = TM_OFF;      // Trailing Stop Mode
+input int             InpTrailTrigger      = 30;          // Trailing Trigger (Points)
+input int             InpTrailDistance     = 20;          // Trailing Distance (Points)
+input int             InpTrailStep         = 5;           // Trailing Step (Points)
+input int             InpBeActivatePts     = 200;         // Breakeven Activation (Points)
+input int             InpBeLockPts         = 50;          // Breakeven Lock Profit (Points)
+input bool            InpBeEnabled         = false;       // Enable Breakeven
 
+input group "------------- AUTO CANCEL -------------"
+input bool            InpExpireEnabled     = false;       // Enable Expiration by Candles
+input int             InpExpireCandles     = 2;           // Cancel after N Unfilled Candles
 
-input group "=== TRAIL ==="
-input ENUM_TRAIL_MODE InpTrailMode       = TM_OFF;
-input int             InpTrailTrigger    = 30;
-input int             InpTrailDistance   = 20;
-input int             InpTrailStep       = 5;
-input int             InpBeActivatePts   = 200;
-input int             InpBeLockPts       = 50;
-input bool            InpBeEnabled       = false;
+input group "------------- BIG MOMENTUM -------------"
+sinput string         sep_big_m            = "--------------------------------"; // --------------------------------
 
-input group "=== AUTO CANCEL ==="
-input bool            InpExpireEnabled   = false;
-input int             InpExpireCandles   = 2;
+input group "------------- PRESETS -------------"
+sinput string         sep_preset_mA        = "---------- SET mA ----------"; // ---------- SET mA ----------
+input int             InpmA_SL             = 1500;        // Set mA: Stop Loss
+input int             InpmA_TP             = 3000;        // Set mA: Take Profit
+input double          InpmA_Risk           = 1.0;         // Set mA: Risk %
+input int             InpmA_TrTrig         = 30;          // Set mA: Trail Trigger
+input int             InpmA_TrDist         = 20;          // Set mA: Trail Distance
+input int             InpmA_TrStep         = 5;           // Set mA: Trail Step
+input ENUM_TIMEFRAMES InpmA_TF             = PERIOD_M2;   // Set mA: Timeframe
 
+sinput string         sep_preset_mB        = "---------- SET mB ----------"; // ---------- SET mB ----------
+input int             InpmB_SL             = 300;         // Set mB: Stop Loss
+input int             InpmB_TP             = 600;         // Set mB: Take Profit
+input double          InpmB_Risk           = 0.5;         // Set mB: Risk %
+input int             InpmB_TrTrig         = 20;          // Set mB: Trail Trigger
+input int             InpmB_TrDist         = 15;          // Set mB: Trail Distance
+input int             InpmB_TrStep         = 3;           // Set mB: Trail Step
+input ENUM_TIMEFRAMES InpmB_TF             = PERIOD_M1;   // Set mB: Timeframe
 
+sinput string         sep_preset_mC        = "---------- SET mC ----------"; // ---------- SET mC ----------
+input int             InpmC_SL             = 800;         // Set mC: Stop Loss
+input int             InpmC_TP             = 1600;        // Set mC: Take Profit
+input double          InpmC_Risk           = 2.0;         // Set mC: Risk %
+input int             InpmC_TrTrig         = 50;          // Set mC: Trail Trigger
+input int             InpmC_TrDist         = 30;          // Set mC: Trail Distance
+input int             InpmC_TrStep         = 10;          // Set mC: Trail Step
+input ENUM_TIMEFRAMES InpmC_TF             = PERIOD_M5;   // Set mC: Timeframe
 
-input group "=== PRESETS ==="
-input int InpA1_SL=1500;input int InpA1_TP=3000;input double InpA1_Risk=1.0;
-input int InpA1_TrTrig=30;input int InpA1_TrDist=20;input int InpA1_TrStep=5;input ENUM_TIMEFRAMES InpA1_TF=PERIOD_M2;
-input int InpA2_SL=300;input int InpA2_TP=600;input double InpA2_Risk=0.5;
-input int InpA2_TrTrig=20;input int InpA2_TrDist=15;input int InpA2_TrStep=3;input ENUM_TIMEFRAMES InpA2_TF=PERIOD_M1;
-input int InpA3_SL=800;input int InpA3_TP=1600;input double InpA3_Risk=2.0;
-input int InpA3_TrTrig=50;input int InpA3_TrDist=30;input int InpA3_TrStep=10;input ENUM_TIMEFRAMES InpA3_TF=PERIOD_M5;
+sinput string         sep_preset_2A        = "---------- SET 2A ----------"; // ---------- SET 2A ----------
+input int             Inp2A_SL             = 1500;        // Set 2A: Stop Loss
+input int             Inp2A_TP             = 3000;        // Set 2A: Take Profit
+input double          Inp2A_Risk           = 1.0;         // Set 2A: Risk %
+input int             Inp2A_TrTrig         = 30;          // Set 2A: Trail Trigger
+input int             Inp2A_TrDist         = 20;          // Set 2A: Trail Distance
+input int             Inp2A_TrStep         = 5;           // Set 2A: Trail Step
+input ENUM_TIMEFRAMES Inp2A_TF             = PERIOD_M2;   // Set 2A: Timeframe
 
+sinput string         sep_preset_2B        = "---------- SET 2B ----------"; // ---------- SET 2B ----------
+input int             Inp2B_SL             = 300;         // Set 2B: Stop Loss
+input int             Inp2B_TP             = 600;         // Set 2B: Take Profit
+input double          Inp2B_Risk           = 0.5;         // Set 2B: Risk %
+input int             Inp2B_TrTrig         = 20;          // Set 2B: Trail Trigger
+input int             Inp2B_TrDist         = 15;          // Set 2B: Trail Distance
+input int             Inp2B_TrStep         = 3;           // Set 2B: Trail Step
+input ENUM_TIMEFRAMES Inp2B_TF             = PERIOD_M2;   // Set 2B: Timeframe
+
+sinput string         sep_preset_2C        = "---------- SET 2C ----------"; // ---------- SET 2C ----------
+input int             Inp2C_SL             = 800;         // Set 2C: Stop Loss
+input int             Inp2C_TP             = 1600;        // Set 2C: Take Profit
+input double          Inp2C_Risk           = 2.0;         // Set 2C: Risk %
+input int             Inp2C_TrTrig         = 50;          // Set 2C: Trail Trigger
+input int             Inp2C_TrDist         = 30;          // Set 2C: Trail Distance
+input int             Inp2C_TrStep         = 10;          // Set 2C: Trail Step
+input ENUM_TIMEFRAMES Inp2C_TF             = PERIOD_M2;   // Set 2C: Timeframe
+
+sinput string         sep_preset_5A        = "---------- SET 5A ----------"; // ---------- SET 5A ----------
+input int             Inp5A_SL             = 1500;        // Set 5A: Stop Loss
+input int             Inp5A_TP             = 3000;        // Set 5A: Take Profit
+input double          Inp5A_Risk           = 1.0;         // Set 5A: Risk %
+input int             Inp5A_TrTrig         = 30;          // Set 5A: Trail Trigger
+input int             Inp5A_TrDist         = 20;          // Set 5A: Trail Distance
+input int             Inp5A_TrStep         = 5;           // Set 5A: Trail Step
+input ENUM_TIMEFRAMES Inp5A_TF             = PERIOD_M5;   // Set 5A: Timeframe
+
+sinput string         sep_preset_5B        = "---------- SET 5B ----------"; // ---------- SET 5B ----------
+input int             Inp5B_SL             = 300;         // Set 5B: Stop Loss
+input int             Inp5B_TP             = 600;         // Set 5B: Take Profit
+input double          Inp5B_Risk           = 0.5;         // Set 5B: Risk %
+input int             Inp5B_TrTrig         = 20;          // Set 5B: Trail Trigger
+input int             Inp5B_TrDist         = 15;          // Set 5B: Trail Distance
+input int             Inp5B_TrStep         = 3;           // Set 5B: Trail Step
+input ENUM_TIMEFRAMES Inp5B_TF             = PERIOD_M5;   // Set 5B: Timeframe
+
+sinput string         sep_preset_5C        = "---------- SET 5C ----------"; // ---------- SET 5C ----------
+input int             Inp5C_SL             = 800;         // Set 5C: Stop Loss
+input int             Inp5C_TP             = 1600;        // Set 5C: Take Profit
+input double          Inp5C_Risk           = 2.0;         // Set 5C: Risk %
+input int             Inp5C_TrTrig         = 50;          // Set 5C: Trail Trigger
+input int             Inp5C_TrDist         = 30;          // Set 5C: Trail Distance
+input int             Inp5C_TrStep         = 10;          // Set 5C: Trail Step
+input ENUM_TIMEFRAMES Inp5C_TF             = PERIOD_M5;   // Set 5C: Timeframe
 
 
 #include "Dashboard.mqh"
@@ -66,7 +139,7 @@ input int InpA3_TrTrig=50;input int InpA3_TrDist=30;input int InpA3_TrStep=10;in
 #include "NewsManager.mqh"
 
 int g_magic;
-PresetParams g_presets[3];
+PresetParams g_presets[9];
 CDashboard    g_dashboard;
 CTimeManager  g_timeMgr;
 CRiskManager  g_riskMgr;   // Used for dashboard balance/risk display only
@@ -124,9 +197,15 @@ int OnInit()
    g_newsMgr.SetNYO(InpNyHour,InpNyMinute,InpNySecond,InpUtcOffset);
 
    // Presets — v2.0: uses InitPreset helper (DRY)
-   InitPreset(g_presets[0], InpA1_SL,InpA1_TP,InpA1_Risk,InpA1_TrTrig,InpA1_TrDist,InpA1_TrStep,InpA1_TF);
-   InitPreset(g_presets[1], InpA2_SL,InpA2_TP,InpA2_Risk,InpA2_TrTrig,InpA2_TrDist,InpA2_TrStep,InpA2_TF);
-   InitPreset(g_presets[2], InpA3_SL,InpA3_TP,InpA3_Risk,InpA3_TrTrig,InpA3_TrDist,InpA3_TrStep,InpA3_TF);
+   InitPreset(g_presets[0], InpmA_SL,InpmA_TP,InpmA_Risk,InpmA_TrTrig,InpmA_TrDist,InpmA_TrStep,InpmA_TF);
+   InitPreset(g_presets[1], InpmB_SL,InpmB_TP,InpmB_Risk,InpmB_TrTrig,InpmB_TrDist,InpmB_TrStep,InpmB_TF);
+   InitPreset(g_presets[2], InpmC_SL,InpmC_TP,InpmC_Risk,InpmC_TrTrig,InpmC_TrDist,InpmC_TrStep,InpmC_TF);
+   InitPreset(g_presets[3], Inp2A_SL,Inp2A_TP,Inp2A_Risk,Inp2A_TrTrig,Inp2A_TrDist,Inp2A_TrStep,Inp2A_TF);
+   InitPreset(g_presets[4], Inp2B_SL,Inp2B_TP,Inp2B_Risk,Inp2B_TrTrig,Inp2B_TrDist,Inp2B_TrStep,Inp2B_TF);
+   InitPreset(g_presets[5], Inp2C_SL,Inp2C_TP,Inp2C_Risk,Inp2C_TrTrig,Inp2C_TrDist,Inp2C_TrStep,Inp2C_TF);
+   InitPreset(g_presets[6], Inp5A_SL,Inp5A_TP,Inp5A_Risk,Inp5A_TrTrig,Inp5A_TrDist,Inp5A_TrStep,Inp5A_TF);
+   InitPreset(g_presets[7], Inp5B_SL,Inp5B_TP,Inp5B_Risk,Inp5B_TrTrig,Inp5B_TrDist,Inp5B_TrStep,Inp5B_TF);
+   InitPreset(g_presets[8], Inp5C_SL,Inp5C_TP,Inp5C_Risk,Inp5C_TrTrig,Inp5C_TrDist,Inp5C_TrStep,Inp5C_TF);
 
    string pn=EA_NAME+"_"+IntegerToString(ChartID());
    if(!g_dashboard.CreatePanel(0,pn,0,PANEL_X,PANEL_Y,PANEL_WIDTH,PANEL_HEIGHT))
@@ -183,10 +262,12 @@ int g_lossesToday = 0;
 
 void UpdateTradeStats()
 {
-   int wins = 0, losses = 0;
+   int wToday = 0, lToday = 0, wWeek = 0, lWeek = 0, wMonth = 0, lMonth = 0;
    double netToday = 0, netWeek = 0, netMonth = 0;
-   int w2m = 0, l2m = 0, w5m = 0, l5m = 0;
-   double net2mToday = 0, net5mToday = 0;
+   int w2mToday = 0, l2mToday = 0, w2mWeek = 0, l2mWeek = 0, w2mMonth = 0, l2mMonth = 0;
+   double net2mToday = 0, net2mWeek = 0, net2mMonth = 0;
+   int w5mToday = 0, l5mToday = 0, w5mWeek = 0, l5mWeek = 0, w5mMonth = 0, l5mMonth = 0;
+   double net5mToday = 0, net5mWeek = 0, net5mMonth = 0;
    
    datetime now = TimeCurrent();
    datetime d1Start = iTime(Symbol(), PERIOD_D1, 0);
@@ -209,17 +290,27 @@ void UpdateTradeStats()
          
          if(time >= d1Start) {
             netToday += profit;
-            if(profit > 0) wins++; else losses++;
-            if(is2m) { net2mToday += profit; if(profit > 0) w2m++; else l2m++; }
-            if(is5m) { net5mToday += profit; if(profit > 0) w5m++; else l5m++; }
+            if(profit > 0) wToday++; else lToday++;
+            if(is2m) { net2mToday += profit; if(profit > 0) w2mToday++; else l2mToday++; }
+            if(is5m) { net5mToday += profit; if(profit > 0) w5mToday++; else l5mToday++; }
          }
-         if(time >= w1Start) netWeek += profit;
-         if(time >= mn1Start) netMonth += profit;
+         if(time >= w1Start) {
+            netWeek += profit;
+            if(profit > 0) wWeek++; else lWeek++;
+            if(is2m) { net2mWeek += profit; if(profit > 0) w2mWeek++; else l2mWeek++; }
+            if(is5m) { net5mWeek += profit; if(profit > 0) w5mWeek++; else l5mWeek++; }
+         }
+         if(time >= mn1Start) {
+            netMonth += profit;
+            if(profit > 0) wMonth++; else lMonth++;
+            if(is2m) { net2mMonth += profit; if(profit > 0) w2mMonth++; else l2mMonth++; }
+            if(is5m) { net5mMonth += profit; if(profit > 0) w5mMonth++; else l5mMonth++; }
+         }
       }
    }
    
-   g_winsToday = wins;
-   g_lossesToday = losses;
+   g_winsToday = wToday;
+   g_lossesToday = lToday;
    
    string eR2 = g_orderMgr_M2.GetEntryReason();
    string cR2 = g_orderMgr_M2.GetCancelReason();
@@ -234,15 +325,42 @@ void UpdateTradeStats()
    if(cR2 != "") cancelR += cR2;
    if(cR5 != "") cancelR += (cancelR != "" ? " | " : "") + cR5;
    
-   g_dashboard.UpdateStatsTab(entryR, cancelR, wins, losses, netToday, netWeek, netMonth);
-   g_dashboard.Update2mPL(w2m, l2m, net2mToday);
-   g_dashboard.Update5mPL(w5m, l5m, net5mToday);
+   g_dashboard.UpdateStatsTab(entryR, cancelR, netToday, wToday, lToday, netWeek, wWeek, lWeek, netMonth, wMonth, lMonth);
+   g_dashboard.Update2mPL(net2mToday, w2mToday, l2mToday, net2mWeek, w2mWeek, l2mWeek, net2mMonth, w2mMonth, l2mMonth);
+   g_dashboard.Update5mPL(net5mToday, w5mToday, l5mToday, net5mWeek, w5mWeek, l5mWeek, net5mMonth, w5mMonth, l5mMonth);
+}
+
+void DrawNYOLines(int utcOffset)
+{
+   datetime t930 = g_timeMgr.NYTimeToServerTime(9, 30, 0, utcOffset);
+   datetime t1030 = g_timeMgr.NYTimeToServerTime(10, 30, 0, utcOffset);
+   
+   string name930 = "NY_930_" + TimeToString(t930, TIME_DATE);
+   if(ObjectFind(0, name930) < 0) {
+      ObjectCreate(0, name930, OBJ_VLINE, 0, t930, 0);
+      ObjectSetInteger(0, name930, OBJPROP_COLOR, clrDarkGray);
+      ObjectSetInteger(0, name930, OBJPROP_STYLE, STYLE_DOT);
+      ObjectSetInteger(0, name930, OBJPROP_BACK, true);
+      ObjectSetInteger(0, name930, OBJPROP_SELECTABLE, false);
+      ObjectSetInteger(0, name930, OBJPROP_HIDDEN, true);
+   }
+   
+   string name1030 = "NY_1030_" + TimeToString(t1030, TIME_DATE);
+   if(ObjectFind(0, name1030) < 0) {
+      ObjectCreate(0, name1030, OBJ_VLINE, 0, t1030, 0);
+      ObjectSetInteger(0, name1030, OBJPROP_COLOR, clrDarkGray);
+      ObjectSetInteger(0, name1030, OBJPROP_STYLE, STYLE_DOT);
+      ObjectSetInteger(0, name1030, OBJPROP_BACK, true);
+      ObjectSetInteger(0, name1030, OBJPROP_SELECTABLE, false);
+      ObjectSetInteger(0, name1030, OBJPROP_HIDDEN, true);
+   }
 }
 
 void OnTimer()
 {
    if(!g_initialized) return;
    SystemConfig cfg=g_dashboard.GetParams();
+   DrawNYOLines(cfg.main.utcOffset);
    DashboardParams p=cfg.main; // Time/Display mostly uses MAIN params
    g_dashboard.UpdateNYClock(g_timeMgr.GetNYTimeString(p.utcOffset), g_timeMgr.GetNYAmPmString(p.utcOffset), g_timeMgr.GetNYDateString(p.utcOffset));
    g_newsMgr.SetNYO(p.nyHour,p.nyMinute,p.nySecond,p.utcOffset);
@@ -443,7 +561,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
          case CMD_PRESET:
          {
             int idx = g_dashboard.PresetIndex;
-            if(idx >= 0 && idx < 6) g_dashboard.ApplyPreset(g_presets[idx]);
+            if(idx >= 0 && idx < 9) g_dashboard.ApplyPreset(g_presets[idx]);
             g_dashboard.UpdateStatus("Preset applied ✓");
             break;
          }

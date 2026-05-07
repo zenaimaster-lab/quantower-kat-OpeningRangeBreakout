@@ -44,4 +44,4 @@ A MetaTrader 5 Expert Advisor that trades the **Opening Range Breakout & Retest*
 
 ## Version
 
-Current: **v0.14** | 08 May 2026
+Current: **v1.0** | 08 May 2026

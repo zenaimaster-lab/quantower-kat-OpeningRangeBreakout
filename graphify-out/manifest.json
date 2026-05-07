@@ -1,39 +1,7 @@
 {
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\Dashboard.mqh": {
-    "mtime": 1778177324.1093562,
-    "hash": "53de92868e6ccd103dac416f97eeb92b"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\Defines.mqh": {
-    "mtime": 1778177969.5004992,
-    "hash": "0829b97e7bb2e662ec6624368667ccf9"
-  },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\deploy.ps1": {
     "mtime": 1778142374.15304,
     "hash": "192e61eb1e92e205832cc610a287082f"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\mt5-kat-ORB.mq5": {
-    "mtime": 1778177792.7375653,
-    "hash": "23fe21eeabd7d29c7f10dab7f2d5017e"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\NewsManager.mqh": {
-    "mtime": 1778177277.044375,
-    "hash": "fed05ce2c55136e1ccbc2a23d5439ac8"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\OrderManager.mqh": {
-    "mtime": 1778177937.333982,
-    "hash": "2f51e917f9aff25cf888db0b8c36ecfd"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\RiskManager.mqh": {
-    "mtime": 1778177277.039368,
-    "hash": "78b7eda9865982fe7505c5438f0ce6bf"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\TimeManager.mqh": {
-    "mtime": 1778177398.900551,
-    "hash": "72441d2377fe461a520e429f5286bbb9"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\TrailManager.mqh": {
-    "mtime": 1778177277.044375,
-    "hash": "5edea904157f04658d7225e9d81f8b92"
   },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\agents.md": {
     "mtime": 1778020623.5965276,

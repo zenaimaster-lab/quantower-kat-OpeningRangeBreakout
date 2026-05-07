@@ -4,816 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "label": "Dashboard.mqh",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L1",
-      "id": "dashboard_mqh",
-      "community": 2,
-      "norm_label": "dashboard.mqh"
-    },
-    {
-      "label": "CDashboard",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L10",
-      "id": "mt5_kat_orb_dashboard_cdashboard",
-      "community": 14,
-      "norm_label": "cdashboard"
-    },
-    {
-      "label": ".CDashboard()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L112",
-      "id": "mt5_kat_orb_dashboard_cdashboard_cdashboard",
-      "community": 14,
-      "norm_label": ".cdashboard()"
-    },
-    {
-      "label": "CreatePanel()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L196",
-      "id": "mt5_kat_orb_dashboard_createpanel",
-      "community": 8,
-      "norm_label": "createpanel()"
-    },
-    {
-      "label": "ML()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L435",
-      "id": "mt5_kat_orb_dashboard_ml",
-      "community": 8,
-      "norm_label": "ml()"
-    },
-    {
-      "label": "ME()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L444",
-      "id": "mt5_kat_orb_dashboard_me",
-      "community": 8,
-      "norm_label": "me()"
-    },
-    {
-      "label": "MB()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L450",
-      "id": "mt5_kat_orb_dashboard_mb",
-      "community": 8,
-      "norm_label": "mb()"
-    },
-    {
-      "label": "MSep()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L456",
-      "id": "mt5_kat_orb_dashboard_msep",
-      "community": 8,
-      "norm_label": "msep()"
-    },
-    {
-      "label": "CtrlShow()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L465",
-      "id": "mt5_kat_orb_dashboard_ctrlshow",
-      "community": 0,
-      "norm_label": "ctrlshow()"
-    },
-    {
-      "label": "CtrlShowBtn()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L469",
-      "id": "mt5_kat_orb_dashboard_ctrlshowbtn",
-      "community": 2,
-      "norm_label": "ctrlshowbtn()"
-    },
-    {
-      "label": "CtrlShowEdit()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L473",
-      "id": "mt5_kat_orb_dashboard_ctrlshowedit",
-      "community": 0,
-      "norm_label": "ctrlshowedit()"
-    },
-    {
-      "label": "CtrlHide()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L477",
-      "id": "mt5_kat_orb_dashboard_ctrlhide",
-      "community": 2,
-      "norm_label": "ctrlhide()"
-    },
-    {
-      "label": "GetParams()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L483",
-      "id": "mt5_kat_orb_dashboard_getparams",
-      "community": 0,
-      "norm_label": "getparams()"
-    },
-    {
-      "label": "SaveTab()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L491",
-      "id": "mt5_kat_orb_dashboard_savetab",
-      "community": 0,
-      "norm_label": "savetab()"
-    },
-    {
-      "label": "LoadTab()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L547",
-      "id": "mt5_kat_orb_dashboard_loadtab",
-      "community": 0,
-      "norm_label": "loadtab()"
-    },
-    {
-      "label": "SetInitialParams()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L589",
-      "id": "mt5_kat_orb_dashboard_setinitialparams",
-      "community": 0,
-      "norm_label": "setinitialparams()"
-    },
-    {
-      "label": "UpdateSpread()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L600",
-      "id": "mt5_kat_orb_dashboard_updatespread",
-      "community": 2,
-      "norm_label": "updatespread()"
-    },
-    {
-      "label": "UpdateStatus()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L602",
-      "id": "mt5_kat_orb_dashboard_updatestatus",
-      "community": 2,
-      "norm_label": "updatestatus()"
-    },
-    {
-      "label": "UpdateOrderStatus()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L603",
-      "id": "mt5_kat_orb_dashboard_updateorderstatus",
-      "community": 2,
-      "norm_label": "updateorderstatus()"
-    },
-    {
-      "label": "UpdateNYClock()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L604",
-      "id": "mt5_kat_orb_dashboard_updatenyclock",
-      "community": 2,
-      "norm_label": "updatenyclock()"
-    },
-    {
-      "label": "HandleDirectClick()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L607",
-      "id": "mt5_kat_orb_dashboard_handledirectclick",
-      "community": 0,
-      "norm_label": "handledirectclick()"
-    },
-    {
-      "label": "UpdateBalanceInfo()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L651",
-      "id": "mt5_kat_orb_dashboard_updatebalanceinfo",
-      "community": 6,
-      "norm_label": "updatebalanceinfo()"
-    },
-    {
-      "label": "UpdateNews()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L654",
-      "id": "mt5_kat_orb_dashboard_updatenews",
-      "community": 2,
-      "norm_label": "updatenews()"
-    },
-    {
-      "label": "UpdateTimer()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L655",
-      "id": "mt5_kat_orb_dashboard_updatetimer",
-      "community": 2,
-      "norm_label": "updatetimer()"
-    },
-    {
-      "label": "UpdateSymbol()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L656",
-      "id": "mt5_kat_orb_dashboard_updatesymbol",
-      "community": 2,
-      "norm_label": "updatesymbol()"
-    },
-    {
-      "label": "UpdateMarketStatus()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L657",
-      "id": "mt5_kat_orb_dashboard_updatemarketstatus",
-      "community": 2,
-      "norm_label": "updatemarketstatus()"
-    },
-    {
-      "label": "ApplyPreset()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L660",
-      "id": "mt5_kat_orb_dashboard_applypreset",
-      "community": 2,
-      "norm_label": "applypreset()"
-    },
-    {
-      "label": "FormatMoneyRound()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L666",
-      "id": "mt5_kat_orb_dashboard_formatmoneyround",
-      "community": 6,
-      "norm_label": "formatmoneyround()"
-    },
-    {
-      "label": "UpdateEquityPL()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L680",
-      "id": "mt5_kat_orb_dashboard_updateequitypl",
-      "community": 6,
-      "norm_label": "updateequitypl()"
-    },
-    {
-      "label": "UpdateTotalExposed()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L687",
-      "id": "mt5_kat_orb_dashboard_updatetotalexposed",
-      "community": 2,
-      "norm_label": "updatetotalexposed()"
-    },
-    {
-      "label": "UpdateRealtimeRR()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L694",
-      "id": "mt5_kat_orb_dashboard_updaterealtimerr",
-      "community": 6,
-      "norm_label": "updaterealtimerr()"
-    },
-    {
-      "label": "UpdateRealtimeRiskPercent()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L704",
-      "id": "mt5_kat_orb_dashboard_updaterealtimeriskpercent",
-      "community": 2,
-      "norm_label": "updaterealtimeriskpercent()"
-    },
-    {
-      "label": "UpdateStatsTab()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L712",
-      "id": "mt5_kat_orb_dashboard_updatestatstab",
-      "community": 6,
-      "norm_label": "updatestatstab()"
-    },
-    {
-      "label": "Update2mStatus()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L729",
-      "id": "mt5_kat_orb_dashboard_update2mstatus",
-      "community": 2,
-      "norm_label": "update2mstatus()"
-    },
-    {
-      "label": "Update5mStatus()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L733",
-      "id": "mt5_kat_orb_dashboard_update5mstatus",
-      "community": 2,
-      "norm_label": "update5mstatus()"
-    },
-    {
-      "label": "Update2mPL()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L737",
-      "id": "mt5_kat_orb_dashboard_update2mpl",
-      "community": 6,
-      "norm_label": "update2mpl()"
-    },
-    {
-      "label": "Update5mPL()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L742",
-      "id": "mt5_kat_orb_dashboard_update5mpl",
-      "community": 6,
-      "norm_label": "update5mpl()"
-    },
-    {
-      "label": "OnSLS()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L749",
-      "id": "mt5_kat_orb_dashboard_onsls",
-      "community": 0,
-      "norm_label": "onsls()"
-    },
-    {
-      "label": "OnBoth()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L751",
-      "id": "mt5_kat_orb_dashboard_onboth",
-      "community": 0,
-      "norm_label": "onboth()"
-    },
-    {
-      "label": "OnBuyO()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L752",
-      "id": "mt5_kat_orb_dashboard_onbuyo",
-      "community": 0,
-      "norm_label": "onbuyo()"
-    },
-    {
-      "label": "OnSellO()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L753",
-      "id": "mt5_kat_orb_dashboard_onsello",
-      "community": 0,
-      "norm_label": "onsello()"
-    },
-    {
-      "label": "UpdMode()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L754",
-      "id": "mt5_kat_orb_dashboard_updmode",
-      "community": 0,
-      "norm_label": "updmode()"
-    },
-    {
-      "label": "OnTrM()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L757",
-      "id": "mt5_kat_orb_dashboard_ontrm",
-      "community": 10,
-      "norm_label": "ontrm()"
-    },
-    {
-      "label": "UpdTrail()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L760",
-      "id": "mt5_kat_orb_dashboard_updtrail",
-      "community": 10,
-      "norm_label": "updtrail()"
-    },
-    {
-      "label": "OnBEToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L763",
-      "id": "mt5_kat_orb_dashboard_onbetoggle",
-      "community": 12,
-      "norm_label": "onbetoggle()"
-    },
-    {
-      "label": "UpdBE()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L764",
-      "id": "mt5_kat_orb_dashboard_updbe",
-      "community": 12,
-      "norm_label": "updbe()"
-    },
-    {
-      "label": "OnUfmToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L767",
-      "id": "mt5_kat_orb_dashboard_onufmtoggle",
-      "community": 0,
-      "norm_label": "onufmtoggle()"
-    },
-    {
-      "label": "UpdUfm()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L768",
-      "id": "mt5_kat_orb_dashboard_updufm",
-      "community": 0,
-      "norm_label": "updufm()"
-    },
-    {
-      "label": "OnTmrToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L769",
-      "id": "mt5_kat_orb_dashboard_ontmrtoggle",
-      "community": 0,
-      "norm_label": "ontmrtoggle()"
-    },
-    {
-      "label": "UpdTmr()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L770",
-      "id": "mt5_kat_orb_dashboard_updtmr",
-      "community": 0,
-      "norm_label": "updtmr()"
-    },
-    {
-      "label": "OnAucToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L771",
-      "id": "mt5_kat_orb_dashboard_onauctoggle",
-      "community": 0,
-      "norm_label": "onauctoggle()"
-    },
-    {
-      "label": "UpdAuc()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L772",
-      "id": "mt5_kat_orb_dashboard_updauc",
-      "community": 0,
-      "norm_label": "updauc()"
-    },
-    {
-      "label": "OnAamToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L773",
-      "id": "mt5_kat_orb_dashboard_onaamtoggle",
-      "community": 0,
-      "norm_label": "onaamtoggle()"
-    },
-    {
-      "label": "UpdAam()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L774",
-      "id": "mt5_kat_orb_dashboard_updaam",
-      "community": 0,
-      "norm_label": "updaam()"
-    },
-    {
-      "label": "OnEma1Toggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L775",
-      "id": "mt5_kat_orb_dashboard_onema1toggle",
-      "community": 0,
-      "norm_label": "onema1toggle()"
-    },
-    {
-      "label": "UpdEma1()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L776",
-      "id": "mt5_kat_orb_dashboard_updema1",
-      "community": 0,
-      "norm_label": "updema1()"
-    },
-    {
-      "label": "OnEma2Toggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L777",
-      "id": "mt5_kat_orb_dashboard_onema2toggle",
-      "community": 0,
-      "norm_label": "onema2toggle()"
-    },
-    {
-      "label": "UpdEma2()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L778",
-      "id": "mt5_kat_orb_dashboard_updema2",
-      "community": 0,
-      "norm_label": "updema2()"
-    },
-    {
-      "label": "OnEma3Toggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L779",
-      "id": "mt5_kat_orb_dashboard_onema3toggle",
-      "community": 0,
-      "norm_label": "onema3toggle()"
-    },
-    {
-      "label": "UpdEma3()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L780",
-      "id": "mt5_kat_orb_dashboard_updema3",
-      "community": 0,
-      "norm_label": "updema3()"
-    },
-    {
-      "label": "OnContToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L782",
-      "id": "mt5_kat_orb_dashboard_onconttoggle",
-      "community": 0,
-      "norm_label": "onconttoggle()"
-    },
-    {
-      "label": "UpdCont()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L783",
-      "id": "mt5_kat_orb_dashboard_updcont",
-      "community": 0,
-      "norm_label": "updcont()"
-    },
-    {
-      "label": "OnMaxSToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L785",
-      "id": "mt5_kat_orb_dashboard_onmaxstoggle",
-      "community": 0,
-      "norm_label": "onmaxstoggle()"
-    },
-    {
-      "label": "UpdMaxS()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L786",
-      "id": "mt5_kat_orb_dashboard_updmaxs",
-      "community": 0,
-      "norm_label": "updmaxs()"
-    },
-    {
-      "label": "OnMaxLToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L788",
-      "id": "mt5_kat_orb_dashboard_onmaxltoggle",
-      "community": 13,
-      "norm_label": "onmaxltoggle()"
-    },
-    {
-      "label": "UpdMaxL()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L789",
-      "id": "mt5_kat_orb_dashboard_updmaxl",
-      "community": 13,
-      "norm_label": "updmaxl()"
-    },
-    {
-      "label": "OnBigMToggle()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L791",
-      "id": "mt5_kat_orb_dashboard_onbigmtoggle",
-      "community": 11,
-      "norm_label": "onbigmtoggle()"
-    },
-    {
-      "label": "UpdBigM()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L792",
-      "id": "mt5_kat_orb_dashboard_updbigm",
-      "community": 11,
-      "norm_label": "updbigm()"
-    },
-    {
-      "label": "OnToggleGlobal()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L793",
-      "id": "mt5_kat_orb_dashboard_ontoggleglobal",
-      "community": 9,
-      "norm_label": "ontoggleglobal()"
-    },
-    {
-      "label": "OnToggleM2()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L794",
-      "id": "mt5_kat_orb_dashboard_ontogglem2",
-      "community": 9,
-      "norm_label": "ontogglem2()"
-    },
-    {
-      "label": "OnToggleM5()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L795",
-      "id": "mt5_kat_orb_dashboard_ontogglem5",
-      "community": 9,
-      "norm_label": "ontogglem5()"
-    },
-    {
-      "label": "UpdToggles()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L797",
-      "id": "mt5_kat_orb_dashboard_updtoggles",
-      "community": 9,
-      "norm_label": "updtoggles()"
-    },
-    {
-      "label": "OnTabMain()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L806",
-      "id": "mt5_kat_orb_dashboard_ontabmain",
-      "community": 0,
-      "norm_label": "ontabmain()"
-    },
-    {
-      "label": "OnTabM2()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L807",
-      "id": "mt5_kat_orb_dashboard_ontabm2",
-      "community": 0,
-      "norm_label": "ontabm2()"
-    },
-    {
-      "label": "OnTabM5()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L808",
-      "id": "mt5_kat_orb_dashboard_ontabm5",
-      "community": 0,
-      "norm_label": "ontabm5()"
-    },
-    {
-      "label": "OnTabStats()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L809",
-      "id": "mt5_kat_orb_dashboard_ontabstats",
-      "community": 0,
-      "norm_label": "ontabstats()"
-    },
-    {
-      "label": "UpdTabs()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L811",
-      "id": "mt5_kat_orb_dashboard_updtabs",
-      "community": 0,
-      "norm_label": "updtabs()"
-    },
-    {
-      "label": "OnA1()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L919",
-      "id": "mt5_kat_orb_dashboard_ona1",
-      "community": 2,
-      "norm_label": "ona1()"
-    },
-    {
-      "label": "OnA2()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L920",
-      "id": "mt5_kat_orb_dashboard_ona2",
-      "community": 0,
-      "norm_label": "ona2()"
-    },
-    {
-      "label": "OnA3()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L921",
-      "id": "mt5_kat_orb_dashboard_ona3",
-      "community": 0,
-      "norm_label": "ona3()"
-    },
-    {
-      "label": "Minimize()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L923",
-      "id": "mt5_kat_orb_dashboard_minimize",
-      "community": 2,
-      "norm_label": "minimize()"
-    },
-    {
-      "label": "Maximize()",
-      "file_type": "code",
-      "source_file": "Dashboard.mqh",
-      "source_location": "L974",
-      "id": "mt5_kat_orb_dashboard_maximize",
-      "community": 0,
-      "norm_label": "maximize()"
-    },
-    {
-      "label": "Defines.mqh",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L1",
-      "id": "defines_mqh",
-      "community": 3,
-      "norm_label": "defines.mqh"
-    },
-    {
-      "label": "DashboardParams()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L145",
-      "id": "mt5_kat_orb_defines_dashboardparams",
-      "community": 3,
-      "norm_label": "dashboardparams()"
-    },
-    {
-      "label": "SystemConfig()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L197",
-      "id": "mt5_kat_orb_defines_systemconfig",
-      "community": 3,
-      "norm_label": "systemconfig()"
-    },
-    {
-      "label": "NewsEvent()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L222",
-      "id": "mt5_kat_orb_defines_newsevent",
-      "community": 3,
-      "norm_label": "newsevent()"
-    },
-    {
-      "label": "InitPreset()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L226",
-      "id": "mt5_kat_orb_defines_initpreset",
-      "community": 3,
-      "norm_label": "initpreset()"
-    },
-    {
-      "label": "TimeframeToString()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L239",
-      "id": "mt5_kat_orb_defines_timeframetostring",
-      "community": 3,
-      "norm_label": "timeframetostring()"
-    },
-    {
-      "label": "StringToTimeframe()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L251",
-      "id": "mt5_kat_orb_defines_stringtotimeframe",
-      "community": 3,
-      "norm_label": "stringtotimeframe()"
-    },
-    {
-      "label": "TimeframeToIndex()",
-      "file_type": "code",
-      "source_file": "Defines.mqh",
-      "source_location": "L263",
-      "id": "mt5_kat_orb_defines_timeframetoindex",
-      "community": 3,
-      "norm_label": "timeframetoindex()"
-    },
-    {
       "label": "deploy.ps1",
       "file_type": "code",
       "source_file": "deploy.ps1",
@@ -823,598 +13,1408 @@
       "norm_label": "deploy.ps1"
     },
     {
+      "label": "Dashboard.mqh",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L1",
+      "community": 2,
+      "norm_label": "dashboard.mqh",
+      "id": "dashboard_mqh"
+    },
+    {
+      "label": "CDashboard",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L10",
+      "community": 10,
+      "norm_label": "cdashboard",
+      "id": "mt5_kat_orb_dashboard_cdashboard"
+    },
+    {
+      "label": ".CDashboard()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L112",
+      "community": 10,
+      "norm_label": ".cdashboard()",
+      "id": "mt5_kat_orb_dashboard_cdashboard_cdashboard"
+    },
+    {
+      "label": "CreatePanel()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L196",
+      "community": 8,
+      "norm_label": "createpanel()",
+      "id": "mt5_kat_orb_dashboard_createpanel"
+    },
+    {
+      "label": "ML()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L435",
+      "community": 8,
+      "norm_label": "ml()",
+      "id": "mt5_kat_orb_dashboard_ml"
+    },
+    {
+      "label": "ME()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L444",
+      "community": 8,
+      "norm_label": "me()",
+      "id": "mt5_kat_orb_dashboard_me"
+    },
+    {
+      "label": "MB()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L450",
+      "community": 8,
+      "norm_label": "mb()",
+      "id": "mt5_kat_orb_dashboard_mb"
+    },
+    {
+      "label": "MSep()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L456",
+      "community": 8,
+      "norm_label": "msep()",
+      "id": "mt5_kat_orb_dashboard_msep"
+    },
+    {
+      "label": "CtrlShow()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L465",
+      "community": 0,
+      "norm_label": "ctrlshow()",
+      "id": "mt5_kat_orb_dashboard_ctrlshow"
+    },
+    {
+      "label": "CtrlShowBtn()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L469",
+      "community": 2,
+      "norm_label": "ctrlshowbtn()",
+      "id": "mt5_kat_orb_dashboard_ctrlshowbtn"
+    },
+    {
+      "label": "CtrlShowEdit()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L473",
+      "community": 0,
+      "norm_label": "ctrlshowedit()",
+      "id": "mt5_kat_orb_dashboard_ctrlshowedit"
+    },
+    {
+      "label": "CtrlHide()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L477",
+      "community": 2,
+      "norm_label": "ctrlhide()",
+      "id": "mt5_kat_orb_dashboard_ctrlhide"
+    },
+    {
+      "label": "GetParams()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L483",
+      "community": 0,
+      "norm_label": "getparams()",
+      "id": "mt5_kat_orb_dashboard_getparams"
+    },
+    {
+      "label": "SaveTab()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L491",
+      "community": 0,
+      "norm_label": "savetab()",
+      "id": "mt5_kat_orb_dashboard_savetab"
+    },
+    {
+      "label": "LoadTab()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L547",
+      "community": 0,
+      "norm_label": "loadtab()",
+      "id": "mt5_kat_orb_dashboard_loadtab"
+    },
+    {
+      "label": "SetInitialParams()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L589",
+      "community": 0,
+      "norm_label": "setinitialparams()",
+      "id": "mt5_kat_orb_dashboard_setinitialparams"
+    },
+    {
+      "label": "UpdateSpread()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L600",
+      "community": 2,
+      "norm_label": "updatespread()",
+      "id": "mt5_kat_orb_dashboard_updatespread"
+    },
+    {
+      "label": "UpdateStatus()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L602",
+      "community": 2,
+      "norm_label": "updatestatus()",
+      "id": "mt5_kat_orb_dashboard_updatestatus"
+    },
+    {
+      "label": "UpdateOrderStatus()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L603",
+      "community": 2,
+      "norm_label": "updateorderstatus()",
+      "id": "mt5_kat_orb_dashboard_updateorderstatus"
+    },
+    {
+      "label": "UpdateNYClock()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L604",
+      "community": 2,
+      "norm_label": "updatenyclock()",
+      "id": "mt5_kat_orb_dashboard_updatenyclock"
+    },
+    {
+      "label": "HandleDirectClick()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L607",
+      "community": 0,
+      "norm_label": "handledirectclick()",
+      "id": "mt5_kat_orb_dashboard_handledirectclick"
+    },
+    {
+      "label": "UpdateBalanceInfo()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L651",
+      "community": 6,
+      "norm_label": "updatebalanceinfo()",
+      "id": "mt5_kat_orb_dashboard_updatebalanceinfo"
+    },
+    {
+      "label": "UpdateNews()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L654",
+      "community": 2,
+      "norm_label": "updatenews()",
+      "id": "mt5_kat_orb_dashboard_updatenews"
+    },
+    {
+      "label": "UpdateTimer()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L655",
+      "community": 2,
+      "norm_label": "updatetimer()",
+      "id": "mt5_kat_orb_dashboard_updatetimer"
+    },
+    {
+      "label": "UpdateSymbol()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L656",
+      "community": 2,
+      "norm_label": "updatesymbol()",
+      "id": "mt5_kat_orb_dashboard_updatesymbol"
+    },
+    {
+      "label": "UpdateMarketStatus()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L657",
+      "community": 2,
+      "norm_label": "updatemarketstatus()",
+      "id": "mt5_kat_orb_dashboard_updatemarketstatus"
+    },
+    {
+      "label": "ApplyPreset()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L660",
+      "community": 2,
+      "norm_label": "applypreset()",
+      "id": "mt5_kat_orb_dashboard_applypreset"
+    },
+    {
+      "label": "FormatMoneyRound()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L666",
+      "community": 6,
+      "norm_label": "formatmoneyround()",
+      "id": "mt5_kat_orb_dashboard_formatmoneyround"
+    },
+    {
+      "label": "UpdateEquityPL()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L680",
+      "community": 6,
+      "norm_label": "updateequitypl()",
+      "id": "mt5_kat_orb_dashboard_updateequitypl"
+    },
+    {
+      "label": "UpdateTotalExposed()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L687",
+      "community": 2,
+      "norm_label": "updatetotalexposed()",
+      "id": "mt5_kat_orb_dashboard_updatetotalexposed"
+    },
+    {
+      "label": "UpdateRealtimeRR()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L694",
+      "community": 6,
+      "norm_label": "updaterealtimerr()",
+      "id": "mt5_kat_orb_dashboard_updaterealtimerr"
+    },
+    {
+      "label": "UpdateRealtimeRiskPercent()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L704",
+      "community": 2,
+      "norm_label": "updaterealtimeriskpercent()",
+      "id": "mt5_kat_orb_dashboard_updaterealtimeriskpercent"
+    },
+    {
+      "label": "UpdateStatsTab()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L712",
+      "community": 6,
+      "norm_label": "updatestatstab()",
+      "id": "mt5_kat_orb_dashboard_updatestatstab"
+    },
+    {
+      "label": "Update2mStatus()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L729",
+      "community": 2,
+      "norm_label": "update2mstatus()",
+      "id": "mt5_kat_orb_dashboard_update2mstatus"
+    },
+    {
+      "label": "Update5mStatus()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L733",
+      "community": 2,
+      "norm_label": "update5mstatus()",
+      "id": "mt5_kat_orb_dashboard_update5mstatus"
+    },
+    {
+      "label": "Update2mPL()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L737",
+      "community": 6,
+      "norm_label": "update2mpl()",
+      "id": "mt5_kat_orb_dashboard_update2mpl"
+    },
+    {
+      "label": "Update5mPL()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L742",
+      "community": 6,
+      "norm_label": "update5mpl()",
+      "id": "mt5_kat_orb_dashboard_update5mpl"
+    },
+    {
+      "label": "OnSLS()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L749",
+      "community": 0,
+      "norm_label": "onsls()",
+      "id": "mt5_kat_orb_dashboard_onsls"
+    },
+    {
+      "label": "OnBoth()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L751",
+      "community": 0,
+      "norm_label": "onboth()",
+      "id": "mt5_kat_orb_dashboard_onboth"
+    },
+    {
+      "label": "OnBuyO()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L752",
+      "community": 0,
+      "norm_label": "onbuyo()",
+      "id": "mt5_kat_orb_dashboard_onbuyo"
+    },
+    {
+      "label": "OnSellO()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L753",
+      "community": 0,
+      "norm_label": "onsello()",
+      "id": "mt5_kat_orb_dashboard_onsello"
+    },
+    {
+      "label": "UpdMode()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L754",
+      "community": 0,
+      "norm_label": "updmode()",
+      "id": "mt5_kat_orb_dashboard_updmode"
+    },
+    {
+      "label": "OnTrM()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L757",
+      "community": 11,
+      "norm_label": "ontrm()",
+      "id": "mt5_kat_orb_dashboard_ontrm"
+    },
+    {
+      "label": "UpdTrail()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L760",
+      "community": 11,
+      "norm_label": "updtrail()",
+      "id": "mt5_kat_orb_dashboard_updtrail"
+    },
+    {
+      "label": "OnBEToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L763",
+      "community": 12,
+      "norm_label": "onbetoggle()",
+      "id": "mt5_kat_orb_dashboard_onbetoggle"
+    },
+    {
+      "label": "UpdBE()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L764",
+      "community": 12,
+      "norm_label": "updbe()",
+      "id": "mt5_kat_orb_dashboard_updbe"
+    },
+    {
+      "label": "OnUfmToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L767",
+      "community": 0,
+      "norm_label": "onufmtoggle()",
+      "id": "mt5_kat_orb_dashboard_onufmtoggle"
+    },
+    {
+      "label": "UpdUfm()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L768",
+      "community": 0,
+      "norm_label": "updufm()",
+      "id": "mt5_kat_orb_dashboard_updufm"
+    },
+    {
+      "label": "OnTmrToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L769",
+      "community": 0,
+      "norm_label": "ontmrtoggle()",
+      "id": "mt5_kat_orb_dashboard_ontmrtoggle"
+    },
+    {
+      "label": "UpdTmr()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L770",
+      "community": 0,
+      "norm_label": "updtmr()",
+      "id": "mt5_kat_orb_dashboard_updtmr"
+    },
+    {
+      "label": "OnAucToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L771",
+      "community": 0,
+      "norm_label": "onauctoggle()",
+      "id": "mt5_kat_orb_dashboard_onauctoggle"
+    },
+    {
+      "label": "UpdAuc()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L772",
+      "community": 0,
+      "norm_label": "updauc()",
+      "id": "mt5_kat_orb_dashboard_updauc"
+    },
+    {
+      "label": "OnAamToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L773",
+      "community": 0,
+      "norm_label": "onaamtoggle()",
+      "id": "mt5_kat_orb_dashboard_onaamtoggle"
+    },
+    {
+      "label": "UpdAam()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L774",
+      "community": 0,
+      "norm_label": "updaam()",
+      "id": "mt5_kat_orb_dashboard_updaam"
+    },
+    {
+      "label": "OnEma1Toggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L775",
+      "community": 0,
+      "norm_label": "onema1toggle()",
+      "id": "mt5_kat_orb_dashboard_onema1toggle"
+    },
+    {
+      "label": "UpdEma1()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L776",
+      "community": 0,
+      "norm_label": "updema1()",
+      "id": "mt5_kat_orb_dashboard_updema1"
+    },
+    {
+      "label": "OnEma2Toggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L777",
+      "community": 0,
+      "norm_label": "onema2toggle()",
+      "id": "mt5_kat_orb_dashboard_onema2toggle"
+    },
+    {
+      "label": "UpdEma2()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L778",
+      "community": 0,
+      "norm_label": "updema2()",
+      "id": "mt5_kat_orb_dashboard_updema2"
+    },
+    {
+      "label": "OnEma3Toggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L779",
+      "community": 0,
+      "norm_label": "onema3toggle()",
+      "id": "mt5_kat_orb_dashboard_onema3toggle"
+    },
+    {
+      "label": "UpdEma3()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L780",
+      "community": 0,
+      "norm_label": "updema3()",
+      "id": "mt5_kat_orb_dashboard_updema3"
+    },
+    {
+      "label": "OnContToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L782",
+      "community": 0,
+      "norm_label": "onconttoggle()",
+      "id": "mt5_kat_orb_dashboard_onconttoggle"
+    },
+    {
+      "label": "UpdCont()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L783",
+      "community": 0,
+      "norm_label": "updcont()",
+      "id": "mt5_kat_orb_dashboard_updcont"
+    },
+    {
+      "label": "OnMaxSToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L785",
+      "community": 0,
+      "norm_label": "onmaxstoggle()",
+      "id": "mt5_kat_orb_dashboard_onmaxstoggle"
+    },
+    {
+      "label": "UpdMaxS()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L786",
+      "community": 0,
+      "norm_label": "updmaxs()",
+      "id": "mt5_kat_orb_dashboard_updmaxs"
+    },
+    {
+      "label": "OnMaxLToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L788",
+      "community": 13,
+      "norm_label": "onmaxltoggle()",
+      "id": "mt5_kat_orb_dashboard_onmaxltoggle"
+    },
+    {
+      "label": "UpdMaxL()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L789",
+      "community": 13,
+      "norm_label": "updmaxl()",
+      "id": "mt5_kat_orb_dashboard_updmaxl"
+    },
+    {
+      "label": "OnBigMToggle()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L791",
+      "community": 14,
+      "norm_label": "onbigmtoggle()",
+      "id": "mt5_kat_orb_dashboard_onbigmtoggle"
+    },
+    {
+      "label": "UpdBigM()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L792",
+      "community": 14,
+      "norm_label": "updbigm()",
+      "id": "mt5_kat_orb_dashboard_updbigm"
+    },
+    {
+      "label": "OnToggleGlobal()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L793",
+      "community": 9,
+      "norm_label": "ontoggleglobal()",
+      "id": "mt5_kat_orb_dashboard_ontoggleglobal"
+    },
+    {
+      "label": "OnToggleM2()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L794",
+      "community": 9,
+      "norm_label": "ontogglem2()",
+      "id": "mt5_kat_orb_dashboard_ontogglem2"
+    },
+    {
+      "label": "OnToggleM5()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L795",
+      "community": 9,
+      "norm_label": "ontogglem5()",
+      "id": "mt5_kat_orb_dashboard_ontogglem5"
+    },
+    {
+      "label": "UpdToggles()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L797",
+      "community": 9,
+      "norm_label": "updtoggles()",
+      "id": "mt5_kat_orb_dashboard_updtoggles"
+    },
+    {
+      "label": "OnTabMain()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L806",
+      "community": 0,
+      "norm_label": "ontabmain()",
+      "id": "mt5_kat_orb_dashboard_ontabmain"
+    },
+    {
+      "label": "OnTabM2()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L807",
+      "community": 0,
+      "norm_label": "ontabm2()",
+      "id": "mt5_kat_orb_dashboard_ontabm2"
+    },
+    {
+      "label": "OnTabM5()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L808",
+      "community": 0,
+      "norm_label": "ontabm5()",
+      "id": "mt5_kat_orb_dashboard_ontabm5"
+    },
+    {
+      "label": "OnTabStats()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L809",
+      "community": 0,
+      "norm_label": "ontabstats()",
+      "id": "mt5_kat_orb_dashboard_ontabstats"
+    },
+    {
+      "label": "UpdTabs()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L811",
+      "community": 0,
+      "norm_label": "updtabs()",
+      "id": "mt5_kat_orb_dashboard_updtabs"
+    },
+    {
+      "label": "OnA1()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L919",
+      "community": 2,
+      "norm_label": "ona1()",
+      "id": "mt5_kat_orb_dashboard_ona1"
+    },
+    {
+      "label": "OnA2()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L920",
+      "community": 0,
+      "norm_label": "ona2()",
+      "id": "mt5_kat_orb_dashboard_ona2"
+    },
+    {
+      "label": "OnA3()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L921",
+      "community": 0,
+      "norm_label": "ona3()",
+      "id": "mt5_kat_orb_dashboard_ona3"
+    },
+    {
+      "label": "Minimize()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L923",
+      "community": 2,
+      "norm_label": "minimize()",
+      "id": "mt5_kat_orb_dashboard_minimize"
+    },
+    {
+      "label": "Maximize()",
+      "file_type": "code",
+      "source_file": "Dashboard.mqh",
+      "source_location": "L974",
+      "community": 0,
+      "norm_label": "maximize()",
+      "id": "mt5_kat_orb_dashboard_maximize"
+    },
+    {
+      "label": "Defines.mqh",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L1",
+      "community": 3,
+      "norm_label": "defines.mqh",
+      "id": "defines_mqh"
+    },
+    {
+      "label": "DashboardParams()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L145",
+      "community": 3,
+      "norm_label": "dashboardparams()",
+      "id": "mt5_kat_orb_defines_dashboardparams"
+    },
+    {
+      "label": "SystemConfig()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L197",
+      "community": 3,
+      "norm_label": "systemconfig()",
+      "id": "mt5_kat_orb_defines_systemconfig"
+    },
+    {
+      "label": "NewsEvent()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L222",
+      "community": 3,
+      "norm_label": "newsevent()",
+      "id": "mt5_kat_orb_defines_newsevent"
+    },
+    {
+      "label": "InitPreset()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L226",
+      "community": 3,
+      "norm_label": "initpreset()",
+      "id": "mt5_kat_orb_defines_initpreset"
+    },
+    {
+      "label": "TimeframeToString()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L239",
+      "community": 3,
+      "norm_label": "timeframetostring()",
+      "id": "mt5_kat_orb_defines_timeframetostring"
+    },
+    {
+      "label": "StringToTimeframe()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L251",
+      "community": 3,
+      "norm_label": "stringtotimeframe()",
+      "id": "mt5_kat_orb_defines_stringtotimeframe"
+    },
+    {
+      "label": "TimeframeToIndex()",
+      "file_type": "code",
+      "source_file": "Defines.mqh",
+      "source_location": "L263",
+      "community": 3,
+      "norm_label": "timeframetoindex()",
+      "id": "mt5_kat_orb_defines_timeframetoindex"
+    },
+    {
       "label": "mt5-kat-ORB.mq5",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L1",
-      "id": "mt5_kat_orb_mq5",
       "community": 3,
-      "norm_label": "mt5-kat-orb.mq5"
+      "norm_label": "mt5-kat-orb.mq5",
+      "id": "mt5_kat_orb_mq5"
     },
     {
       "label": "IsMarketOpen()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L83",
-      "id": "mt5_kat_orb_mt5_kat_orb_ismarketopen",
       "community": 3,
-      "norm_label": "ismarketopen()"
+      "norm_label": "ismarketopen()",
+      "id": "mt5_kat_orb_mt5_kat_orb_ismarketopen"
     },
     {
       "label": "TimeDayOfWeek()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L117",
-      "id": "mt5_kat_orb_mt5_kat_orb_timedayofweek",
       "community": 3,
-      "norm_label": "timedayofweek()"
+      "norm_label": "timedayofweek()",
+      "id": "mt5_kat_orb_mt5_kat_orb_timedayofweek"
     },
     {
       "label": "OnInit()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L119",
-      "id": "mt5_kat_orb_mt5_kat_orb_oninit",
       "community": 3,
-      "norm_label": "oninit()"
+      "norm_label": "oninit()",
+      "id": "mt5_kat_orb_mt5_kat_orb_oninit"
     },
     {
       "label": "OnDeinit()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L155",
-      "id": "mt5_kat_orb_mt5_kat_orb_ondeinit",
       "community": 3,
-      "norm_label": "ondeinit()"
+      "norm_label": "ondeinit()",
+      "id": "mt5_kat_orb_mt5_kat_orb_ondeinit"
     },
     {
       "label": "OnTick()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L157",
-      "id": "mt5_kat_orb_mt5_kat_orb_ontick",
       "community": 3,
-      "norm_label": "ontick()"
+      "norm_label": "ontick()",
+      "id": "mt5_kat_orb_mt5_kat_orb_ontick"
     },
     {
       "label": "UpdateTradeStats()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L184",
-      "id": "mt5_kat_orb_mt5_kat_orb_updatetradestats",
       "community": 3,
-      "norm_label": "updatetradestats()"
+      "norm_label": "updatetradestats()",
+      "id": "mt5_kat_orb_mt5_kat_orb_updatetradestats"
     },
     {
       "label": "OnTimer()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L242",
-      "id": "mt5_kat_orb_mt5_kat_orb_ontimer",
       "community": 3,
-      "norm_label": "ontimer()"
+      "norm_label": "ontimer()",
+      "id": "mt5_kat_orb_mt5_kat_orb_ontimer"
     },
     {
       "label": "OnChartEvent()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L387",
-      "id": "mt5_kat_orb_mt5_kat_orb_onchartevent",
       "community": 3,
-      "norm_label": "onchartevent()"
+      "norm_label": "onchartevent()",
+      "id": "mt5_kat_orb_mt5_kat_orb_onchartevent"
     },
     {
       "label": "OnTradeTransaction()",
       "file_type": "code",
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L456",
-      "id": "mt5_kat_orb_mt5_kat_orb_ontradetransaction",
       "community": 3,
-      "norm_label": "ontradetransaction()"
+      "norm_label": "ontradetransaction()",
+      "id": "mt5_kat_orb_mt5_kat_orb_ontradetransaction"
     },
     {
       "label": "NewsManager.mqh",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L1",
-      "id": "newsmanager_mqh",
       "community": 7,
-      "norm_label": "newsmanager.mqh"
+      "norm_label": "newsmanager.mqh",
+      "id": "newsmanager_mqh"
     },
     {
       "label": "CNewsManager",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L10",
-      "id": "mt5_kat_orb_newsmanager_cnewsmanager",
       "community": 7,
-      "norm_label": "cnewsmanager"
+      "norm_label": "cnewsmanager",
+      "id": "mt5_kat_orb_newsmanager_cnewsmanager"
     },
     {
       "label": ".CNewsManager()",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L19",
-      "id": "mt5_kat_orb_newsmanager_cnewsmanager_cnewsmanager",
       "community": 7,
-      "norm_label": ".cnewsmanager()"
+      "norm_label": ".cnewsmanager()",
+      "id": "mt5_kat_orb_newsmanager_cnewsmanager_cnewsmanager"
     },
     {
       "label": "NYOToUTC()",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L41",
-      "id": "mt5_kat_orb_newsmanager_nyotoutc",
       "community": 7,
-      "norm_label": "nyotoutc()"
+      "norm_label": "nyotoutc()",
+      "id": "mt5_kat_orb_newsmanager_nyotoutc"
     },
     {
       "label": "CalcNextNYOEvent()",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L54",
-      "id": "mt5_kat_orb_newsmanager_calcnextnyoevent",
       "community": 7,
-      "norm_label": "calcnextnyoevent()"
+      "norm_label": "calcnextnyoevent()",
+      "id": "mt5_kat_orb_newsmanager_calcnextnyoevent"
     },
     {
       "label": "Update()",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L76",
-      "id": "mt5_kat_orb_newsmanager_update",
       "community": 7,
-      "norm_label": "update()"
+      "norm_label": "update()",
+      "id": "mt5_kat_orb_newsmanager_update"
     },
     {
       "label": "GetNextEventString()",
       "file_type": "code",
       "source_file": "NewsManager.mqh",
       "source_location": "L86",
-      "id": "mt5_kat_orb_newsmanager_getnexteventstring",
       "community": 7,
-      "norm_label": "getnexteventstring()"
+      "norm_label": "getnexteventstring()",
+      "id": "mt5_kat_orb_newsmanager_getnexteventstring"
     },
     {
       "label": "OrderManager.mqh",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L1",
-      "id": "ordermanager_mqh",
       "community": 4,
-      "norm_label": "ordermanager.mqh"
+      "norm_label": "ordermanager.mqh",
+      "id": "ordermanager_mqh"
     },
     {
       "label": "COrderManager",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L27",
-      "id": "mt5_kat_orb_ordermanager_cordermanager",
       "community": 4,
-      "norm_label": "cordermanager"
+      "norm_label": "cordermanager",
+      "id": "mt5_kat_orb_ordermanager_cordermanager"
     },
     {
       "label": "Init()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L91",
-      "id": "mt5_kat_orb_ordermanager_init",
       "community": 4,
-      "norm_label": "init()"
+      "norm_label": "init()",
+      "id": "mt5_kat_orb_ordermanager_init"
     },
     {
       "label": "ResetState()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L96",
-      "id": "mt5_kat_orb_ordermanager_resetstate",
       "community": 4,
-      "norm_label": "resetstate()"
+      "norm_label": "resetstate()",
+      "id": "mt5_kat_orb_ordermanager_resetstate"
     },
     {
       "label": "GetCandleRange()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L112",
-      "id": "mt5_kat_orb_ordermanager_getcandlerange",
       "community": 4,
-      "norm_label": "getcandlerange()"
+      "norm_label": "getcandlerange()",
+      "id": "mt5_kat_orb_ordermanager_getcandlerange"
     },
     {
       "label": "GenerateOrderTag()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L127",
-      "id": "mt5_kat_orb_ordermanager_generateordertag",
       "community": 4,
-      "norm_label": "generateordertag()"
+      "norm_label": "generateordertag()",
+      "id": "mt5_kat_orb_ordermanager_generateordertag"
     },
     {
       "label": "DrawORBLines()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L135",
-      "id": "mt5_kat_orb_ordermanager_draworblines",
       "community": 4,
-      "norm_label": "draworblines()"
+      "norm_label": "draworblines()",
+      "id": "mt5_kat_orb_ordermanager_draworblines"
     },
     {
       "label": "DrawTradeLines()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L177",
-      "id": "mt5_kat_orb_ordermanager_drawtradelines",
       "community": 4,
-      "norm_label": "drawtradelines()"
+      "norm_label": "drawtradelines()",
+      "id": "mt5_kat_orb_ordermanager_drawtradelines"
     },
     {
       "label": "DeleteLines()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L225",
-      "id": "mt5_kat_orb_ordermanager_deletelines",
       "community": 4,
-      "norm_label": "deletelines()"
+      "norm_label": "deletelines()",
+      "id": "mt5_kat_orb_ordermanager_deletelines"
     },
     {
       "label": "CleanupLines()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L238",
-      "id": "mt5_kat_orb_ordermanager_cleanuplines",
       "community": 4,
-      "norm_label": "cleanuplines()"
+      "norm_label": "cleanuplines()",
+      "id": "mt5_kat_orb_ordermanager_cleanuplines"
     },
     {
       "label": "ProcessORB()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L244",
-      "id": "mt5_kat_orb_ordermanager_processorb",
       "community": 4,
-      "norm_label": "processorb()"
+      "norm_label": "processorb()",
+      "id": "mt5_kat_orb_ordermanager_processorb"
     },
     {
       "label": "GetStatus()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L360",
-      "id": "mt5_kat_orb_ordermanager_getstatus",
       "community": 4,
-      "norm_label": "getstatus()"
+      "norm_label": "getstatus()",
+      "id": "mt5_kat_orb_ordermanager_getstatus"
     },
     {
       "label": "GetStatusColor()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L374",
-      "id": "mt5_kat_orb_ordermanager_getstatuscolor",
       "community": 4,
-      "norm_label": "getstatuscolor()"
+      "norm_label": "getstatuscolor()",
+      "id": "mt5_kat_orb_ordermanager_getstatuscolor"
     },
     {
       "label": "CancelAllPending()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L385",
-      "id": "mt5_kat_orb_ordermanager_cancelallpending",
       "community": 4,
-      "norm_label": "cancelallpending()"
+      "norm_label": "cancelallpending()",
+      "id": "mt5_kat_orb_ordermanager_cancelallpending"
     },
     {
       "label": "GetEmaValue()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L402",
-      "id": "mt5_kat_orb_ordermanager_getemavalue",
       "community": 4,
-      "norm_label": "getemavalue()"
+      "norm_label": "getemavalue()",
+      "id": "mt5_kat_orb_ordermanager_getemavalue"
     },
     {
       "label": "CheckAutoCancel()",
       "file_type": "code",
       "source_file": "OrderManager.mqh",
       "source_location": "L415",
-      "id": "mt5_kat_orb_ordermanager_checkautocancel",
       "community": 4,
-      "norm_label": "checkautocancel()"
+      "norm_label": "checkautocancel()",
+      "id": "mt5_kat_orb_ordermanager_checkautocancel"
     },
     {
       "label": "RiskManager.mqh",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L1",
-      "id": "riskmanager_mqh",
       "community": 1,
-      "norm_label": "riskmanager.mqh"
+      "norm_label": "riskmanager.mqh",
+      "id": "riskmanager_mqh"
     },
     {
       "label": "CRiskManager",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L14",
-      "id": "mt5_kat_orb_riskmanager_criskmanager",
       "community": 1,
-      "norm_label": "criskmanager"
+      "norm_label": "criskmanager",
+      "id": "mt5_kat_orb_riskmanager_criskmanager"
     },
     {
       "label": ".CRiskManager()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L17",
-      "id": "mt5_kat_orb_riskmanager_criskmanager_criskmanager",
       "community": 1,
-      "norm_label": ".criskmanager()"
+      "norm_label": ".criskmanager()",
+      "id": "mt5_kat_orb_riskmanager_criskmanager_criskmanager"
     },
     {
       "label": "CalcLotSize()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L44",
-      "id": "mt5_kat_orb_riskmanager_calclotsize",
       "community": 1,
-      "norm_label": "calclotsize()"
+      "norm_label": "calclotsize()",
+      "id": "mt5_kat_orb_riskmanager_calclotsize"
     },
     {
       "label": "GetTickValue()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L93",
-      "id": "mt5_kat_orb_riskmanager_gettickvalue",
       "community": 1,
-      "norm_label": "gettickvalue()"
+      "norm_label": "gettickvalue()",
+      "id": "mt5_kat_orb_riskmanager_gettickvalue"
     },
     {
       "label": "GetTickSize()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L99",
-      "id": "mt5_kat_orb_riskmanager_getticksize",
       "community": 1,
-      "norm_label": "getticksize()"
+      "norm_label": "getticksize()",
+      "id": "mt5_kat_orb_riskmanager_getticksize"
     },
     {
       "label": "GetPoint()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L105",
-      "id": "mt5_kat_orb_riskmanager_getpoint",
       "community": 1,
-      "norm_label": "getpoint()"
+      "norm_label": "getpoint()",
+      "id": "mt5_kat_orb_riskmanager_getpoint"
     },
     {
       "label": "GetMinLot()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L111",
-      "id": "mt5_kat_orb_riskmanager_getminlot",
       "community": 1,
-      "norm_label": "getminlot()"
+      "norm_label": "getminlot()",
+      "id": "mt5_kat_orb_riskmanager_getminlot"
     },
     {
       "label": "GetMaxLot()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L117",
-      "id": "mt5_kat_orb_riskmanager_getmaxlot",
       "community": 1,
-      "norm_label": "getmaxlot()"
+      "norm_label": "getmaxlot()",
+      "id": "mt5_kat_orb_riskmanager_getmaxlot"
     },
     {
       "label": "GetLotStep()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L123",
-      "id": "mt5_kat_orb_riskmanager_getlotstep",
       "community": 1,
-      "norm_label": "getlotstep()"
+      "norm_label": "getlotstep()",
+      "id": "mt5_kat_orb_riskmanager_getlotstep"
     },
     {
       "label": "GetSpread()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L129",
-      "id": "mt5_kat_orb_riskmanager_getspread",
       "community": 1,
-      "norm_label": "getspread()"
+      "norm_label": "getspread()",
+      "id": "mt5_kat_orb_riskmanager_getspread"
     },
     {
       "label": "NormalizeLot()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L137",
-      "id": "mt5_kat_orb_riskmanager_normalizelot",
       "community": 1,
-      "norm_label": "normalizelot()"
+      "norm_label": "normalizelot()",
+      "id": "mt5_kat_orb_riskmanager_normalizelot"
     },
     {
       "label": "CalcRiskRewardInfo()",
       "file_type": "code",
       "source_file": "RiskManager.mqh",
       "source_location": "L157",
-      "id": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
       "community": 1,
-      "norm_label": "calcriskrewardinfo()"
+      "norm_label": "calcriskrewardinfo()",
+      "id": "mt5_kat_orb_riskmanager_calcriskrewardinfo"
     },
     {
       "label": "TimeManager.mqh",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L1",
-      "id": "timemanager_mqh",
       "community": 5,
-      "norm_label": "timemanager.mqh"
+      "norm_label": "timemanager.mqh",
+      "id": "timemanager_mqh"
     },
     {
       "label": "CTimeManager",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L14",
-      "id": "mt5_kat_orb_timemanager_ctimemanager",
       "community": 5,
-      "norm_label": "ctimemanager"
+      "norm_label": "ctimemanager",
+      "id": "mt5_kat_orb_timemanager_ctimemanager"
     },
     {
       "label": ".CTimeManager()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L25",
-      "id": "mt5_kat_orb_timemanager_ctimemanager_ctimemanager",
       "community": 5,
-      "norm_label": ".ctimemanager()"
+      "norm_label": ".ctimemanager()",
+      "id": "mt5_kat_orb_timemanager_ctimemanager_ctimemanager"
     },
     {
       "label": "Reset()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L52",
-      "id": "mt5_kat_orb_timemanager_reset",
       "community": 5,
-      "norm_label": "reset()"
+      "norm_label": "reset()",
+      "id": "mt5_kat_orb_timemanager_reset"
     },
     {
       "label": "GetBrokerGMTOffset()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L64",
-      "id": "mt5_kat_orb_timemanager_getbrokergmtoffset",
       "community": 5,
-      "norm_label": "getbrokergmtoffset()"
+      "norm_label": "getbrokergmtoffset()",
+      "id": "mt5_kat_orb_timemanager_getbrokergmtoffset"
     },
     {
       "label": "NYTimeToServerTime()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L76",
-      "id": "mt5_kat_orb_timemanager_nytimetoservertime",
       "community": 5,
-      "norm_label": "nytimetoservertime()"
+      "norm_label": "nytimetoservertime()",
+      "id": "mt5_kat_orb_timemanager_nytimetoservertime"
     },
     {
       "label": "CalculateTargetTime()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L117",
-      "id": "mt5_kat_orb_timemanager_calculatetargettime",
       "community": 5,
-      "norm_label": "calculatetargettime()"
+      "norm_label": "calculatetargettime()",
+      "id": "mt5_kat_orb_timemanager_calculatetargettime"
     },
     {
       "label": "MarkFired()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L141",
-      "id": "mt5_kat_orb_timemanager_markfired",
       "community": 5,
-      "norm_label": "markfired()"
+      "norm_label": "markfired()",
+      "id": "mt5_kat_orb_timemanager_markfired"
     },
     {
       "label": "GetCountdownString()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L151",
-      "id": "mt5_kat_orb_timemanager_getcountdownstring",
       "community": 5,
-      "norm_label": "getcountdownstring()"
+      "norm_label": "getcountdownstring()",
+      "id": "mt5_kat_orb_timemanager_getcountdownstring"
     },
     {
       "label": "GetNYTimeString()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L169",
-      "id": "mt5_kat_orb_timemanager_getnytimestring",
       "community": 5,
-      "norm_label": "getnytimestring()"
+      "norm_label": "getnytimestring()",
+      "id": "mt5_kat_orb_timemanager_getnytimestring"
     },
     {
       "label": "GetNYAmPmString()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L187",
-      "id": "mt5_kat_orb_timemanager_getnyampmstring",
       "community": 5,
-      "norm_label": "getnyampmstring()"
+      "norm_label": "getnyampmstring()",
+      "id": "mt5_kat_orb_timemanager_getnyampmstring"
     },
     {
       "label": "GetNYDateString()",
       "file_type": "code",
       "source_file": "TimeManager.mqh",
       "source_location": "L201",
-      "id": "mt5_kat_orb_timemanager_getnydatestring",
       "community": 5,
-      "norm_label": "getnydatestring()"
+      "norm_label": "getnydatestring()",
+      "id": "mt5_kat_orb_timemanager_getnydatestring"
     },
     {
       "label": "TrailManager.mqh",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L1",
-      "id": "trailmanager_mqh",
       "community": 1,
-      "norm_label": "trailmanager.mqh"
+      "norm_label": "trailmanager.mqh",
+      "id": "trailmanager_mqh"
     },
     {
       "label": "CTrailManager",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L15",
-      "id": "mt5_kat_orb_trailmanager_ctrailmanager",
       "community": 1,
-      "norm_label": "ctrailmanager"
+      "norm_label": "ctrailmanager",
+      "id": "mt5_kat_orb_trailmanager_ctrailmanager"
     },
     {
       "label": ".CTrailManager()",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L22",
-      "id": "mt5_kat_orb_trailmanager_ctrailmanager_ctrailmanager",
       "community": 1,
-      "norm_label": ".ctrailmanager()"
+      "norm_label": ".ctrailmanager()",
+      "id": "mt5_kat_orb_trailmanager_ctrailmanager_ctrailmanager"
     },
     {
       "label": "Process()",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L53",
-      "id": "mt5_kat_orb_trailmanager_process",
       "community": 1,
-      "norm_label": "process()"
+      "norm_label": "process()",
+      "id": "mt5_kat_orb_trailmanager_process"
     },
     {
       "label": "ManageBreakevenAggregate()",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L88",
-      "id": "mt5_kat_orb_trailmanager_managebreakevenaggregate",
       "community": 1,
-      "norm_label": "managebreakevenaggregate()"
+      "norm_label": "managebreakevenaggregate()",
+      "id": "mt5_kat_orb_trailmanager_managebreakevenaggregate"
     },
     {
       "label": "ManageTrailing()",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L181",
-      "id": "mt5_kat_orb_trailmanager_managetrailing",
       "community": 1,
-      "norm_label": "managetrailing()"
+      "norm_label": "managetrailing()",
+      "id": "mt5_kat_orb_trailmanager_managetrailing"
     },
     {
       "label": "ForceBreakeven()",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L243",
-      "id": "mt5_kat_orb_trailmanager_forcebreakeven",
       "community": 1,
-      "norm_label": "forcebreakeven()"
+      "norm_label": "forcebreakeven()",
+      "id": "mt5_kat_orb_trailmanager_forcebreakeven"
     },
     {
       "label": "ManageCandleTrailShift()",
       "file_type": "code",
       "source_file": "TrailManager.mqh",
       "source_location": "L322",
-      "id": "mt5_kat_orb_trailmanager_managecandletrailshift",
       "community": 1,
-      "norm_label": "managecandletrailshift()"
+      "norm_label": "managecandletrailshift()",
+      "id": "mt5_kat_orb_trailmanager_managecandletrailshift"
     }
   ],
   "links": [
@@ -1424,9 +1424,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L187",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_cdashboard",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_cdashboard"
     },
     {
       "relation": "contains",
@@ -1434,9 +1434,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L196",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_createpanel",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_createpanel"
     },
     {
       "relation": "contains",
@@ -1444,9 +1444,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L435",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ml",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ml"
     },
     {
       "relation": "contains",
@@ -1454,9 +1454,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L444",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_me",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_me"
     },
     {
       "relation": "contains",
@@ -1464,9 +1464,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L450",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_mb",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_mb"
     },
     {
       "relation": "contains",
@@ -1474,9 +1474,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L456",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_msep",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_msep"
     },
     {
       "relation": "contains",
@@ -1484,9 +1484,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L465",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ctrlshow",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshow"
     },
     {
       "relation": "contains",
@@ -1494,9 +1494,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L469",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ctrlshowbtn",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshowbtn"
     },
     {
       "relation": "contains",
@@ -1504,9 +1504,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L473",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ctrlshowedit",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshowedit"
     },
     {
       "relation": "contains",
@@ -1514,9 +1514,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L477",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ctrlhide",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlhide"
     },
     {
       "relation": "contains",
@@ -1524,9 +1524,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L483",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_getparams",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_getparams"
     },
     {
       "relation": "contains",
@@ -1534,9 +1534,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L491",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_savetab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_savetab"
     },
     {
       "relation": "contains",
@@ -1544,9 +1544,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L547",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_loadtab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_loadtab"
     },
     {
       "relation": "contains",
@@ -1554,9 +1554,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L589",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_setinitialparams",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_setinitialparams"
     },
     {
       "relation": "contains",
@@ -1564,9 +1564,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L600",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatespread",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatespread"
     },
     {
       "relation": "contains",
@@ -1574,9 +1574,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L602",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatestatus",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatestatus"
     },
     {
       "relation": "contains",
@@ -1584,9 +1584,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L603",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updateorderstatus",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updateorderstatus"
     },
     {
       "relation": "contains",
@@ -1594,9 +1594,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L604",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatenyclock",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatenyclock"
     },
     {
       "relation": "contains",
@@ -1604,9 +1604,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L607",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_handledirectclick",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_handledirectclick"
     },
     {
       "relation": "contains",
@@ -1614,9 +1614,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L651",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatebalanceinfo",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatebalanceinfo"
     },
     {
       "relation": "contains",
@@ -1624,9 +1624,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L654",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatenews",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatenews"
     },
     {
       "relation": "contains",
@@ -1634,9 +1634,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L655",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatetimer",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatetimer"
     },
     {
       "relation": "contains",
@@ -1644,9 +1644,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L656",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatesymbol",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatesymbol"
     },
     {
       "relation": "contains",
@@ -1654,9 +1654,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L657",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatemarketstatus",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatemarketstatus"
     },
     {
       "relation": "contains",
@@ -1664,9 +1664,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L660",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_applypreset",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_applypreset"
     },
     {
       "relation": "contains",
@@ -1674,9 +1674,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L666",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "contains",
@@ -1684,9 +1684,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L680",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updateequitypl",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updateequitypl"
     },
     {
       "relation": "contains",
@@ -1694,9 +1694,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L687",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatetotalexposed",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatetotalexposed"
     },
     {
       "relation": "contains",
@@ -1704,9 +1704,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L694",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updaterealtimerr",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updaterealtimerr"
     },
     {
       "relation": "contains",
@@ -1714,9 +1714,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L704",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updaterealtimeriskpercent",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updaterealtimeriskpercent"
     },
     {
       "relation": "contains",
@@ -1724,9 +1724,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L712",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updatestatstab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updatestatstab"
     },
     {
       "relation": "contains",
@@ -1734,9 +1734,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L729",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_update2mstatus",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_update2mstatus"
     },
     {
       "relation": "contains",
@@ -1744,9 +1744,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L733",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_update5mstatus",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_update5mstatus"
     },
     {
       "relation": "contains",
@@ -1754,9 +1754,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L737",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_update2mpl",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_update2mpl"
     },
     {
       "relation": "contains",
@@ -1764,9 +1764,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L742",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_update5mpl",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_update5mpl"
     },
     {
       "relation": "contains",
@@ -1774,9 +1774,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L749",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onsls",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onsls"
     },
     {
       "relation": "contains",
@@ -1784,9 +1784,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L751",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onboth",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onboth"
     },
     {
       "relation": "contains",
@@ -1794,9 +1794,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L752",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onbuyo",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onbuyo"
     },
     {
       "relation": "contains",
@@ -1804,9 +1804,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L753",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onsello",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onsello"
     },
     {
       "relation": "contains",
@@ -1814,9 +1814,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L754",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updmode",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmode"
     },
     {
       "relation": "contains",
@@ -1824,9 +1824,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L757",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontrm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontrm"
     },
     {
       "relation": "contains",
@@ -1834,9 +1834,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L760",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updtrail",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtrail"
     },
     {
       "relation": "contains",
@@ -1844,9 +1844,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L763",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onbetoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onbetoggle"
     },
     {
       "relation": "contains",
@@ -1854,9 +1854,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L764",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updbe",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updbe"
     },
     {
       "relation": "contains",
@@ -1864,9 +1864,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L767",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onufmtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onufmtoggle"
     },
     {
       "relation": "contains",
@@ -1874,9 +1874,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L768",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updufm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updufm"
     },
     {
       "relation": "contains",
@@ -1884,9 +1884,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L769",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontmrtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontmrtoggle"
     },
     {
       "relation": "contains",
@@ -1894,9 +1894,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L770",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updtmr",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtmr"
     },
     {
       "relation": "contains",
@@ -1904,9 +1904,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L771",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onauctoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onauctoggle"
     },
     {
       "relation": "contains",
@@ -1914,9 +1914,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L772",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updauc",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updauc"
     },
     {
       "relation": "contains",
@@ -1924,9 +1924,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L773",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onaamtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onaamtoggle"
     },
     {
       "relation": "contains",
@@ -1934,9 +1934,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L774",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updaam",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updaam"
     },
     {
       "relation": "contains",
@@ -1944,9 +1944,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L775",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onema1toggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onema1toggle"
     },
     {
       "relation": "contains",
@@ -1954,9 +1954,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L776",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updema1",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema1"
     },
     {
       "relation": "contains",
@@ -1964,9 +1964,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L777",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onema2toggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onema2toggle"
     },
     {
       "relation": "contains",
@@ -1974,9 +1974,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L778",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updema2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema2"
     },
     {
       "relation": "contains",
@@ -1984,9 +1984,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L779",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onema3toggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onema3toggle"
     },
     {
       "relation": "contains",
@@ -1994,9 +1994,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L780",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updema3",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema3"
     },
     {
       "relation": "contains",
@@ -2004,9 +2004,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L782",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onconttoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onconttoggle"
     },
     {
       "relation": "contains",
@@ -2014,9 +2014,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L783",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updcont",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updcont"
     },
     {
       "relation": "contains",
@@ -2024,9 +2024,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L785",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onmaxstoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onmaxstoggle"
     },
     {
       "relation": "contains",
@@ -2034,9 +2034,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L786",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updmaxs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmaxs"
     },
     {
       "relation": "contains",
@@ -2044,9 +2044,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L788",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onmaxltoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onmaxltoggle"
     },
     {
       "relation": "contains",
@@ -2054,9 +2054,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L789",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updmaxl",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmaxl"
     },
     {
       "relation": "contains",
@@ -2064,9 +2064,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L791",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_onbigmtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onbigmtoggle"
     },
     {
       "relation": "contains",
@@ -2074,9 +2074,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L792",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updbigm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updbigm"
     },
     {
       "relation": "contains",
@@ -2084,9 +2084,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L793",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontoggleglobal",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontoggleglobal"
     },
     {
       "relation": "contains",
@@ -2094,9 +2094,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L794",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontogglem2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontogglem2"
     },
     {
       "relation": "contains",
@@ -2104,9 +2104,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L795",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontogglem5",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontogglem5"
     },
     {
       "relation": "contains",
@@ -2114,9 +2114,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L797",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updtoggles",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtoggles"
     },
     {
       "relation": "contains",
@@ -2124,9 +2124,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L806",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontabmain",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabmain"
     },
     {
       "relation": "contains",
@@ -2134,9 +2134,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L807",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontabm2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabm2"
     },
     {
       "relation": "contains",
@@ -2144,9 +2144,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L808",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontabm5",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabm5"
     },
     {
       "relation": "contains",
@@ -2154,9 +2154,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L809",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ontabstats",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabstats"
     },
     {
       "relation": "contains",
@@ -2164,9 +2164,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L811",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "contains",
@@ -2174,9 +2174,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L919",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ona1",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ona1"
     },
     {
       "relation": "contains",
@@ -2184,9 +2184,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L920",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ona2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ona2"
     },
     {
       "relation": "contains",
@@ -2194,9 +2194,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L921",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_ona3",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ona3"
     },
     {
       "relation": "contains",
@@ -2204,9 +2204,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L923",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_minimize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_minimize"
     },
     {
       "relation": "contains",
@@ -2214,9 +2214,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L974",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "dashboard_mqh",
-      "target": "mt5_kat_orb_dashboard_maximize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_maximize"
     },
     {
       "relation": "method",
@@ -2224,9 +2224,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L112",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_cdashboard",
-      "target": "mt5_kat_orb_dashboard_cdashboard_cdashboard",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_cdashboard_cdashboard"
     },
     {
       "relation": "calls",
@@ -2235,9 +2235,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L227",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_createpanel",
-      "target": "mt5_kat_orb_dashboard_ml",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ml"
     },
     {
       "relation": "calls",
@@ -2246,9 +2246,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L228",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_createpanel",
-      "target": "mt5_kat_orb_dashboard_msep",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_msep"
     },
     {
       "relation": "calls",
@@ -2257,9 +2257,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L251",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_createpanel",
-      "target": "mt5_kat_orb_dashboard_mb",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_mb"
     },
     {
       "relation": "calls",
@@ -2268,9 +2268,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L281",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_createpanel",
-      "target": "mt5_kat_orb_dashboard_me",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_me"
     },
     {
       "relation": "calls",
@@ -2279,9 +2279,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L820",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updtabs",
-      "target": "mt5_kat_orb_dashboard_ctrlshow",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshow"
     },
     {
       "relation": "calls",
@@ -2290,9 +2290,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L977",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_maximize",
-      "target": "mt5_kat_orb_dashboard_ctrlshow",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshow"
     },
     {
       "relation": "calls",
@@ -2301,9 +2301,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L884",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updtabs",
-      "target": "mt5_kat_orb_dashboard_ctrlshowbtn",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshowbtn"
     },
     {
       "relation": "calls",
@@ -2312,9 +2312,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L885",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updtabs",
-      "target": "mt5_kat_orb_dashboard_ctrlshowedit",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlshowedit"
     },
     {
       "relation": "calls",
@@ -2323,9 +2323,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L842",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updtabs",
-      "target": "mt5_kat_orb_dashboard_ctrlhide",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlhide"
     },
     {
       "relation": "calls",
@@ -2334,9 +2334,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L926",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_minimize",
-      "target": "mt5_kat_orb_dashboard_ctrlhide",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ctrlhide"
     },
     {
       "relation": "calls",
@@ -2345,9 +2345,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L485",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_getparams",
-      "target": "mt5_kat_orb_dashboard_savetab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_savetab"
     },
     {
       "relation": "calls",
@@ -2356,9 +2356,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L806",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabmain",
-      "target": "mt5_kat_orb_dashboard_savetab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_savetab"
     },
     {
       "relation": "calls",
@@ -2367,9 +2367,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L807",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabm2",
-      "target": "mt5_kat_orb_dashboard_savetab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_savetab"
     },
     {
       "relation": "calls",
@@ -2378,9 +2378,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L808",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabm5",
-      "target": "mt5_kat_orb_dashboard_savetab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_savetab"
     },
     {
       "relation": "calls",
@@ -2389,9 +2389,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L809",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabstats",
-      "target": "mt5_kat_orb_dashboard_savetab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_savetab"
     },
     {
       "relation": "calls",
@@ -2400,9 +2400,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L562",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updmode",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmode"
     },
     {
       "relation": "calls",
@@ -2411,9 +2411,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L563",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updtrail",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtrail"
     },
     {
       "relation": "calls",
@@ -2422,9 +2422,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L567",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updbe",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updbe"
     },
     {
       "relation": "calls",
@@ -2433,9 +2433,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L568",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updufm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updufm"
     },
     {
       "relation": "calls",
@@ -2444,9 +2444,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L570",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updtmr",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtmr"
     },
     {
       "relation": "calls",
@@ -2455,9 +2455,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L571",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updauc",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updauc"
     },
     {
       "relation": "calls",
@@ -2466,9 +2466,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L573",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updaam",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updaam"
     },
     {
       "relation": "calls",
@@ -2477,9 +2477,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L575",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updema1",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema1"
     },
     {
       "relation": "calls",
@@ -2488,9 +2488,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L577",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updema2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema2"
     },
     {
       "relation": "calls",
@@ -2499,9 +2499,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L579",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updema3",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema3"
     },
     {
       "relation": "calls",
@@ -2510,9 +2510,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L581",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updcont",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updcont"
     },
     {
       "relation": "calls",
@@ -2521,9 +2521,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L582",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updmaxs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmaxs"
     },
     {
       "relation": "calls",
@@ -2532,9 +2532,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L584",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updmaxl",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmaxl"
     },
     {
       "relation": "calls",
@@ -2543,9 +2543,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L586",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_loadtab",
-      "target": "mt5_kat_orb_dashboard_updbigm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updbigm"
     },
     {
       "relation": "calls",
@@ -2554,9 +2554,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L596",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_setinitialparams",
-      "target": "mt5_kat_orb_dashboard_loadtab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_loadtab"
     },
     {
       "relation": "calls",
@@ -2565,9 +2565,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L806",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabmain",
-      "target": "mt5_kat_orb_dashboard_loadtab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_loadtab"
     },
     {
       "relation": "calls",
@@ -2576,9 +2576,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L807",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabm2",
-      "target": "mt5_kat_orb_dashboard_loadtab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_loadtab"
     },
     {
       "relation": "calls",
@@ -2587,9 +2587,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L808",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabm5",
-      "target": "mt5_kat_orb_dashboard_loadtab",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_loadtab"
     },
     {
       "relation": "calls",
@@ -2598,9 +2598,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L594",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_setinitialparams",
-      "target": "mt5_kat_orb_dashboard_updtoggles",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtoggles"
     },
     {
       "relation": "calls",
@@ -2609,9 +2609,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L595",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_setinitialparams",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "calls",
@@ -2620,9 +2620,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L619",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontoggleglobal",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontoggleglobal"
     },
     {
       "relation": "calls",
@@ -2631,9 +2631,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L620",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontogglem2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontogglem2"
     },
     {
       "relation": "calls",
@@ -2642,9 +2642,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L621",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontogglem5",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontogglem5"
     },
     {
       "relation": "calls",
@@ -2653,9 +2653,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L622",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontabmain",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabmain"
     },
     {
       "relation": "calls",
@@ -2664,9 +2664,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L623",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontabm2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabm2"
     },
     {
       "relation": "calls",
@@ -2675,9 +2675,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L624",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontabm5",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabm5"
     },
     {
       "relation": "calls",
@@ -2686,9 +2686,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L625",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontabstats",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontabstats"
     },
     {
       "relation": "calls",
@@ -2697,9 +2697,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L627",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onsls",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onsls"
     },
     {
       "relation": "calls",
@@ -2708,9 +2708,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L628",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onboth",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onboth"
     },
     {
       "relation": "calls",
@@ -2719,9 +2719,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L629",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onbuyo",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onbuyo"
     },
     {
       "relation": "calls",
@@ -2730,9 +2730,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L630",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onsello",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onsello"
     },
     {
       "relation": "calls",
@@ -2741,9 +2741,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L631",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontrm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontrm"
     },
     {
       "relation": "calls",
@@ -2752,9 +2752,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L632",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onbetoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onbetoggle"
     },
     {
       "relation": "calls",
@@ -2763,9 +2763,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L633",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onufmtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onufmtoggle"
     },
     {
       "relation": "calls",
@@ -2774,9 +2774,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L634",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ontmrtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ontmrtoggle"
     },
     {
       "relation": "calls",
@@ -2785,9 +2785,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L635",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onauctoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onauctoggle"
     },
     {
       "relation": "calls",
@@ -2796,9 +2796,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L636",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onaamtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onaamtoggle"
     },
     {
       "relation": "calls",
@@ -2807,9 +2807,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L637",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onema1toggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onema1toggle"
     },
     {
       "relation": "calls",
@@ -2818,9 +2818,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L638",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onema2toggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onema2toggle"
     },
     {
       "relation": "calls",
@@ -2829,9 +2829,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L639",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onema3toggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onema3toggle"
     },
     {
       "relation": "calls",
@@ -2840,9 +2840,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L640",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onconttoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onconttoggle"
     },
     {
       "relation": "calls",
@@ -2851,9 +2851,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L641",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onmaxstoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onmaxstoggle"
     },
     {
       "relation": "calls",
@@ -2862,9 +2862,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L642",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onmaxltoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onmaxltoggle"
     },
     {
       "relation": "calls",
@@ -2873,9 +2873,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L643",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_onbigmtoggle",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_onbigmtoggle"
     },
     {
       "relation": "calls",
@@ -2884,9 +2884,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L644",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ona1",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ona1"
     },
     {
       "relation": "calls",
@@ -2895,9 +2895,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L645",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ona2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ona2"
     },
     {
       "relation": "calls",
@@ -2906,9 +2906,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L646",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_handledirectclick",
-      "target": "mt5_kat_orb_dashboard_ona3",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_ona3"
     },
     {
       "relation": "calls",
@@ -2917,9 +2917,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L652",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updatebalanceinfo",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "calls",
@@ -2928,9 +2928,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L682",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updateequitypl",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "calls",
@@ -2939,9 +2939,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L696",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updaterealtimerr",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "calls",
@@ -2950,9 +2950,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L719",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_updatestatstab",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "calls",
@@ -2961,9 +2961,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L739",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_update2mpl",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "calls",
@@ -2972,9 +2972,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L744",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_update5mpl",
-      "target": "mt5_kat_orb_dashboard_formatmoneyround",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_formatmoneyround"
     },
     {
       "relation": "calls",
@@ -2983,9 +2983,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L751",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onboth",
-      "target": "mt5_kat_orb_dashboard_updmode",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmode"
     },
     {
       "relation": "calls",
@@ -2994,9 +2994,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L752",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onbuyo",
-      "target": "mt5_kat_orb_dashboard_updmode",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmode"
     },
     {
       "relation": "calls",
@@ -3005,9 +3005,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L753",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onsello",
-      "target": "mt5_kat_orb_dashboard_updmode",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmode"
     },
     {
       "relation": "calls",
@@ -3016,9 +3016,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L759",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontrm",
-      "target": "mt5_kat_orb_dashboard_updtrail",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtrail"
     },
     {
       "relation": "calls",
@@ -3027,9 +3027,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L763",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onbetoggle",
-      "target": "mt5_kat_orb_dashboard_updbe",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updbe"
     },
     {
       "relation": "calls",
@@ -3038,9 +3038,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L767",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onufmtoggle",
-      "target": "mt5_kat_orb_dashboard_updufm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updufm"
     },
     {
       "relation": "calls",
@@ -3049,9 +3049,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L769",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontmrtoggle",
-      "target": "mt5_kat_orb_dashboard_updtmr",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtmr"
     },
     {
       "relation": "calls",
@@ -3060,9 +3060,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L771",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onauctoggle",
-      "target": "mt5_kat_orb_dashboard_updauc",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updauc"
     },
     {
       "relation": "calls",
@@ -3071,9 +3071,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L773",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onaamtoggle",
-      "target": "mt5_kat_orb_dashboard_updaam",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updaam"
     },
     {
       "relation": "calls",
@@ -3082,9 +3082,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L775",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onema1toggle",
-      "target": "mt5_kat_orb_dashboard_updema1",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema1"
     },
     {
       "relation": "calls",
@@ -3093,9 +3093,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L777",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onema2toggle",
-      "target": "mt5_kat_orb_dashboard_updema2",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema2"
     },
     {
       "relation": "calls",
@@ -3104,9 +3104,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L779",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onema3toggle",
-      "target": "mt5_kat_orb_dashboard_updema3",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updema3"
     },
     {
       "relation": "calls",
@@ -3115,9 +3115,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L782",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onconttoggle",
-      "target": "mt5_kat_orb_dashboard_updcont",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updcont"
     },
     {
       "relation": "calls",
@@ -3126,9 +3126,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L785",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onmaxstoggle",
-      "target": "mt5_kat_orb_dashboard_updmaxs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmaxs"
     },
     {
       "relation": "calls",
@@ -3137,9 +3137,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L788",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onmaxltoggle",
-      "target": "mt5_kat_orb_dashboard_updmaxl",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updmaxl"
     },
     {
       "relation": "calls",
@@ -3148,9 +3148,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L791",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_onbigmtoggle",
-      "target": "mt5_kat_orb_dashboard_updbigm",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updbigm"
     },
     {
       "relation": "calls",
@@ -3159,9 +3159,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L793",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontoggleglobal",
-      "target": "mt5_kat_orb_dashboard_updtoggles",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtoggles"
     },
     {
       "relation": "calls",
@@ -3170,9 +3170,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L794",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontogglem2",
-      "target": "mt5_kat_orb_dashboard_updtoggles",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtoggles"
     },
     {
       "relation": "calls",
@@ -3181,9 +3181,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L795",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontogglem5",
-      "target": "mt5_kat_orb_dashboard_updtoggles",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtoggles"
     },
     {
       "relation": "calls",
@@ -3192,9 +3192,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L806",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabmain",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "calls",
@@ -3203,9 +3203,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L807",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabm2",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "calls",
@@ -3214,9 +3214,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L808",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabm5",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "calls",
@@ -3225,9 +3225,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L809",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_ontabstats",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "calls",
@@ -3236,9 +3236,9 @@
       "source_file": "Dashboard.mqh",
       "source_location": "L983",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_dashboard_maximize",
-      "target": "mt5_kat_orb_dashboard_updtabs",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_dashboard_updtabs"
     },
     {
       "relation": "contains",
@@ -3246,9 +3246,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L145",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_dashboardparams",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_dashboardparams"
     },
     {
       "relation": "contains",
@@ -3256,9 +3256,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L197",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_systemconfig",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_systemconfig"
     },
     {
       "relation": "contains",
@@ -3266,9 +3266,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L222",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_newsevent",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_newsevent"
     },
     {
       "relation": "contains",
@@ -3276,9 +3276,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L226",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_initpreset",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_initpreset"
     },
     {
       "relation": "contains",
@@ -3286,9 +3286,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L239",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_timeframetostring",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_timeframetostring"
     },
     {
       "relation": "contains",
@@ -3296,9 +3296,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L251",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_stringtotimeframe",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_stringtotimeframe"
     },
     {
       "relation": "contains",
@@ -3306,9 +3306,9 @@
       "source_file": "Defines.mqh",
       "source_location": "L263",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "defines_mqh",
-      "target": "mt5_kat_orb_defines_timeframetoindex",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_defines_timeframetoindex"
     },
     {
       "relation": "calls",
@@ -3327,9 +3327,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L83",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_ismarketopen",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_ismarketopen"
     },
     {
       "relation": "contains",
@@ -3337,9 +3337,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L117",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_timedayofweek",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_timedayofweek"
     },
     {
       "relation": "contains",
@@ -3347,9 +3347,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L119",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_oninit",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_oninit"
     },
     {
       "relation": "contains",
@@ -3357,9 +3357,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L155",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_ondeinit",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_ondeinit"
     },
     {
       "relation": "contains",
@@ -3367,9 +3367,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_ontick",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_ontick"
     },
     {
       "relation": "contains",
@@ -3377,9 +3377,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_updatetradestats",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_updatetradestats"
     },
     {
       "relation": "contains",
@@ -3387,9 +3387,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L242",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_ontimer",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_ontimer"
     },
     {
       "relation": "contains",
@@ -3397,9 +3397,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L387",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_onchartevent",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_onchartevent"
     },
     {
       "relation": "contains",
@@ -3407,9 +3407,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L456",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mq5",
-      "target": "mt5_kat_orb_mt5_kat_orb_ontradetransaction",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_ontradetransaction"
     },
     {
       "relation": "calls",
@@ -3418,9 +3418,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L163",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mt5_kat_orb_ontick",
-      "target": "mt5_kat_orb_mt5_kat_orb_ismarketopen",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_ismarketopen"
     },
     {
       "relation": "calls",
@@ -3429,9 +3429,9 @@
       "source_file": "mt5-kat-ORB.mq5",
       "source_location": "L252",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_mt5_kat_orb_ontimer",
-      "target": "mt5_kat_orb_mt5_kat_orb_updatetradestats",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_mt5_kat_orb_updatetradestats"
     },
     {
       "relation": "contains",
@@ -3439,9 +3439,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsmanager_mqh",
-      "target": "mt5_kat_orb_newsmanager_cnewsmanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_cnewsmanager"
     },
     {
       "relation": "contains",
@@ -3449,9 +3449,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsmanager_mqh",
-      "target": "mt5_kat_orb_newsmanager_nyotoutc",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_nyotoutc"
     },
     {
       "relation": "contains",
@@ -3459,9 +3459,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L54",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsmanager_mqh",
-      "target": "mt5_kat_orb_newsmanager_calcnextnyoevent",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_calcnextnyoevent"
     },
     {
       "relation": "contains",
@@ -3469,9 +3469,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsmanager_mqh",
-      "target": "mt5_kat_orb_newsmanager_update",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_update"
     },
     {
       "relation": "contains",
@@ -3479,9 +3479,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsmanager_mqh",
-      "target": "mt5_kat_orb_newsmanager_getnexteventstring",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_getnexteventstring"
     },
     {
       "relation": "method",
@@ -3489,9 +3489,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_newsmanager_cnewsmanager",
-      "target": "mt5_kat_orb_newsmanager_cnewsmanager_cnewsmanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_cnewsmanager_cnewsmanager"
     },
     {
       "relation": "calls",
@@ -3500,9 +3500,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_newsmanager_calcnextnyoevent",
-      "target": "mt5_kat_orb_newsmanager_nyotoutc",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_nyotoutc"
     },
     {
       "relation": "calls",
@@ -3511,9 +3511,9 @@
       "source_file": "NewsManager.mqh",
       "source_location": "L82",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_newsmanager_update",
-      "target": "mt5_kat_orb_newsmanager_calcnextnyoevent",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_newsmanager_calcnextnyoevent"
     },
     {
       "relation": "contains",
@@ -3521,9 +3521,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L87",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_cordermanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_cordermanager"
     },
     {
       "relation": "contains",
@@ -3531,9 +3531,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_init",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_init"
     },
     {
       "relation": "contains",
@@ -3541,9 +3541,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L96",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_resetstate",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_resetstate"
     },
     {
       "relation": "contains",
@@ -3551,9 +3551,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L112",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_getcandlerange",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_getcandlerange"
     },
     {
       "relation": "contains",
@@ -3561,9 +3561,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L127",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_generateordertag",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_generateordertag"
     },
     {
       "relation": "contains",
@@ -3571,9 +3571,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L135",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_draworblines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_draworblines"
     },
     {
       "relation": "contains",
@@ -3581,9 +3581,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L177",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_drawtradelines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_drawtradelines"
     },
     {
       "relation": "contains",
@@ -3591,9 +3591,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L225",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_deletelines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_deletelines"
     },
     {
       "relation": "contains",
@@ -3601,9 +3601,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L238",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_cleanuplines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_cleanuplines"
     },
     {
       "relation": "contains",
@@ -3611,9 +3611,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L244",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_processorb",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_processorb"
     },
     {
       "relation": "contains",
@@ -3621,9 +3621,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L360",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_getstatus",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_getstatus"
     },
     {
       "relation": "contains",
@@ -3631,9 +3631,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L374",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_getstatuscolor",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_getstatuscolor"
     },
     {
       "relation": "contains",
@@ -3641,9 +3641,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L385",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_cancelallpending",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_cancelallpending"
     },
     {
       "relation": "contains",
@@ -3651,9 +3651,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L402",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_getemavalue",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_getemavalue"
     },
     {
       "relation": "contains",
@@ -3661,9 +3661,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L415",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ordermanager_mqh",
-      "target": "mt5_kat_orb_ordermanager_checkautocancel",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_checkautocancel"
     },
     {
       "relation": "calls",
@@ -3672,9 +3672,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_cordermanager",
-      "target": "mt5_kat_orb_ordermanager_resetstate",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_resetstate"
     },
     {
       "relation": "calls",
@@ -3683,9 +3683,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L250",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_processorb",
-      "target": "mt5_kat_orb_ordermanager_resetstate",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_resetstate"
     },
     {
       "relation": "calls",
@@ -3694,9 +3694,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L325",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_processorb",
-      "target": "mt5_kat_orb_ordermanager_generateordertag",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_generateordertag"
     },
     {
       "relation": "calls",
@@ -3705,9 +3705,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L271",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_processorb",
-      "target": "mt5_kat_orb_ordermanager_draworblines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_draworblines"
     },
     {
       "relation": "calls",
@@ -3716,9 +3716,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L331",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_processorb",
-      "target": "mt5_kat_orb_ordermanager_drawtradelines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_drawtradelines"
     },
     {
       "relation": "calls",
@@ -3727,9 +3727,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L240",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_cleanuplines",
-      "target": "mt5_kat_orb_ordermanager_deletelines",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_deletelines"
     },
     {
       "relation": "calls",
@@ -3760,9 +3760,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L544",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_checkautocancel",
-      "target": "mt5_kat_orb_ordermanager_cancelallpending",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_cancelallpending"
     },
     {
       "relation": "calls",
@@ -3771,9 +3771,9 @@
       "source_file": "OrderManager.mqh",
       "source_location": "L508",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_ordermanager_checkautocancel",
-      "target": "mt5_kat_orb_ordermanager_getemavalue",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_ordermanager_getemavalue"
     },
     {
       "relation": "calls",
@@ -3792,9 +3792,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_criskmanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_criskmanager"
     },
     {
       "relation": "contains",
@@ -3802,9 +3802,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_calclotsize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_calclotsize"
     },
     {
       "relation": "contains",
@@ -3812,9 +3812,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_gettickvalue",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_gettickvalue"
     },
     {
       "relation": "contains",
@@ -3822,9 +3822,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L99",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_getticksize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getticksize"
     },
     {
       "relation": "contains",
@@ -3832,9 +3832,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L105",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_getpoint",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getpoint"
     },
     {
       "relation": "contains",
@@ -3842,9 +3842,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L111",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_getminlot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getminlot"
     },
     {
       "relation": "contains",
@@ -3852,9 +3852,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L117",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_getmaxlot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getmaxlot"
     },
     {
       "relation": "contains",
@@ -3862,9 +3862,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L123",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_getlotstep",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getlotstep"
     },
     {
       "relation": "contains",
@@ -3872,9 +3872,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L129",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_getspread",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getspread"
     },
     {
       "relation": "contains",
@@ -3882,9 +3882,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L137",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_normalizelot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_normalizelot"
     },
     {
       "relation": "contains",
@@ -3892,9 +3892,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "riskmanager_mqh",
-      "target": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_calcriskrewardinfo"
     },
     {
       "relation": "method",
@@ -3902,9 +3902,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_criskmanager",
-      "target": "mt5_kat_orb_riskmanager_criskmanager_criskmanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_criskmanager_criskmanager"
     },
     {
       "relation": "calls",
@@ -3913,9 +3913,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calclotsize",
-      "target": "mt5_kat_orb_riskmanager_getminlot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getminlot"
     },
     {
       "relation": "calls",
@@ -3924,9 +3924,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calclotsize",
-      "target": "mt5_kat_orb_riskmanager_gettickvalue",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_gettickvalue"
     },
     {
       "relation": "calls",
@@ -3935,9 +3935,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calclotsize",
-      "target": "mt5_kat_orb_riskmanager_getticksize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getticksize"
     },
     {
       "relation": "calls",
@@ -3946,9 +3946,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L58",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calclotsize",
-      "target": "mt5_kat_orb_riskmanager_getpoint",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getpoint"
     },
     {
       "relation": "calls",
@@ -3957,9 +3957,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L83",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calclotsize",
-      "target": "mt5_kat_orb_riskmanager_normalizelot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_normalizelot"
     },
     {
       "relation": "calls",
@@ -3968,9 +3968,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L168",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
-      "target": "mt5_kat_orb_riskmanager_calclotsize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_calclotsize"
     },
     {
       "relation": "calls",
@@ -3979,9 +3979,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L173",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
-      "target": "mt5_kat_orb_riskmanager_gettickvalue",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_gettickvalue"
     },
     {
       "relation": "calls",
@@ -3990,9 +3990,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L174",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
-      "target": "mt5_kat_orb_riskmanager_getticksize",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getticksize"
     },
     {
       "relation": "calls",
@@ -4001,9 +4001,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L175",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
-      "target": "mt5_kat_orb_riskmanager_getpoint",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getpoint"
     },
     {
       "relation": "calls",
@@ -4056,9 +4056,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L139",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_normalizelot",
-      "target": "mt5_kat_orb_riskmanager_getminlot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getminlot"
     },
     {
       "relation": "calls",
@@ -4067,9 +4067,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_normalizelot",
-      "target": "mt5_kat_orb_riskmanager_getmaxlot",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getmaxlot"
     },
     {
       "relation": "calls",
@@ -4078,9 +4078,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L141",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_normalizelot",
-      "target": "mt5_kat_orb_riskmanager_getlotstep",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getlotstep"
     },
     {
       "relation": "calls",
@@ -4089,9 +4089,9 @@
       "source_file": "RiskManager.mqh",
       "source_location": "L168",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_riskmanager_calcriskrewardinfo",
-      "target": "mt5_kat_orb_riskmanager_getspread",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_riskmanager_getspread"
     },
     {
       "relation": "contains",
@@ -4099,9 +4099,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_ctimemanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_ctimemanager"
     },
     {
       "relation": "contains",
@@ -4109,9 +4109,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_reset",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_reset"
     },
     {
       "relation": "contains",
@@ -4119,9 +4119,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_getbrokergmtoffset",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_getbrokergmtoffset"
     },
     {
       "relation": "contains",
@@ -4129,9 +4129,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L76",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_nytimetoservertime",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_nytimetoservertime"
     },
     {
       "relation": "contains",
@@ -4139,9 +4139,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L117",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_calculatetargettime",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_calculatetargettime"
     },
     {
       "relation": "contains",
@@ -4149,9 +4149,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L141",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_markfired",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_markfired"
     },
     {
       "relation": "contains",
@@ -4159,9 +4159,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L151",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_getcountdownstring",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_getcountdownstring"
     },
     {
       "relation": "contains",
@@ -4169,9 +4169,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L169",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_getnytimestring",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_getnytimestring"
     },
     {
       "relation": "contains",
@@ -4179,9 +4179,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L187",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_getnyampmstring",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_getnyampmstring"
     },
     {
       "relation": "contains",
@@ -4189,9 +4189,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L201",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "timemanager_mqh",
-      "target": "mt5_kat_orb_timemanager_getnydatestring",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_getnydatestring"
     },
     {
       "relation": "method",
@@ -4199,9 +4199,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_timemanager_ctimemanager",
-      "target": "mt5_kat_orb_timemanager_ctimemanager_ctimemanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_ctimemanager_ctimemanager"
     },
     {
       "relation": "calls",
@@ -4210,9 +4210,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_timemanager_ctimemanager",
-      "target": "mt5_kat_orb_timemanager_reset",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_reset"
     },
     {
       "relation": "calls",
@@ -4221,9 +4221,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_timemanager_nytimetoservertime",
-      "target": "mt5_kat_orb_timemanager_getbrokergmtoffset",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_getbrokergmtoffset"
     },
     {
       "relation": "calls",
@@ -4232,9 +4232,9 @@
       "source_file": "TimeManager.mqh",
       "source_location": "L135",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_timemanager_calculatetargettime",
-      "target": "mt5_kat_orb_timemanager_nytimetoservertime",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_timemanager_nytimetoservertime"
     },
     {
       "relation": "contains",
@@ -4242,9 +4242,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "trailmanager_mqh",
-      "target": "mt5_kat_orb_trailmanager_ctrailmanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_ctrailmanager"
     },
     {
       "relation": "contains",
@@ -4252,9 +4252,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L53",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "trailmanager_mqh",
-      "target": "mt5_kat_orb_trailmanager_process",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_process"
     },
     {
       "relation": "contains",
@@ -4262,9 +4262,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L88",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "trailmanager_mqh",
-      "target": "mt5_kat_orb_trailmanager_managebreakevenaggregate",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_managebreakevenaggregate"
     },
     {
       "relation": "contains",
@@ -4272,9 +4272,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L181",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "trailmanager_mqh",
-      "target": "mt5_kat_orb_trailmanager_managetrailing",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_managetrailing"
     },
     {
       "relation": "contains",
@@ -4282,9 +4282,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L243",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "trailmanager_mqh",
-      "target": "mt5_kat_orb_trailmanager_forcebreakeven",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_forcebreakeven"
     },
     {
       "relation": "contains",
@@ -4292,9 +4292,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L322",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "trailmanager_mqh",
-      "target": "mt5_kat_orb_trailmanager_managecandletrailshift",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_managecandletrailshift"
     },
     {
       "relation": "method",
@@ -4302,9 +4302,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_trailmanager_ctrailmanager",
-      "target": "mt5_kat_orb_trailmanager_ctrailmanager_ctrailmanager",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_ctrailmanager_ctrailmanager"
     },
     {
       "relation": "calls",
@@ -4313,9 +4313,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_trailmanager_process",
-      "target": "mt5_kat_orb_trailmanager_managebreakevenaggregate",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_managebreakevenaggregate"
     },
     {
       "relation": "calls",
@@ -4324,9 +4324,9 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_trailmanager_process",
-      "target": "mt5_kat_orb_trailmanager_managetrailing",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_managetrailing"
     },
     {
       "relation": "calls",
@@ -4335,11 +4335,11 @@
       "source_file": "TrailManager.mqh",
       "source_location": "L79",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mt5_kat_orb_trailmanager_process",
-      "target": "mt5_kat_orb_trailmanager_managecandletrailshift",
-      "confidence_score": 1.0
+      "target": "mt5_kat_orb_trailmanager_managecandletrailshift"
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ec3a125a49777e25156f345a6719e1999a4d069d"
+  "built_at_commit": "e1ac52b2f93d35184bcdba13147dda065057e0a8"
 }
