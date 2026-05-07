@@ -13,6 +13,7 @@ private:
    CEdit m_lblVer, m_lblSym, m_lblMktLine, m_lblSpdVal, m_lblMktStatus;
    CEdit m_lblClkTag, m_lblClkVal, m_lblClkAmPm, m_lblClkDate;
    CEdit m_lblNewsTag, m_lblNewsVal;
+   CEdit m_lblTimerTag, m_lblTimerVal;
    CEdit m_lblSlTag, m_lblMdTag;
    
    CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
@@ -32,9 +33,12 @@ private:
    CButton m_btnBE;
    CEdit m_lblBETag;
    CEdit m_lblExpTag;
-   CButton m_btnExpire;
-   CEdit m_lblExpCandles;
-   CEdit m_edtExpCandles;
+   CEdit m_lblUfmTag, m_edtUfmPts;
+   CButton m_btnUfm;
+   CEdit m_lblTmrTag;
+   CButton m_btnTmr;
+   CEdit m_lblAucTag, m_edtAuc;
+   CButton m_btnAuc;
    CButton m_btnA1,m_btnA2,m_btnA3;
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
    CEdit m_lblEqTag, m_lblPlTag;
@@ -54,7 +58,8 @@ private:
 
    SystemConfig m_config;
    ENUM_TAB m_activeTab;
-   bool m_slCandle, m_expEnabled, m_beOn;
+   bool m_slCandle, m_beOn;
+   bool m_ufmEnabled, m_tmrEnabled, m_aucEnabled;
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
@@ -84,6 +89,7 @@ public:
    void UpdateBalanceInfo(double b,double r,double rw,double l);
    void ApplyPreset(const PresetParams &pr);
    void UpdateNews(string newsStr);
+   void UpdateTimer(string timerStr);
    void UpdateMarketStatus(bool isOpen);
    void UpdateSymbol(string sym);
    void UpdateInternalTiming(int h, int m, int s) { m_config.main.nyHour=h; m_config.main.nyMinute=m; m_config.main.nySecond=s; }
@@ -110,11 +116,14 @@ private:
    void OnToggleGlobal(); void OnToggleM2(); void OnToggleM5();
    void OnTabMain(); void OnTabM2(); void OnTabM5();
    void OnBrkEv();
-   void OnExpire(); void OnBEToggle();
+   void OnBEToggle();
+   void OnUfmToggle(); void UpdUfm();
+   void OnTmrToggle(); void UpdTmr();
+   void OnAucToggle(); void UpdAuc();
    void OnA1(); void OnA2(); void OnA3();
 
 
-   void UpdMode(); void UpdTrail(); void UpdExpire(); void UpdBE();
+   void UpdMode(); void UpdTrail(); void UpdBE();
    void UpdToggles(); void UpdTabs();
 
 public:
@@ -123,7 +132,7 @@ public:
 };
 
 CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_MAIN;
-   m_expEnabled=false; m_utcOff=-4; m_beOn=false;
+   m_ufmEnabled=false; m_tmrEnabled=false; m_aucEnabled=false; m_utcOff=-4; m_beOn=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
    m_dayOffset=0; m_customTiming=false;
    m_lastClickMs=0; m_lastClickName=""; }
@@ -161,6 +170,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    ML(m_lblNewsTag,"lNw","Next session:",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ML(m_lblNewsVal,"vNw","Loading...",rx,cy,rw,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblTimerTag,"lTm","Countdown",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   ML(m_lblTimerVal,"vTm","--:--:--",rx,cy,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
    
    // --- MAIN TOGGLES ---
    int thw=(cw-4)/2;
@@ -221,10 +232,15 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── AUTO CANCEL PENDING ──
-   ML(m_lblExpTag,"lExT","Auto cancel",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnExpire,"bEx","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblExpCandles,"lExC","Candles limit",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtExpCandles,"eEx","2",rx,cy,rw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
+   ML(m_lblExpTag,"lExT","AUTO CANCEL PENDING ORDER",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cy,80,CTRL_HEIGHT);
+   ME(m_edtUfmPts,"eUfm","100",cx+85,cy,35,CTRL_HEIGHT);
+   MB(m_btnUfm,"bUfm","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblTmrTag,"lTmr","Touch middle range",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   MB(m_btnTmr,"bTmr","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cy,120,CTRL_HEIGHT);
+   ME(m_edtAuc,"eAuc","2",cx+125,cy,30,CTRL_HEIGHT);
+   MB(m_btnAuc,"bAuc","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── PRESETS ──
@@ -337,8 +353,11 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.beActivatePoints=(int)StringToInteger(m_edtBEA.Text());
    p.beLockPoints=(int)StringToInteger(m_edtBEL.Text());
    p.beEnabled=m_beOn;
-   p.expireEnabled=m_expEnabled;
-   p.expireCandles=(int)StringToInteger(m_edtExpCandles.Text());
+   p.unfavorMoveOn=m_ufmEnabled;
+   p.unfavorMovePts=(int)StringToInteger(m_edtUfmPts.Text());
+   p.touchMidOn=m_tmrEnabled;
+   p.unfilledCandlesOn=m_aucEnabled;
+   p.unfilledCandles=(int)StringToInteger(m_edtAuc.Text());
    p.customTiming=m_customTiming;
    p.targetDayOffset=m_dayOffset;
 
@@ -377,8 +396,11 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_edtTSt.Text(IntegerToString(p.trailStep));
    m_edtBEA.Text(IntegerToString(p.beActivatePoints)); m_edtBEL.Text(IntegerToString(p.beLockPoints));
    m_beOn=p.beEnabled; UpdBE();
-   m_expEnabled=p.expireEnabled; UpdExpire();
-   m_edtExpCandles.Text(IntegerToString(p.expireCandles));
+   m_ufmEnabled=p.unfavorMoveOn; UpdUfm();
+   m_edtUfmPts.Text(IntegerToString(p.unfavorMovePts));
+   m_tmrEnabled=p.touchMidOn; UpdTmr();
+   m_aucEnabled=p.unfilledCandlesOn; UpdAuc();
+   m_edtAuc.Text(IntegerToString(p.unfilledCandles));
 }
 
 void CDashboard::SetInitialParams(const SystemConfig &cfg)
@@ -424,7 +446,9 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnSell.Name())          { OnSellO(); return true; }
    if(objName == m_btnTrMode.Name())        { OnTrM(); return true; }
    if(objName == m_btnBE.Name())            { OnBEToggle(); return true; }
-   if(objName == m_btnExpire.Name())        { OnExpire(); return true; }
+   if(objName == m_btnUfm.Name())           { OnUfmToggle(); return true; }
+   if(objName == m_btnTmr.Name())           { OnTmrToggle(); return true; }
+   if(objName == m_btnAuc.Name())           { OnAucToggle(); return true; }
    if(objName == m_btnA1.Name()) { OnA1(); return true; }
    if(objName == m_btnA2.Name()) { OnA2(); return true; }
    if(objName == m_btnA3.Name()) { OnA3(); return true; }
@@ -434,8 +458,9 @@ bool CDashboard::HandleDirectClick(const string &objName)
 
 void CDashboard::UpdateBalanceInfo(double b,double r,double rw,double l)
 { m_lblBalVal.Text("$"+FormatMoneyRound(b)); m_lblRAVal.Text("-$"+FormatMoneyRound(r));
-  m_lblRwVal.Text("+$"+FormatMoneyRound(rw)); m_lblLtVal.Text(DoubleToString(l,2)); }
+   m_lblRwVal.Text("+$"+FormatMoneyRound(rw)); m_lblLtVal.Text(DoubleToString(l,2)); }
 void CDashboard::UpdateNews(string s) { m_lblNewsVal.Text(s); }
+void CDashboard::UpdateTimer(string s) { m_lblTimerVal.Text(s); }
 void CDashboard::UpdateSymbol(string sym) { m_lblSym.Text(sym); MarkDirty(); }
 void CDashboard::UpdateMarketStatus(bool o)
 { m_lblMktStatus.Text(o?"Market Open":"Market Closed"); m_lblMktStatus.Color(o?CLR_MKT_OPEN:CLR_MKT_CLOSED); }
@@ -511,9 +536,12 @@ void CDashboard::OnBEToggle() { m_btnBE.Pressed(false); m_beOn=!m_beOn; UpdBE();
 void CDashboard::UpdBE() { m_btnBE.Text(m_beOn?"ON":"OFF");
    m_btnBE.ColorBackground(m_beOn?CLR_SUCCESS:CLR_BTN_OFF); }
 
-void CDashboard::OnExpire() { m_btnExpire.Pressed(false); m_expEnabled=!m_expEnabled; UpdExpire(); MarkDirty(); }
-void CDashboard::UpdExpire() { m_btnExpire.Text(m_expEnabled?"ON":"OFF");
-   m_btnExpire.ColorBackground(m_expEnabled?CLR_WARNING:CLR_BTN_OFF); }
+void CDashboard::OnUfmToggle() { m_btnUfm.Pressed(false); m_ufmEnabled=!m_ufmEnabled; UpdUfm(); MarkDirty(); }
+void CDashboard::UpdUfm() { m_btnUfm.Text(m_ufmEnabled?"ON":"OFF"); m_btnUfm.ColorBackground(m_ufmEnabled?CLR_WARNING:CLR_BTN_OFF); }
+void CDashboard::OnTmrToggle() { m_btnTmr.Pressed(false); m_tmrEnabled=!m_tmrEnabled; UpdTmr(); MarkDirty(); }
+void CDashboard::UpdTmr() { m_btnTmr.Text(m_tmrEnabled?"ON":"OFF"); m_btnTmr.ColorBackground(m_tmrEnabled?CLR_WARNING:CLR_BTN_OFF); }
+void CDashboard::OnAucToggle() { m_btnAuc.Pressed(false); m_aucEnabled=!m_aucEnabled; UpdAuc(); MarkDirty(); }
+void CDashboard::UpdAuc() { m_btnAuc.Text(m_aucEnabled?"ON":"OFF"); m_btnAuc.ColorBackground(m_aucEnabled?CLR_WARNING:CLR_BTN_OFF); }
 void CDashboard::OnToggleGlobal() { m_btnGlobal.Pressed(false); m_config.globalOverride=!m_config.globalOverride; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2.isActive=!m_config.m2.isActive; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5.isActive=!m_config.m5.isActive; UpdToggles(); MarkDirty(); }

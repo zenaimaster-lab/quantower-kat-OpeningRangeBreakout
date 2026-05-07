@@ -141,8 +141,9 @@ int OnInit()
    cfg.main.orderMode=InpOrderMode;cfg.main.trailMode=InpTrailMode;cfg.main.trailTrigger=InpTrailTrigger;
    cfg.main.trailDistance=InpTrailDistance;cfg.main.trailStep=InpTrailStep;
    cfg.main.beActivatePoints=InpBeActivatePts;cfg.main.beLockPoints=InpBeLockPts;cfg.main.beEnabled=InpBeEnabled;
-   cfg.main.expireEnabled=InpExpireEnabled;cfg.main.expireCandles=InpExpireCandles;
-   
+   cfg.main.unfavorMoveOn=false; cfg.main.unfavorMovePts=100;
+   cfg.main.touchMidOn=false;
+   cfg.main.unfilledCandlesOn=false; cfg.main.unfilledCandles=2;
    cfg.m2 = cfg.main; cfg.m2.timeframe = PERIOD_M2; cfg.m2.comment = "orb-2m";
    cfg.m5 = cfg.main; cfg.m5.timeframe = PERIOD_M5; cfg.m5.comment = "orb-5m";
 
@@ -162,7 +163,9 @@ void OnTick()
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym,SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
    
+   g_orderMgr_M2.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m2);
    g_orderMgr_M2.CheckOCO(); g_orderMgr_M2.ProcessMissingOrders();
+   g_orderMgr_M5.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m5);
    g_orderMgr_M5.CheckOCO(); g_orderMgr_M5.ProcessMissingOrders();
    
    string s2 = g_orderMgr_M2.GetStatus();
@@ -185,6 +188,7 @@ void OnTimer()
    g_newsMgr.SetNYO(p.nyHour,p.nyMinute,p.nySecond,p.utcOffset);
    g_newsMgr.Update();
    g_dashboard.UpdateNews(g_newsMgr.GetNextEventString());
+   g_dashboard.UpdateTimer(g_timeMgr.GetCountdownString());
    if(p.symbol!="")
    { double bal=0,rAmt=0,rwAmt=0,lot=0;
      int displaySlPoints = p.slPoints;

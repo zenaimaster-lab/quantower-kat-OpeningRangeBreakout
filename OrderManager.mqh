@@ -30,6 +30,8 @@ private:
    string            m_missingSymbol;
    datetime          m_placedTime;
    ENUM_TIMEFRAMES   m_placedTf;
+   double            m_placedHigh;
+   double            m_placedLow;
    
 public:
                      COrderManager();
@@ -53,6 +55,7 @@ public:
    bool              HasActiveOrders() const { return m_ordersActive; }
    string            GetLastTag() const { return m_lastOcoTag; }
    string            GetStatus() const;
+   void              CheckAutoCancel(const DashboardParams &p);
 
    
    //--- Virtual properties for testing
@@ -85,6 +88,8 @@ COrderManager::COrderManager()
    m_missingSymbol = "";
    m_placedTime    = 0;
    m_placedTf      = PERIOD_M2;
+   m_placedHigh    = 0;
+   m_placedLow     = 0;
 }
 
 //+------------------------------------------------------------------+
@@ -276,7 +281,12 @@ bool COrderManager::PlaceOCOOrders(const DashboardParams &params)
    else m_missingSell = false;
    
    m_ordersActive = (buyPlaced || sellPlaced || m_missingBuy || m_missingSell);
-   if(m_ordersActive) { m_placedTime = TimeCurrent(); m_placedTf = params.timeframe; }
+   if(m_ordersActive) { 
+       m_placedTime = TimeCurrent(); 
+       m_placedTf = params.timeframe; 
+       m_placedHigh = candleHigh;
+       m_placedLow = candleLow;
+   }
    return m_ordersActive;
 }
 
@@ -453,6 +463,94 @@ string COrderManager::GetStatus() const
    return "IDLE";
 }
 
+//+------------------------------------------------------------------+
+void COrderManager::CheckAutoCancel(const DashboardParams &p)
+{
+   if(!m_ordersActive) return;
+   
+   string symbol = p.symbol;
+   if(symbol == "") return;
+   
+   bool shouldCancel = false;
+   string reason = "";
+   
+   // 1. Unfilled Candles
+   if(p.unfilledCandlesOn && m_placedTime > 0)
+   {
+      int candlesPassed = iBarShift(symbol, p.timeframe, m_placedTime);
+      if(candlesPassed >= p.unfilledCandles)
+      {
+         shouldCancel = true;
+         reason = "Unfilled candles > " + IntegerToString(p.unfilledCandles);
+      }
+   }
+   
+   // Check price-based conditions only if not already cancelled
+   if(!shouldCancel && (p.unfavorMoveOn || p.touchMidOn))
+   {
+      double bid = GetBid(symbol);
+      double ask = GetAsk(symbol);
+      double point = GetPoint(symbol);
+      double midPrice = (m_placedHigh + m_placedLow) / 2.0;
+      
+      // Iterate over pending orders
+      for(int i = OrdersTotal() - 1; i >= 0; i--)
+      {
+         ulong ticket = OrderGetTicket(i);
+         if(!OrderSelect(ticket)) continue;
+         if(OrderGetInteger(ORDER_MAGIC) != g_magic) continue;
+         if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
+         
+         string comment = OrderGetString(ORDER_COMMENT);
+         if(StringFind(comment, m_lastOcoTag) >= 0)
+         {
+            ENUM_ORDER_TYPE type = (ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
+            double openPrice = OrderGetDouble(ORDER_PRICE_OPEN);
+            
+            if(type == ORDER_TYPE_BUY_STOP)
+            {
+               if(p.unfavorMoveOn && bid <= openPrice - p.unfavorMovePts * point)
+               {
+                  shouldCancel = true;
+                  reason = "Unfavor move (BuyStop)";
+                  break;
+               }
+               if(p.touchMidOn && bid <= midPrice)
+               {
+                  shouldCancel = true;
+                  reason = "Touch Mid (BuyStop)";
+                  break;
+               }
+            }
+            else if(type == ORDER_TYPE_SELL_STOP)
+            {
+               if(p.unfavorMoveOn && ask >= openPrice + p.unfavorMovePts * point)
+               {
+                  shouldCancel = true;
+                  reason = "Unfavor move (SellStop)";
+                  break;
+               }
+               if(p.touchMidOn && ask >= midPrice)
+               {
+                  shouldCancel = true;
+                  reason = "Touch Mid (SellStop)";
+                  break;
+               }
+            }
+         }
+      }
+   }
+   
+   if(shouldCancel)
+   {
+      PrintFormat("[OrderMgr] Auto Cancel Triggered: %s", reason);
+      CancelAllPending(symbol);
+      m_lastOcoTag = "";
+      m_ordersActive = false;
+      m_missingBuy = false;
+      m_missingSell = false;
+   }
+}
 
 
 #endif // __ORDERMANAGER_MQH__

@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Orb Breakout"
-#define EA_VERSION        "0.04"
+#define EA_VERSION        "0.05"
 #define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
@@ -51,7 +51,7 @@ extern int g_magic;
 #define CLR_EDIT_BORDER   C'45,45,65'
 #define CLR_BTN_ON        C'30,90,160'
 #define CLR_BTN_OFF       C'45,45,62'
-#define CLR_WARNING       C'220,100,10'
+#define CLR_WARNING       C'220,150,20'
 #define CLR_SUCCESS       C'15,105,60'
 #define CLR_GOLD          C'255,210,80'
 #define CLR_MONEY_GREEN   C'100,220,140'
@@ -118,8 +118,11 @@ struct DashboardParams
    int    beActivatePoints;
    int    beLockPoints;
    bool   beEnabled;
-   int    expireCandles;
-   bool   expireEnabled;
+   int    unfavorMovePts;
+   bool   unfavorMoveOn;
+   bool   touchMidOn;
+   int    unfilledCandles;
+   bool   unfilledCandlesOn;
    string comment;
    bool   isActive;
 
@@ -150,8 +153,11 @@ struct DashboardParams
       beActivatePoints  = 200;
       beLockPoints      = 50;
       beEnabled         = false;
-      expireCandles     = 2;
-      expireEnabled     = false;
+      unfavorMovePts=100;
+      unfavorMoveOn=false;
+      touchMidOn=false;
+      unfilledCandles=2;
+      unfilledCandlesOn=false;
       targetGrowthPercent = 50.0;
       customTiming      = false;
       targetDayOffset   = 0;
