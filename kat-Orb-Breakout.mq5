@@ -170,7 +170,7 @@ void ApplyNewsToTiming()
    NewsEvent ev=g_newsMgr.GetNextEvent(); if(ev.time==0) return;
    DashboardParams p=g_dashboard.GetParams();
    datetime nyTime=ev.time+p.utcOffset*3600; MqlDateTime dt; TimeToStruct(nyTime,dt);
-   g_dashboard.ApplyTimingFromNews(dt.hour,dt.min,dt.sec);
+   g_dashboard.UpdateInternalTiming(dt.hour,dt.min,dt.sec);
    g_dashboard.UpdateStatus("Applied: "+ev.name);
 }
 
@@ -280,7 +280,7 @@ void OnTimer()
    }
    if(p.symbol==""){g_dashboard.UpdateStatus("No symbol");return;}
    if(p.eaMode==EA_AUTO)
-   { g_timeMgr.CalculateTriggerTime(p); g_dashboard.UpdateCountdown(g_timeMgr.GetCountdownString());
+   { g_timeMgr.CalculateTriggerTime(p);
      if(g_timeMgr.IsTimeToTrade())
      { g_dashboard.UpdateStatus("TRIGGERING...");
        if(g_orderMgr.PlaceOCOOrders(p)){g_timeMgr.MarkFired(p);g_dashboard.UpdateStatus("Orders placed ✓");}
@@ -288,7 +288,7 @@ void OnTimer()
        g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus()); }
      else if(g_timeMgr.HasFiredToday()) g_dashboard.UpdateStatus("Fired — change schedule");
      else g_dashboard.UpdateStatus("AUTO — Waiting..."); }
-   else{g_dashboard.UpdateCountdown("MANUAL");g_dashboard.UpdateStatus("Manual mode");}
+   else{g_dashboard.UpdateStatus("Manual mode");}
 }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)

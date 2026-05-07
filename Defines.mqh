@@ -7,8 +7,8 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Orb Breakout"
-#define EA_VERSION        "1.56"
-#define EA_BUILD_DATE     "06 May 2026"
+#define EA_VERSION        "0.01"
+#define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
 

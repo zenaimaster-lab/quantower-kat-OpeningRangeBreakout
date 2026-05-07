@@ -11,10 +11,8 @@ class CDashboard : public CAppDialog
 {
 private:
    CEdit m_lblVer, m_lblSym, m_lblMktLine, m_lblSpdVal, m_lblMktStatus;
-   CEdit m_lblClkTag, m_lblClkVal, m_lblClkAmPm, m_lblClkDate, m_lblCdTag, m_lblCdVal;
+   CEdit m_lblClkTag, m_lblClkVal, m_lblClkAmPm, m_lblClkDate;
    CEdit m_lblNewsTag, m_lblNewsVal;
-   CEdit m_lblSchTag, m_lblC1, m_lblC2, m_lblBefTag, m_lblBefSec;
-   CEdit  m_edtH, m_edtM, m_edtS, m_edtBef;
    CEdit m_lblTfTag, m_lblSlTag, m_lblMdTag, m_lblCsTag;
    CButton m_btnTf;
    CEdit  m_edtSL, m_edtTP;
@@ -41,8 +39,7 @@ private:
    CEdit m_lblRtRrTag, m_lblRtRrLoss, m_lblRtRrPft, m_lblRtRrRiskPc;
    CPanel m_sep[20];
 
-   // v0.66: Day picker (replaces AM/PM + TODAY)
-   CButton m_btnDayPicker;
+
 
 
    void CtrlShow(CWnd &obj);
@@ -75,7 +72,7 @@ public:
    void SetInitialParams(const DashboardParams &p);
    DashboardParams GetParams();
    void UpdateSpread(int s);
-   void UpdateCountdown(string s);
+
    void UpdateStatus(string s);
    void UpdateOrderStatus(string s);
    void UpdateNYClock(string t, string ap, string d);
@@ -84,7 +81,8 @@ public:
    void UpdateNews(string newsStr);
    void UpdateMarketStatus(bool isOpen);
    void UpdateSymbol(string sym);
-   void ApplyTimingFromNews(int h,int m,int s);
+   void UpdateInternalTiming(int h, int m, int s) { m_p.nyHour=h; m_p.nyMinute=m; m_p.nySecond=s; }
+
 
    void UpdateEquityPL(double equity, double profit);
    void UpdateTotalExposed(double lots, int type);
@@ -110,7 +108,7 @@ private:
    void OnExpire(); void OnBEToggle();
    void OnA1(); void OnA2(); void OnA3();
    void OnNyoOnly(); void OnAutoApply(); void OnApplyNextClick();
-   void OnDayPicker();
+
    void UpdMode(); void UpdTrail(); void UpdCandleSrc(); void UpdExpire(); void UpdBE();
 
 public:
@@ -154,9 +152,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblClkTag,"lCk","NY Time",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT,FONT_SIZE_MED);
    ML(m_lblClkVal,"vCk","--:--:--",rx,cy,72,CTRL_HEIGHT,CLR_CLOCK_BLUE,FONT_SIZE_MED);
    ML(m_lblClkAmPm,"vCkAP","--",rx+74,cy,32,CTRL_HEIGHT,CLR_REVERSE,FONT_SIZE_MED);
-   ML(m_lblClkDate,"vCkD","(-- ---)",rx+108,cy,rw-108,CTRL_HEIGHT,CLR_TEXT_DIM,FONT_SIZE_MED); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblCdTag,"lCd","Countdown",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT,FONT_SIZE_MED);
-   ML(m_lblCdVal,"vCd","--:--:--",rx,cy,rw,CTRL_HEIGHT,CLR_WARNING,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
+   ML(m_lblClkDate,"vCkD","(-- ---)",rx+108,cy,rw-108,CTRL_HEIGHT,CLR_TEXT_DIM,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── EVENTS / CONTROLS ──
@@ -169,17 +165,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnApplyNext,"bAN","APPLY NEXT",cx+hw2+4,cy,hw2,CTRL_HEIGHT+2,CLR_PRESET); cy+=CTRL_HEIGHT+2+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── TIMING ──
-   int tw=44;
-   ML(m_lblSchTag,"lSc","Target H:M:S",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtH,"eH","9",rx,cy,tw,CTRL_HEIGHT); ML(m_lblC1,"c1",":",rx+tw+2,cy,7,CTRL_HEIGHT);
-   ME(m_edtM,"eM","30",rx+tw+12,cy,tw,CTRL_HEIGHT); ML(m_lblC2,"c2",":",rx+tw*2+14,cy,7,CTRL_HEIGHT);
-   ME(m_edtS,"eS","0",rx+tw*2+24,cy,tw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblBefTag,"lBf","Trigger before",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtBef,"eBf","10",rx,cy,40,CTRL_HEIGHT);
-   ML(m_lblBefSec,"lBs","sec",rx+45,cy,30,CTRL_HEIGHT,CLR_TEXT_DIM);
-   MB(m_btnDayPicker,"bDP","TODAY",cx+cw-110,cy,110,CTRL_HEIGHT,CLR_BTN_OFF); cy+=CTRL_HEIGHT+8;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+
 
    // ── ORDER ──
    ML(m_lblTfTag,"lTf","Timeframe",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
@@ -316,11 +302,7 @@ DashboardParams CDashboard::GetParams()
    DashboardParams p = m_p;
    // v0.89: These were missing — symbol + timing MUST be read from UI
    p.symbol = m_lblSym.Text();
-   p.nyHour = (int)StringToInteger(m_edtH.Text());
-   p.nyMinute = (int)StringToInteger(m_edtM.Text());
-   p.nySecond = (int)StringToInteger(m_edtS.Text());
    p.utcOffset = m_utcOff;
-   p.triggerBeforeSec = (int)StringToInteger(m_edtBef.Text());
    string tf = m_btnTf.Text();
    if(tf=="M1") p.timeframe = PERIOD_M1;
    else if(tf=="M5") p.timeframe = PERIOD_M5;
@@ -362,9 +344,7 @@ void CDashboard::SetInitialParams(const DashboardParams &p)
    else m_btnTf.Text("M2");
 
    m_edtSL.Text(IntegerToString(p.slPoints)); 
-   m_edtH.Text(IntegerToString(p.nyHour)); m_edtM.Text(IntegerToString(p.nyMinute));
-   m_edtS.Text(IntegerToString(p.nySecond)); m_utcOff=p.utcOffset;
-   m_edtBef.Text(IntegerToString(p.triggerBeforeSec));
+   m_utcOff=p.utcOffset;
    m_edtTP.Text(IntegerToString(p.tpPoints));
    m_slCandle=p.slCandle; m_btnSLS.Text(m_slCandle?"SL by Candle✓":"SL by Candle"); m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
    m_edtRisk.Text(DoubleToString(p.riskPercent,1));
@@ -383,7 +363,7 @@ void CDashboard::SetInitialParams(const DashboardParams &p)
 
 // ── UPDATERS ──
 void CDashboard::UpdateSpread(int s) { m_lblSpdVal.Text("Spread: "+IntegerToString(s)); }
-void CDashboard::UpdateCountdown(string s) { m_lblCdVal.Text(s); }
+
 void CDashboard::UpdateStatus(string s) { m_lblStVal.Text(s); }
 void CDashboard::UpdateOrderStatus(string s) { m_lblOsVal.Text(s); }
 void CDashboard::UpdateNYClock(string t, string ap, string d) { m_lblClkVal.Text(t); m_lblClkAmPm.Text(ap); m_lblClkDate.Text(d); }
@@ -405,7 +385,7 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnNyoOnly.Name())       { OnNyoOnly(); return true; }
    if(objName == m_btnAutoApply.Name())     { OnAutoApply(); return true; }
    if(objName == m_btnApplyNext.Name())     { OnApplyNextClick(); return true; }
-   if(objName == m_btnDayPicker.Name())     { OnDayPicker(); return true; }
+
    if(objName == m_btnSLS.Name())           { OnSLS(); return true; }
    if(objName == m_btnBoth.Name())          { OnBoth(); return true; }
    if(objName == m_btnBuy.Name())           { OnBuyO(); return true; }
@@ -440,8 +420,7 @@ void CDashboard::UpdateNews(string s) { m_lblNewsVal.Text(s); }
 void CDashboard::UpdateSymbol(string sym) { m_lblSym.Text(sym); MarkDirty(); }
 void CDashboard::UpdateMarketStatus(bool o)
 { m_lblMktStatus.Text(o?"Market Open":"Market Closed"); m_lblMktStatus.Color(o?CLR_MKT_OPEN:CLR_MKT_CLOSED); }
-void CDashboard::ApplyTimingFromNews(int h,int m,int s)
-{ m_edtH.Text(IntegerToString(h)); m_edtM.Text(IntegerToString(m)); m_edtS.Text(IntegerToString(s)); MarkDirty(); }
+
 void CDashboard::ApplyPreset(const PresetParams &pr)
 { m_edtSL.Text(IntegerToString(pr.sl)); m_edtTP.Text(IntegerToString(pr.tp));
   m_edtRisk.Text(DoubleToString(pr.risk,1));
@@ -542,31 +521,6 @@ void CDashboard::OnAutoApply() { m_btnAutoApply.Pressed(false); m_autoNews=!m_au
 void CDashboard::OnApplyNextClick() { m_btnApplyNext.Pressed(false); PushCmd(CMD_APPLY_NEXT); }
 
 
-void CDashboard::OnDayPicker()
-{
-   m_btnDayPicker.Pressed(false);
-   m_dayOffset = (m_dayOffset + 1) % 7;
-   if(m_dayOffset == 0)
-   {
-      m_btnDayPicker.Text("TODAY");
-      m_btnDayPicker.ColorBackground(CLR_BTN_OFF);
-   }
-   else
-   {
-      // Calculate future date's day name
-      datetime gmtTime = TimeGMT();
-      datetime futureTime = gmtTime + m_dayOffset * 86400;
-      MqlDateTime dt;
-      TimeToStruct(futureTime, dt);
-      string dNames[] = {"SUN","MON","TUE","WED","THU","FRI","SAT"};
-      string months[] = {"","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-      string dayName = (dt.day_of_week >= 0 && dt.day_of_week <= 6) ? dNames[dt.day_of_week] : "?";
-      string mon = (dt.mon >= 1 && dt.mon <= 12) ? months[dt.mon] : "?";
-      m_btnDayPicker.Text(StringFormat("%s, %02d %s", dayName, dt.day, mon));
-      m_btnDayPicker.ColorBackground(CLR_ACCENT);
-   }
-   MarkDirty();
-}
 
 
 
