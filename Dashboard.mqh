@@ -16,6 +16,7 @@ private:
    CEdit m_lblSlTag, m_lblMdTag;
    
    CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
+   CEdit m_lblGlobalTag;
    CButton m_btnTabMain, m_btnTabM2, m_btnTabM5;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
@@ -29,8 +30,10 @@ private:
    CEdit m_edtBEA, m_edtBEL;
    CButton m_btnTrMode;
    CButton m_btnBE;
+   CEdit m_lblBETag;
    CEdit m_lblExpTag;
    CButton m_btnExpire;
+   CEdit m_lblExpCandles;
    CEdit m_edtExpCandles;
    CButton m_btnA1,m_btnA2,m_btnA3;
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
@@ -175,10 +178,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
 
    // ── ORDER ──
-   MB(m_btnGlobal,"bGb","GLOBAL OVERRIDE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_PURPLE); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblSlTag,"lSl","SL / TP",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","3000",rx+59,cy,55,CTRL_HEIGHT);
-   MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
+   ML(m_lblGlobalTag,"lGbT","Global setting",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   MB(m_btnGlobal,"bGb","ON",rx,cy,rw,CTRL_HEIGHT+2,CLR_WARNING); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblMdTag,"lMd","Order mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    int mb=(rw-6)/3;
    MB(m_btnBoth,"bBt","BOTH",rx,cy,mb,CTRL_HEIGHT+2,CLR_BTN_ON);
@@ -200,6 +201,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── TRAIL / BE ──
+   ML(m_lblSlTag,"lSl","SL / TP",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","3000",rx+59,cy,55,CTRL_HEIGHT);
+   MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
    ML(m_lblTrTag,"lTr","Trailing mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnTrMode,"bTm","OFF",rx,cy,rw,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblTrTrig,"lTL","Trigger:",cx,cy,60,CTRL_HEIGHT);
@@ -208,13 +212,19 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ME(m_edtTDi,"eTDi","20",cx+172,cy,35,CTRL_HEIGHT);
    ML(m_lblTrStep,"lStp","Step:",cx+212,cy,40,CTRL_HEIGHT);
    ME(m_edtTSt,"eTSt","5",cx+254,cy,35,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   MB(m_btnBE,"bBE","BE: OFF",cx,cy,cw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblBETag,"lBeT","Breakeven",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   MB(m_btnBE,"bBE","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblBeLine,"lBL","BE Trigger",cx,cy,85,CTRL_HEIGHT);
    ME(m_edtBEA,"eBA","200",cx+87,cy,42,CTRL_HEIGHT);
    ML(m_lblBELock,"lPl","+",cx+131,cy,14,CTRL_HEIGHT);
-   ME(m_edtBEL,"eBL","50",cx+147,cy,42,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   MB(m_btnExpire,"bEx","auto cancel all: OFF",cx,cy,cw-44,CTRL_HEIGHT+2,CLR_BTN_OFF);
-   ME(m_edtExpCandles,"eEx","2",cx+cw-40,cy,40,CTRL_HEIGHT); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   ME(m_edtBEL,"eBL","50",cx+147,cy,42,CTRL_HEIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+
+   // ── AUTO CANCEL PENDING ──
+   ML(m_lblExpTag,"lExT","Auto cancel pending",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   MB(m_btnExpire,"bEx","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblExpCandles,"lExC","Candles limit",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   ME(m_edtExpCandles,"eEx","2",rx,cy,rw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── PRESETS ──
@@ -502,22 +512,22 @@ void CDashboard::UpdTrail() { string t="OFF"; color c=CLR_BTN_OFF;
    case TM_CANDLE_3:t="TRAIL CANDLE[3]";c=CLR_LOCK;break;}
    m_btnTrMode.Text(t); m_btnTrMode.ColorBackground(c); }
 void CDashboard::OnBEToggle() { m_btnBE.Pressed(false); m_beOn=!m_beOn; UpdBE(); MarkDirty(); }
-void CDashboard::UpdBE() { m_btnBE.Text(m_beOn?"BE: ON":"BE: OFF");
+void CDashboard::UpdBE() { m_btnBE.Text(m_beOn?"ON":"OFF");
    m_btnBE.ColorBackground(m_beOn?CLR_SUCCESS:CLR_BTN_OFF); }
 
 void CDashboard::OnExpire() { m_btnExpire.Pressed(false); m_expEnabled=!m_expEnabled; UpdExpire(); MarkDirty(); }
-void CDashboard::UpdExpire() { m_btnExpire.Text(m_expEnabled?"auto cancel all: ON":"auto cancel all: OFF");
+void CDashboard::UpdExpire() { m_btnExpire.Text(m_expEnabled?"ON":"OFF");
    m_btnExpire.ColorBackground(m_expEnabled?CLR_WARNING:CLR_BTN_OFF); }
 void CDashboard::OnToggleGlobal() { m_btnGlobal.Pressed(false); m_config.globalOverride=!m_config.globalOverride; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2.isActive=!m_config.m2.isActive; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5.isActive=!m_config.m5.isActive; UpdToggles(); MarkDirty(); }
 
 void CDashboard::UpdToggles() {
-   m_btnGlobal.Text(m_config.globalOverride ? "GLOBAL OVERRIDE: ON" : "GLOBAL OVERRIDE: OFF");
-   m_btnGlobal.ColorBackground(m_config.globalOverride ? CLR_SUCCESS : CLR_BTN_OFF);
-   m_btnToggleM2.Text(m_config.m2.isActive ? "2m: ON" : "2m: OFF");
+   m_btnGlobal.Text(m_config.globalOverride ? "ON" : "OFF");
+   m_btnGlobal.ColorBackground(m_config.globalOverride ? CLR_WARNING : CLR_BTN_OFF);
+   m_btnToggleM2.Text(m_config.m2.isActive ? "Trade 2m: ON" : "Trade 2m: OFF");
    m_btnToggleM2.ColorBackground(m_config.m2.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
-   m_btnToggleM5.Text(m_config.m5.isActive ? "5m: ON" : "5m: OFF");
+   m_btnToggleM5.Text(m_config.m5.isActive ? "Trade 5m: ON" : "Trade 5m: OFF");
    m_btnToggleM5.ColorBackground(m_config.m5.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
 }
 
