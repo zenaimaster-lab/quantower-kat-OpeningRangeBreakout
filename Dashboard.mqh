@@ -232,12 +232,12 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
    ML(m_lblTrTag,"lTr","Trailing mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnTrMode,"bTm","OFF",rx,cy,rw,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblTrTrig,"lTL","Trigger",cx,cy,60,CTRL_HEIGHT);
-   ME(m_edtTTr,"eTTr","30",cx+62,cy,35,CTRL_HEIGHT);
-   ML(m_lblTrDist,"lDi","Distance",cx+100,cy,70,CTRL_HEIGHT);
-   ME(m_edtTDi,"eTDi","20",cx+172,cy,35,CTRL_HEIGHT);
-   ML(m_lblTrStep,"lStp","Step",cx+212,cy,40,CTRL_HEIGHT);
-   ME(m_edtTSt,"eTSt","5",cx+254,cy,35,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblTrTrig,"lTL","Trigger",cx,cy,45,CTRL_HEIGHT);
+   ME(m_edtTTr,"eTTr","30",cx+47,cy,50,CTRL_HEIGHT);
+   ML(m_lblTrDist,"lDi","Distance",cx+100,cy,52,CTRL_HEIGHT);
+   ME(m_edtTDi,"eTDi","20",cx+154,cy,50,CTRL_HEIGHT);
+   ML(m_lblTrStep,"lStp","Step",cx+207,cy,30,CTRL_HEIGHT);
+   ME(m_edtTSt,"eTSt","5",cx+239,cy,50,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblBETag,"lBeT","Breakeven",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnBE,"bBE","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblBeLine,"lBL","BE Trigger",cx,cy,85,CTRL_HEIGHT);
