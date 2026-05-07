@@ -47,11 +47,7 @@ input group "=== AUTO CANCEL ==="
 input bool            InpExpireEnabled   = false;
 input int             InpExpireCandles   = 2;
 
-input group "=== NEWS FILTER ==="
-input bool InpNewsNFP=true; input bool InpNewsCPI=true; input bool InpNewsFOMC=true;
-input bool InpNewsGDP=true; input bool InpNewsPPI=true; input bool InpNewsRetail=true;
-input bool InpNewsUnemploy=true; input bool InpNewsISM=true; input bool InpNewsPMI=true;
-input bool InpNewsFedSpeak=true; input bool InpNewsECB=true; input bool InpNewsBOE=true;
+
 
 input group "=== PRESETS ==="
 input int InpA1_SL=1500;input int InpA1_TP=3000;input double InpA1_Risk=1.0;
@@ -123,8 +119,7 @@ int OnInit()
 {
    g_magic=InpMagicNumber; g_orderMgr.Init(); g_trailMgr.Init();
    g_newsMgr.SetNYO(InpNyHour,InpNyMinute,InpNySecond,InpUtcOffset);
-   g_newsMgr.SetFilters(InpNewsNFP,InpNewsCPI,InpNewsFOMC,InpNewsGDP,InpNewsPPI,
-      InpNewsRetail,InpNewsUnemploy,InpNewsISM,InpNewsPMI,InpNewsFedSpeak,InpNewsECB,InpNewsBOE);
+
    // Presets — v2.0: uses InitPreset helper (DRY)
    InitPreset(g_presets[0], InpA1_SL,InpA1_TP,InpA1_Risk,InpA1_TrTrig,InpA1_TrDist,InpA1_TrStep,InpA1_TF);
    InitPreset(g_presets[1], InpA2_SL,InpA2_TP,InpA2_Risk,InpA2_TrTrig,InpA2_TrDist,InpA2_TrStep,InpA2_TF);
@@ -165,14 +160,7 @@ void OnTick()
    g_trailMgr.Process(p);
 }
 
-void ApplyNewsToTiming()
-{
-   NewsEvent ev=g_newsMgr.GetNextEvent(); if(ev.time==0) return;
-   DashboardParams p=g_dashboard.GetParams();
-   datetime nyTime=ev.time+p.utcOffset*3600; MqlDateTime dt; TimeToStruct(nyTime,dt);
-   g_dashboard.UpdateInternalTiming(dt.hour,dt.min,dt.sec);
-   g_dashboard.UpdateStatus("Applied: "+ev.name);
-}
+
 
 void OnTimer()
 {
@@ -180,16 +168,8 @@ void OnTimer()
    DashboardParams p=g_dashboard.GetParams();
    g_dashboard.UpdateNYClock(g_timeMgr.GetNYTimeString(p.utcOffset), g_timeMgr.GetNYAmPmString(p.utcOffset), g_timeMgr.GetNYDateString(p.utcOffset));
    g_newsMgr.SetNYO(p.nyHour,p.nyMinute,p.nySecond,p.utcOffset);
-   g_newsMgr.SetNYOOnly(g_dashboard.NYOOnlyMode);
    g_newsMgr.Update();
-   // v0.3: Detect custom timing — if user changed H:M:S from input defaults, show "Custom"
-   bool isCustom = (p.nyHour!=InpNyHour || p.nyMinute!=InpNyMinute || p.nySecond!=InpNySecond);
-   if(isCustom)
-   {
-      g_dashboard.UpdateNews(StringFormat("Custom | %02d:%02d", p.nyHour, p.nyMinute));
-   }
-   else g_dashboard.UpdateNews(g_newsMgr.GetNextEventString());
-   if(g_dashboard.AutoNewsEnabled && g_newsMgr.HasEvent()) ApplyNewsToTiming();
+   g_dashboard.UpdateNews(g_newsMgr.GetNextEventString());
    if(p.symbol!="")
    { double bal=0,rAmt=0,rwAmt=0,lot=0;
      int displaySlPoints = p.slPoints;
@@ -337,9 +317,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
       ENUM_DASHBOARD_CMD cmd = g_dashboard.PopCommand();
       switch(cmd)
       {
-         case CMD_APPLY_NEXT:
-            ApplyNewsToTiming();
-            break;
+
          case CMD_PRESET:
          {
             int idx = g_dashboard.PresetIndex;

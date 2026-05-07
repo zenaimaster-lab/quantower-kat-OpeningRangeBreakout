@@ -31,7 +31,7 @@ private:
    CButton m_btnExpire;
    CEdit m_edtExpCandles;
    CButton m_btnA1,m_btnA2,m_btnA3;
-   CButton m_btnAutoTrade, m_btnNyoOnly, m_btnAutoApply, m_btnApplyNext;
+   CButton m_btnAutoTrade;
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
    CEdit m_lblEqTag, m_lblPlTag;
    CEdit m_lblStatEquity, m_lblStatPL;
@@ -51,7 +51,6 @@ private:
    DashboardParams m_p;
    bool m_slCandle, m_auto, m_expEnabled, m_beOn;
    int m_utcOff;
-   bool m_nyoOnly, m_autoNews;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
    ENUM_CANDLE_SOURCE m_cs;
@@ -95,8 +94,6 @@ public:
    void MarkDirtyPublic() { MarkDirty(); }
    void PushCmdPublic(ENUM_DASHBOARD_CMD cmd) { PushCmd(cmd); }
    int  PresetIndex;
-   bool NYOOnlyMode, AutoNewsEnabled;
-
 private:
    bool ML(CEdit &l,string n,string t,int x,int y,int w,int h,color c=CLR_TEXT,int fs=FONT_SIZE);
    bool ME(CEdit &e,string n,string t,int x,int y,int w,int h);
@@ -107,7 +104,7 @@ private:
    void OnBrkEv(); void OnCandleSrc();
    void OnExpire(); void OnBEToggle();
    void OnA1(); void OnA2(); void OnA3();
-   void OnNyoOnly(); void OnAutoApply(); void OnApplyNextClick();
+
 
    void UpdMode(); void UpdTrail(); void UpdCandleSrc(); void UpdExpire(); void UpdBE();
 
@@ -117,10 +114,8 @@ public:
 };
 
 CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_auto=true;
-   m_cs=CANDLE_CURRENT; m_expEnabled=false; m_autoNews=false;
-   m_utcOff=-4; m_nyoOnly=false; m_beOn=false;
+   m_cs=CANDLE_CURRENT; m_expEnabled=false; m_utcOff=-4; m_beOn=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
-   NYOOnlyMode=false; AutoNewsEnabled=false;
    m_dayOffset=0; m_customTiming=false;
    m_lastClickMs=0; m_lastClickName=""; }
 
@@ -155,14 +150,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblClkDate,"vCkD","(-- ---)",rx+108,cy,rw-108,CTRL_HEIGHT,CLR_TEXT_DIM,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── EVENTS / CONTROLS ──
-   ML(m_lblNewsTag,"lNw","Next:",cx,cy,36,CTRL_HEIGHT);
-   ML(m_lblNewsVal,"vNw","Loading...",cx+40,cy,cw-40,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
-   int hw2=(cw-4)/2;
-   MB(m_btnAutoTrade,"bAt","AUTO TRADE: ON",cx,cy,hw2,CTRL_HEIGHT+2,CLR_SUCCESS);
-   MB(m_btnNyoOnly,"bNO","NYO ONLY: OFF",cx+hw2+4,cy,hw2,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   MB(m_btnAutoApply,"bAA","AUTO APPLY: OFF",cx,cy,hw2,CTRL_HEIGHT+2,CLR_BTN_OFF);
-   MB(m_btnApplyNext,"bAN","APPLY NEXT",cx+hw2+4,cy,hw2,CTRL_HEIGHT+2,CLR_PRESET); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   ML(m_lblNewsTag,"lNw","Next session:",cx,cy,80,CTRL_HEIGHT);
+   ML(m_lblNewsVal,"vNw","Loading...",cx+84,cy,cw-84,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
+   MB(m_btnAutoTrade,"bAt","AUTO TRADE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
 
@@ -382,9 +372,6 @@ bool CDashboard::HandleDirectClick(const string &objName)
    m_lastClickMs = now;
    m_lastClickName = objName;
    if(objName == m_btnAutoTrade.Name())     { OnAutoT(); return true; }
-   if(objName == m_btnNyoOnly.Name())       { OnNyoOnly(); return true; }
-   if(objName == m_btnAutoApply.Name())     { OnAutoApply(); return true; }
-   if(objName == m_btnApplyNext.Name())     { OnApplyNextClick(); return true; }
 
    if(objName == m_btnSLS.Name())           { OnSLS(); return true; }
    if(objName == m_btnBoth.Name())          { OnBoth(); return true; }
@@ -512,13 +499,7 @@ void CDashboard::OnAutoT() { m_btnAutoTrade.Pressed(false); m_auto=!m_auto; m_bt
 void CDashboard::OnA1(){ m_btnA1.Pressed(false); PresetIndex=0; PushCmd(CMD_PRESET); }
 void CDashboard::OnA2(){ m_btnA2.Pressed(false); PresetIndex=1; PushCmd(CMD_PRESET); }
 void CDashboard::OnA3(){ m_btnA3.Pressed(false); PresetIndex=2; PushCmd(CMD_PRESET); }
-void CDashboard::OnNyoOnly() { m_btnNyoOnly.Pressed(false); m_nyoOnly=!m_nyoOnly; NYOOnlyMode=m_nyoOnly;
-   m_btnNyoOnly.Text(m_nyoOnly?"NYO ONLY: ON":"NYO ONLY: OFF");
-   m_btnNyoOnly.ColorBackground(m_nyoOnly?CLR_SUCCESS:CLR_BTN_OFF); }
-void CDashboard::OnAutoApply() { m_btnAutoApply.Pressed(false); m_autoNews=!m_autoNews; AutoNewsEnabled=m_autoNews;
-   m_btnAutoApply.Text(m_autoNews?"AUTO APPLY: ON":"AUTO APPLY: OFF");
-   m_btnAutoApply.ColorBackground(m_autoNews?CLR_SUCCESS:CLR_BTN_OFF); MarkDirty(); }
-void CDashboard::OnApplyNextClick() { m_btnApplyNext.Pressed(false); PushCmd(CMD_APPLY_NEXT); }
+
 
 
 

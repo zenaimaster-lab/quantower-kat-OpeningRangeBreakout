@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Orb Breakout"
-#define EA_VERSION        "0.01"
+#define EA_VERSION        "0.02"
 #define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
@@ -89,7 +89,6 @@ enum ENUM_DASHBOARD_CMD
 {
    CMD_NONE = 0,
    CMD_CANCEL_ALL,
-   CMD_APPLY_NEXT,
    CMD_PRESET
 };
 
