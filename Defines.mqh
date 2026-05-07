@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Orb Breakout"
-#define EA_VERSION        "0.03"
+#define EA_VERSION        "0.04"
 #define EA_BUILD_DATE     "07 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "OCO_SNIPER_"
@@ -71,6 +71,7 @@ extern int g_magic;
 //--- Enums
 enum ENUM_ORDER_MODE    { MODE_BOTH=0, MODE_BUY_ONLY=1, MODE_SELL_ONLY=2 };
 enum ENUM_EA_MODE       { EA_AUTO=0, EA_MANUAL=1 };
+enum ENUM_TAB { TAB_MAIN=0, TAB_M2=1, TAB_M5=2 };
 
 
 // Consolidated trail mode
@@ -118,6 +119,8 @@ struct DashboardParams
    bool   beEnabled;
    int    expireCandles;
    bool   expireEnabled;
+   string comment;
+   bool   isActive;
 
    double targetGrowthPercent;
    bool   customTiming;      // v0.2: true if user manually set timing (not from news)
@@ -151,6 +154,23 @@ struct DashboardParams
       targetGrowthPercent = 50.0;
       customTiming      = false;
       targetDayOffset   = 0;
+      comment           = "orb-trade";
+      isActive          = true;
+   }
+};
+
+struct SystemConfig {
+   bool globalOverride;
+   DashboardParams main;
+   DashboardParams m2;
+   DashboardParams m5;
+   
+   SystemConfig() {
+      globalOverride = true;
+      m2.timeframe = PERIOD_M2;
+      m2.comment = "orb-2m";
+      m5.timeframe = PERIOD_M5;
+      m5.comment = "orb-5m";
    }
 };
 

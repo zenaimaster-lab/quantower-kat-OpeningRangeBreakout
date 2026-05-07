@@ -71,8 +71,10 @@ PresetParams g_presets[3];
 CDashboard    g_dashboard;
 CTimeManager  g_timeMgr;
 CRiskManager  g_riskMgr;   // Used for dashboard balance/risk display only
-COrderManager g_orderMgr;
-CTrailManager g_trailMgr;
+COrderManager g_orderMgr_M2;
+COrderManager g_orderMgr_M5;
+CTrailManager g_trailMgr_M2;
+CTrailManager g_trailMgr_M5;
 CNewsManager  g_newsMgr;
 
 bool g_initialized = false;
@@ -117,7 +119,9 @@ int TimeDayOfWeek(datetime t){MqlDateTime d;TimeToStruct(t,d);return d.day_of_we
 
 int OnInit()
 {
-   g_magic=InpMagicNumber; g_orderMgr.Init(); g_trailMgr.Init();
+   g_magic=InpMagicNumber; 
+   g_orderMgr_M2.Init(); g_trailMgr_M2.Init();
+   g_orderMgr_M5.Init(); g_trailMgr_M5.Init();
    g_newsMgr.SetNYO(InpNyHour,InpNyMinute,InpNySecond,InpUtcOffset);
 
    // Presets — v2.0: uses InitPreset helper (DRY)
@@ -129,18 +133,20 @@ int OnInit()
    if(!g_dashboard.CreatePanel(0,pn,0,PANEL_X,PANEL_Y,PANEL_WIDTH,PANEL_HEIGHT))
    { Print("[Main] Dashboard creation FAILED"); return INIT_FAILED; }
 
-   DashboardParams p;
-   p.nyHour=InpNyHour;p.nyMinute=InpNyMinute;p.nySecond=InpNySecond;
-   p.utcOffset=InpUtcOffset;p.triggerBeforeSec=InpTriggerBefore;
-   p.timeframe=InpTimeframe;p.slPoints=InpSlPoints;p.tpPoints=InpTpPoints;
-   p.slCandle=InpSlCandle;p.riskPercent=InpRiskPercent;p.entryBufferPoints=InpEntryBufferPoints;
-   p.orderMode=InpOrderMode;p.eaMode=InpEaMode;
-   p.trailMode=InpTrailMode;p.trailTrigger=InpTrailTrigger;
-   p.trailDistance=InpTrailDistance;p.trailStep=InpTrailStep;
-   p.beActivatePoints=InpBeActivatePts;p.beLockPoints=InpBeLockPts;p.beEnabled=InpBeEnabled;
-   p.expireEnabled=InpExpireEnabled;p.expireCandles=InpExpireCandles;
+   SystemConfig cfg;
+   cfg.main.nyHour=InpNyHour;cfg.main.nyMinute=InpNyMinute;cfg.main.nySecond=InpNySecond;
+   cfg.main.utcOffset=InpUtcOffset;cfg.main.triggerBeforeSec=InpTriggerBefore;
+   cfg.main.timeframe=InpTimeframe;cfg.main.slPoints=InpSlPoints;cfg.main.tpPoints=InpTpPoints;
+   cfg.main.slCandle=InpSlCandle;cfg.main.riskPercent=InpRiskPercent;cfg.main.entryBufferPoints=InpEntryBufferPoints;
+   cfg.main.orderMode=InpOrderMode;cfg.main.trailMode=InpTrailMode;cfg.main.trailTrigger=InpTrailTrigger;
+   cfg.main.trailDistance=InpTrailDistance;cfg.main.trailStep=InpTrailStep;
+   cfg.main.beActivatePoints=InpBeActivatePts;cfg.main.beLockPoints=InpBeLockPts;cfg.main.beEnabled=InpBeEnabled;
+   cfg.main.expireEnabled=InpExpireEnabled;cfg.main.expireCandles=InpExpireCandles;
+   
+   cfg.m2 = cfg.main; cfg.m2.timeframe = PERIOD_M2; cfg.m2.comment = "orb-2m";
+   cfg.m5 = cfg.main; cfg.m5.timeframe = PERIOD_M5; cfg.m5.comment = "orb-5m";
 
-   g_dashboard.SetInitialParams(p);
+   g_dashboard.SetInitialParams(cfg);
    g_dashboard.Run(); EventSetTimer(1); g_initialized=true;
    PrintFormat("[Main] %s v%s | %s | Magic=%d", EA_NAME, EA_VERSION, Symbol(), g_magic);
    return INIT_SUCCEEDED;
@@ -151,13 +157,21 @@ void OnDeinit(const int reason){EventKillTimer();ObjectDelete(0,BE_LINE_NAME);g_
 void OnTick()
 {
    if(!g_initialized) return;
-   DashboardParams p=g_dashboard.GetParams();
-   string sym=(p.symbol!="")?p.symbol:Symbol();
+   SystemConfig cfg=g_dashboard.GetParams();
+   string sym=(cfg.main.symbol!="")?cfg.main.symbol:Symbol();
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym,SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
-   g_orderMgr.CheckOCO(); g_orderMgr.ProcessMissingOrders();
-   g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus());
-   g_trailMgr.Process(p);
+   
+   g_orderMgr_M2.CheckOCO(); g_orderMgr_M2.ProcessMissingOrders();
+   g_orderMgr_M5.CheckOCO(); g_orderMgr_M5.ProcessMissingOrders();
+   
+   string s2 = g_orderMgr_M2.GetStatus();
+   string s5 = g_orderMgr_M5.GetStatus();
+   string combined = "2m: " + s2 + " | 5m: " + s5;
+   g_dashboard.UpdateOrderStatus(combined);
+   
+   g_trailMgr_M2.Process(cfg.globalOverride ? cfg.main : cfg.m2);
+   g_trailMgr_M5.Process(cfg.globalOverride ? cfg.main : cfg.m5);
 }
 
 
@@ -165,7 +179,8 @@ void OnTick()
 void OnTimer()
 {
    if(!g_initialized) return;
-   DashboardParams p=g_dashboard.GetParams();
+   SystemConfig cfg=g_dashboard.GetParams();
+   DashboardParams p=cfg.main; // Time/Display mostly uses MAIN params
    g_dashboard.UpdateNYClock(g_timeMgr.GetNYTimeString(p.utcOffset), g_timeMgr.GetNYAmPmString(p.utcOffset), g_timeMgr.GetNYDateString(p.utcOffset));
    g_newsMgr.SetNYO(p.nyHour,p.nyMinute,p.nySecond,p.utcOffset);
    g_newsMgr.Update();
@@ -259,16 +274,38 @@ void OnTimer()
       }
    }
    if(p.symbol==""){g_dashboard.UpdateStatus("No symbol");return;}
-   if(p.eaMode==EA_AUTO)
-   { g_timeMgr.CalculateTriggerTime(p);
-     if(g_timeMgr.IsTimeToTrade())
-     { g_dashboard.UpdateStatus("TRIGGERING...");
-       if(g_orderMgr.PlaceOCOOrders(p)){g_timeMgr.MarkFired(p);g_dashboard.UpdateStatus("Orders placed ✓");}
-       else g_dashboard.UpdateStatus("Order FAILED");
-       g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus()); }
-     else if(g_timeMgr.HasFiredToday()) g_dashboard.UpdateStatus("Fired — change schedule");
-     else g_dashboard.UpdateStatus("AUTO — Waiting..."); }
-   else{g_dashboard.UpdateStatus("Manual mode");}
+   
+   g_timeMgr.CalculateTriggerTime(p);
+   if(g_timeMgr.IsTimeToTrade())
+   { 
+      g_dashboard.UpdateStatus("TRIGGERING...");
+      
+      bool tradeM2 = cfg.globalOverride ? p.isActive : cfg.m2.isActive;
+      bool tradeM5 = cfg.globalOverride ? p.isActive : cfg.m5.isActive;
+      
+      bool ok2 = true;
+      bool ok5 = true;
+      
+      if(tradeM2) {
+         DashboardParams pm2 = cfg.globalOverride ? p : cfg.m2;
+         pm2.symbol = p.symbol; // ensure symbol
+         ok2 = g_orderMgr_M2.PlaceOCOOrders(pm2);
+      }
+      if(tradeM5) {
+         DashboardParams pm5 = cfg.globalOverride ? p : cfg.m5;
+         pm5.symbol = p.symbol;
+         ok5 = g_orderMgr_M5.PlaceOCOOrders(pm5);
+      }
+      
+      if(ok2 && ok5) { g_timeMgr.MarkFired(p); g_dashboard.UpdateStatus("Orders placed ✓"); }
+      else g_dashboard.UpdateStatus("Order FAILED");
+      
+      string s2 = g_orderMgr_M2.GetStatus();
+      string s5 = g_orderMgr_M5.GetStatus();
+      g_dashboard.UpdateOrderStatus("2m: " + s2 + " | 5m: " + s5); 
+   }
+   else if(g_timeMgr.HasFiredToday()) g_dashboard.UpdateStatus("Fired — change schedule");
+   else g_dashboard.UpdateStatus("AUTO — Waiting..."); 
 }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
@@ -301,7 +338,8 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
    if(id == CHARTEVENT_OBJECT_ENDEDIT)
       g_dashboard.MarkDirtyPublic();
 
-   DashboardParams p = g_dashboard.GetParams();
+   SystemConfig cfg = g_dashboard.GetParams();
+   DashboardParams p = cfg.main;
    string sym = (p.symbol != "") ? p.symbol : Symbol();
 
    // Keyboard shortcuts → push to command queue
@@ -333,8 +371,10 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
 
 void OnTradeTransaction(const MqlTradeTransaction &trans,const MqlTradeRequest &request,const MqlTradeResult &result)
 { 
-   g_orderMgr.OnTransaction(trans,request,result); 
-   g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus()); 
+   g_orderMgr_M2.OnTransaction(trans,request,result); 
+   g_orderMgr_M5.OnTransaction(trans,request,result); 
    
-
+   string s2 = g_orderMgr_M2.GetStatus();
+   string s5 = g_orderMgr_M5.GetStatus();
+   g_dashboard.UpdateOrderStatus("2m: " + s2 + " | 5m: " + s5); 
 }

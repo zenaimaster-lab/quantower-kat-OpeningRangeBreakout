@@ -13,8 +13,12 @@ private:
    CEdit m_lblVer, m_lblSym, m_lblMktLine, m_lblSpdVal, m_lblMktStatus;
    CEdit m_lblClkTag, m_lblClkVal, m_lblClkAmPm, m_lblClkDate;
    CEdit m_lblNewsTag, m_lblNewsVal;
-   CEdit m_lblTfTag, m_lblSlTag, m_lblMdTag;
+   CEdit m_lblTfTag, m_lblSlTag, m_lblMdTag, m_lblCmtTag;
+   CEdit m_edtComment;
    CButton m_btnTf;
+   
+   CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
+   CButton m_btnTabMain, m_btnTabM2, m_btnTabM5;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
    CEdit m_lblBalTag, m_lblBalVal, m_lblRskTag, m_lblRPc;
@@ -31,7 +35,6 @@ private:
    CButton m_btnExpire;
    CEdit m_edtExpCandles;
    CButton m_btnA1,m_btnA2,m_btnA3;
-   CButton m_btnAutoTrade;
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
    CEdit m_lblEqTag, m_lblPlTag;
    CEdit m_lblStatEquity, m_lblStatPL;
@@ -48,14 +51,15 @@ private:
    void CtrlHide(CWnd &obj);
 
 
-   DashboardParams m_p;
-   bool m_slCandle, m_auto, m_expEnabled, m_beOn;
+   SystemConfig m_config;
+   ENUM_TAB m_activeTab;
+   bool m_slCandle, m_expEnabled, m_beOn;
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
-   int m_dayOffset;              // v0.66: 0=Today, 1..6=next days
-   bool m_customTiming;        // v0.2: user set custom timing
-   bool m_dirty;                        // v2.0: dirty flag for cached GetParams
+   int m_dayOffset;              
+   bool m_customTiming;        
+   bool m_dirty;
    ENUM_DASHBOARD_CMD m_cmdQueue[16];   // v2.0: command queue
    int m_cmdCount;                      // v2.0: commands in queue
    uint m_lastClickMs;                  // v0.75: debounce — last click timestamp
@@ -67,8 +71,10 @@ public:
    CDashboard();
   ~CDashboard() {}
    bool CreatePanel(long chart,string name,int subwin,int x,int y,int w,int h);
-   void SetInitialParams(const DashboardParams &p);
-   DashboardParams GetParams();
+   void SetInitialParams(const SystemConfig &cfg);
+   SystemConfig GetParams();
+   void SaveTab(ENUM_TAB tab);
+   void LoadTab(ENUM_TAB tab);
    void UpdateSpread(int s);
 
    void UpdateStatus(string s);
@@ -79,7 +85,7 @@ public:
    void UpdateNews(string newsStr);
    void UpdateMarketStatus(bool isOpen);
    void UpdateSymbol(string sym);
-   void UpdateInternalTiming(int h, int m, int s) { m_p.nyHour=h; m_p.nyMinute=m; m_p.nySecond=s; }
+   void UpdateInternalTiming(int h, int m, int s) { m_config.main.nyHour=h; m_config.main.nyMinute=m; m_config.main.nySecond=s; }
 
 
    void UpdateEquityPL(double equity, double profit);
@@ -99,20 +105,23 @@ private:
    bool MB(CButton &b,string n,string t,int x,int y,int w,int h,color bg=CLR_BTN_OFF);
    void MSep(int idx,int x,int y,int w);
    void OnSLS(); void OnBoth(); void OnBuyO(); void OnSellO();
-   void OnTrM(); void OnAutoT(); void OnManP(); void OnCanA();
+   void OnTrM(); void OnManP(); void OnCanA();
+   void OnToggleGlobal(); void OnToggleM2(); void OnToggleM5();
+   void OnTabMain(); void OnTabM2(); void OnTabM5();
    void OnBrkEv();
    void OnExpire(); void OnBEToggle();
    void OnA1(); void OnA2(); void OnA3();
 
 
    void UpdMode(); void UpdTrail(); void UpdExpire(); void UpdBE();
+   void UpdToggles(); void UpdTabs();
 
 public:
    bool HandleDirectClick(const string &objName);
 
 };
 
-CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_auto=true;
+CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_MAIN;
    m_expEnabled=false; m_utcOff=-4; m_beOn=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
    m_dayOffset=0; m_customTiming=false;
@@ -151,7 +160,19 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    ML(m_lblNewsTag,"lNw","Next session:",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ML(m_lblNewsVal,"vNw","Loading...",rx,cy,rw,CTRL_HEIGHT,CLR_NEWS_RED); cy+=CTRL_HEIGHT+CTRL_GAP;
-   MB(m_btnAutoTrade,"bAt","AUTO TRADE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   
+   // --- MAIN TOGGLES ---
+   int thw=(cw-4)/2;
+   MB(m_btnGlobal,"bGb","GLOBAL OVERRIDE: ON",cx,cy,cw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnToggleM2,"bT2","2m: ON",cx,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS);
+   MB(m_btnToggleM5,"bT5","5m: ON",cx+thw+4,cy,thw,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+
+   // --- TABS ---
+   int tcw=(cw-8)/3;
+   MB(m_btnTabMain,"bTmMain","MAIN",cx,cy,tcw,CTRL_HEIGHT+4,CLR_BTN_ON);
+   MB(m_btnTabM2,"bTmM2","2m CONF",cx+tcw+4,cy,tcw,CTRL_HEIGHT+4,CLR_BTN_OFF);
+   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+4,CLR_BTN_OFF); cy+=CTRL_HEIGHT+4+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
 
@@ -159,6 +180,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    // ── ORDER ──
    ML(m_lblTfTag,"lTf","Timeframe",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    MB(m_btnTf,"bTf","M2",rx,cy,90,CTRL_HEIGHT,CLR_BTN_OFF);
+   cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblCmtTag,"lCm","Comment",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   ME(m_edtComment,"eCm","orb-trade",rx,cy,rw,CTRL_HEIGHT);
    cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblSlTag,"lSl","SL / TP",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","3000",rx+59,cy,55,CTRL_HEIGHT);
@@ -284,10 +308,17 @@ void CDashboard::CtrlHide(CWnd &obj) {
 }
 
 // ── DATA SYNC ──
-DashboardParams CDashboard::GetParams()
+SystemConfig CDashboard::GetParams()
 {
-   DashboardParams p = m_p;
-   // v0.89: These were missing — symbol + timing MUST be read from UI
+   SaveTab(m_activeTab);
+   m_config.main.symbol = m_lblSym.Text();
+   m_dirty = false;
+   return m_config;
+}
+
+void CDashboard::SaveTab(ENUM_TAB tab)
+{
+   DashboardParams p;
    p.symbol = m_lblSym.Text();
    p.utcOffset = m_utcOff;
    string tf = m_btnTf.Text();
@@ -296,31 +327,46 @@ DashboardParams CDashboard::GetParams()
    else if(tf=="M15") p.timeframe = PERIOD_M15;
    else p.timeframe = PERIOD_M2;
    
+   p.comment = m_edtComment.Text();
    p.slPoints = (int)StringToInteger(m_edtSL.Text());
-  p.tpPoints=(int)StringToInteger(m_edtTP.Text());
-  p.slCandle=m_slCandle;
-  p.riskPercent=StringToDouble(m_edtRisk.Text());
-  p.orderMode=m_om;
-  p.eaMode=m_auto ? EA_AUTO : EA_MANUAL;
-  p.trailMode=m_tm;
-  p.trailTrigger=(int)StringToInteger(m_edtTTr.Text());
-  p.trailDistance=(int)StringToInteger(m_edtTDi.Text());
-  p.trailStep=(int)StringToInteger(m_edtTSt.Text());
-  p.beActivatePoints=(int)StringToInteger(m_edtBEA.Text());
-  p.beLockPoints=(int)StringToInteger(m_edtBEL.Text());
-  p.beEnabled=m_beOn;
-  p.expireEnabled=m_expEnabled;
-  p.expireCandles=(int)StringToInteger(m_edtExpCandles.Text());
+   p.tpPoints=(int)StringToInteger(m_edtTP.Text());
+   p.slCandle=m_slCandle;
+   p.riskPercent=StringToDouble(m_edtRisk.Text());
+   p.orderMode=m_om;
+   p.trailMode=m_tm;
+   p.trailTrigger=(int)StringToInteger(m_edtTTr.Text());
+   p.trailDistance=(int)StringToInteger(m_edtTDi.Text());
+   p.trailStep=(int)StringToInteger(m_edtTSt.Text());
+   p.beActivatePoints=(int)StringToInteger(m_edtBEA.Text());
+   p.beLockPoints=(int)StringToInteger(m_edtBEL.Text());
+   p.beEnabled=m_beOn;
+   p.expireEnabled=m_expEnabled;
+   p.expireCandles=(int)StringToInteger(m_edtExpCandles.Text());
+   p.customTiming=m_customTiming;
+   p.targetDayOffset=m_dayOffset;
 
-  p.customTiming=m_customTiming;
-  p.targetDayOffset=m_dayOffset;
-  m_dirty = false;
-  return p;
+   if (tab == TAB_MAIN) {
+       p.isActive = m_config.main.isActive;
+       p.nyHour = m_config.main.nyHour;
+       p.nyMinute = m_config.main.nyMinute;
+       p.nySecond = m_config.main.nySecond;
+       m_config.main = p;
+   } else if (tab == TAB_M2) {
+       p.isActive = m_config.m2.isActive;
+       m_config.m2 = p;
+   } else if (tab == TAB_M5) {
+       p.isActive = m_config.m5.isActive;
+       m_config.m5 = p;
+   }
 }
 
-void CDashboard::SetInitialParams(const DashboardParams &p)
+void CDashboard::LoadTab(ENUM_TAB tab)
 {
-   m_p = p;
+   DashboardParams p;
+   if (tab == TAB_MAIN) p = m_config.main;
+   else if (tab == TAB_M2) p = m_config.m2;
+   else if (tab == TAB_M5) p = m_config.m5;
+
    m_slCandle = p.slCandle;
    m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
    
@@ -329,22 +375,30 @@ void CDashboard::SetInitialParams(const DashboardParams &p)
    else if(p.timeframe == PERIOD_M15) m_btnTf.Text("M15");
    else m_btnTf.Text("M2");
 
+   m_edtComment.Text(p.comment);
    m_edtSL.Text(IntegerToString(p.slPoints)); 
    m_utcOff=p.utcOffset;
    m_edtTP.Text(IntegerToString(p.tpPoints));
-   m_slCandle=p.slCandle; m_btnSLS.Text(m_slCandle?"SL by Candle✓":"SL by Candle"); m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
+   m_btnSLS.Text(m_slCandle?"SL by Candle✓":"SL by Candle"); 
    m_edtRisk.Text(DoubleToString(p.riskPercent,1));
    m_om=p.orderMode; UpdMode();
    m_tm=p.trailMode; UpdTrail();
-   m_auto=(p.eaMode==EA_AUTO); m_btnAutoTrade.Text(m_auto?"AUTO TRADE: ON":"AUTO TRADE: OFF");
-   m_btnAutoTrade.ColorBackground(m_auto?CLR_SUCCESS:CLR_BTN_OFF);
    m_edtTTr.Text(IntegerToString(p.trailTrigger)); m_edtTDi.Text(IntegerToString(p.trailDistance));
    m_edtTSt.Text(IntegerToString(p.trailStep));
    m_edtBEA.Text(IntegerToString(p.beActivatePoints)); m_edtBEL.Text(IntegerToString(p.beLockPoints));
    m_beOn=p.beEnabled; UpdBE();
    m_expEnabled=p.expireEnabled; UpdExpire();
    m_edtExpCandles.Text(IntegerToString(p.expireCandles));
-   m_lblSym.Text(p.symbol!=""?p.symbol:Symbol());
+}
+
+void CDashboard::SetInitialParams(const SystemConfig &cfg)
+{
+   m_config = cfg;
+   m_activeTab = TAB_MAIN;
+   m_lblSym.Text(cfg.main.symbol!=""?cfg.main.symbol:Symbol());
+   UpdToggles();
+   UpdTabs();
+   LoadTab(m_activeTab);
 }
 
 // ── UPDATERS ──
@@ -367,7 +421,12 @@ bool CDashboard::HandleDirectClick(const string &objName)
    ObjectSetInteger(m_chart_id, objName, OBJPROP_STATE, false);
    m_lastClickMs = now;
    m_lastClickName = objName;
-   if(objName == m_btnAutoTrade.Name())     { OnAutoT(); return true; }
+   if(objName == m_btnGlobal.Name())        { OnToggleGlobal(); return true; }
+   if(objName == m_btnToggleM2.Name())      { OnToggleM2(); return true; }
+   if(objName == m_btnToggleM5.Name())      { OnToggleM5(); return true; }
+   if(objName == m_btnTabMain.Name())       { OnTabMain(); return true; }
+   if(objName == m_btnTabM2.Name())         { OnTabM2(); return true; }
+   if(objName == m_btnTabM5.Name())         { OnTabM5(); return true; }
 
    if(objName == m_btnSLS.Name())           { OnSLS(); return true; }
    if(objName == m_btnBoth.Name())          { OnBoth(); return true; }
@@ -485,8 +544,48 @@ void CDashboard::UpdBE() { m_btnBE.Text(m_beOn?"BE: ON":"BE: OFF");
 void CDashboard::OnExpire() { m_btnExpire.Pressed(false); m_expEnabled=!m_expEnabled; UpdExpire(); MarkDirty(); }
 void CDashboard::UpdExpire() { m_btnExpire.Text(m_expEnabled?"auto cancel all: ON":"auto cancel all: OFF");
    m_btnExpire.ColorBackground(m_expEnabled?CLR_WARNING:CLR_BTN_OFF); }
-void CDashboard::OnAutoT() { m_btnAutoTrade.Pressed(false); m_auto=!m_auto; m_btnAutoTrade.Text(m_auto?"AUTO TRADE: ON":"AUTO TRADE: OFF");
-   m_btnAutoTrade.ColorBackground(m_auto?CLR_SUCCESS:CLR_BTN_OFF); MarkDirty(); }
+void CDashboard::OnToggleGlobal() { m_btnGlobal.Pressed(false); m_config.globalOverride=!m_config.globalOverride; UpdToggles(); MarkDirty(); }
+void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2.isActive=!m_config.m2.isActive; UpdToggles(); MarkDirty(); }
+void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5.isActive=!m_config.m5.isActive; UpdToggles(); MarkDirty(); }
+
+void CDashboard::UpdToggles() {
+   m_btnGlobal.Text(m_config.globalOverride ? "GLOBAL OVERRIDE: ON" : "GLOBAL OVERRIDE: OFF");
+   m_btnGlobal.ColorBackground(m_config.globalOverride ? CLR_SUCCESS : CLR_BTN_OFF);
+   m_btnToggleM2.Text(m_config.m2.isActive ? "2m: ON" : "2m: OFF");
+   m_btnToggleM2.ColorBackground(m_config.m2.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
+   m_btnToggleM5.Text(m_config.m5.isActive ? "5m: ON" : "5m: OFF");
+   m_btnToggleM5.ColorBackground(m_config.m5.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
+}
+
+void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); SaveTab(m_activeTab); m_activeTab=TAB_MAIN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabM2() { m_btnTabM2.Pressed(false); SaveTab(m_activeTab); m_activeTab=TAB_M2; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabM5() { m_btnTabM5.Pressed(false); SaveTab(m_activeTab); m_activeTab=TAB_M5; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+
+void CDashboard::UpdTabs() {
+   m_btnTabMain.ColorBackground(m_activeTab==TAB_MAIN ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabM2.ColorBackground(m_activeTab==TAB_M2 ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabM5.ColorBackground(m_activeTab==TAB_M5 ? CLR_BTN_ON : CLR_BTN_OFF);
+   
+   if(m_activeTab==TAB_MAIN) {
+      m_btnA1.Text("Set mA"); m_btnA2.Text("Set mB"); m_btnA3.Text("Set mC");
+      CtrlShow(m_lblOsTag); CtrlShow(m_lblOsVal); CtrlShow(m_lblStVal);
+      CtrlShow(m_lblEqTag); CtrlShow(m_lblStatEquity); CtrlShow(m_lblPlTag); CtrlShow(m_lblStatPL);
+      CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
+      CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
+   } else if(m_activeTab==TAB_M2) {
+      m_btnA1.Text("Set 2A"); m_btnA2.Text("Set 2B"); m_btnA3.Text("Set 2C");
+      CtrlHide(m_lblOsTag); CtrlHide(m_lblOsVal); CtrlHide(m_lblStVal);
+      CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
+      CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
+      CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
+   } else {
+      m_btnA1.Text("Set 5A"); m_btnA2.Text("Set 5B"); m_btnA3.Text("Set 5C");
+      CtrlHide(m_lblOsTag); CtrlHide(m_lblOsVal); CtrlHide(m_lblStVal);
+      CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
+      CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
+      CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
+   }
+}
 
 void CDashboard::OnA1(){ m_btnA1.Pressed(false); PresetIndex=0; PushCmd(CMD_PRESET); }
 void CDashboard::OnA2(){ m_btnA2.Pressed(false); PresetIndex=1; PushCmd(CMD_PRESET); }

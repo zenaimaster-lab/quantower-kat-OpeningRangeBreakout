@@ -65,7 +65,7 @@ public:
 
 private:
    //--- Internal helpers
-   string            GenerateOcoTag();
+   string            GenerateOcoTag(string comment);
    bool              GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low);
    void              CancelPendingByTag(string tag);
    int               CountPendingByTag(string tag);
@@ -88,10 +88,10 @@ COrderManager::COrderManager()
 }
 
 //+------------------------------------------------------------------+
-string COrderManager::GenerateOcoTag()
+string COrderManager::GenerateOcoTag(string comment)
 {
    m_ocoCounter++;
-   return EA_COMMENT_PREFIX + IntegerToString(TimeCurrent()) + "_" + IntegerToString(m_ocoCounter);
+   return EA_COMMENT_PREFIX + comment + "_" + IntegerToString(TimeCurrent()) + "_" + IntegerToString(m_ocoCounter);
 }
 
 //+------------------------------------------------------------------+
@@ -166,7 +166,7 @@ bool COrderManager::PlaceOCOOrders(const DashboardParams &params)
    if(lotSize <= 0) return false;
    
    //--- Generate OCO tag
-   string ocoTag = GenerateOcoTag();
+   string ocoTag = GenerateOcoTag(params.comment);
    m_lastOcoTag = ocoTag;
    
    //--- Calculate order prices
