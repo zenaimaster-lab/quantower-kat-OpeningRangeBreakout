@@ -166,10 +166,7 @@ void OnTick()
    g_orderMgr_M2.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m2, g_timeMgr.GetTargetTime());
    g_orderMgr_M5.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m5, g_timeMgr.GetTargetTime());
    
-   string s2 = g_orderMgr_M2.GetStatus();
-   string s5 = g_orderMgr_M5.GetStatus();
-   string combined = "2m: " + s2 + " | 5m: " + s5;
-   g_dashboard.UpdateOrderStatus(combined);
+   // Status is now updated via Update2mStatus/Update5mStatus in OnTimer
    
    g_trailMgr_M2.Process(cfg.globalOverride ? cfg.main : cfg.m2);
    g_trailMgr_M5.Process(cfg.globalOverride ? cfg.main : cfg.m5);
@@ -184,6 +181,8 @@ void UpdateTradeStats()
 {
    int wins = 0, losses = 0;
    double netToday = 0, netWeek = 0, netMonth = 0;
+   int w2m = 0, l2m = 0, w5m = 0, l5m = 0;
+   double net2mToday = 0, net5mToday = 0;
    
    datetime now = TimeCurrent();
    datetime d1Start = iTime(Symbol(), PERIOD_D1, 0);
@@ -200,11 +199,15 @@ void UpdateTradeStats()
          
          double profit = HistoryDealGetDouble(ticket, DEAL_PROFIT) + HistoryDealGetDouble(ticket, DEAL_COMMISSION) + HistoryDealGetDouble(ticket, DEAL_SWAP);
          datetime time = (datetime)HistoryDealGetInteger(ticket, DEAL_TIME);
+         string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
+         bool is2m = (StringFind(comment, "2m") >= 0);
+         bool is5m = (StringFind(comment, "5m") >= 0);
          
          if(time >= d1Start) {
             netToday += profit;
-            if(profit > 0) wins++;
-            else losses++;
+            if(profit > 0) wins++; else losses++;
+            if(is2m) { net2mToday += profit; if(profit > 0) w2m++; else l2m++; }
+            if(is5m) { net5mToday += profit; if(profit > 0) w5m++; else l5m++; }
          }
          if(time >= w1Start) netWeek += profit;
          if(time >= mn1Start) netMonth += profit;
@@ -219,10 +222,17 @@ void UpdateTradeStats()
    string eR5 = g_orderMgr_M5.GetEntryReason();
    string cR5 = g_orderMgr_M5.GetCancelReason();
    
-   string entryR = (eR5 != "") ? eR5 : eR2;
-   string cancelR = (cR5 != "") ? cR5 : cR2;
+   // Combine entry/cancel reasons from both timeframes
+   string entryR = "";
+   if(eR2 != "") entryR += eR2;
+   if(eR5 != "") entryR += (entryR != "" ? " | " : "") + eR5;
+   string cancelR = "";
+   if(cR2 != "") cancelR += cR2;
+   if(cR5 != "") cancelR += (cancelR != "" ? " | " : "") + cR5;
    
    g_dashboard.UpdateStatsTab(entryR, cancelR, wins, losses, netToday, netWeek, netMonth);
+   g_dashboard.Update2mPL(w2m, l2m, net2mToday);
+   g_dashboard.Update5mPL(w5m, l5m, net5mToday);
 }
 
 void OnTimer()
@@ -357,9 +367,17 @@ void OnTimer()
       g_orderMgr_M5.CleanupLines(PERIOD_M5);
    }
    
-   string s2 = tradeM2 ? g_orderMgr_M2.GetStatus() : "OFF";
-   string s5 = tradeM5 ? g_orderMgr_M5.GetStatus() : "OFF";
-   g_dashboard.UpdateOrderStatus("2m: " + s2 + " | 5m: " + s5);
+   // Update status for each timeframe separately
+   if(tradeM2) {
+      g_dashboard.Update2mStatus(g_orderMgr_M2.GetStatus(), g_orderMgr_M2.GetStatusColor());
+   } else {
+      g_dashboard.Update2mStatus("OFF", CLR_TEXT_DIM);
+   }
+   if(tradeM5) {
+      g_dashboard.Update5mStatus(g_orderMgr_M5.GetStatus(), g_orderMgr_M5.GetStatusColor());
+   } else {
+      g_dashboard.Update5mStatus("OFF", CLR_TEXT_DIM);
+   }
 }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)

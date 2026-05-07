@@ -65,6 +65,7 @@ public:
    void              CleanupLines(ENUM_TIMEFRAMES tf);
    
    string            GetStatus() const;
+   color             GetStatusColor() const;
    string            GetEntryReason() const { return m_entryReason; }
    string            GetCancelReason() const { return m_cancelReason; }
 
@@ -358,14 +359,23 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
 string COrderManager::GetStatus() const
 {
    switch(m_state) {
-      case ORB_WAIT_NYO: return "WAIT NYO";
-      case ORB_WAIT_CANDLE: return "WAIT RANGE";
-      case ORB_WAIT_BREAK: return "WAIT BREAK";
-      case ORB_WAIT_RETEST: return "WAIT RETEST";
-      case ORB_WAIT_ENTRY: return "ORDER ACTIVE";
-      case ORB_DONE: return "DONE";
+      case ORB_WAIT_NYO: return "Wait NYO";
+      case ORB_WAIT_CANDLE: return "Wait Range";
+      case ORB_WAIT_BREAK: return "Wait Break";
+      case ORB_WAIT_RETEST: return (m_breakDir == 1) ? "Break Out ▲" : "Break Down ▼";
+      case ORB_WAIT_ENTRY: return "Wait Entry";
+      case ORB_DONE: return "Done";
    }
-   return "IDLE";
+   return "Idle";
+}
+
+color COrderManager::GetStatusColor() const
+{
+   switch(m_state) {
+      case ORB_WAIT_RETEST: return (m_breakDir == 1) ? CLR_MONEY_GREEN : CLR_MONEY_RED;
+      case ORB_WAIT_ENTRY: return CLR_WARNING;
+      default: return CLR_TEXT_DIM;
+   }
 }
 
 //+------------------------------------------------------------------+
