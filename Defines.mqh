@@ -83,32 +83,14 @@ enum ENUM_TRAIL_MODE
    TM_CANDLE_3  = 4    // Trail SL to candle[3]
 };
 
-// Origami SL Mode — 3 modes
-enum ENUM_ORIGAMI_SL_MODE
-{
-   ORIGAMI_SL_DONT_MOVE     = 0,    // Don't move SL
-   ORIGAMI_SL_ALWAYS_ORIG   = 1,    // Always keep original risk %
-   ORIGAMI_SL_BE_SPREAD     = 2     // BE + Spread
-};
 
-// Command queue enum — replaces 13+ public boolean flags
+// Command queue enum
 enum ENUM_DASHBOARD_CMD
 {
    CMD_NONE = 0,
-   CMD_MANUAL_PLACE,
    CMD_CANCEL_ALL,
-   CMD_FLATTEN_ALL,
-   CMD_BREAK_EVEN,
    CMD_APPLY_NEXT,
-   CMD_APPLY_TRAIL,
-   CMD_APPLY_BE,
-   CMD_BUY_MKT,
-   CMD_SELL_MKT,
-   CMD_LOCK,
-   CMD_REVERSE,
-   CMD_PRESET,
-   CMD_ORIGAMI_APPLY_NOW,
-   CMD_ORIGAMI_CLEAR
+   CMD_PRESET
 };
 
 //--- Data structs
@@ -139,13 +121,6 @@ struct DashboardParams
    bool   expireEnabled;
    ENUM_CANDLE_SOURCE candleSource;
    double targetGrowthPercent;
-   ENUM_ORIGAMI_SL_MODE origamiSlMode;
-   double addInPct1;
-   double addInPct2;
-   double addInPct3;
-   bool   origamiEnabled;        // v0.2: Origami ON/OFF toggle
-   double origamiMaxRiskPercent; // v0.5.2: Max risk for origami
-   double marginSafetyPct;       // v1.51: DIAD Margin of Safety (% of total distance)
    bool   customTiming;      // v0.2: true if user manually set timing (not from news)
    int    targetDayOffset;   // v0.66: 0=Today, 1..6=next days
 
@@ -176,13 +151,6 @@ struct DashboardParams
       expireEnabled     = false;
       candleSource      = CANDLE_CURRENT;
       targetGrowthPercent = 50.0;
-      origamiSlMode         = ORIGAMI_SL_BE_SPREAD;
-      addInPct1         = 35.0;
-      addInPct2         = 50.0;
-      addInPct3         = 65.0;
-      origamiEnabled        = false;
-      origamiMaxRiskPercent = 5.0;
-      marginSafetyPct      = 10.0;
       customTiming      = false;
       targetDayOffset   = 0;
    }
@@ -257,16 +225,5 @@ int TimeframeToIndex(ENUM_TIMEFRAMES tf)
    }
 }
 
-//--- SL Mode text helper
-string OrigamiSlModeToString(ENUM_ORIGAMI_SL_MODE mode)
-{
-   switch(mode)
-   {
-      case ORIGAMI_SL_DONT_MOVE:   return "DON'T MOVE";
-      case ORIGAMI_SL_ALWAYS_ORIG: return "ALWAYS ORIGINAL";
-      case ORIGAMI_SL_BE_SPREAD:   return "BE + SPREAD";
-      default:                 return "DON'T MOVE";
-   }
-}
 
 #endif // __DEFINES_MQH__

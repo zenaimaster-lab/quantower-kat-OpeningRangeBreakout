@@ -26,15 +26,12 @@ private:
    CEdit m_lblTrTrig, m_lblTrDist, m_lblTrStep;
    CEdit m_lblBELock;
    CButton m_btnTrMode;
-   CEdit  m_edtTTr, m_edtTDi, m_edtTSt, m_edtBEA, m_edtBEL;
-   CButton m_btnBE, m_btnApplyBE, m_btnApplyTrail;
+   CButton m_btnBE;
    CEdit m_lblExpTag;
    CButton m_btnExpire;
    CEdit m_edtExpCandles;
    CButton m_btnA1,m_btnA2,m_btnA3;
    CButton m_btnAutoTrade, m_btnNyoOnly, m_btnAutoApply, m_btnApplyNext;
-   CButton m_btnFlatten, m_btnPlaceStop, m_btnCancelPend;
-   CButton m_btnBuyMkt, m_btnSellMkt, m_btnLock, m_btnReverse;
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
    CEdit m_lblEqTag, m_lblPlTag;
    CEdit m_lblStatEquity, m_lblStatPL;
@@ -45,27 +42,6 @@ private:
    // v0.66: Day picker (replaces AM/PM + TODAY)
    CButton m_btnDayPicker;
 
-   // Tab system
-   CButton m_btnTabMain, m_btnTabOrigami;
-   int m_activeTab; // 0=Main, 1=Origami
-
-   // Origami tab controls
-   CEdit m_lblOrigamiTitle;
-   CEdit m_lblOrigamiTarget, m_lblOrigamiSlMode, m_lblOrigamiPct, m_lblOrigamiTargetAmt;
-   CEdit m_lblOrigamiAdd1, m_lblOrigamiAdd2, m_lblOrigamiAdd3;
-   CEdit  m_edtOrigamiTarget;
-   CEdit  m_edtOrigamiAdd1, m_edtOrigamiAdd2, m_edtOrigamiAdd3;
-   CButton m_btnOrigamiSlMode, m_btnOrigamiOnOff, m_btnOrigamiApplyNow, m_btnOrigamiClear;
-   CButton m_btnOrigamiOnOffMain, m_btnOrigamiApplyNowMain, m_btnOrigamiClearMain;
-   CEdit m_lblOrigamiInfo1, m_lblOrigamiInfo2, m_lblOrigamiInfo3, m_lblOrigamiInfo4;
-   CEdit m_lblO_OsTag, m_lblO_OsVal, m_lblO_StVal;
-   CEdit m_lblO_EqTag, m_lblO_StatEquity, m_lblO_PlTag, m_lblO_StatPL;
-   CEdit m_lblO_TotExpTag, m_lblO_TotExpVal;
-   CEdit m_lblO_RtRrTag, m_lblO_RtRrLoss, m_lblO_RtRrPft, m_lblO_RtRrRiskPc;
-   CEdit m_lblOrigamiStatus, m_lblOrigamiStatusMain;
-   CEdit m_lblDiadStatus, m_lblDiadStatusMain;  // v1.51: DIAD solver status (shown below origami status)
-   CEdit m_lblOrigamiMaxRiskTag, m_lblOrigamiMaxRiskPc;
-   CEdit  m_edtOrigamiMaxRisk;
 
    void CtrlShow(CWnd &obj);
    void CtrlShowBtn(CWnd &obj);
@@ -80,10 +56,8 @@ private:
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
    ENUM_CANDLE_SOURCE m_cs;
-   bool m_origamiEnabled;          // v0.2: origami on/off
    int m_dayOffset;              // v0.66: 0=Today, 1..6=next days
    bool m_customTiming;        // v0.2: user set custom timing
-   ENUM_ORIGAMI_SL_MODE m_origamiSlMode;
    bool m_dirty;                        // v2.0: dirty flag for cached GetParams
    ENUM_DASHBOARD_CMD m_cmdQueue[16];   // v2.0: command queue
    int m_cmdCount;                      // v2.0: commands in queue
@@ -109,9 +83,7 @@ public:
    void UpdateMarketStatus(bool isOpen);
    void UpdateSymbol(string sym);
    void ApplyTimingFromNews(int h,int m,int s);
-   void UpdateOrigamiInfo(string s1,string s2,string s3,string s4);
-   void UpdateOrigamiStatus(string s);
-   void UpdateDiadStatus(string s);  // v1.51
+
    void UpdateEquityPL(double equity, double profit);
    void UpdateTotalExposed(double lots, int type);
    void UpdateRealtimeRR(double profit, double loss, double theoreticalRisk);
@@ -132,16 +104,13 @@ private:
    void MSep(int idx,int x,int y,int w);
    void OnSLS(); void OnBoth(); void OnBuyO(); void OnSellO();
    void OnTrM(); void OnAutoT(); void OnManP(); void OnCanA();
-   void OnFlatA(); void OnBrkEv(); void OnCandleSrc();
-   void OnExpire(); void OnBEToggle(); void OnApplyBE(); void OnApplyTrail();
+   void OnBrkEv(); void OnCandleSrc();
+   void OnExpire(); void OnBEToggle();
    void OnA1(); void OnA2(); void OnA3();
    void OnNyoOnly(); void OnAutoApply(); void OnApplyNextClick();
-   void OnBuyMkt(); void OnSellMkt(); void OnLock(); void OnReverse();
-   void OnTabMain(); void OnTabOrigami(); void OnOrigamiSlMode(); void OnOrigamiOnOff(); void OnOrigamiApplyNow(); void OnOrigamiClear();
-   void OnOrigamiOnOffMain(); void OnOrigamiApplyNowMain(); void OnOrigamiClearMain();
    void OnDayPicker();
    void UpdMode(); void UpdTrail(); void UpdCandleSrc(); void UpdExpire(); void UpdBE();
-   void ShowTab(int tab);
+
 public:
    bool HandleDirectClick(const string &objName);
 
@@ -152,8 +121,7 @@ CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_auto
    m_utcOff=-4; m_nyoOnly=false; m_beOn=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
    NYOOnlyMode=false; AutoNewsEnabled=false;
-   m_activeTab=0; m_origamiSlMode=ORIGAMI_SL_BE_SPREAD;
-   m_origamiEnabled=false; m_dayOffset=0; m_customTiming=false;
+   m_dayOffset=0; m_customTiming=false;
    m_lastClickMs=0; m_lastClickName=""; }
 
 
@@ -169,12 +137,6 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
      else if(ot==OBJ_EDIT){ObjectSetInteger(chart,n,OBJPROP_BGCOLOR,CLR_CAPTION_BG);ObjectSetInteger(chart,n,OBJPROP_COLOR,CLR_TEXT_BRIGHT);ObjectSetInteger(chart,n,OBJPROP_BORDER_COLOR,CLR_CAPTION_BG);ObjectSetInteger(chart,n,OBJPROP_ZORDER,-100);colored++;}}
    int cx=6,cy=4,cw=w-26,rx=cx+LABEL_WIDTH+4,rw=cw-LABEL_WIDTH-4;
    int si=0;
-
-   // ── TAB BUTTONS ──
-   int tabW=(cw-4)/2;
-   MB(m_btnTabMain,"tMain","MAIN",cx,cy,tabW,CTRL_HEIGHT+4,CLR_ACCENT);
-   MB(m_btnTabOrigami,"tOrigami","ORIGAMI",cx+tabW+4,cy,tabW,CTRL_HEIGHT+4,CLR_BTN_OFF);
-   cy+=CTRL_HEIGHT+4+4;
 
    cy+=2;
    ML(m_lblVer,"ver","Version "+EA_VERSION+" | "+EA_BUILD_DATE,cx,cy,cw,12,CLR_TEXT_DIM,7); cy+=16;
@@ -238,10 +200,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblBalVal,"vBa","$0.00",rx,cy,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblRskTag,"lRk","Risk (%)",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ME(m_edtRisk,"eRk","1.0",rx,cy,40,CTRL_HEIGHT);
-   ML(m_lblRPc,"lPc","%",rx+43,cy,18,CTRL_HEIGHT,CLR_TEXT_DIM);
-   ML(m_lblOrigamiMaxRiskTag,"pMRt","Max risk",rx+64,cy,70,CTRL_HEIGHT,CLR_TEXT);
-   ME(m_edtOrigamiMaxRisk,"pMRk","5.0",rx+136,cy,40,CTRL_HEIGHT);
-   ML(m_lblOrigamiMaxRiskPc,"pMRp","%",rx+180,cy,18,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblRPc,"lPc","%",rx+43,cy,18,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblRATag,"lRA","Risk / Reward",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ML(m_lblRAVal,"vRA","-$0",rx,cy,70,CTRL_HEIGHT,CLR_MONEY_RED);
    ML(m_lblRwVal,"vRw","+$0",rx+75,cy,70,CTRL_HEIGHT,CLR_MONEY_GREEN); cy+=CTRL_HEIGHT+CTRL_GAP;
@@ -258,10 +217,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ME(m_edtTDi,"eTDi","20",cx+172,cy,35,CTRL_HEIGHT);
    ML(m_lblTrStep,"lStp","Step:",cx+212,cy,40,CTRL_HEIGHT);
    ME(m_edtTSt,"eTSt","5",cx+254,cy,35,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   MB(m_btnApplyTrail,"bATr","APPLY TRAILING NOW",cx,cy,cw,CTRL_HEIGHT+2,CLR_ACCENT_DIM); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   int bew1=cw/3, bew2=cw-bew1-3;
-   MB(m_btnBE,"bBE","BE: OFF",cx,cy,bew1,CTRL_HEIGHT+2,CLR_BTN_OFF);
-   MB(m_btnApplyBE,"bABE","APPLY BE NOW",cx+bew1+3,cy,bew2,CTRL_HEIGHT+2,CLR_ACCENT_DIM); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnBE,"bBE","BE: OFF",cx,cy,cw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblBeLine,"lBL","BE Trigger",cx,cy,85,CTRL_HEIGHT);
    ME(m_edtBEA,"eBA","200",cx+87,cy,42,CTRL_HEIGHT);
    ML(m_lblBELock,"lPl","+",cx+131,cy,14,CTRL_HEIGHT);
@@ -277,16 +233,6 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnA3,"bA3","Set C",cx+(pw+5)*2,cy,pw,CTRL_HEIGHT+2,CLR_PRESET); cy+=CTRL_HEIGHT+2+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── MANAGE ──
-   MB(m_btnFlatten,"bFl","FLATTEN ALL",cx,cy,cw,MANAGE_BTN_H,CLR_FLATTEN); cy+=MANAGE_BTN_H+CTRL_GAP;
-   int hw=(cw-6)/2;
-   MB(m_btnPlaceStop,"bPS","PLACE STOP ORDER",cx,cy,hw,MANAGE_BTN_H,CLR_ACCENT);
-   MB(m_btnCancelPend,"bCP","CANCEL PENDING",cx+hw+6,cy,hw,MANAGE_BTN_H,CLR_BTN_OFF); cy+=MANAGE_BTN_H+CTRL_GAP;
-   MB(m_btnBuyMkt,"bBM","BUY MARKET",cx,cy,hw,MANAGE_BTN_H,CLR_BUY);
-   MB(m_btnSellMkt,"bSM","SELL MARKET",cx+hw+6,cy,hw,MANAGE_BTN_H,CLR_SELL); cy+=MANAGE_BTN_H+CTRL_GAP;
-   MB(m_btnLock,"bLK","LOCK",cx,cy,hw,MANAGE_BTN_H,CLR_LOCK);
-   MB(m_btnReverse,"bRV","REVERSE",cx+hw+6,cy,hw,MANAGE_BTN_H,CLR_REVERSE); cy+=MANAGE_BTN_H+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── STATUS ──
    ML(m_lblOsTag,"lOs","Orders",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
@@ -310,76 +256,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblRtRrRiskPc,"sRtPc","{0.0%}",cx+cw-45,cy,45,CTRL_HEIGHT,CLR_ACCENT);
    cy+=CTRL_HEIGHT+CTRL_GAP;
    
-   MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
-   ML(m_lblOrigamiStatusMain,"pStM","Origami: OFF",cx,cy,cw-140,CTRL_HEIGHT,CLR_WARNING);
-   MB(m_btnOrigamiApplyNowMain,"bPOAM","NOW",cx+cw-135,cy,40,CTRL_HEIGHT,CLR_ACCENT_DIM);
-   MB(m_btnOrigamiClearMain,"bPOCM","CLR",cx+cw-90,cy,35,CTRL_HEIGHT,CLR_FLATTEN);
-   MB(m_btnOrigamiOnOffMain,"bPOOM","OFF",cx+cw-50,cy,50,CTRL_HEIGHT,CLR_BTN_OFF);
-   cy+=CTRL_HEIGHT+2;
-   ML(m_lblDiadStatusMain,"pDsM","",cx,cy,cw,CTRL_HEIGHT,C'255,220,100',FONT_SIZE);
-   cy+=CTRL_HEIGHT+SEC_PAD+15;
-
-   // ══════════════════════════════════════════════════
-   // ── ORIGAMI TAB (initially hidden) ──
-   // ══════════════════════════════════════════════════
-   int py = 50;
-   MSep(si++,cx,py,cw); py+=SEP_GAP+SEC_PAD;
-   ML(m_lblOrigamiTitle,"pTi","ORIGAMI MODE",cx,py,cw-90,CTRL_HEIGHT+4,CLR_CLOCK_BLUE,FONT_SIZE_MED);
-   MB(m_btnOrigamiOnOff,"bPOO","OFF",cx+cw-80,py,80,CTRL_HEIGHT+4,CLR_BTN_OFF);
-   py+=CTRL_HEIGHT+8;
-
-   int obtnW = (cw-CTRL_GAP)/2;
-   MB(m_btnOrigamiApplyNow,"bPOA","APPLY NOW",cx,py,obtnW,CTRL_HEIGHT+2,CLR_ACCENT_DIM);
-   MB(m_btnOrigamiClear,"bPOC","CLEAR",cx+obtnW+CTRL_GAP,py,obtnW,CTRL_HEIGHT+2,CLR_FLATTEN);
-   py+=CTRL_HEIGHT+2+CTRL_GAP+SEC_PAD+10;
-   MSep(si++,cx,py,cw); py+=SEP_GAP+SEC_PAD;
-
-   ML(m_lblOrigamiTarget,"pTg","Target Growth",cx,py,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtOrigamiTarget,"ePTg","50.0",rx,py,44,CTRL_HEIGHT);
-   ML(m_lblOrigamiPct,"pPc","%",rx+46,py,20,CTRL_HEIGHT,CLR_TEXT_DIM);
-   ML(m_lblOrigamiTargetAmt,"pTA","",rx+68,py,rw-68,CTRL_HEIGHT,CLR_GOLD,FONT_SIZE); py+=CTRL_HEIGHT+CTRL_GAP;
-
-   ML(m_lblOrigamiAdd1,"pA1","Add-in 1 (%)",cx,py,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtOrigamiAdd1,"ePA1","35",rx,py,44,CTRL_HEIGHT); py+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblOrigamiAdd2,"pA2","Add-in 2 (%)",cx,py,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtOrigamiAdd2,"ePA2","50",rx,py,44,CTRL_HEIGHT); py+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblOrigamiAdd3,"pA3","Add-in 3 (%)",cx,py,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtOrigamiAdd3,"ePA3","65",rx,py,44,CTRL_HEIGHT); py+=CTRL_HEIGHT+CTRL_GAP+4;
-
-   MSep(si++,cx,py,cw); py+=SEP_GAP+SEC_PAD;
-   ML(m_lblOrigamiInfo1,"pI1","Step 1: —",cx,py,cw,CTRL_HEIGHT,CLR_TEXT_DIM); py+=CTRL_HEIGHT+2;
-   ML(m_lblOrigamiInfo2,"pI2","Step 2: —",cx,py,cw,CTRL_HEIGHT,CLR_TEXT_DIM); py+=CTRL_HEIGHT+2;
-   ML(m_lblOrigamiInfo3,"pI3","Step 3: —",cx,py,cw,CTRL_HEIGHT,CLR_TEXT_DIM); py+=CTRL_HEIGHT+2;
-   ML(m_lblOrigamiInfo4,"pI4","Base: —",cx,py,cw,CTRL_HEIGHT,CLR_TEXT_DIM); py+=CTRL_HEIGHT+CTRL_GAP;
-   MSep(si++,cx,py,cw); py+=SEP_GAP+SEC_PAD;
-   ML(m_lblO_OsTag,"lO_Os","Orders",cx,py,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblO_OsVal,"vO_Os","IDLE",rx,py,rw,CTRL_HEIGHT,CLR_TEXT_DIM); py+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblO_StVal,"vO_Sv","Ready",cx,py,cw,CTRL_HEIGHT,CLR_SUCCESS); py+=CTRL_HEIGHT+SEC_PAD;
-   py+=SEC_PAD; MSep(si++,cx,py,cw); py+=SEP_GAP+SEC_PAD;
-
-   ML(m_lblO_EqTag,"lO_EqT","Equity:",cx,py,50,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblO_StatEquity,"sO_Eq","$0",cx+52,py,85,CTRL_HEIGHT,clrWhite);
-   ML(m_lblO_PlTag,"lO_PlT","P/L:",cx+142,py,30,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblO_StatPL,"sO_PL","+$0",cx+175,py,75,CTRL_HEIGHT,CLR_SUCCESS);
-   py+=CTRL_HEIGHT+CTRL_GAP;
-
-   ML(m_lblO_TotExpTag,"lO_TeT","Total exposed:",cx,py,100,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblO_TotExpVal,"sO_TeV","0.00",cx+105,py,rw,CTRL_HEIGHT,CLR_TEXT_DIM);
-   py+=CTRL_HEIGHT+CTRL_GAP;
-
-   ML(m_lblO_RtRrTag,"lO_RtT","Realtime R:R",cx,py,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblO_RtRrLoss,"sO_RtL","-$0",rx,py,65,CTRL_HEIGHT,CLR_MONEY_RED);
-   ML(m_lblO_RtRrPft,"sO_RtP","+$0",rx+68,py,65,CTRL_HEIGHT,CLR_MONEY_GREEN);
-   ML(m_lblO_RtRrRiskPc,"sO_RtPc","{0.0%}",cx+cw-45,py,45,CTRL_HEIGHT,CLR_ACCENT);
-   py+=CTRL_HEIGHT+CTRL_GAP;
-
-   MSep(si++,cx,py,cw); py+=SEP_GAP+SEC_PAD;
-   ML(m_lblOrigamiStatus,"pSt","Origami: OFF",cx,py,cw,CTRL_HEIGHT,CLR_WARNING);
-   py+=CTRL_HEIGHT+2;
-   ML(m_lblDiadStatus,"pDs","",cx,py,cw,CTRL_HEIGHT,C'255,220,100',FONT_SIZE);
-
-   // Start on Main tab
-   ShowTab(0);
+   return true;
    return true;
 }
 
@@ -506,23 +383,13 @@ void CDashboard::SetInitialParams(const DashboardParams &p)
    m_expEnabled=p.expireEnabled; UpdExpire();
    m_edtExpCandles.Text(IntegerToString(p.expireCandles));
    m_lblSym.Text(p.symbol!=""?p.symbol:Symbol());
-   m_edtOrigamiTarget.Text(DoubleToString(p.targetGrowthPercent,1));
-   m_origamiSlMode=p.origamiSlMode;
-   m_btnOrigamiSlMode.Text(OrigamiSlModeToString(m_origamiSlMode));
-   color slClr=CLR_BTN_OFF;
-   if(m_origamiSlMode==ORIGAMI_SL_ALWAYS_ORIG) slClr=CLR_WARNING;
-   else if(m_origamiSlMode==ORIGAMI_SL_BE_SPREAD) slClr=CLR_SUCCESS;
-   m_btnOrigamiSlMode.ColorBackground(slClr);
-   m_origamiEnabled=p.origamiEnabled;
-   m_edtOrigamiMaxRisk.Text(DoubleToString(p.origamiMaxRiskPercent,1));
-   m_btnOrigamiOnOff.Text(m_origamiEnabled?"ON":"OFF");
-   m_btnOrigamiOnOff.ColorBackground(m_origamiEnabled?CLR_SUCCESS:CLR_BTN_OFF); }
+}
 
 // ── UPDATERS ──
 void CDashboard::UpdateSpread(int s) { m_lblSpdVal.Text("Spread: "+IntegerToString(s)); }
 void CDashboard::UpdateCountdown(string s) { m_lblCdVal.Text(s); }
-void CDashboard::UpdateStatus(string s) { m_lblStVal.Text(s); m_lblO_StVal.Text(s); }
-void CDashboard::UpdateOrderStatus(string s) { m_lblOsVal.Text(s); m_lblO_OsVal.Text(s); }
+void CDashboard::UpdateStatus(string s) { m_lblStVal.Text(s); }
+void CDashboard::UpdateOrderStatus(string s) { m_lblOsVal.Text(s); }
 void CDashboard::UpdateNYClock(string t, string ap, string d) { m_lblClkVal.Text(t); m_lblClkAmPm.Text(ap); m_lblClkDate.Text(d); }
 
 // ── DIRECT CLICK HANDLER — bypasses CAppDialog event routing ──
@@ -549,27 +416,11 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnSell.Name())          { OnSellO(); return true; }
    if(objName == m_btnCandleSrc.Name())     { OnCandleSrc(); return true; }
    if(objName == m_btnTrMode.Name())        { OnTrM(); return true; }
-   if(objName == m_btnApplyTrail.Name())    { OnApplyTrail(); return true; }
    if(objName == m_btnBE.Name())            { OnBEToggle(); return true; }
-   if(objName == m_btnApplyBE.Name())       { OnApplyBE(); return true; }
    if(objName == m_btnExpire.Name())        { OnExpire(); return true; }
    if(objName == m_btnA1.Name()) { OnA1(); return true; }
    if(objName == m_btnA2.Name()) { OnA2(); return true; }
    if(objName == m_btnA3.Name()) { OnA3(); return true; }
-   if(objName == m_btnFlatten.Name())       { OnFlatA(); return true; }
-   if(objName == m_btnPlaceStop.Name())     { OnManP(); return true; }
-   if(objName == m_btnCancelPend.Name())    { OnCanA(); return true; }
-   if(objName == m_btnBuyMkt.Name())        { OnBuyMkt(); return true; }
-   if(objName == m_btnSellMkt.Name())       { OnSellMkt(); return true; }
-   if(objName == m_btnLock.Name())          { OnLock(); return true; }
-   if(objName == m_btnReverse.Name())       { OnReverse(); return true; }
-   if(objName == m_btnTabMain.Name())       { OnTabMain(); return true; }
-   if(objName == m_btnTabOrigami.Name())    { OnTabOrigami(); return true; }
-   if(objName == m_btnOrigamiSlMode.Name()) { OnOrigamiSlMode(); return true; }
-   if(objName == m_btnOrigamiOnOff.Name())  { OnOrigamiOnOff(); return true; }
-   if(objName == m_btnOrigamiApplyNow.Name())    { OnOrigamiApplyNow(); return true; }
-   if(objName == m_btnOrigamiClear.Name())       { OnOrigamiClear(); return true; }
-   if(objName == m_btnOrigamiOnOffMain.Name())   { OnOrigamiOnOffMain(); return true; }
    else if(objName == m_btnTf.Name())
    {
       string tf = m_btnTf.Text();
@@ -581,9 +432,7 @@ bool CDashboard::HandleDirectClick(const string &objName)
       m_btnTf.Pressed(false);
       return true;
    }
-   else if(objName == m_btnOrigamiApplyNowMain.Name() || objName == m_btnOrigamiApplyNow.Name())
-   { OnOrigamiApplyNowMain(); return true; }
-   if(objName == m_btnOrigamiClearMain.Name())   { OnOrigamiClearMain(); return true; }
+
    return false;
 }
 
@@ -688,17 +537,13 @@ void CDashboard::UpdTrail() { string t="OFF"; color c=CLR_BTN_OFF;
 void CDashboard::OnBEToggle() { m_btnBE.Pressed(false); m_beOn=!m_beOn; UpdBE(); MarkDirty(); }
 void CDashboard::UpdBE() { m_btnBE.Text(m_beOn?"BE: ON":"BE: OFF");
    m_btnBE.ColorBackground(m_beOn?CLR_SUCCESS:CLR_BTN_OFF); }
-void CDashboard::OnApplyBE() { m_btnApplyBE.Pressed(false); PushCmd(CMD_APPLY_BE); }
-void CDashboard::OnApplyTrail() { m_btnApplyTrail.Pressed(false); PushCmd(CMD_APPLY_TRAIL); }
+
 void CDashboard::OnExpire() { m_btnExpire.Pressed(false); m_expEnabled=!m_expEnabled; UpdExpire(); MarkDirty(); }
 void CDashboard::UpdExpire() { m_btnExpire.Text(m_expEnabled?"auto cancel all: ON":"auto cancel all: OFF");
    m_btnExpire.ColorBackground(m_expEnabled?CLR_WARNING:CLR_BTN_OFF); }
 void CDashboard::OnAutoT() { m_btnAutoTrade.Pressed(false); m_auto=!m_auto; m_btnAutoTrade.Text(m_auto?"AUTO TRADE: ON":"AUTO TRADE: OFF");
    m_btnAutoTrade.ColorBackground(m_auto?CLR_SUCCESS:CLR_BTN_OFF); MarkDirty(); }
-void CDashboard::OnManP()  { m_btnPlaceStop.Pressed(false); PushCmd(CMD_MANUAL_PLACE); }
-void CDashboard::OnCanA()  { m_btnCancelPend.Pressed(false); PushCmd(CMD_CANCEL_ALL); }
-void CDashboard::OnFlatA() { m_btnFlatten.Pressed(false); PushCmd(CMD_FLATTEN_ALL); }
-void CDashboard::OnBrkEv() { PushCmd(CMD_BREAK_EVEN); }
+
 void CDashboard::OnA1(){ m_btnA1.Pressed(false); PresetIndex=0; PushCmd(CMD_PRESET); }
 void CDashboard::OnA2(){ m_btnA2.Pressed(false); PresetIndex=1; PushCmd(CMD_PRESET); }
 void CDashboard::OnA3(){ m_btnA3.Pressed(false); PresetIndex=2; PushCmd(CMD_PRESET); }
@@ -709,181 +554,7 @@ void CDashboard::OnAutoApply() { m_btnAutoApply.Pressed(false); m_autoNews=!m_au
    m_btnAutoApply.Text(m_autoNews?"AUTO APPLY: ON":"AUTO APPLY: OFF");
    m_btnAutoApply.ColorBackground(m_autoNews?CLR_SUCCESS:CLR_BTN_OFF); MarkDirty(); }
 void CDashboard::OnApplyNextClick() { m_btnApplyNext.Pressed(false); PushCmd(CMD_APPLY_NEXT); }
-void CDashboard::OnBuyMkt()  { m_btnBuyMkt.Pressed(false); PushCmd(CMD_BUY_MKT); }
-void CDashboard::OnSellMkt() { m_btnSellMkt.Pressed(false); PushCmd(CMD_SELL_MKT); }
-void CDashboard::OnLock()    { m_btnLock.Pressed(false); PushCmd(CMD_LOCK); }
-void CDashboard::OnReverse() { m_btnReverse.Pressed(false); PushCmd(CMD_REVERSE); }
 
-// ── TAB SWITCHING ──
-void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); ShowTab(0); }
-void CDashboard::OnTabOrigami()  { m_btnTabOrigami.Pressed(false); ShowTab(1); }
-
-void CDashboard::ShowTab(int tab)
-{
-   m_activeTab = tab;
-   m_btnTabMain.ColorBackground(tab==0 ? CLR_ACCENT : CLR_BTN_OFF);
-   m_btnTabOrigami.ColorBackground(tab==1 ? CLR_ACCENT : CLR_BTN_OFF);
-   
-   if(tab == 0)
-   {
-      // Show Main controls
-      CtrlShow(m_lblVer); CtrlShow(m_lblSym); CtrlShow(m_lblMktStatus); CtrlShow(m_lblSpdVal);
-      CtrlShow(m_lblClkTag); CtrlShow(m_lblClkVal); CtrlShow(m_lblClkAmPm); CtrlShow(m_lblClkDate); CtrlShow(m_lblCdTag); CtrlShow(m_lblCdVal);
-      CtrlShow(m_lblNewsTag); CtrlShow(m_lblNewsVal);
-      CtrlShowBtn(m_btnAutoTrade); CtrlShowBtn(m_btnNyoOnly); CtrlShowBtn(m_btnAutoApply); CtrlShowBtn(m_btnApplyNext);
-      CtrlShow(m_lblSchTag); CtrlShowEdit(m_edtH); CtrlShow(m_lblC1); CtrlShowEdit(m_edtM); CtrlShow(m_lblC2); CtrlShowEdit(m_edtS);
-      CtrlShow(m_lblBefTag); CtrlShowEdit(m_edtBef); CtrlShow(m_lblBefSec);
-      CtrlShow(m_lblTfTag); CtrlShowBtn(m_btnTf);
-      CtrlShow(m_lblSlTag); CtrlShowEdit(m_edtSL); CtrlShowEdit(m_edtTP); CtrlShowBtn(m_btnSLS);
-      CtrlShow(m_lblMdTag); CtrlShowBtn(m_btnBoth); CtrlShowBtn(m_btnBuy); CtrlShowBtn(m_btnSell);
-      CtrlShow(m_lblCsTag); CtrlShowBtn(m_btnCandleSrc);
-      CtrlShow(m_lblBalTag); CtrlShow(m_lblBalVal); CtrlShow(m_lblRskTag); CtrlShowEdit(m_edtRisk); CtrlShow(m_lblRPc);
-      CtrlShow(m_lblRATag); CtrlShow(m_lblRAVal); CtrlShow(m_lblRwVal); CtrlShow(m_lblLtTag); CtrlShow(m_lblLtVal);
-      CtrlShow(m_lblTrTag); CtrlShowBtn(m_btnTrMode);
-      CtrlShow(m_lblTrTrig); CtrlShowEdit(m_edtTTr); CtrlShow(m_lblTrDist); CtrlShowEdit(m_edtTDi); CtrlShow(m_lblTrStep); CtrlShowEdit(m_edtTSt);
-      CtrlShowBtn(m_btnApplyTrail); CtrlShowBtn(m_btnBE); CtrlShowBtn(m_btnApplyBE);
-      CtrlShow(m_lblBeLine); CtrlShowEdit(m_edtBEA); CtrlShow(m_lblBELock); CtrlShowEdit(m_edtBEL);
-      CtrlShowBtn(m_btnExpire); CtrlShowEdit(m_edtExpCandles);
-      CtrlShowBtn(m_btnA1); CtrlShowBtn(m_btnA2); CtrlShowBtn(m_btnA3); 
-      CtrlShowBtn(m_btnFlatten); CtrlShowBtn(m_btnPlaceStop); CtrlShowBtn(m_btnCancelPend);
-      CtrlShowBtn(m_btnBuyMkt); CtrlShowBtn(m_btnSellMkt); CtrlShowBtn(m_btnLock); CtrlShowBtn(m_btnReverse);
-      CtrlShow(m_lblOsTag); CtrlShow(m_lblOsVal); CtrlShow(m_lblStVal);
-      CtrlShow(m_lblEqTag); CtrlShow(m_lblStatEquity); CtrlShow(m_lblPlTag); CtrlShow(m_lblStatPL);
-      CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal); CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
-      CtrlShowBtn(m_btnDayPicker);
-      CtrlShow(m_lblOrigamiStatusMain); CtrlShowBtn(m_btnOrigamiApplyNowMain); CtrlShowBtn(m_btnOrigamiClearMain); CtrlShowBtn(m_btnOrigamiOnOffMain);
-      CtrlShow(m_lblDiadStatusMain);
-      CtrlShow(m_lblOrigamiMaxRiskTag); CtrlShowEdit(m_edtOrigamiMaxRisk); CtrlShow(m_lblOrigamiMaxRiskPc);
-      // Hide Origami controls
-      CtrlHide(m_lblOrigamiTitle); CtrlHide(m_lblOrigamiTarget); CtrlHide(m_edtOrigamiTarget); CtrlHide(m_lblOrigamiPct);
-      CtrlHide(m_lblOrigamiSlMode); CtrlHide(m_btnOrigamiSlMode);
-      CtrlHide(m_lblOrigamiAdd1); CtrlHide(m_edtOrigamiAdd1);
-      CtrlHide(m_lblOrigamiAdd2); CtrlHide(m_edtOrigamiAdd2);
-      CtrlHide(m_lblOrigamiAdd3); CtrlHide(m_edtOrigamiAdd3);
-      CtrlHide(m_lblOrigamiInfo1); CtrlHide(m_lblOrigamiInfo2); CtrlHide(m_lblOrigamiInfo3); CtrlHide(m_lblOrigamiInfo4);
-      CtrlHide(m_lblOrigamiStatus); CtrlHide(m_lblDiadStatus);
-      CtrlHide(m_btnOrigamiOnOff); CtrlHide(m_lblOrigamiTargetAmt); CtrlHide(m_btnOrigamiApplyNow); CtrlHide(m_btnOrigamiClear);
-      CtrlHide(m_lblO_OsTag); CtrlHide(m_lblO_OsVal); CtrlHide(m_lblO_StVal);
-      CtrlHide(m_lblO_OsTag); CtrlHide(m_lblO_OsVal); CtrlHide(m_lblO_StVal);
-      CtrlHide(m_lblO_EqTag); CtrlHide(m_lblO_StatEquity); CtrlHide(m_lblO_PlTag); CtrlHide(m_lblO_StatPL);
-      CtrlHide(m_lblO_TotExpTag); CtrlHide(m_lblO_TotExpVal); CtrlHide(m_lblO_RtRrTag); CtrlHide(m_lblO_RtRrLoss); CtrlHide(m_lblO_RtRrPft); CtrlHide(m_lblO_RtRrRiskPc);
-   }
-   else
-   {
-      // Hide Main controls
-      CtrlHide(m_lblVer); CtrlHide(m_lblSym); CtrlHide(m_lblMktStatus); CtrlHide(m_lblSpdVal);
-      CtrlHide(m_lblClkTag); CtrlHide(m_lblClkVal); CtrlHide(m_lblClkAmPm); CtrlHide(m_lblClkDate); CtrlHide(m_lblCdTag); CtrlHide(m_lblCdVal);
-      CtrlHide(m_lblNewsTag); CtrlHide(m_lblNewsVal);
-      CtrlHide(m_btnAutoTrade); CtrlHide(m_btnNyoOnly); CtrlHide(m_btnAutoApply); CtrlHide(m_btnApplyNext);
-      CtrlHide(m_lblSchTag); CtrlHide(m_edtH); CtrlHide(m_lblC1); CtrlHide(m_edtM); CtrlHide(m_lblC2); CtrlHide(m_edtS);
-      CtrlHide(m_lblBefTag); CtrlHide(m_edtBef); CtrlHide(m_lblBefSec);
-      CtrlHide(m_lblTfTag); CtrlHide(m_btnTf);
-      CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
-      CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
-      CtrlHide(m_lblCsTag); CtrlHide(m_btnCandleSrc);
-      CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_lblRskTag); CtrlHide(m_edtRisk); CtrlHide(m_lblRPc);
-      CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
-      CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
-      CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
-      CtrlHide(m_btnApplyTrail); CtrlHide(m_btnBE); CtrlHide(m_btnApplyBE);
-      CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
-      CtrlHide(m_btnExpire); CtrlHide(m_edtExpCandles);
-      CtrlHide(m_btnA1); CtrlHide(m_btnA2); CtrlHide(m_btnA3); 
-      CtrlHide(m_btnFlatten); CtrlHide(m_btnPlaceStop); CtrlHide(m_btnCancelPend);
-      CtrlHide(m_btnBuyMkt); CtrlHide(m_btnSellMkt); CtrlHide(m_btnLock); CtrlHide(m_btnReverse);
-      CtrlHide(m_lblOsTag); CtrlHide(m_lblOsVal); CtrlHide(m_lblStVal);
-      CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
-      CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal); CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
-      CtrlHide(m_btnDayPicker);
-      CtrlHide(m_lblOrigamiStatusMain); CtrlHide(m_btnOrigamiApplyNowMain); CtrlHide(m_btnOrigamiClearMain); CtrlHide(m_btnOrigamiOnOffMain);
-      CtrlHide(m_lblDiadStatusMain);
-      CtrlHide(m_lblOrigamiMaxRiskTag); CtrlHide(m_edtOrigamiMaxRisk); CtrlHide(m_lblOrigamiMaxRiskPc);
-      // Show Origami controls
-      CtrlShow(m_lblOrigamiTitle); CtrlShow(m_lblOrigamiTarget); CtrlShowEdit(m_edtOrigamiTarget); CtrlShow(m_lblOrigamiPct);
-      CtrlHide(m_lblOrigamiSlMode); CtrlHide(m_btnOrigamiSlMode); // v1.51: SL mode removed
-      CtrlShow(m_lblOrigamiAdd1); CtrlShowEdit(m_edtOrigamiAdd1);
-      CtrlShow(m_lblOrigamiAdd2); CtrlShowEdit(m_edtOrigamiAdd2);
-      CtrlShow(m_lblOrigamiAdd3); CtrlShowEdit(m_edtOrigamiAdd3);
-      CtrlShow(m_lblOrigamiInfo1); CtrlShow(m_lblOrigamiInfo2); CtrlShow(m_lblOrigamiInfo3); CtrlShow(m_lblOrigamiInfo4);
-      CtrlShow(m_lblOrigamiStatus); CtrlShow(m_lblDiadStatus);
-      CtrlShowBtn(m_btnOrigamiOnOff); CtrlShow(m_lblOrigamiTargetAmt); CtrlShowBtn(m_btnOrigamiApplyNow); CtrlShowBtn(m_btnOrigamiClear);
-      CtrlShow(m_lblO_OsTag); CtrlShow(m_lblO_OsVal); CtrlShow(m_lblO_StVal);
-      CtrlShow(m_lblO_EqTag); CtrlShow(m_lblO_StatEquity); CtrlShow(m_lblO_PlTag); CtrlShow(m_lblO_StatPL);
-      CtrlShow(m_lblO_TotExpTag); CtrlShow(m_lblO_TotExpVal); CtrlShow(m_lblO_RtRrTag); CtrlShow(m_lblO_RtRrLoss); CtrlShow(m_lblO_RtRrPft); CtrlShow(m_lblO_RtRrRiskPc);
-   }
-   // Separators: 0-11 main, 12+ origami
-   for(int i=0; i<20; i++)
-   {
-      if(i < 12) { if(tab==0) m_sep[i].Show(); else m_sep[i].Hide(); }
-      else { if(tab==1) m_sep[i].Show(); else m_sep[i].Hide(); }
-   }
-   ChartRedraw();
-}
-
-void CDashboard::OnOrigamiSlMode()
-{
-   m_btnOrigamiSlMode.Pressed(false);
-   switch(m_origamiSlMode)
-   {
-      case ORIGAMI_SL_DONT_MOVE:   m_origamiSlMode=ORIGAMI_SL_ALWAYS_ORIG; break;
-      case ORIGAMI_SL_ALWAYS_ORIG: m_origamiSlMode=ORIGAMI_SL_BE_SPREAD;   break;
-      case ORIGAMI_SL_BE_SPREAD:   m_origamiSlMode=ORIGAMI_SL_DONT_MOVE;   break;
-   }
-   m_btnOrigamiSlMode.Text(OrigamiSlModeToString(m_origamiSlMode));
-   color slClr=CLR_BTN_OFF;
-   if(m_origamiSlMode==ORIGAMI_SL_ALWAYS_ORIG) slClr=CLR_WARNING;
-   else if(m_origamiSlMode==ORIGAMI_SL_BE_SPREAD) slClr=CLR_SUCCESS;
-   m_btnOrigamiSlMode.ColorBackground(slClr);
-   MarkDirty();
-}
-
-void CDashboard::OnOrigamiOnOff()
-{
-   m_btnOrigamiOnOff.Pressed(false);
-   m_origamiEnabled=!m_origamiEnabled;
-   m_btnOrigamiOnOff.Text(m_origamiEnabled?"ON":"OFF");
-   m_btnOrigamiOnOff.ColorBackground(m_origamiEnabled?CLR_SUCCESS:CLR_BTN_OFF);
-   m_btnOrigamiOnOffMain.Text(m_origamiEnabled?"ON":"OFF");
-   m_btnOrigamiOnOffMain.ColorBackground(m_origamiEnabled?CLR_SUCCESS:CLR_BTN_OFF);
-   m_lblOrigamiStatus.Text(m_origamiEnabled?"Origami: ON":"Origami: OFF");
-   m_lblOrigamiStatus.Color(m_origamiEnabled?CLR_SUCCESS:CLR_WARNING);
-   m_lblOrigamiStatusMain.Text(m_origamiEnabled?"Origami: ON":"Origami: OFF");
-   m_lblOrigamiStatusMain.Color(m_origamiEnabled?CLR_SUCCESS:CLR_WARNING);
-   MarkDirty();
-}
-
-void CDashboard::OnOrigamiOnOffMain()
-{
-   m_btnOrigamiOnOffMain.Pressed(false);
-   OnOrigamiOnOff();
-}
-
-void CDashboard::OnOrigamiApplyNow()
-{
-   m_btnOrigamiApplyNow.Pressed(false);
-   if(!m_origamiEnabled) {
-      OnOrigamiOnOff();
-   }
-   PushCmd(CMD_ORIGAMI_APPLY_NOW);
-}
-
-void CDashboard::OnOrigamiApplyNowMain()
-{
-   m_btnOrigamiApplyNowMain.Pressed(false);
-   OnOrigamiApplyNow();
-}
-
-void CDashboard::OnOrigamiClear()
-{
-   m_btnOrigamiClear.Pressed(false);
-   PushCmd(CMD_ORIGAMI_CLEAR);
-}
-
-void CDashboard::OnOrigamiClearMain()
-{
-   m_btnOrigamiClearMain.Pressed(false);
-   OnOrigamiClear();
-}
 
 void CDashboard::OnDayPicker()
 {

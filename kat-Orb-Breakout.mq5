@@ -33,9 +33,6 @@ input int             InpEntryBufferPoints= 5;
 input group "=== RISK ==="
 input double          InpRiskPercent     = 1.0;
 
-input group "=== ORIGAMI ==="
-input double          InpTargetGrowthPercent = 50.0;
-input double          InpMarginSafetyPct     = 10.0; // v1.51: DIAD Margin of Safety (% of distance)
 
 input group "=== TRAIL ==="
 input ENUM_TRAIL_MODE InpTrailMode       = TM_OFF;
@@ -64,8 +61,7 @@ input int InpA2_TrTrig=20;input int InpA2_TrDist=15;input int InpA2_TrStep=3;inp
 input int InpA3_SL=800;input int InpA3_TP=1600;input double InpA3_Risk=2.0;
 input int InpA3_TrTrig=50;input int InpA3_TrDist=30;input int InpA3_TrStep=10;input ENUM_TIMEFRAMES InpA3_TF=PERIOD_M5;
 
-input group "=== SHORTCUTS ==="
-input string InpKeyPlaceOrder="P"; input string InpKeyFlatten="F"; input string InpKeyCollapse="H";
+
 
 #include "Dashboard.mqh"
 #include "TimeManager.mqh"
@@ -73,7 +69,6 @@ input string InpKeyPlaceOrder="P"; input string InpKeyFlatten="F"; input string 
 #include "OrderManager.mqh"
 #include "TrailManager.mqh"
 #include "NewsManager.mqh"
-#include "OrigamiManager.mqh"
 
 int g_magic;
 PresetParams g_presets[3];
@@ -83,10 +78,10 @@ CRiskManager  g_riskMgr;   // Used for dashboard balance/risk display only
 COrderManager g_orderMgr;
 CTrailManager g_trailMgr;
 CNewsManager  g_newsMgr;
-COrigamiManager g_origamiMgr;
+
 bool g_initialized = false;
 datetime g_lastTpPollTime = 0;  // Throttle for tick-based TP polling
-const string BE_LINE_NAME = "Origami_BE_Line";
+const string BE_LINE_NAME = "Aggregate_BE_Line";
 
 bool IsMarketOpen(string sym)
 { 
@@ -149,8 +144,7 @@ int OnInit()
    p.trailDistance=InpTrailDistance;p.trailStep=InpTrailStep;
    p.beActivatePoints=InpBeActivatePts;p.beLockPoints=InpBeLockPts;p.beEnabled=InpBeEnabled;
    p.candleSource=InpCandleSrc;p.expireEnabled=InpExpireEnabled;p.expireCandles=InpExpireCandles;
-   p.targetGrowthPercent=InpTargetGrowthPercent;p.origamiSlMode=ORIGAMI_SL_BE_SPREAD;
-   p.marginSafetyPct=InpMarginSafetyPct;
+
    g_dashboard.SetInitialParams(p);
    g_dashboard.Run(); EventSetTimer(1); g_initialized=true;
    PrintFormat("[Main] %s v%s | %s | Magic=%d", EA_NAME, EA_VERSION, Symbol(), g_magic);
@@ -170,139 +164,7 @@ void OnTick()
    g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus());
    g_trailMgr.Process(p);
    
-   // Tick-based TP polling fallback (throttled to 1x/sec)
-   if(g_origamiMgr.IsActive() && TimeCurrent() > g_lastTpPollTime)
-   {
-      g_lastTpPollTime = TimeCurrent();
-      int totalPositions = PositionsTotal();
-      double pointSize = SymbolInfoDouble(sym, SYMBOL_POINT);
-      for(int i=0; i<totalPositions; i++)
-      {
-         ulong t = PositionGetTicket(i);
-         if(t <= 0) continue;
-         if(PositionGetInteger(POSITION_MAGIC) != g_magic) continue;
-         if(PositionGetString(POSITION_SYMBOL) != sym) continue;
-         double posTP = PositionGetDouble(POSITION_TP);
-         if(posTP > 0 && MathAbs(posTP - g_origamiMgr.GetTP()) > pointSize)
-         {
-            HandleTPChange(posTP, sym);
-            break;
-         }
-      }
-   }
 
-   // Origami Engine Check
-   if(g_origamiMgr.IsActive())
-   {
-      if(!p.origamiEnabled)
-      {
-         g_origamiMgr.Reset();
-         g_dashboard.UpdateOrigamiStatus("Origami: OFF");
-      }
-      else
-      {
-         int posCount = 0;
-         int totalPositions = PositionsTotal();
-         for(int i=0; i<totalPositions; i++){
-            if(PositionGetTicket(i)>0 && PositionGetInteger(POSITION_MAGIC)==g_magic && PositionGetString(POSITION_SYMBOL)==p.symbol) posCount++;
-         }
-         if(posCount == 0) {
-            g_origamiMgr.Reset();
-            g_dashboard.UpdateOrigamiStatus("Origami: INACTIVE");
-         }
-         else {
-            double currentPrice = (g_origamiMgr.GetOrderType() == ORDER_TYPE_BUY) ? SymbolInfoDouble(p.symbol, SYMBOL_ASK) : SymbolInfoDouble(p.symbol, SYMBOL_BID);
-            double lotToAdd = g_origamiMgr.CheckThresholds(currentPrice);
-            if(lotToAdd > 0)
-            {
-               // Margin check before placing add-in
-               double marginReq = 0;
-               if(OrderCalcMargin(g_origamiMgr.GetOrderType()==ORDER_TYPE_BUY?ORDER_TYPE_BUY:ORDER_TYPE_SELL, p.symbol, lotToAdd, currentPrice, marginReq))
-               {
-                  if(AccountInfoDouble(ACCOUNT_MARGIN_FREE) >= marginReq)
-                  {
-                     double tp = g_origamiMgr.GetTP();
-                     if(g_origamiMgr.GetOrderType() == ORDER_TYPE_BUY) g_orderMgr.BuyMarketEx(lotToAdd, 0, tp, p.symbol);
-                     else g_orderMgr.SellMarketEx(lotToAdd, 0, tp, p.symbol);
-                  }
-                  else PrintFormat("[Origami] SKIP add-in: margin insufficient");
-               }
-            }
-            
-            // v1.50: Always apply DIAD-computed SL (no mode selector)
-            double targetSL = g_origamiMgr.GetCurrentSLTarget();
-            if(targetSL > 0)
-            {
-               CTrade trade;
-               for(int i=0; i<totalPositions; i++)
-               {
-                  ulong t = PositionGetTicket(i);
-                  if(t <= 0) continue;
-                  if(PositionGetInteger(POSITION_MAGIC)==g_magic && PositionGetString(POSITION_SYMBOL)==p.symbol)
-                  {
-                     double sl = PositionGetDouble(POSITION_SL);
-                     int type = (int)PositionGetInteger(POSITION_TYPE);
-                     bool modify = false;
-                     if(type == POSITION_TYPE_BUY && (sl < targetSL || sl == 0)) modify = true;
-                     if(type == POSITION_TYPE_SELL && (sl > targetSL || sl == 0)) modify = true;
-                     if(modify) trade.PositionModify(t, targetSL, PositionGetDouble(POSITION_TP));
-                  }
-               }
-            }
-            
-            // Dashboard origami status sync
-            int tCount = g_origamiMgr.GetTriggeredCount();
-            g_dashboard.UpdateOrigamiStatus("Origami: ACTIVE " + IntegerToString(tCount) + "/3");
-            if(g_origamiMgr.IsDiadFallback())
-               g_dashboard.UpdateDiadStatus("FALLBACK: mathematical edge case");
-            else
-               g_dashboard.UpdateDiadStatus("DIAD: OK | Calc Risk (C): -$" + DoubleToString(MathAbs(g_origamiMgr.GetDiadConstC()), 0));
-            double tr1,tr2,tr3,lt1,lt2,lt3; bool fg1,fg2,fg3;
-            g_origamiMgr.GetStepInfo(0,tr1,lt1,fg1); g_origamiMgr.GetStepInfo(1,tr2,lt2,fg2); g_origamiMgr.GetStepInfo(2,tr3,lt3,fg3);
-            string baseLine = "Base: "+DoubleToString(g_origamiMgr.GetBaseLot(),2)+" | CalcRisk: -$" + DoubleToString(MathAbs(g_origamiMgr.GetDiadConstC()),0);
-            g_dashboard.UpdateOrigamiInfo(
-               "Step 1: "+(fg1?"FIRED ":"")+DoubleToString(tr1,2)+" | "+DoubleToString(lt1,2)+" lots",
-               "Step 2: "+(fg2?"FIRED ":"")+DoubleToString(tr2,2)+" | "+DoubleToString(lt2,2)+" lots",
-               "Step 3: "+(fg3?"FIRED ":"")+DoubleToString(tr3,2)+" | "+DoubleToString(lt3,2)+" lots",
-               baseLine
-            );
-         }
-      }
-   }
-}
-
-// Centralized TP change handler — called from both OnTradeTransaction and OnTick polling
-void HandleTPChange(double newTP, string symbol)
-{
-   double oldTP = g_origamiMgr.GetTP();
-   PrintFormat("[Origami] TP DRAGGED: %.5f -> %.5f", oldTP, newTP);
-   g_dashboard.UpdateStatus("TP updated -> recalculating...");
-   
-   if(g_origamiMgr.RecalculateTP(newTP))
-   {
-      // Sync new TP to ALL open positions with our magic
-      CTrade syncTrade;
-      int totalPositions = PositionsTotal();
-      double pointSize = SymbolInfoDouble(symbol, SYMBOL_POINT);
-      for(int i=0; i<totalPositions; i++)
-      {
-         ulong t = PositionGetTicket(i);
-         if(t <= 0) continue;
-         if(PositionGetInteger(POSITION_MAGIC) != g_magic) continue;
-         if(PositionGetString(POSITION_SYMBOL) != symbol) continue;
-         double curTP = PositionGetDouble(POSITION_TP);
-         if(MathAbs(curTP - newTP) > pointSize)
-         {
-            syncTrade.PositionModify(t, PositionGetDouble(POSITION_SL), newTP);
-         }
-      }
-      g_dashboard.UpdateStatus("Origami recalculated OK");
-   }
-   else
-   {
-      g_dashboard.UpdateStatus("TP recalc skipped (invalid)");
-   }
-}
 
 void ApplyNewsToTiming()
 {
@@ -467,12 +329,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
    if(id == CHARTEVENT_KEYDOWN)
    {
       string k = ShortToString((ushort)lparam); StringToUpper(k);
-      string kP = InpKeyPlaceOrder; StringToUpper(kP);
-      string kF = InpKeyFlatten;    StringToUpper(kF);
-      string kC = InpKeyCollapse;   StringToUpper(kC);
-      if(k == kP)      g_dashboard.PushCmdPublic(CMD_MANUAL_PLACE);
-      else if(k == kF)  g_dashboard.PushCmdPublic(CMD_FLATTEN_ALL);
-      else if(k == kC) { static bool h = false; if(!h){g_dashboard.Hide();h=true;}else{g_dashboard.Show();h=false;} }
+
    }
 
    // v2.0: Command queue dispatcher — process all pending commands
@@ -491,63 +348,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
             g_dashboard.UpdateStatus("Preset applied ✓");
             break;
          }
-         case CMD_MANUAL_PLACE:
-            if(g_orderMgr.PlaceOCOOrders(p)) g_dashboard.UpdateStatus("Stop orders placed ✓");
-            else g_dashboard.UpdateStatus("Order FAILED");
-            g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus());
-            break;
-         case CMD_CANCEL_ALL:
-            g_orderMgr.CancelAllPending(sym);
-            g_dashboard.UpdateStatus("Pending cancelled");
-            g_dashboard.UpdateOrderStatus("IDLE");
-            break;
-         case CMD_FLATTEN_ALL:
-            g_orderMgr.FlattenAll(sym);
-            g_origamiMgr.Reset();
-            g_dashboard.UpdateOrigamiStatus("Origami: INACTIVE");
-            g_dashboard.UpdateStatus("FLAT — all closed");
-            g_dashboard.UpdateOrderStatus("FLAT");
-            break;
-         case CMD_APPLY_TRAIL:
-            g_orderMgr.ApplySettings(p);
-            g_dashboard.UpdateStatus("Trailing applied ✓");
-            break;
-         case CMD_APPLY_BE:
-            g_trailMgr.ForceBreakeven(p);
-            g_dashboard.UpdateStatus("BE applied ✓");
-            break;
-         case CMD_BUY_MKT:
-            if(g_orderMgr.BuyMarket(p)) g_dashboard.UpdateStatus("BUY filled ✓");
-            else g_dashboard.UpdateStatus("BUY FAILED");
-            break;
-         case CMD_SELL_MKT:
-            if(g_orderMgr.SellMarket(p)) g_dashboard.UpdateStatus("SELL filled ✓");
-            else g_dashboard.UpdateStatus("SELL FAILED");
-            break;
-         case CMD_LOCK:
-            if(g_orderMgr.LockAll(sym)) { g_origamiMgr.Reset(); g_dashboard.UpdateOrigamiStatus("Origami: INACTIVE"); g_dashboard.UpdateStatus("LOCKED ✓"); }
-            else g_dashboard.UpdateStatus("LOCK FAILED");
-            break;
-         case CMD_REVERSE:
-            if(g_orderMgr.ReverseAll(p)) { g_origamiMgr.Reset(); g_dashboard.UpdateOrigamiStatus("Origami: INACTIVE"); g_dashboard.UpdateStatus("REVERSED ✓"); }
-            else g_dashboard.UpdateStatus("REVERSE FAILED");
-            break;
-         case CMD_BREAK_EVEN:
-            g_trailMgr.ForceBreakeven(p);
-            g_dashboard.UpdateStatus("BE applied ✓");
-            break;
-         case CMD_ORIGAMI_APPLY_NOW:
-             if(p.origamiEnabled) {
-                g_origamiMgr.SetMarginSafety(p.marginSafetyPct); // v1.51: DIAD
-                g_origamiMgr.ApplyNow(p);
-                g_dashboard.UpdateOrigamiStatus("Origami: APPLIED");
-             }
-            break;
-         case CMD_ORIGAMI_CLEAR:
-            g_origamiMgr.Reset();
-            g_dashboard.UpdateOrigamiStatus("Origami: CLEARED");
-            g_dashboard.UpdateStatus("Origami steps cleared");
-            break;
+
          default: break;
       }
    }
@@ -558,50 +359,5 @@ void OnTradeTransaction(const MqlTradeTransaction &trans,const MqlTradeRequest &
    g_orderMgr.OnTransaction(trans,request,result); 
    g_dashboard.UpdateOrderStatus(g_orderMgr.GetStatus()); 
    
-   // Detect TP modification from chart drag (TRADE_TRANSACTION_POSITION)
-   if(trans.type == TRADE_TRANSACTION_POSITION && g_origamiMgr.IsActive())
-   {
-      ulong posTicket = trans.position;
-      if(PositionSelectByTicket(posTicket) && PositionGetInteger(POSITION_MAGIC) == g_magic)
-      {
-         string posSymbol = PositionGetString(POSITION_SYMBOL);
-         double newTP = PositionGetDouble(POSITION_TP);
-         if(newTP > 0 && MathAbs(newTP - g_origamiMgr.GetTP()) > SymbolInfoDouble(posSymbol, SYMBOL_POINT))
-         {
-            HandleTPChange(newTP, posSymbol);
-         }
-      }
-   }
-   
-   // Detect new position entry for origami initialization
-   if(trans.type == TRADE_TRANSACTION_DEAL_ADD)
-   {
-      ulong dealTicket = trans.deal;
-      if(HistoryDealSelect(dealTicket) && HistoryDealGetInteger(dealTicket, DEAL_MAGIC) == g_magic)
-      {
-         long entryType = HistoryDealGetInteger(dealTicket, DEAL_ENTRY);
-         if(entryType == DEAL_ENTRY_IN)
-         {
-            if(!g_origamiMgr.IsActive())
-            {
-               DashboardParams p = g_dashboard.GetParams();
-               if(!p.origamiEnabled) return;
-               g_origamiMgr.SetMarginSafety(p.marginSafetyPct);
-               double bal = AccountInfoDouble(ACCOUNT_BALANCE);
-               double entry = HistoryDealGetDouble(dealTicket, DEAL_PRICE);
-               int orderType = (int)HistoryDealGetInteger(dealTicket, DEAL_TYPE); 
-               
-               long posId = HistoryDealGetInteger(dealTicket, DEAL_POSITION_ID);
-               if(PositionSelectByTicket(posId))
-               {
-                  double tp = PositionGetDouble(POSITION_TP);
-                  if(tp > 0)
-                  {
-                     g_origamiMgr.CalculateOrigami(bal, p.targetGrowthPercent, p.riskPercent, p.origamiMaxRiskPercent, entry, tp, p.slPoints, orderType, p.symbol, p.addInPct1, p.addInPct2, p.addInPct3);
-                  }
-               }
-            }
-         }
-      }
-   }
+
 }
