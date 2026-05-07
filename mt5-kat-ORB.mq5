@@ -51,11 +51,11 @@ sinput string         sep_big_m            = "--------------------------------";
 input group "------------- PRESETS -------------"
 sinput string         sep_preset_mA        = "---------- SET mA ----------"; // ---------- SET mA ----------
 input int             InpmA_SL             = 1500;        // Set mA: Stop Loss
-input int             InpmA_TP             = 3000;        // Set mA: Take Profit
+input int             InpmA_TP             = 1500;        // Set mA: Take Profit
 input double          InpmA_Risk           = 1.0;         // Set mA: Risk %
-input int             InpmA_TrTrig         = 30;          // Set mA: Trail Trigger
-input int             InpmA_TrDist         = 20;          // Set mA: Trail Distance
-input int             InpmA_TrStep         = 5;           // Set mA: Trail Step
+input int             InpmA_TrTrig         = 1500;        // Set mA: Trail Trigger
+input int             InpmA_TrDist         = 500;         // Set mA: Trail Distance
+input int             InpmA_TrStep         = 1;           // Set mA: Trail Step
 input ENUM_TIMEFRAMES InpmA_TF             = PERIOD_M2;   // Set mA: Timeframe
 
 sinput string         sep_preset_mB        = "---------- SET mB ----------"; // ---------- SET mB ----------
@@ -78,11 +78,11 @@ input ENUM_TIMEFRAMES InpmC_TF             = PERIOD_M5;   // Set mC: Timeframe
 
 sinput string         sep_preset_2A        = "---------- SET 2A ----------"; // ---------- SET 2A ----------
 input int             Inp2A_SL             = 1500;        // Set 2A: Stop Loss
-input int             Inp2A_TP             = 3000;        // Set 2A: Take Profit
+input int             Inp2A_TP             = 1500;        // Set 2A: Take Profit
 input double          Inp2A_Risk           = 1.0;         // Set 2A: Risk %
-input int             Inp2A_TrTrig         = 30;          // Set 2A: Trail Trigger
-input int             Inp2A_TrDist         = 20;          // Set 2A: Trail Distance
-input int             Inp2A_TrStep         = 5;           // Set 2A: Trail Step
+input int             Inp2A_TrTrig         = 1500;        // Set 2A: Trail Trigger
+input int             Inp2A_TrDist         = 500;         // Set 2A: Trail Distance
+input int             Inp2A_TrStep         = 1;           // Set 2A: Trail Step
 input ENUM_TIMEFRAMES Inp2A_TF             = PERIOD_M2;   // Set 2A: Timeframe
 
 sinput string         sep_preset_2B        = "---------- SET 2B ----------"; // ---------- SET 2B ----------
@@ -105,11 +105,11 @@ input ENUM_TIMEFRAMES Inp2C_TF             = PERIOD_M2;   // Set 2C: Timeframe
 
 sinput string         sep_preset_5A        = "---------- SET 5A ----------"; // ---------- SET 5A ----------
 input int             Inp5A_SL             = 1500;        // Set 5A: Stop Loss
-input int             Inp5A_TP             = 3000;        // Set 5A: Take Profit
+input int             Inp5A_TP             = 1500;        // Set 5A: Take Profit
 input double          Inp5A_Risk           = 1.0;         // Set 5A: Risk %
-input int             Inp5A_TrTrig         = 30;          // Set 5A: Trail Trigger
-input int             Inp5A_TrDist         = 20;          // Set 5A: Trail Distance
-input int             Inp5A_TrStep         = 5;           // Set 5A: Trail Step
+input int             Inp5A_TrTrig         = 1500;        // Set 5A: Trail Trigger
+input int             Inp5A_TrDist         = 500;         // Set 5A: Trail Distance
+input int             Inp5A_TrStep         = 1;           // Set 5A: Trail Step
 input ENUM_TIMEFRAMES Inp5A_TF             = PERIOD_M5;   // Set 5A: Timeframe
 
 sinput string         sep_preset_5B        = "---------- SET 5B ----------"; // ---------- SET 5B ----------

@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.01"
+#define EA_VERSION        "1.02"
 #define EA_BUILD_DATE     "08 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "KAT_ORB_"
@@ -151,38 +151,38 @@ struct DashboardParams
       utcOffset         = -4;
       timeframe         = PERIOD_M2;
       slPoints          = 1500;
-      tpPoints          = 3000;
+      tpPoints          = 1500;
       slCandle          = false;
       entryBufferPoints = 5;
       riskPercent       = 1.0;
       orderMode         = MODE_BOTH;
       eaMode            = EA_AUTO;
-      trailMode         = TM_OFF;
-      trailTrigger      = 30;
-      trailDistance      = 20;
-      trailStep         = 5;
+      trailMode         = TM_CHASE;
+      trailTrigger      = 1500;
+      trailDistance     = 500;
+      trailStep         = 1;
       beActivatePoints  = 200;
       beLockPoints      = 50;
       beEnabled         = false;
-      unfavorMovePts=100;
-      unfavorMoveOn=false;
-      touchMidOn=false;
-      unfilledCandles=2;
-      unfilledCandlesOn=false;
-      afterMinutes=5;
-      afterMinutesOn=false;
-      ema1On=false;
-      ema1Period=9;
-      ema2On=false;
-      ema2Period=21;
-      ema3On=false;
-      ema3Period=34;
-      contAfter1st=true;
-      maxSuccessOn=false;
-      maxSuccess=5;
-      maxLossOn=false;
-      maxLoss=1;
-      bigMomentum=false;
+      unfavorMovePts    = 8000;
+      unfavorMoveOn     = true;
+      touchMidOn        = true;
+      unfilledCandles   = 2;
+      unfilledCandlesOn = false;
+      afterMinutes      = 60;
+      afterMinutesOn    = true;
+      ema1On            = false;
+      ema1Period        = 9;
+      ema2On            = false;
+      ema2Period        = 21;
+      ema3On            = false;
+      ema3Period        = 34;
+      contAfter1st      = true;
+      maxSuccessOn      = true;
+      maxSuccess        = 2;
+      maxLossOn         = true;
+      maxLoss           = 1;
+      bigMomentum       = false;
       comment           = "orb-trade";
       isActive          = true;
    }
