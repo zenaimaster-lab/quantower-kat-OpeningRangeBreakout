@@ -185,6 +185,24 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 {
    if(!CAppDialog::Create(chart,name,subwin,x,y,x+w,y+h)) return false;
    Caption(EA_NAME);
+   
+   // Customize caption bar: hide X button, enlarge Minimize button
+   for(int i=ObjectsTotal(chart,subwin)-1;i>=0;i--)
+   { string n=ObjectName(chart,i,subwin);
+     // The CAppDialog creates buttons named "Close" and "Minimize" with suffix
+     if(StringFind(n,"Close") >= 0) {
+        ObjectSetInteger(chart, n, OBJPROP_XSIZE, 0);
+        ObjectSetInteger(chart, n, OBJPROP_YSIZE, 0);
+        ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, -100);
+        ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, -100);
+     }
+     if(StringFind(n,"Minimize") >= 0) {
+        ObjectSetString(chart, n, OBJPROP_TEXT, "Minimize");
+        ObjectSetInteger(chart, n, OBJPROP_XSIZE, 70);
+        ObjectSetInteger(chart, n, OBJPROP_FONTSIZE, 8);
+     }
+   }
+   
    int colored=0;
    for(int i=ObjectsTotal(chart,subwin)-1;i>=0;i--)
    { string n=ObjectName(chart,i,subwin); ENUM_OBJECT ot=(ENUM_OBJECT)ObjectGetInteger(chart,n,OBJPROP_TYPE);

@@ -50,6 +50,7 @@ private:
    
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
    void              DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, double entry, double target);
+   void              DeleteLines(ENUM_TIMEFRAMES tf);
 
 public:
                      COrderManager();
@@ -61,6 +62,7 @@ public:
    void              ProcessORB(const DashboardParams &params, datetime nyOpenTimeServer);
    void              CheckAutoCancel(const DashboardParams &params, datetime nyOpenTimeServer);
    void              CancelAllPending(string symbol);
+   void              CleanupLines(ENUM_TIMEFRAMES tf);
    
    string            GetStatus() const;
    string            GetEntryReason() const { return m_entryReason; }
@@ -172,40 +174,64 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
 {
    string prefix = (tf == PERIOD_M2) ? "2m " : "5m ";
    color colEntry = (dir == 1) ? clrDodgerBlue : clrOrangeRed;
-   color colTarget = clrRed;
+   color colTarget = clrLimeGreen;
    
    datetime t = TimeTradeServer();
-   datetime tEnd = t + 5 * PeriodSeconds(tf);
+   int tickLen = PeriodSeconds(tf); // 1 candle width
+   datetime tEnd = t + tickLen;
    
    string nameE = "ORB_ENTRY_" + EnumToString(tf);
    string nameT = "ORB_TARGET_" + EnumToString(tf);
    
    ObjectCreate(0, nameE, OBJ_TREND, 0, t, entry, tEnd, entry);
    ObjectSetInteger(0, nameE, OBJPROP_COLOR, colEntry);
-   ObjectSetInteger(0, nameE, OBJPROP_STYLE, STYLE_DASH);
+   ObjectSetInteger(0, nameE, OBJPROP_STYLE, STYLE_SOLID);
+   ObjectSetInteger(0, nameE, OBJPROP_WIDTH, 2);
    ObjectSetInteger(0, nameE, OBJPROP_RAY_RIGHT, false);
-   ObjectSetInteger(0, nameE, OBJPROP_BACK, true);
+   ObjectSetInteger(0, nameE, OBJPROP_BACK, false);
    
    string textE = nameE + "_TXT";
-   ObjectCreate(0, textE, OBJ_TEXT, 0, t, entry);
+   ObjectCreate(0, textE, OBJ_TEXT, 0, tEnd, entry);
    string typeStr = (dir == 1) ? "Buy Stop: " : "Sell Stop: ";
    ObjectSetString(0, textE, OBJPROP_TEXT, prefix + typeStr + DoubleToString(entry, GetDigits(symbol)));
    ObjectSetInteger(0, textE, OBJPROP_COLOR, colEntry);
-   ObjectSetInteger(0, textE, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+   ObjectSetInteger(0, textE, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+   ObjectSetInteger(0, textE, OBJPROP_FONTSIZE, 8);
    
    if(target > 0) {
        ObjectCreate(0, nameT, OBJ_TREND, 0, t, target, tEnd, target);
        ObjectSetInteger(0, nameT, OBJPROP_COLOR, colTarget);
-       ObjectSetInteger(0, nameT, OBJPROP_STYLE, STYLE_DOT);
+       ObjectSetInteger(0, nameT, OBJPROP_STYLE, STYLE_SOLID);
+       ObjectSetInteger(0, nameT, OBJPROP_WIDTH, 2);
        ObjectSetInteger(0, nameT, OBJPROP_RAY_RIGHT, false);
-       ObjectSetInteger(0, nameT, OBJPROP_BACK, true);
+       ObjectSetInteger(0, nameT, OBJPROP_BACK, false);
        
        string textT = nameT + "_TXT";
-       ObjectCreate(0, textT, OBJ_TEXT, 0, t, target);
+       ObjectCreate(0, textT, OBJ_TEXT, 0, tEnd, target);
        ObjectSetString(0, textT, OBJPROP_TEXT, prefix + "Target: " + DoubleToString(target, GetDigits(symbol)));
        ObjectSetInteger(0, textT, OBJPROP_COLOR, colTarget);
-       ObjectSetInteger(0, textT, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+       ObjectSetInteger(0, textT, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+       ObjectSetInteger(0, textT, OBJPROP_FONTSIZE, 8);
    }
+}
+
+//+------------------------------------------------------------------+
+void COrderManager::DeleteLines(ENUM_TIMEFRAMES tf)
+{
+   string sfx = EnumToString(tf);
+   ObjectDelete(0, "ORB_H_" + sfx);
+   ObjectDelete(0, "ORB_H_" + sfx + "_TXT");
+   ObjectDelete(0, "ORB_L_" + sfx);
+   ObjectDelete(0, "ORB_L_" + sfx + "_TXT");
+   ObjectDelete(0, "ORB_ENTRY_" + sfx);
+   ObjectDelete(0, "ORB_ENTRY_" + sfx + "_TXT");
+   ObjectDelete(0, "ORB_TARGET_" + sfx);
+   ObjectDelete(0, "ORB_TARGET_" + sfx + "_TXT");
+}
+
+void COrderManager::CleanupLines(ENUM_TIMEFRAMES tf)
+{
+   DeleteLines(tf);
 }
 
 //+------------------------------------------------------------------+

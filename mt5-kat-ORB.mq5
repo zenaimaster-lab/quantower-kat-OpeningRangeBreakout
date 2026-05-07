@@ -336,17 +336,25 @@ void OnTimer()
    if(tradeM2) {
       DashboardParams pm2 = cfg.globalOverride ? p : cfg.m2;
       pm2.symbol = p.symbol;
-      pm2.isActive = tradeM2;
+      pm2.timeframe = PERIOD_M2;  // Always M2 regardless of global
+      pm2.comment = "orb-2m";
+      pm2.isActive = true;
       g_orderMgr_M2.ProcessORB(pm2, nyoTime);
       g_orderMgr_M2.CheckAutoCancel(pm2, nyoTime);
+   } else {
+      g_orderMgr_M2.CleanupLines(PERIOD_M2);
    }
    
    if(tradeM5) {
       DashboardParams pm5 = cfg.globalOverride ? p : cfg.m5;
       pm5.symbol = p.symbol;
-      pm5.isActive = tradeM5;
+      pm5.timeframe = PERIOD_M5;  // Always M5 regardless of global
+      pm5.comment = "orb-5m";
+      pm5.isActive = true;
       g_orderMgr_M5.ProcessORB(pm5, nyoTime);
       g_orderMgr_M5.CheckAutoCancel(pm5, nyoTime);
+   } else {
+      g_orderMgr_M5.CleanupLines(PERIOD_M5);
    }
    
    string s2 = tradeM2 ? g_orderMgr_M2.GetStatus() : "OFF";
