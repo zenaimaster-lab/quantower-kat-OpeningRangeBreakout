@@ -1,413 +1,323 @@
 //+------------------------------------------------------------------+
 //|                                                 OrderManager.mqh |
-//|                    Opening Sniper EA — OCO Order Placement Logic  |
+//|                         Opening Sniper EA - Order/State Manager  |
 //|                                                      Version 2.0 |
 //+------------------------------------------------------------------+
 #ifndef __ORDERMANAGER_MQH__
 #define __ORDERMANAGER_MQH__
 
+#include <Trade\Trade.mqh>
 #include "Defines.mqh"
 #include "RiskManager.mqh"
-#include <Trade\Trade.mqh>
 
-//+------------------------------------------------------------------+
-//| COrderManager — places OCO Buy Stop / Sell Stop orders            |
-//+------------------------------------------------------------------+
+enum ENUM_ORB_STATE {
+   ORB_WAIT_NYO = 0,
+   ORB_WAIT_CANDLE = 1,
+   ORB_WAIT_BREAK = 2,
+   ORB_WAIT_RETEST = 3,
+   ORB_WAIT_ENTRY = 4,
+   ORB_DONE = 5
+};
+
 class COrderManager
 {
 private:
    CTrade            m_trade;
    CRiskManager      m_riskMgr;
-   string            m_lastOcoTag;     // Comment tag for current OCO pair
-   bool              m_ordersActive;    // Whether we have pending OCO orders
-   int               m_ocoCounter;     // Counter for unique OCO tags
    
-   // Missing orders tracking
-   bool              m_missingBuy;
-   double            m_buyStopPrice, m_buySL, m_buyTP, m_buyLot;
-   bool              m_missingSell;
-   double            m_sellStopPrice, m_sellSL, m_sellTP, m_sellLot;
-   string            m_missingSymbol;
+   ENUM_ORB_STATE    m_state;
+   datetime          m_nyoTime;
+   double            m_rangeHigh;
+   double            m_rangeLow;
+   datetime          m_candleTime;
+   int               m_breakDir; // 1 = UP, -1 = DOWN
+   
+   string            m_lastOcoTag;
+   bool              m_ordersActive;
    datetime          m_placedTime;
-   ENUM_TIMEFRAMES   m_placedTf;
-   double            m_placedHigh;
-   double            m_placedLow;
    
+   // Helper methods
+   bool              GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low);
+   string            GenerateOcoTag(string prefix);
+   double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
+   
+   void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
+   void              DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, double entry, double target);
+
 public:
                      COrderManager();
-                    ~COrderManager() {}
+                    ~COrderManager();
+                    
+   void              Init();
+   void              ResetState();
    
-   //--- Core methods
-   void              Init() { m_trade.SetExpertMagicNumber(g_magic); }
-   bool              PlaceOCOOrders(const DashboardParams &params);
-   void              CheckOCO();
-   void              ProcessMissingOrders();
+   void              ProcessORB(const DashboardParams &params, datetime nyOpenTimeServer);
+   void              CheckAutoCancel(const DashboardParams &params, datetime nyOpenTimeServer);
    void              CancelAllPending(string symbol);
-
-
    
-   //--- OCO handler — call from OnTradeTransaction
-   void              OnTransaction(const MqlTradeTransaction &trans,
-                                    const MqlTradeRequest &request,
-                                    const MqlTradeResult &result);
-   
-   //--- Status
-   bool              HasActiveOrders() const { return m_ordersActive; }
-   string            GetLastTag() const { return m_lastOcoTag; }
    string            GetStatus() const;
-   void              CheckAutoCancel(const DashboardParams &p, datetime nyOpenTimeServer);
 
-   
-   //--- Virtual properties for testing
    virtual double    GetPoint(string symbol) { return SymbolInfoDouble(symbol, SYMBOL_POINT); }
    virtual int       GetDigits(string symbol) { return (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS); }
    virtual int       GetSpread(string symbol) { return (int)SymbolInfoInteger(symbol, SYMBOL_SPREAD); }
    virtual double    GetAsk(string symbol) { return SymbolInfoDouble(symbol, SYMBOL_ASK); }
    virtual double    GetBid(string symbol) { return SymbolInfoDouble(symbol, SYMBOL_BID); }
    virtual int       GetStopsLevel(string symbol) { return (int)SymbolInfoInteger(symbol, SYMBOL_TRADE_STOPS_LEVEL); }
-
-private:
-   //--- Internal helpers
-   string            GenerateOcoTag(string comment);
-   bool              GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low);
-   void              CancelPendingByTag(string tag);
-   int               CountPendingByTag(string tag);
-   int               CountPositionsByTag(string tag);
-   double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
 };
 
 //+------------------------------------------------------------------+
 COrderManager::COrderManager()
 {
-   m_trade.SetDeviationInPoints(30);
-   m_lastOcoTag    = "";
-   m_ordersActive  = false;
-   m_ocoCounter    = 0;
-   
-   m_missingBuy    = false;
-   m_missingSell   = false;
-   m_missingSymbol = "";
-   m_placedTime    = 0;
-   m_placedTf      = PERIOD_M2;
-   m_placedHigh    = 0;
-   m_placedLow     = 0;
+   ResetState();
 }
 
-//+------------------------------------------------------------------+
-string COrderManager::GenerateOcoTag(string comment)
+COrderManager::~COrderManager()
 {
-   m_ocoCounter++;
-   return EA_COMMENT_PREFIX + comment + "_" + IntegerToString(TimeCurrent()) + "_" + IntegerToString(m_ocoCounter);
+}
+
+void COrderManager::Init()
+{
+   m_trade.SetExpertMagicNumber(g_magic);
+}
+
+void COrderManager::ResetState()
+{
+   m_state = ORB_WAIT_NYO;
+   m_nyoTime = 0;
+   m_rangeHigh = 0;
+   m_rangeLow = 0;
+   m_candleTime = 0;
+   m_breakDir = 0;
+   m_lastOcoTag = "";
+   m_ordersActive = false;
+   m_placedTime = 0;
 }
 
 //+------------------------------------------------------------------+
 bool COrderManager::GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low)
 {
-   MqlRates rates[];
-   ArraySetAsSeries(rates, true);
+   double h[], l[];
+   ArraySetAsSeries(h, true);
+   ArraySetAsSeries(l, true);
    
-   int copied = CopyRates(symbol, tf, shift, 1, rates);
-   if(copied < 1)
-   {
-      PrintFormat("[OrderMgr] ERROR: CopyRates failed for %s %s. Err=%d", 
-                  symbol, TimeframeToString(tf), GetLastError());
-      return false;
-   }
+   if(CopyHigh(symbol, tf, shift, 1, h) <= 0) return false;
+   if(CopyLow(symbol, tf, shift, 1, l) <= 0) return false;
    
-   high = rates[0].high;
-   low  = rates[0].low;
-   
-   PrintFormat("[OrderMgr] Candle %s %s | High=%.5f Low=%.5f", 
-               symbol, TimeframeToString(tf), high, low);
-   
+   high = h[0];
+   low  = l[0];
    return true;
 }
 
 //+------------------------------------------------------------------+
-bool COrderManager::PlaceOCOOrders(const DashboardParams &params)
+string COrderManager::GenerateOcoTag(string prefix)
+{
+   string base = (prefix != "") ? prefix : EA_COMMENT_PREFIX;
+   int rn = MathRand() % 10000;
+   return StringFormat("%s_ORB_%d", base, rn);
+}
+
+//+------------------------------------------------------------------+
+void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low)
+{
+   string prefix = (tf == PERIOD_M2) ? "2m " : "5m ";
+   color colHigh = (tf == PERIOD_M2) ? clrDodgerBlue : clrLimeGreen;
+   color colLow  = clrOrange; 
+   
+   string nameH = "ORB_H_" + EnumToString(tf);
+   string nameL = "ORB_L_" + EnumToString(tf);
+   
+   datetime endTime = cTime + 3600; // 1 hour
+   
+   ObjectCreate(0, nameH, OBJ_TREND, 0, cTime, high, endTime, high);
+   ObjectSetInteger(0, nameH, OBJPROP_COLOR, colHigh);
+   ObjectSetInteger(0, nameH, OBJPROP_RAY_RIGHT, false);
+   ObjectSetInteger(0, nameH, OBJPROP_STYLE, STYLE_SOLID);
+   ObjectSetInteger(0, nameH, OBJPROP_WIDTH, 1);
+   ObjectSetInteger(0, nameH, OBJPROP_BACK, true);
+   
+   string textH = nameH + "_TXT";
+   ObjectCreate(0, textH, OBJ_TEXT, 0, cTime, high);
+   ObjectSetString(0, textH, OBJPROP_TEXT, prefix + "H: " + DoubleToString(high, GetDigits(symbol)));
+   ObjectSetInteger(0, textH, OBJPROP_COLOR, colHigh);
+   ObjectSetInteger(0, textH, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+   
+   ObjectCreate(0, nameL, OBJ_TREND, 0, cTime, low, endTime, low);
+   ObjectSetInteger(0, nameL, OBJPROP_COLOR, colLow);
+   ObjectSetInteger(0, nameL, OBJPROP_RAY_RIGHT, false);
+   ObjectSetInteger(0, nameL, OBJPROP_STYLE, STYLE_SOLID);
+   ObjectSetInteger(0, nameL, OBJPROP_WIDTH, 1);
+   ObjectSetInteger(0, nameL, OBJPROP_BACK, true);
+   
+   string textL = nameL + "_TXT";
+   ObjectCreate(0, textL, OBJ_TEXT, 0, cTime, low);
+   ObjectSetString(0, textL, OBJPROP_TEXT, prefix + "L: " + DoubleToString(low, GetDigits(symbol)));
+   ObjectSetInteger(0, textL, OBJPROP_COLOR, colLow);
+   ObjectSetInteger(0, textL, OBJPROP_ANCHOR, ANCHOR_RIGHT_UPPER);
+}
+
+//+------------------------------------------------------------------+
+void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, double entry, double target)
+{
+   string prefix = (tf == PERIOD_M2) ? "2m " : "5m ";
+   color colEntry = (dir == 1) ? clrDodgerBlue : clrOrangeRed;
+   color colTarget = clrRed;
+   
+   datetime t = TimeTradeServer();
+   datetime tEnd = t + 3600;
+   
+   string nameE = "ORB_ENTRY_" + EnumToString(tf);
+   string nameT = "ORB_TARGET_" + EnumToString(tf);
+   
+   ObjectCreate(0, nameE, OBJ_TREND, 0, t, entry, tEnd, entry);
+   ObjectSetInteger(0, nameE, OBJPROP_COLOR, colEntry);
+   ObjectSetInteger(0, nameE, OBJPROP_STYLE, STYLE_DASH);
+   ObjectSetInteger(0, nameE, OBJPROP_RAY_RIGHT, false);
+   ObjectSetInteger(0, nameE, OBJPROP_BACK, true);
+   
+   string textE = nameE + "_TXT";
+   ObjectCreate(0, textE, OBJ_TEXT, 0, t, entry);
+   string typeStr = (dir == 1) ? "Buy Stop: " : "Sell Stop: ";
+   ObjectSetString(0, textE, OBJPROP_TEXT, prefix + typeStr + DoubleToString(entry, GetDigits(symbol)));
+   ObjectSetInteger(0, textE, OBJPROP_COLOR, colEntry);
+   ObjectSetInteger(0, textE, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+   
+   if(target > 0) {
+       ObjectCreate(0, nameT, OBJ_TREND, 0, t, target, tEnd, target);
+       ObjectSetInteger(0, nameT, OBJPROP_COLOR, colTarget);
+       ObjectSetInteger(0, nameT, OBJPROP_STYLE, STYLE_DOT);
+       ObjectSetInteger(0, nameT, OBJPROP_RAY_RIGHT, false);
+       ObjectSetInteger(0, nameT, OBJPROP_BACK, true);
+       
+       string textT = nameT + "_TXT";
+       ObjectCreate(0, textT, OBJ_TEXT, 0, t, target);
+       ObjectSetString(0, textT, OBJPROP_TEXT, prefix + "Target: " + DoubleToString(target, GetDigits(symbol)));
+       ObjectSetInteger(0, textT, OBJPROP_COLOR, colTarget);
+       ObjectSetInteger(0, textT, OBJPROP_ANCHOR, ANCHOR_RIGHT_LOWER);
+   }
+}
+
+//+------------------------------------------------------------------+
+void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTimeServer)
 {
    string symbol = params.symbol;
+   ENUM_TIMEFRAMES tf = params.timeframe;
    
-   //--- Validate symbol
-   bool isCustom = false;
-   if(!SymbolExist(symbol, isCustom))
-   {
-      PrintFormat("[OrderMgr] ERROR: Symbol %s does not exist", symbol);
-      return false;
+   if(m_nyoTime != nyOpenTimeServer) {
+       ResetState();
+       m_nyoTime = nyOpenTimeServer;
    }
    
-   //--- Ensure symbol is in Market Watch
-   SymbolSelect(symbol, true);
+   datetime now = TimeTradeServer();
+   if(nyOpenTimeServer == 0 || now < nyOpenTimeServer) return;
    
-   //--- Get candle range
-   double candleHigh = 0, candleLow = 0;
-   int shift = 0;
-   if(!GetCandleRange(symbol, params.timeframe, shift, candleHigh, candleLow))
-      return false;
-   
-   if(candleHigh <= 0 || candleLow <= 0 || candleHigh <= candleLow)
-   {
-      PrintFormat("[OrderMgr] ERROR: Invalid candle range H=%.5f L=%.5f", candleHigh, candleLow);
-      return false;
+   if(m_state == ORB_WAIT_NYO) {
+       m_state = ORB_WAIT_CANDLE;
    }
    
-   //--- Symbol properties
-   double point  = GetPoint(symbol);
-   int    digits = GetDigits(symbol);
-   int    spread = GetSpread(symbol);
-   double ask    = GetAsk(symbol);
-   double bid    = GetBid(symbol);
-   int    stops  = GetStopsLevel(symbol);
-   
-   if(point <= 0) return false;
-   
-   //--- Calculate SL/TP adjustments
-   int exactLossPoints = params.slPoints;
-   if(params.slCandle) {
-       exactLossPoints = (int)MathRound((candleHigh - candleLow) / point) + 2 * params.entryBufferPoints + spread;
+   if(m_state == ORB_WAIT_CANDLE) {
+       int shift = iBarShift(symbol, tf, nyOpenTimeServer);
+       datetime cTime = iTime(symbol, tf, shift);
+       
+       int periodSec = PeriodSeconds(tf);
+       if(now >= cTime + periodSec) { // Candle closed
+           m_rangeHigh = iHigh(symbol, tf, shift);
+           m_rangeLow  = iLow(symbol, tf, shift);
+           m_candleTime = cTime;
+           
+           DrawORBLines(symbol, tf, cTime, m_rangeHigh, m_rangeLow);
+           m_state = ORB_WAIT_BREAK;
+           PrintFormat("[%s] ORB Range formed: H=%.5f L=%.5f", EnumToString(tf), m_rangeHigh, m_rangeLow);
+       }
    }
    
-   //--- Calculate lot size
-   double lotSize = m_riskMgr.CalcLotSize(symbol, params.riskPercent, exactLossPoints);
-   if(lotSize <= 0) return false;
-   
-   //--- Generate OCO tag
-   string ocoTag = GenerateOcoTag(params.comment);
-   m_lastOcoTag = ocoTag;
-   
-   //--- Calculate order prices
-   // Buy Stop triggers at Ask. To ensure the chart (Bid) breaks the high, we add spread + buffer.
-   int buyBuffer = params.entryBufferPoints + spread;
-   double buyStopPrice = NormalizeDouble(candleHigh + buyBuffer * point, digits);
-   
-   // Sell Stop triggers at Bid. The chart (Bid) matches this directly, so only buffer is needed.
-   int sellBuffer = params.entryBufferPoints;
-   double sellStopPrice = NormalizeDouble(candleLow - sellBuffer * point, digits);
-   
-   //--- Calculate SL/TP levels
-   double buySL = 0, sellSL = 0;
-   if(params.slCandle) {
-       buySL = NormalizeDouble(candleLow - params.entryBufferPoints * point, digits);
-       sellSL = NormalizeDouble(candleHigh + (params.entryBufferPoints + spread) * point, digits);
-   } else if (params.slPoints > 0) {
-       buySL = NormalizeDouble(buyStopPrice - exactLossPoints * point, digits);
-       sellSL = NormalizeDouble(sellStopPrice + exactLossPoints * point, digits);
+   if(m_state == ORB_WAIT_BREAK) {
+       int shift1 = 1;
+       datetime t1 = iTime(symbol, tf, shift1);
+       if(t1 > m_candleTime) {
+           double c = iClose(symbol, tf, shift1);
+           if(c > m_rangeHigh) {
+               m_breakDir = 1;
+               m_state = ORB_WAIT_RETEST;
+               PrintFormat("[%s] Breakout UP detected. Waiting for retest.", EnumToString(tf));
+           } else if(c < m_rangeLow) {
+               m_breakDir = -1;
+               m_state = ORB_WAIT_RETEST;
+               PrintFormat("[%s] Breakout DOWN detected. Waiting for retest.", EnumToString(tf));
+           }
+       }
    }
    
-   int tpAdjust = params.tpPoints;
-   double buyTP = (params.tpPoints > 0) ? NormalizeDouble(buyStopPrice + tpAdjust * point, digits) : 0;
-   double sellTP = (params.tpPoints > 0) ? NormalizeDouble(sellStopPrice - tpAdjust * point, digits) : 0;
-   
-   //--- Check existing orders/positions to prevent duplication
-   bool buyExists = false;
-   bool sellExists = false;
-   
-   for(int i = OrdersTotal() - 1; i >= 0; i--) {
-      ulong t = OrderGetTicket(i);
-      if(OrderSelect(t) && OrderGetInteger(ORDER_MAGIC) == g_magic && OrderGetString(ORDER_SYMBOL) == symbol) {
-         long type = OrderGetInteger(ORDER_TYPE);
-         if(type == ORDER_TYPE_BUY_STOP) buyExists = true;
-         if(type == ORDER_TYPE_SELL_STOP) sellExists = true;
-      }
-   }
-   for(int i = PositionsTotal() - 1; i >= 0; i--) {
-      ulong t = PositionGetTicket(i);
-      if(t > 0 && PositionGetInteger(POSITION_MAGIC) == g_magic && PositionGetString(POSITION_SYMBOL) == symbol) {
-         long type = PositionGetInteger(POSITION_TYPE);
-         if(type == POSITION_TYPE_BUY) buyExists = true;
-         if(type == POSITION_TYPE_SELL) sellExists = true;
-      }
-   }
-   
-   bool buyPlaced  = false;
-   bool sellPlaced = false;
-   m_missingSymbol = symbol;
-   
-   if(params.orderMode == MODE_BOTH || params.orderMode == MODE_BUY_ONLY)
-   {
-      if(!buyExists)
-      {
-         if(buyStopPrice <= ask + stops * point)
-         {
-            m_missingBuy = true;
-            m_buyStopPrice = buyStopPrice; m_buySL = buySL; m_buyTP = buyTP; m_buyLot = lotSize;
-            PrintFormat("[OrderMgr] BuyStop at %.5f too close to Ask %.5f, queued for later.", buyStopPrice, ask);
-         }
-         else
-         {
-            buyPlaced = m_trade.BuyStop(lotSize, buyStopPrice, symbol, buySL, buyTP, ORDER_TIME_GTC, 0, ocoTag);
-            if(buyPlaced)
-            {
-               m_missingBuy = false;
-               PrintFormat("[OrderMgr] BUY STOP placed: Price=%.5f SL=%.5f TP=%.5f Lot=%.2f Tag=%s",
-                           buyStopPrice, buySL, buyTP, lotSize, ocoTag);
-            }
-         }
-      }
-      else
-      {
-         m_missingBuy = false;
-         PrintFormat("[OrderMgr] Buy order/pos exists, skipping BuyStop.");
-      }
-   }
-   else m_missingBuy = false;
-   
-   if(params.orderMode == MODE_BOTH || params.orderMode == MODE_SELL_ONLY)
-   {
-      if(!sellExists)
-      {
-         if(sellStopPrice >= bid - stops * point)
-         {
-            m_missingSell = true;
-            m_sellStopPrice = sellStopPrice; m_sellSL = sellSL; m_sellTP = sellTP; m_sellLot = lotSize;
-            PrintFormat("[OrderMgr] SellStop at %.5f too close to Bid %.5f, queued for later.", sellStopPrice, bid);
-         }
-         else
-         {
-            sellPlaced = m_trade.SellStop(lotSize, sellStopPrice, symbol, sellSL, sellTP, ORDER_TIME_GTC, 0, ocoTag);
-            if(sellPlaced)
-            {
-               m_missingSell = false;
-               PrintFormat("[OrderMgr] SELL STOP placed: Price=%.5f SL=%.5f TP=%.5f Lot=%.2f Tag=%s",
-                           sellStopPrice, sellSL, sellTP, lotSize, ocoTag);
-            }
-         }
-      }
-      else
-      {
-         m_missingSell = false;
-         PrintFormat("[OrderMgr] Sell order/pos exists, skipping SellStop.");
-      }
-   }
-   else m_missingSell = false;
-   
-   m_ordersActive = (buyPlaced || sellPlaced || m_missingBuy || m_missingSell);
-   if(m_ordersActive) { 
-       m_placedTime = TimeCurrent(); 
-       m_placedTf = params.timeframe; 
-       m_placedHigh = candleHigh;
-       m_placedLow = candleLow;
-   }
-   return m_ordersActive;
-}
-
-//+------------------------------------------------------------------+
-void COrderManager::ProcessMissingOrders()
-{
-   if(!m_missingBuy && !m_missingSell) return;
-   
-   string symbol = m_missingSymbol;
-   if(symbol == "") return;
-   
-   double ask    = GetAsk(symbol);
-   double bid    = GetBid(symbol);
-   double point  = GetPoint(symbol);
-   int    stops  = GetStopsLevel(symbol);
-   
-   if(m_missingBuy)
-   {
-      if(m_buyStopPrice > ask + stops * point)
-      {
-         if(m_trade.BuyStop(m_buyLot, m_buyStopPrice, symbol, m_buySL, m_buyTP, ORDER_TIME_GTC, 0, m_lastOcoTag))
-         {
-            m_missingBuy = false;
-            m_ordersActive = true;
-            PrintFormat("[OrderMgr] Missing BUY STOP placed automatically: Price=%.5f", m_buyStopPrice);
-         }
-      }
-   }
-   
-   if(m_missingSell)
-   {
-      if(m_sellStopPrice < bid - stops * point)
-      {
-         if(m_trade.SellStop(m_sellLot, m_sellStopPrice, symbol, m_sellSL, m_sellTP, ORDER_TIME_GTC, 0, m_lastOcoTag))
-         {
-            m_missingSell = false;
-            m_ordersActive = true;
-            PrintFormat("[OrderMgr] Missing SELL STOP placed automatically: Price=%.5f", m_sellStopPrice);
-         }
-      }
+   if(m_state == ORB_WAIT_RETEST) {
+       int shift1 = 1;
+       datetime t1 = iTime(symbol, tf, shift1);
+       
+       double c = iClose(symbol, tf, shift1);
+       double o = iOpen(symbol, tf, shift1);
+       double h = iHigh(symbol, tf, shift1);
+       double l = iLow(symbol, tf, shift1);
+       
+       double point = GetPoint(symbol);
+       int digits = GetDigits(symbol);
+       int spread = GetSpread(symbol);
+       int buffer = params.entryBufferPoints;
+       
+       if(m_breakDir == 1) { // Break UP, waiting for RED candle touching High
+           if(c < o && l <= m_rangeHigh) {
+               double entryPrice = NormalizeDouble(h + (buffer + spread) * point, digits);
+               double sl = params.slCandle ? NormalizeDouble(l - buffer * point, digits) : NormalizeDouble(entryPrice - params.slPoints * point, digits);
+               double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice + params.tpPoints * point, digits) : 0;
+               
+               double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
+               if(lot > 0) {
+                   m_lastOcoTag = GenerateOcoTag(params.comment);
+                   if(m_trade.BuyStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOcoTag)) {
+                       m_state = ORB_WAIT_ENTRY;
+                       m_ordersActive = true;
+                       m_placedTime = TimeTradeServer();
+                       DrawTradeLines(symbol, tf, 1, entryPrice, tp);
+                       PrintFormat("[%s] BUY STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
+                   }
+               }
+           }
+       } else if(m_breakDir == -1) { // Break DOWN, waiting for GREEN candle touching Low
+           if(c > o && h >= m_rangeLow) {
+               double entryPrice = NormalizeDouble(l - buffer * point, digits);
+               double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
+               double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice - params.tpPoints * point, digits) : 0;
+               
+               double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
+               if(lot > 0) {
+                   m_lastOcoTag = GenerateOcoTag(params.comment);
+                   if(m_trade.SellStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOcoTag)) {
+                       m_state = ORB_WAIT_ENTRY;
+                       m_ordersActive = true;
+                       m_placedTime = TimeTradeServer();
+                       DrawTradeLines(symbol, tf, -1, entryPrice, tp);
+                       PrintFormat("[%s] SELL STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
+                   }
+               }
+           }
+       }
    }
 }
 
 //+------------------------------------------------------------------+
-void COrderManager::OnTransaction(const MqlTradeTransaction &trans,
-                                   const MqlTradeRequest &request,
-                                   const MqlTradeResult &result)
+string COrderManager::GetStatus() const
 {
-   if(trans.type != TRADE_TRANSACTION_DEAL_ADD) return;
-   if(!m_ordersActive) return;
-   if(m_lastOcoTag == "") return;
-   
-   ulong dealTicket = trans.deal;
-   if(dealTicket <= 0) return;
-   
-   HistorySelect(TimeCurrent() - 60, TimeCurrent() + 60);
-   if(!HistoryDealSelect(dealTicket)) return;
-   
-   long dealMagic = HistoryDealGetInteger(dealTicket, DEAL_MAGIC);
-   if(dealMagic != g_magic) return;
-   
-   string dealComment = HistoryDealGetString(dealTicket, DEAL_COMMENT);
-   
-   if(StringFind(dealComment, m_lastOcoTag) >= 0 || 
-      StringFind(dealComment, EA_COMMENT_PREFIX) >= 0)
-   {
-      PrintFormat("[OrderMgr] OCO TRIGGERED: Deal #%d filled. Cancelling remaining pending...", dealTicket);
-      CancelPendingByTag(m_lastOcoTag);
-      m_missingBuy = false;
-      m_missingSell = false;
+   switch(m_state) {
+      case ORB_WAIT_NYO: return "WAIT NYO";
+      case ORB_WAIT_CANDLE: return "WAIT RANGE";
+      case ORB_WAIT_BREAK: return "WAIT BREAK";
+      case ORB_WAIT_RETEST: return "WAIT RETEST";
+      case ORB_WAIT_ENTRY: return "ORDER ACTIVE";
+      case ORB_DONE: return "DONE";
    }
-}
-
-//+------------------------------------------------------------------+
-void COrderManager::CheckOCO()
-{
-   if(!m_ordersActive) return;
-   if(m_lastOcoTag == "") return;
-   
-   int pendingCount  = CountPendingByTag(m_lastOcoTag);
-   int positionCount = CountPositionsByTag(m_lastOcoTag);
-   
-   if(positionCount > 0 && pendingCount > 0)
-   {
-      PrintFormat("[OrderMgr] OCO backup check: %d positions, %d pending → cancelling pending", 
-                  positionCount, pendingCount);
-      CancelPendingByTag(m_lastOcoTag);
-      m_missingBuy = false;
-      m_missingSell = false;
-   }
-   
-   if(pendingCount == 0 && !m_missingBuy && !m_missingSell)
-   {
-      m_ordersActive = false;
-   }
-}
-
-//+------------------------------------------------------------------+
-void COrderManager::CancelPendingByTag(string tag)
-{
-   for(int i = OrdersTotal() - 1; i >= 0; i--)
-   {
-      ulong ticket = OrderGetTicket(i);
-      if(!OrderSelect(ticket)) continue;
-      if(OrderGetInteger(ORDER_MAGIC) != g_magic) continue;
-      
-      string comment = OrderGetString(ORDER_COMMENT);
-      if(StringFind(comment, tag) >= 0)
-      {
-         if(m_trade.OrderDelete(ticket))
-            PrintFormat("[OrderMgr] Cancelled pending order #%d (OCO)", ticket);
-      }
-   }
+   return "IDLE";
 }
 
 //+------------------------------------------------------------------+
 void COrderManager::CancelAllPending(string symbol)
 {
-   m_missingBuy = false;
-   m_missingSell = false;
    for(int i = OrdersTotal() - 1; i >= 0; i--)
    {
       ulong ticket = OrderGetTicket(i);
@@ -419,39 +329,7 @@ void COrderManager::CancelAllPending(string symbol)
          PrintFormat("[OrderMgr] Cancelled pending #%d for %s", ticket, symbol);
    }
    m_ordersActive = false;
-}
-
-//+------------------------------------------------------------------+
-int COrderManager::CountPendingByTag(string tag)
-{
-   int count = 0;
-   for(int i = OrdersTotal() - 1; i >= 0; i--)
-   {
-      ulong ticket = OrderGetTicket(i);
-      if(!OrderSelect(ticket)) continue;
-      if(OrderGetInteger(ORDER_MAGIC) != g_magic) continue;
-      
-      string comment = OrderGetString(ORDER_COMMENT);
-      if(StringFind(comment, tag) >= 0) count++;
-   }
-   return count;
-}
-
-//+------------------------------------------------------------------+
-int COrderManager::CountPositionsByTag(string tag)
-{
-   int count = 0;
-   for(int i = PositionsTotal() - 1; i >= 0; i--)
-   {
-      ulong ticket = PositionGetTicket(i);
-      if(ticket <= 0) continue;
-      if(PositionGetInteger(POSITION_MAGIC) != g_magic) continue;
-      
-      string comment = PositionGetString(POSITION_COMMENT);
-      if(StringFind(comment, tag) >= 0 || StringFind(comment, EA_COMMENT_PREFIX) >= 0) 
-         count++;
-   }
-   return count;
+   if(m_state == ORB_WAIT_ENTRY) m_state = ORB_DONE; // Simple fallback
 }
 
 //+------------------------------------------------------------------+
@@ -465,16 +343,6 @@ double COrderManager::GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period)
       if(CopyBuffer(h, 0, 0, 1, ema) > 0) return ema[0];
    }
    return 0;
-}
-
-//+------------------------------------------------------------------+
-string COrderManager::GetStatus() const
-{
-   if(m_ordersActive) {
-      if(m_missingBuy || m_missingSell) return "PENDING OCO (QUEUED)";
-      return "PENDING OCO ACTIVE";
-   }
-   return "IDLE";
 }
 
 //+------------------------------------------------------------------+
@@ -516,9 +384,8 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       double bid = GetBid(symbol);
       double ask = GetAsk(symbol);
       double point = GetPoint(symbol);
-      double midPrice = (m_placedHigh + m_placedLow) / 2.0;
+      double midPrice = (m_rangeHigh + m_rangeLow) / 2.0;
       
-      // Iterate over pending orders
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
          ulong ticket = OrderGetTicket(i);
@@ -609,11 +476,7 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       PrintFormat("[OrderMgr] Auto Cancel Triggered: %s", reason);
       CancelAllPending(symbol);
       m_lastOcoTag = "";
-      m_ordersActive = false;
-      m_missingBuy = false;
-      m_missingSell = false;
    }
 }
-
 
 #endif // __ORDERMANAGER_MQH__

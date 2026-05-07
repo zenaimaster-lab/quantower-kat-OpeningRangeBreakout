@@ -164,9 +164,7 @@ void OnTick()
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
    
    g_orderMgr_M2.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m2, g_timeMgr.GetTargetTime());
-   g_orderMgr_M2.CheckOCO(); g_orderMgr_M2.ProcessMissingOrders();
    g_orderMgr_M5.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m5, g_timeMgr.GetTargetTime());
-   g_orderMgr_M5.CheckOCO(); g_orderMgr_M5.ProcessMissingOrders();
    
    string s2 = g_orderMgr_M2.GetStatus();
    string s5 = g_orderMgr_M5.GetStatus();
@@ -280,36 +278,28 @@ void OnTimer()
    if(p.symbol==""){g_dashboard.UpdateStatus("No symbol");return;}
    
    g_timeMgr.CalculateTriggerTime(p);
-   if(g_timeMgr.IsTimeToTrade())
-   { 
-      g_dashboard.UpdateStatus("TRIGGERING...");
-      
-      bool tradeM2 = cfg.globalOverride ? p.isActive : cfg.m2.isActive;
-      bool tradeM5 = cfg.globalOverride ? p.isActive : cfg.m5.isActive;
-      
-      bool ok2 = true;
-      bool ok5 = true;
-      
-      if(tradeM2) {
-         DashboardParams pm2 = cfg.globalOverride ? p : cfg.m2;
-         pm2.symbol = p.symbol; // ensure symbol
-         ok2 = g_orderMgr_M2.PlaceOCOOrders(pm2);
-      }
-      if(tradeM5) {
-         DashboardParams pm5 = cfg.globalOverride ? p : cfg.m5;
-         pm5.symbol = p.symbol;
-         ok5 = g_orderMgr_M5.PlaceOCOOrders(pm5);
-      }
-      
-      if(ok2 && ok5) { g_timeMgr.MarkFired(p); g_dashboard.UpdateStatus("Orders placed ✓"); }
-      else g_dashboard.UpdateStatus("Order FAILED");
-      
-      string s2 = g_orderMgr_M2.GetStatus();
-      string s5 = g_orderMgr_M5.GetStatus();
-      g_dashboard.UpdateOrderStatus("2m: " + s2 + " | 5m: " + s5); 
+   datetime nyoTime = g_timeMgr.GetTargetTime();
+   
+   bool tradeM2 = cfg.globalOverride ? p.isActive : cfg.m2.isActive;
+   bool tradeM5 = cfg.globalOverride ? p.isActive : cfg.m5.isActive;
+   
+   if(tradeM2) {
+      DashboardParams pm2 = cfg.globalOverride ? p : cfg.m2;
+      pm2.symbol = p.symbol;
+      g_orderMgr_M2.ProcessORB(pm2, nyoTime);
+      g_orderMgr_M2.CheckAutoCancel(pm2, nyoTime);
    }
-   else if(g_timeMgr.HasFiredToday()) g_dashboard.UpdateStatus("Fired — change schedule");
-   else g_dashboard.UpdateStatus("AUTO — Waiting..."); 
+   
+   if(tradeM5) {
+      DashboardParams pm5 = cfg.globalOverride ? p : cfg.m5;
+      pm5.symbol = p.symbol;
+      g_orderMgr_M5.ProcessORB(pm5, nyoTime);
+      g_orderMgr_M5.CheckAutoCancel(pm5, nyoTime);
+   }
+   
+   string s2 = tradeM2 ? g_orderMgr_M2.GetStatus() : "OFF";
+   string s5 = tradeM5 ? g_orderMgr_M5.GetStatus() : "OFF";
+   g_dashboard.UpdateOrderStatus("2m: " + s2 + " | 5m: " + s5);
 }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
@@ -375,10 +365,4 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
 
 void OnTradeTransaction(const MqlTradeTransaction &trans,const MqlTradeRequest &request,const MqlTradeResult &result)
 { 
-   g_orderMgr_M2.OnTransaction(trans,request,result); 
-   g_orderMgr_M5.OnTransaction(trans,request,result); 
-   
-   string s2 = g_orderMgr_M2.GetStatus();
-   string s5 = g_orderMgr_M5.GetStatus();
-   g_dashboard.UpdateOrderStatus("2m: " + s2 + " | 5m: " + s5); 
 }
