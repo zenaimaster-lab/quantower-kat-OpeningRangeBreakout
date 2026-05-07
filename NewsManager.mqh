@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                                 NewsManager.mqh  |
-//|               Opening Sniper EA — Session Manager                |
+//|               KAT Opening Range Breakout EA — Session Manager                |
 //|                                                      Version 2.0 |
 #ifndef __NEWSMANAGER_MQH__
 #define __NEWSMANAGER_MQH__

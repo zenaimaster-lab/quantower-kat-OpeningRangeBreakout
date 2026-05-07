@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                                  RiskManager.mqh |
-//|                          Opening Sniper EA — Lot Size Calculator  |
+//|                          KAT Opening Range Breakout EA — Lot Size Calculator  |
 //|                                                      Version 2.0 |
 //+------------------------------------------------------------------+
 #ifndef __RISKMANAGER_MQH__

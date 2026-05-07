@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                 OrderManager.mqh |
-//|                         Opening Sniper EA - Order/State Manager  |
-//|                                                      Version 2.0 |
+//|                  KAT Opening Range Breakout EA — Order/State Mgr  |
+//|                                                                  |
 //+------------------------------------------------------------------+
 #ifndef __ORDERMANAGER_MQH__
 #define __ORDERMANAGER_MQH__
@@ -36,7 +36,7 @@ private:
    datetime          m_candleTime;
    int               m_breakDir; // 1 = UP, -1 = DOWN
    
-   string            m_lastOcoTag;
+   string            m_lastOrderTag;
    bool              m_ordersActive;
    datetime          m_placedTime;
    
@@ -45,7 +45,7 @@ private:
    
    // Helper methods
    bool              GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low);
-   string            GenerateOcoTag(string prefix);
+   string            GenerateOrderTag(string prefix);
    double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
    
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
@@ -100,7 +100,7 @@ void COrderManager::ResetState()
    m_rangeLow = 0;
    m_candleTime = 0;
    m_breakDir = 0;
-   m_lastOcoTag = "";
+   m_lastOrderTag = "";
    m_ordersActive = false;
    m_placedTime = 0;
    m_entryReason = "";
@@ -123,7 +123,7 @@ bool COrderManager::GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift,
 }
 
 //+------------------------------------------------------------------+
-string COrderManager::GenerateOcoTag(string prefix)
+string COrderManager::GenerateOrderTag(string prefix)
 {
    string base = (prefix != "") ? prefix : EA_COMMENT_PREFIX;
    int rn = MathRand() % 10000;
@@ -321,8 +321,8 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                
                double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
                if(lot > 0) {
-                   m_lastOcoTag = GenerateOcoTag(params.comment);
-                   if(m_trade.BuyStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOcoTag)) {
+                   m_lastOrderTag = GenerateOrderTag(params.comment);
+                   if(m_trade.BuyStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOrderTag)) {
                        m_state = ORB_WAIT_ENTRY;
                        m_ordersActive = true;
                        m_placedTime = TimeTradeServer();
@@ -340,8 +340,8 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                
                double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
                if(lot > 0) {
-                   m_lastOcoTag = GenerateOcoTag(params.comment);
-                   if(m_trade.SellStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOcoTag)) {
+                   m_lastOrderTag = GenerateOrderTag(params.comment);
+                   if(m_trade.SellStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOrderTag)) {
                        m_state = ORB_WAIT_ENTRY;
                        m_ordersActive = true;
                        m_placedTime = TimeTradeServer();
@@ -457,7 +457,7 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
          if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
          
          string comment = OrderGetString(ORDER_COMMENT);
-         if(StringFind(comment, m_lastOcoTag) >= 0)
+         if(StringFind(comment, m_lastOrderTag) >= 0)
          {
             ENUM_ORDER_TYPE type = (ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
             double openPrice = OrderGetDouble(ORDER_PRICE_OPEN);
@@ -514,7 +514,7 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
          if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
          
          string comment = OrderGetString(ORDER_COMMENT);
-         if(StringFind(comment, m_lastOcoTag) >= 0)
+         if(StringFind(comment, m_lastOrderTag) >= 0)
          {
             ENUM_ORDER_TYPE type = (ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
             
@@ -539,7 +539,7 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       m_cancelReason = reason;
       PrintFormat("[OrderMgr] Auto Cancel Triggered: %s", reason);
       CancelAllPending(symbol);
-      m_lastOcoTag = "";
+      m_lastOrderTag = "";
       
       bool limitHit = false;
       if(p.maxSuccessOn && g_winsToday >= p.maxSuccess) limitHit = true;
@@ -547,20 +547,20 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       
       if(p.contAfter1st && !limitHit) m_state = ORB_WAIT_BREAK;
    }
-   else if(m_lastOcoTag != "")
+   else if(m_lastOrderTag != "")
    {
       bool exists = false;
       for(int i = OrdersTotal() - 1; i >= 0; i--) {
           ulong ticket = OrderGetTicket(i);
           if(OrderSelect(ticket)) {
-              if(OrderGetString(ORDER_COMMENT) == m_lastOcoTag) {
+              if(OrderGetString(ORDER_COMMENT) == m_lastOrderTag) {
                   exists = true; break;
               }
           }
       }
       if(!exists) {
           m_ordersActive = false;
-          m_lastOcoTag = "";
+          m_lastOrderTag = "";
           
           bool limitHit = false;
           if(p.maxSuccessOn && g_winsToday >= p.maxSuccess) limitHit = true;

@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                  TimeManager.mqh |
-//|                         Opening Sniper EA — Timezone & Scheduling |
-//|                                                      Version 2.0 |
+//|                KAT Opening Range Breakout EA — Timezone & Sched.  |
+//|                                                                  |
 //+------------------------------------------------------------------+
 #ifndef __TIMEMANAGER_MQH__
 #define __TIMEMANAGER_MQH__
@@ -9,17 +9,16 @@
 #include "Defines.mqh"
 
 //+------------------------------------------------------------------+
-//| CTimeManager — handles NY timezone conversion and trigger timing |
+//| CTimeManager — handles NY timezone conversion and NYO countdown  |
 //+------------------------------------------------------------------+
 class CTimeManager
 {
 private:
    bool              m_firedToday;
    int               m_lastFireDay;
-   int               m_firedScheduleHash; // Track which schedule was fired
-   datetime          m_triggerTimeServer;
+   int               m_firedScheduleHash;
    datetime          m_targetTimeServer;
-   bool              m_triggerCalculated;
+   bool              m_calculated;
    
 public:
                      CTimeManager();
@@ -27,15 +26,12 @@ public:
    
    //--- Core methods
    void              Reset();
-   bool              CalculateTriggerTime(const DashboardParams &params);
-   bool              IsTimeToTrade();
+   bool              CalculateTargetTime(const DashboardParams &params);
    bool              HasFiredToday() const { return m_firedToday; }
    void              MarkFired(const DashboardParams &params);
    
    //--- Info methods
-   datetime          GetTriggerTime() const { return m_triggerTimeServer; }
    datetime          GetTargetTime() const { return m_targetTimeServer; }
-   int               GetSecondsToTrigger();
    string            GetCountdownString();
    string            GetNYTimeString(int utcOffset);
    string            GetNYAmPmString(int utcOffset);
@@ -58,9 +54,8 @@ void CTimeManager::Reset()
    m_firedToday        = false;
    m_lastFireDay       = -1;
    m_firedScheduleHash = -1;
-   m_triggerTimeServer  = 0;
    m_targetTimeServer   = 0;
-   m_triggerCalculated  = false;
+   m_calculated         = false;
 }
 
 //+------------------------------------------------------------------+
@@ -117,88 +112,48 @@ datetime CTimeManager::NYTimeToServerTime(int nyHour, int nyMin, int nySec, int 
 }
 
 //+------------------------------------------------------------------+
-//| Calculate trigger time for today based on dashboard params        |
+//| Calculate NYO target time for today based on dashboard params      |
 //+------------------------------------------------------------------+
-bool CTimeManager::CalculateTriggerTime(const DashboardParams &params)
+bool CTimeManager::CalculateTargetTime(const DashboardParams &params)
 {
    MqlDateTime nowDt;
    TimeToStruct(TimeTradeServer(), nowDt);
    
-   // Reset on new day
    if(nowDt.day != m_lastFireDay)
    {
-      m_firedToday       = false;
-      m_triggerCalculated = false;
+      m_firedToday = false;
+      m_calculated = false;
    }
    
-   // Reset if schedule changed (allow re-fire for new schedule)
    int newHash = params.nyHour * 10000 + params.nyMinute * 100 + params.nySecond;
    if(m_firedToday && newHash != m_firedScheduleHash)
    {
       m_firedToday = false;
-      PrintFormat("[TimeMgr] Schedule changed → allowing new trigger");
+      PrintFormat("[TimeMgr] Schedule changed, allowing new cycle");
    }
    
    m_targetTimeServer = NYTimeToServerTime(params.nyHour, params.nyMinute, 
                                             params.nySecond, params.utcOffset);
-   m_triggerTimeServer = m_targetTimeServer - params.triggerBeforeSec;
-   m_triggerCalculated = true;
+   m_calculated = true;
    return true;
 }
 
-//+------------------------------------------------------------------+
-//| Check if it's time to execute trades                              |
-//+------------------------------------------------------------------+
-bool CTimeManager::IsTimeToTrade()
-{
-   if(!m_triggerCalculated) return false;
-   if(m_firedToday) return false;
-   
-   datetime now = TimeTradeServer();
-   
-   // Fire if current time >= trigger time AND within a reasonable window (60 seconds)
-   if(now >= m_triggerTimeServer && now <= m_triggerTimeServer + 60)
-   {
-      return true;
-   }
-   
-   return false;
-}
-
-//+------------------------------------------------------------------+
-//| Mark as fired today to prevent duplicate execution                |
-//+------------------------------------------------------------------+
 void CTimeManager::MarkFired(const DashboardParams &params)
 {
    m_firedToday = true;
    MqlDateTime nowDt;
    TimeToStruct(TimeTradeServer(), nowDt);
    m_lastFireDay = nowDt.day;
-   // Store hash of NY schedule that was fired (must match CalculateTriggerTime's formula)
    m_firedScheduleHash = params.nyHour * 10000 + params.nyMinute * 100 + params.nySecond;
 }
 
 //+------------------------------------------------------------------+
-//| Get seconds remaining until trigger                               |
-//+------------------------------------------------------------------+
-int CTimeManager::GetSecondsToTrigger()
-{
-   if(!m_triggerCalculated) return -1;
-   if(m_firedToday) return 0;
-   
-   int diff = (int)(m_triggerTimeServer - TimeTradeServer());
-   return (diff > 0) ? diff : 0;
-}
-
-//+------------------------------------------------------------------+
-//| Get human-readable countdown string                               |
-//+------------------------------------------------------------------+
 string CTimeManager::GetCountdownString()
 {
-   if(!m_triggerCalculated) return "Not configured";
+   if(!m_calculated) return "Not configured";
    if(m_firedToday) return "Fired today";
    
-   int secs = GetSecondsToTrigger();
+   int secs = (int)(m_targetTimeServer - TimeTradeServer());
    if(secs <= 0) return "NOW";
    
    int hours   = secs / 3600;

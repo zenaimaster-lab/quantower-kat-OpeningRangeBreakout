@@ -1,16 +1,16 @@
 //+------------------------------------------------------------------+
 //|                                                      Defines.mqh |
-//|                                   Opening Sniper EA — Shared Defs |
-//|                                                      Version 0.4 |
+//|                     KAT Opening Range Breakout EA — Shared Defs   |
+//|                                                                  |
 //+------------------------------------------------------------------+
 #ifndef __DEFINES_MQH__
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "0.12"
+#define EA_VERSION        "0.13"
 #define EA_BUILD_DATE     "08 May 2026"
 extern int g_magic;
-#define EA_COMMENT_PREFIX "OCO_SNIPER_"
+#define EA_COMMENT_PREFIX "KAT_ORB_"
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
@@ -102,7 +102,6 @@ struct DashboardParams
    int    nyMinute;
    int    nySecond;
    int    utcOffset;
-   int    triggerBeforeSec;
    ENUM_TIMEFRAMES   timeframe;
    int    slPoints;
    int    tpPoints;
@@ -142,9 +141,6 @@ struct DashboardParams
    string comment;
    bool   isActive;
 
-   double targetGrowthPercent;
-   bool   customTiming;      // v0.2: true if user manually set timing (not from news)
-   int    targetDayOffset;   // v0.66: 0=Today, 1..6=next days
 
    DashboardParams()
    {
@@ -153,7 +149,6 @@ struct DashboardParams
       nyMinute          = 30;
       nySecond          = 0;
       utcOffset         = -4;
-      triggerBeforeSec   = 10;
       timeframe         = PERIOD_M2;
       slPoints          = 1500;
       tpPoints          = 3000;
@@ -188,9 +183,6 @@ struct DashboardParams
       maxLossOn=false;
       maxLoss=1;
       bigMomentum=false;
-      targetGrowthPercent = 50.0;
-      customTiming      = false;
-      targetDayOffset   = 0;
       comment           = "orb-trade";
       isActive          = true;
    }

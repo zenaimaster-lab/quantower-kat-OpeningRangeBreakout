@@ -6,7 +6,7 @@
 #property copyright   "KAT Opening Range Breakout"
 #property link        ""
 #property description "KAT Opening Range Breakout"
-#property description "Scaling into winners to hit % growth targets."
+#property description "Break & Retest range strategy on 2m/5m NYO candles."
 
 #include "Defines.mqh"
 
@@ -19,7 +19,6 @@ input int             InpNyHour          = 9;
 input int             InpNyMinute        = 30;
 input int             InpNySecond        = 0;
 input int             InpUtcOffset       = -4;
-input int             InpTriggerBefore   = 10;
 
 input group "=== ORDER ==="
 input ENUM_TIMEFRAMES InpTimeframe       = PERIOD_M2;
@@ -135,7 +134,7 @@ int OnInit()
 
    SystemConfig cfg;
    cfg.main.nyHour=InpNyHour;cfg.main.nyMinute=InpNyMinute;cfg.main.nySecond=InpNySecond;
-   cfg.main.utcOffset=InpUtcOffset;cfg.main.triggerBeforeSec=InpTriggerBefore;
+   cfg.main.utcOffset=InpUtcOffset;
    cfg.main.timeframe=InpTimeframe;cfg.main.slPoints=InpSlPoints;cfg.main.tpPoints=InpTpPoints;
    cfg.main.slCandle=InpSlCandle;cfg.main.riskPercent=InpRiskPercent;cfg.main.entryBufferPoints=InpEntryBufferPoints;
    cfg.main.orderMode=InpOrderMode;cfg.main.trailMode=InpTrailMode;cfg.main.trailTrigger=InpTrailTrigger;
@@ -337,7 +336,7 @@ void OnTimer()
    }
    if(p.symbol==""){g_dashboard.UpdateStatus("No symbol");return;}
    
-   g_timeMgr.CalculateTriggerTime(p);
+   g_timeMgr.CalculateTargetTime(p);
    datetime nyoTime = g_timeMgr.GetTargetTime();
    
    bool tradeM2 = cfg.m2.isActive;
@@ -383,7 +382,7 @@ void OnTimer()
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
 {
    // v0.72: Direct button click handling — bypasses CAppDialog event routing
-   // CRITICAL: Do NOT return early — command queue + origami engine must still run
+   // CRITICAL: Do NOT return early — command queue must still run
    bool handled = false;
    
 

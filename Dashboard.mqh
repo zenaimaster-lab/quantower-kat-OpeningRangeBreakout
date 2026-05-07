@@ -99,8 +99,6 @@ private:
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
-   int m_dayOffset;              
-   bool m_customTiming;        
    bool m_dirty;
    ENUM_DASHBOARD_CMD m_cmdQueue[16];   // v2.0: command queue
    int m_cmdCount;                      // v2.0: commands in queue
@@ -190,7 +188,7 @@ CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_acti
    m_ufmEnabled=false; m_tmrEnabled=false; m_aucEnabled=false; m_aamEnabled=false; m_utcOff=-4; m_beOn=false;
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
-   m_dayOffset=0; m_customTiming=false;
+
    m_lastClickMs=0; m_lastClickName=""; }
 
 
@@ -529,8 +527,7 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.maxLossOn=m_maxLossOn;
    p.maxLoss=(int)StringToInteger(m_edtMaxL.Text());
    p.bigMomentum=m_bigMomentum;
-   p.customTiming=m_customTiming;
-   p.targetDayOffset=m_dayOffset;
+
 
    if (tab == TAB_MAIN) {
        p.isActive = m_config.main.isActive;

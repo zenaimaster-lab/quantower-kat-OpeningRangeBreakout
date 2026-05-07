@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                                 TrailManager.mqh |
-//|                       Opening Sniper EA — Trailing Stop/Breakeven |
+//|                       KAT Opening Range Breakout EA — Trailing Stop/Breakeven |
 //|                                                      Version 2.0 |
 //+------------------------------------------------------------------+
 #ifndef __TRAILMANAGER_MQH__
