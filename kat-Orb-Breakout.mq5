@@ -163,9 +163,9 @@ void OnTick()
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym,SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
    
-   g_orderMgr_M2.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m2);
+   g_orderMgr_M2.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m2, g_timeMgr.GetTargetTime());
    g_orderMgr_M2.CheckOCO(); g_orderMgr_M2.ProcessMissingOrders();
-   g_orderMgr_M5.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m5);
+   g_orderMgr_M5.CheckAutoCancel(cfg.globalOverride ? cfg.main : cfg.m5, g_timeMgr.GetTargetTime());
    g_orderMgr_M5.CheckOCO(); g_orderMgr_M5.ProcessMissingOrders();
    
    string s2 = g_orderMgr_M2.GetStatus();

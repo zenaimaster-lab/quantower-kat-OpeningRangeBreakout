@@ -55,7 +55,7 @@ public:
    bool              HasActiveOrders() const { return m_ordersActive; }
    string            GetLastTag() const { return m_lastOcoTag; }
    string            GetStatus() const;
-   void              CheckAutoCancel(const DashboardParams &p);
+   void              CheckAutoCancel(const DashboardParams &p, datetime nyOpenTimeServer);
 
    
    //--- Virtual properties for testing
@@ -464,7 +464,7 @@ string COrderManager::GetStatus() const
 }
 
 //+------------------------------------------------------------------+
-void COrderManager::CheckAutoCancel(const DashboardParams &p)
+void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTimeServer)
 {
    if(!m_ordersActive) return;
    
@@ -482,6 +482,17 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p)
       {
          shouldCancel = true;
          reason = "Unfilled candles > " + IntegerToString(p.unfilledCandles);
+      }
+   }
+   
+   // 2. After Minutes from NY Open
+   if(!shouldCancel && p.afterMinutesOn && nyOpenTimeServer > 0)
+   {
+      datetime now = TimeTradeServer();
+      if(now >= nyOpenTimeServer + p.afterMinutes * 60)
+      {
+         shouldCancel = true;
+         reason = "Passed " + IntegerToString(p.afterMinutes) + " mins after NY Open";
       }
    }
    
