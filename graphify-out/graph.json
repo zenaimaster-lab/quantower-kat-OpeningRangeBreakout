@@ -26,7 +26,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L10",
-      "community": 10,
+      "community": 12,
       "norm_label": "cdashboard",
       "id": "mt5_kat_orb_dashboard_cdashboard"
     },
@@ -35,7 +35,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L112",
-      "community": 10,
+      "community": 12,
       "norm_label": ".cdashboard()",
       "id": "mt5_kat_orb_dashboard_cdashboard_cdashboard"
     },
@@ -116,7 +116,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L477",
-      "community": 2,
+      "community": 10,
       "norm_label": "ctrlhide()",
       "id": "mt5_kat_orb_dashboard_ctrlhide"
     },
@@ -395,7 +395,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L757",
-      "community": 11,
+      "community": 14,
       "norm_label": "ontrm()",
       "id": "mt5_kat_orb_dashboard_ontrm"
     },
@@ -404,7 +404,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L760",
-      "community": 11,
+      "community": 14,
       "norm_label": "updtrail()",
       "id": "mt5_kat_orb_dashboard_updtrail"
     },
@@ -413,7 +413,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L763",
-      "community": 12,
+      "community": 13,
       "norm_label": "onbetoggle()",
       "id": "mt5_kat_orb_dashboard_onbetoggle"
     },
@@ -422,7 +422,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L764",
-      "community": 12,
+      "community": 13,
       "norm_label": "updbe()",
       "id": "mt5_kat_orb_dashboard_updbe"
     },
@@ -593,7 +593,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L788",
-      "community": 13,
+      "community": 11,
       "norm_label": "onmaxltoggle()",
       "id": "mt5_kat_orb_dashboard_onmaxltoggle"
     },
@@ -602,7 +602,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L789",
-      "community": 13,
+      "community": 11,
       "norm_label": "updmaxl()",
       "id": "mt5_kat_orb_dashboard_updmaxl"
     },
@@ -611,7 +611,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L791",
-      "community": 14,
+      "community": 2,
       "norm_label": "onbigmtoggle()",
       "id": "mt5_kat_orb_dashboard_onbigmtoggle"
     },
@@ -620,7 +620,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L792",
-      "community": 14,
+      "community": 2,
       "norm_label": "updbigm()",
       "id": "mt5_kat_orb_dashboard_updbigm"
     },
@@ -737,7 +737,7 @@
       "file_type": "code",
       "source_file": "Dashboard.mqh",
       "source_location": "L923",
-      "community": 2,
+      "community": 10,
       "norm_label": "minimize()",
       "id": "mt5_kat_orb_dashboard_minimize"
     },
@@ -4341,5 +4341,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e1ac52b2f93d35184bcdba13147dda065057e0a8"
+  "built_at_commit": "17923026c9cd74ff608c45399f17c3031842a487"
 }
