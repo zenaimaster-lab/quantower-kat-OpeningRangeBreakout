@@ -48,6 +48,8 @@ private:
    bool              GetCandleRange(string symbol, ENUM_TIMEFRAMES tf, int shift, double &high, double &low);
    string            GenerateOrderTag(string prefix);
    double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
+   bool              CheckIndicatorFilters(const DashboardParams &params, int direction, string &outReason);
+   bool              CheckAutoCancelFilters(const DashboardParams &params, int direction, string &outReason);
    
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
    void              DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, double entry, double target);
@@ -331,12 +333,13 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                    }
                }
                
-               // Favor EMA check — skip if price not on favorable side of EMA
-               if(params.favorEma1On || params.favorEma2On || params.favorEma3On) {
-                   double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
-                   if(params.favorEma1On) { double v = GetEmaValue(symbol, tf, params.favorEma1Period); if(v > 0 && bid < v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma1Period) + " (Buy below)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
-                   if(params.favorEma2On) { double v = GetEmaValue(symbol, tf, params.favorEma2Period); if(v > 0 && bid < v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma2Period) + " (Buy below)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
-                   if(params.favorEma3On) { double v = GetEmaValue(symbol, tf, params.favorEma3Period); if(v > 0 && bid < v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma3Period) + " (Buy below)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+               // Run Indicator Filters
+               string filterReason = "";
+               if(!CheckIndicatorFilters(params, 1, filterReason)) {
+                   m_cancelReason = filterReason;
+                   if(params.contAfter1st) m_state = ORB_WAIT_BREAK;
+                   else m_state = ORB_DONE;
+                   return;
                }
                
                double sl = params.slCandle ? NormalizeDouble(l - buffer * point, digits) : NormalizeDouble(entryPrice - params.slPoints * point, digits);
@@ -355,7 +358,8 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                    }
                }
            }
-       } else if(m_breakDir == -1 && params.orderMode != MODE_BUY_ONLY) { // Break DOWN
+       }
+       else if(m_breakDir == -1 && params.orderMode != MODE_BUY_ONLY) { // Break DOWN
            if(c > o && h >= m_rangeLow) {
                double entryPrice = NormalizeDouble(l - buffer * point, digits);
                
@@ -372,15 +376,16 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                    }
                 }
                 
-                // Favor EMA check — skip if price not on favorable side of EMA
-                if(params.favorEma1On || params.favorEma2On || params.favorEma3On) {
-                    double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
-                    if(params.favorEma1On) { double v = GetEmaValue(symbol, tf, params.favorEma1Period); if(v > 0 && ask > v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma1Period) + " (Sell above)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
-                    if(params.favorEma2On) { double v = GetEmaValue(symbol, tf, params.favorEma2Period); if(v > 0 && ask > v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma2Period) + " (Sell above)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
-                    if(params.favorEma3On) { double v = GetEmaValue(symbol, tf, params.favorEma3Period); if(v > 0 && ask > v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma3Period) + " (Sell above)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
-                }
-                
-                double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
+               // Run Indicator Filters
+               string filterReason = "";
+               if(!CheckIndicatorFilters(params, -1, filterReason)) {
+                   m_cancelReason = filterReason;
+                   if(params.contAfter1st) m_state = ORB_WAIT_BREAK;
+                   else m_state = ORB_DONE;
+                   return;
+               }
+
+               double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
                double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice - params.tpPoints * point, digits) : 0;
                
                double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
@@ -453,6 +458,63 @@ double COrderManager::GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period)
       if(CopyBuffer(h, 0, 0, 1, ema) > 0) return ema[0];
    }
    return 0;
+}
+
+//+------------------------------------------------------------------+
+//| Check Indicator Filters (e.g. Favor EMA)                          |
+//| Returns true if trade is allowed, false if it should be filtered. |
+//| direction: 1 (Buy), -1 (Sell)                                     |
+//+------------------------------------------------------------------+
+bool COrderManager::CheckIndicatorFilters(const DashboardParams &params, int direction, string &outReason)
+{
+   string symbol = params.symbol;
+   ENUM_TIMEFRAMES tf = params.timeframe;
+   outReason = "";
+
+   if(direction == 1) // Buy rules
+   {
+      double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+      if(params.favorEma1On) { double v = GetEmaValue(symbol, tf, params.favorEma1Period); if(v > 0 && bid < v) { outReason = "Favor EMA" + IntegerToString(params.favorEma1Period) + " (Buy below)"; return false; } }
+      if(params.favorEma2On) { double v = GetEmaValue(symbol, tf, params.favorEma2Period); if(v > 0 && bid < v) { outReason = "Favor EMA" + IntegerToString(params.favorEma2Period) + " (Buy below)"; return false; } }
+      if(params.favorEma3On) { double v = GetEmaValue(symbol, tf, params.favorEma3Period); if(v > 0 && bid < v) { outReason = "Favor EMA" + IntegerToString(params.favorEma3Period) + " (Buy below)"; return false; } }
+   }
+   else if(direction == -1) // Sell rules
+   {
+      double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+      if(params.favorEma1On) { double v = GetEmaValue(symbol, tf, params.favorEma1Period); if(v > 0 && ask > v) { outReason = "Favor EMA" + IntegerToString(params.favorEma1Period) + " (Sell above)"; return false; } }
+      if(params.favorEma2On) { double v = GetEmaValue(symbol, tf, params.favorEma2Period); if(v > 0 && ask > v) { outReason = "Favor EMA" + IntegerToString(params.favorEma2Period) + " (Sell above)"; return false; } }
+      if(params.favorEma3On) { double v = GetEmaValue(symbol, tf, params.favorEma3Period); if(v > 0 && ask > v) { outReason = "Favor EMA" + IntegerToString(params.favorEma3Period) + " (Sell above)"; return false; } }
+   }
+
+   return true; // All filters passed
+}
+
+//+------------------------------------------------------------------+
+//| Check Indicator Filters for Auto-Cancel (e.g. EMA 1/2/3)         |
+//| Returns true if order should be kept, false if it should cancel. |
+//+------------------------------------------------------------------+
+bool COrderManager::CheckAutoCancelFilters(const DashboardParams &params, int direction, string &outReason)
+{
+   string symbol = params.symbol;
+   ENUM_TIMEFRAMES tf = params.timeframe;
+   outReason = "";
+
+   if(direction == 1) // BuyStop rules
+   {
+      double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+      if(params.ema1On) { double v = GetEmaValue(symbol, tf, params.ema1Period); if(v > 0 && bid < v) { outReason = "Price < EMA1 (Buy)"; return false; } }
+      if(params.ema2On) { double v = GetEmaValue(symbol, tf, params.ema2Period); if(v > 0 && bid < v) { outReason = "Price < EMA2 (Buy)"; return false; } }
+      if(params.ema3On) { double v = GetEmaValue(symbol, tf, params.ema3Period); if(v > 0 && bid < v) { outReason = "Price < EMA3 (Buy)"; return false; } }
+   }
+   else if(direction == -1) // SellStop rules
+   {
+      double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+      if(params.ema1On) { double v = GetEmaValue(symbol, tf, params.ema1Period); if(v > 0 && ask > v) { outReason = "Price > EMA1 (Sell)"; return false; } }
+      if(params.ema2On) { double v = GetEmaValue(symbol, tf, params.ema2Period); if(v > 0 && ask > v) { outReason = "Price > EMA2 (Sell)"; return false; } }
+      if(params.ema3On) { double v = GetEmaValue(symbol, tf, params.ema3Period); if(v > 0 && ask > v) { outReason = "Price > EMA3 (Sell)"; return false; } }
+   }
+
+   return true;
 }
 
 //+------------------------------------------------------------------+
@@ -543,16 +605,10 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       }
    }
    
-   // 4. EMA based Auto Cancel
-   if(!shouldCancel && (p.ema1On || p.ema2On || p.ema3On))
+   // 4. Indicator-based Auto Cancel
+   if(!shouldCancel)
    {
-      double bid = GetBid(symbol);
-      double ask = GetAsk(symbol);
-      double ema1 = 0, ema2 = 0, ema3 = 0;
-      if(p.ema1On) ema1 = GetEmaValue(symbol, p.timeframe, p.ema1Period);
-      if(p.ema2On) ema2 = GetEmaValue(symbol, p.timeframe, p.ema2Period);
-      if(p.ema3On) ema3 = GetEmaValue(symbol, p.timeframe, p.ema3Period);
-      
+      string filterReason = "";
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
          ulong ticket = OrderGetTicket(i);
@@ -564,18 +620,13 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
          if(StringFind(comment, m_lastOrderTag) >= 0)
          {
             ENUM_ORDER_TYPE type = (ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
+            int direction = (type == ORDER_TYPE_BUY_STOP) ? 1 : -1;
             
-            if(type == ORDER_TYPE_BUY_STOP)
+            if(!CheckAutoCancelFilters(p, direction, filterReason))
             {
-               if(p.ema1On && ema1 > 0 && bid < ema1) { shouldCancel = true; reason = "Price < EMA1 (Buy)"; break; }
-               if(p.ema2On && ema2 > 0 && bid < ema2) { shouldCancel = true; reason = "Price < EMA2 (Buy)"; break; }
-               if(p.ema3On && ema3 > 0 && bid < ema3) { shouldCancel = true; reason = "Price < EMA3 (Buy)"; break; }
-            }
-            else if(type == ORDER_TYPE_SELL_STOP)
-            {
-               if(p.ema1On && ema1 > 0 && ask > ema1) { shouldCancel = true; reason = "Price > EMA1 (Sell)"; break; }
-               if(p.ema2On && ema2 > 0 && ask > ema2) { shouldCancel = true; reason = "Price > EMA2 (Sell)"; break; }
-               if(p.ema3On && ema3 > 0 && ask > ema3) { shouldCancel = true; reason = "Price > EMA3 (Sell)"; break; }
+               shouldCancel = true;
+               reason = filterReason;
+               break;
             }
          }
       }

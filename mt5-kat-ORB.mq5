@@ -410,8 +410,12 @@ void OnTimer()
         double pftTP = 0, pftSL = 0;
         ENUM_ORDER_TYPE orderType = (type == POSITION_TYPE_BUY) ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
         
-        if(tp > 0) { if(OrderCalcProfit(orderType, p.symbol, vol, price, tp, pftTP)) totalProfitAtTP += pftTP; }
-        if(sl > 0) { if(OrderCalcProfit(orderType, p.symbol, vol, price, sl, pftSL)) totalLossAtSL += pftSL; }
+        if(tp > 0) {
+           if(OrderCalcProfit(orderType, p.symbol, vol, price, tp, pftTP)) totalProfitAtTP += pftTP;
+        }
+        if(sl > 0) {
+           if(OrderCalcProfit(orderType, p.symbol, vol, price, sl, pftSL)) totalLossAtSL += pftSL;
+        }
      }
      
      double netExposed = totalBuyLots - totalSellLots;
