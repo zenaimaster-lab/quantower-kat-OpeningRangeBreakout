@@ -20,6 +20,12 @@ private:
    datetime          m_targetTimeServer;
    bool              m_calculated;
    
+   //--- Cached schedule params for next-day countdown calculation
+   int               m_nyHour;
+   int               m_nyMinute;
+   int               m_nySecond;
+   int               m_utcOffset;
+   
 public:
                      CTimeManager();
                     ~CTimeManager() {}
@@ -40,6 +46,7 @@ public:
    //--- Timezone helpers
    int               GetBrokerGMTOffset();
    datetime          NYTimeToServerTime(int nyHour, int nyMin, int nySec, int utcOffset);
+   datetime          NYTimeToServerTimeForDate(int nyHour, int nyMin, int nySec, int utcOffset, datetime gmtDate);
 };
 
 //+------------------------------------------------------------------+
@@ -56,6 +63,10 @@ void CTimeManager::Reset()
    m_firedScheduleHash = -1;
    m_targetTimeServer   = 0;
    m_calculated         = false;
+   m_nyHour             = 9;
+   m_nyMinute           = 30;
+   m_nySecond           = 0;
+   m_utcOffset          = -4;
 }
 
 //+------------------------------------------------------------------+
@@ -75,9 +86,9 @@ int CTimeManager::GetBrokerGMTOffset()
 //+------------------------------------------------------------------+
 datetime CTimeManager::NYTimeToServerTime(int nyHour, int nyMin, int nySec, int utcOffset)
 {
-   // Step 1: Get today's date in server time
-   MqlDateTime serverDt;
-   TimeToStruct(TimeTradeServer(), serverDt);
+   // Step 1: Get today's date using real-time GMT (not stale TimeTradeServer)
+   MqlDateTime gmtDt;
+   TimeToStruct(TimeGMT(), gmtDt);
    
    // Step 2: Build target time in UTC
    // NY time = UTC + utcOffset → UTC = NY time - utcOffset
@@ -93,9 +104,9 @@ datetime CTimeManager::NYTimeToServerTime(int nyHour, int nyMin, int nySec, int 
    
    // Step 3: Build UTC datetime
    MqlDateTime utcDt;
-   utcDt.year  = serverDt.year;
-   utcDt.mon   = serverDt.mon;
-   utcDt.day   = serverDt.day + dayAdjust;
+   utcDt.year  = gmtDt.year;
+   utcDt.mon   = gmtDt.mon;
+   utcDt.day   = gmtDt.day + dayAdjust;
    utcDt.hour  = utcHour;
    utcDt.min   = utcMin;
    utcDt.sec   = utcSec;
@@ -116,8 +127,10 @@ datetime CTimeManager::NYTimeToServerTime(int nyHour, int nyMin, int nySec, int 
 //+------------------------------------------------------------------+
 bool CTimeManager::CalculateTargetTime(const DashboardParams &params)
 {
+   // Use real-time GMT + broker offset instead of stale TimeTradeServer()
+   datetime realServerTime = TimeGMT() + GetBrokerGMTOffset();
    MqlDateTime nowDt;
-   TimeToStruct(TimeTradeServer(), nowDt);
+   TimeToStruct(realServerTime, nowDt);
    
    if(nowDt.day != m_lastFireDay)
    {
@@ -132,6 +145,12 @@ bool CTimeManager::CalculateTargetTime(const DashboardParams &params)
       PrintFormat("[TimeMgr] Schedule changed, allowing new cycle");
    }
    
+   // Cache schedule params for next-day countdown calculation
+   m_nyHour    = params.nyHour;
+   m_nyMinute  = params.nyMinute;
+   m_nySecond  = params.nySecond;
+   m_utcOffset = params.utcOffset;
+   
    m_targetTimeServer = NYTimeToServerTime(params.nyHour, params.nyMinute, 
                                             params.nySecond, params.utcOffset);
    m_calculated = true;
@@ -142,25 +161,88 @@ void CTimeManager::MarkFired(const DashboardParams &params)
 {
    m_firedToday = true;
    MqlDateTime nowDt;
-   TimeToStruct(TimeTradeServer(), nowDt);
+   TimeToStruct(TimeGMT() + GetBrokerGMTOffset(), nowDt);
    m_lastFireDay = nowDt.day;
    m_firedScheduleHash = params.nyHour * 10000 + params.nyMinute * 100 + params.nySecond;
+}
+
+//+------------------------------------------------------------------+
+//| Convert NY time to server time for a specific GMT date            |
+//+------------------------------------------------------------------+
+datetime CTimeManager::NYTimeToServerTimeForDate(int nyHour, int nyMin, int nySec, int utcOffset, datetime gmtDate)
+{
+   MqlDateTime gmtDt;
+   TimeToStruct(gmtDate, gmtDt);
+   
+   int utcHour   = nyHour - utcOffset;
+   int utcMin    = nyMin;
+   int utcSec    = nySec;
+   
+   int dayAdjust = 0;
+   if(utcHour >= 24) { utcHour -= 24; dayAdjust = 1; }
+   if(utcHour < 0)   { utcHour += 24; dayAdjust = -1; }
+   
+   MqlDateTime utcDt;
+   utcDt.year  = gmtDt.year;
+   utcDt.mon   = gmtDt.mon;
+   utcDt.day   = gmtDt.day + dayAdjust;
+   utcDt.hour  = utcHour;
+   utcDt.min   = utcMin;
+   utcDt.sec   = utcSec;
+   utcDt.day_of_week = 0;
+   utcDt.day_of_year = 0;
+   
+   datetime utcTarget = StructToTime(utcDt);
+   int brokerOffset = GetBrokerGMTOffset();
+   return utcTarget + brokerOffset;
 }
 
 //+------------------------------------------------------------------+
 string CTimeManager::GetCountdownString()
 {
    if(!m_calculated) return "Not configured";
-   if(m_firedToday) return "Fired today";
    
-   int secs = (int)(m_targetTimeServer - TimeTradeServer());
-   if(secs <= 0) return "NOW";
+   // Use real-time GMT for smooth countdown (not stale TimeTradeServer)
+   datetime gmtNow = TimeGMT();
+   int brokerOffset = GetBrokerGMTOffset();
+   datetime realServerTime = gmtNow + brokerOffset;
    
-   int hours   = secs / 3600;
-   int minutes = (secs % 3600) / 60;
-   int seconds = secs % 60;
+   int secs = (int)(m_targetTimeServer - realServerTime);
    
-   return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
+   // Today's NYO hasn't arrived yet → countdown to it
+   if(secs > 0)
+   {
+      int hours   = secs / 3600;
+      int minutes = (secs % 3600) / 60;
+      int seconds = secs % 60;
+      return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
+   }
+   
+   // Today's NYO has passed → calculate countdown to NEXT business day's NYO
+   // Try each day from tomorrow, skip Saturday(6) and Sunday(0)
+   for(int d = 1; d <= 7; d++)
+   {
+      datetime futureGmt = gmtNow + d * 86400;  // +d days in GMT
+      MqlDateTime futureDt;
+      TimeToStruct(futureGmt, futureDt);
+      
+      // Skip Saturday (6) and Sunday (0)
+      if(futureDt.day_of_week == 0 || futureDt.day_of_week == 6)
+         continue;
+      
+      datetime nextTarget = NYTimeToServerTimeForDate(m_nyHour, m_nyMinute, 
+                                                       m_nySecond, m_utcOffset, futureGmt);
+      int nextSecs = (int)(nextTarget - realServerTime);
+      if(nextSecs > 0)
+      {
+         int hours   = nextSecs / 3600;
+         int minutes = (nextSecs % 3600) / 60;
+         int seconds = nextSecs % 60;
+         return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
+      }
+   }
+   
+   return "---";
 }
 
 //+------------------------------------------------------------------+

@@ -108,5 +108,9 @@ If you see a better approach:
 * Suggest improvement
 * Then implement it safely
 
+## 🔖 Mandatory Workflow: Auto Version Bump
+* **CRITICAL:** After EVERY code change (fix, feature, upgrade), you MUST bump the `EA_VERSION` (e.g., from "1.06" to "1.07") and update the `EA_BUILD_DATE` in `Defines.mqh`! Do not wait for the user to remind you.
+* Always finish your workflow by pushing the changes to the associated GitHub repository.
+
 ## 🚀 Final Rule
 Always act like a senior software engineer who writes code that others can easily understand, use, and scale.

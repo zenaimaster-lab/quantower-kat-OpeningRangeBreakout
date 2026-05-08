@@ -498,6 +498,10 @@ void OnTimer()
    } else {
       g_dashboard.Update5mStatus("OFF", CLR_TEXT_DIM);
    }
+   
+   // Force chart repaint so clock/countdown updates visually every second
+   // Without this, chart objects only refresh on tick (price movement)
+   ChartRedraw();
 }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)

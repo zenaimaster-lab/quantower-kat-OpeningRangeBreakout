@@ -317,6 +317,28 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
        if(m_breakDir == 1 && params.orderMode != MODE_SELL_ONLY) { // Break UP
            if(c < o && l <= m_rangeHigh) {
                double entryPrice = NormalizeDouble(h + (buffer + spread) * point, digits);
+               
+               // Max distance from range check — skip if retest candle too large
+               if(params.maxDistRangeOn) {
+                   int distFromRange = (int)MathRound((entryPrice - m_rangeHigh) / point);
+                   if(distFromRange > params.maxDistRange) {
+                       PrintFormat("[%s] SKIP BuyStop: dist %d > max %d pts from range", 
+                                   EnumToString(tf), distFromRange, params.maxDistRange);
+                       m_cancelReason = "Max dist range (Buy " + IntegerToString(distFromRange) + ">" + IntegerToString(params.maxDistRange) + ")";
+                       if(params.contAfter1st) m_state = ORB_WAIT_BREAK;
+                       else m_state = ORB_DONE;
+                       return;
+                   }
+               }
+               
+               // Favor EMA check — skip if price not on favorable side of EMA
+               if(params.favorEma1On || params.favorEma2On || params.favorEma3On) {
+                   double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+                   if(params.favorEma1On) { double v = GetEmaValue(symbol, tf, params.favorEma1Period); if(v > 0 && bid < v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma1Period) + " (Buy below)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+                   if(params.favorEma2On) { double v = GetEmaValue(symbol, tf, params.favorEma2Period); if(v > 0 && bid < v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma2Period) + " (Buy below)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+                   if(params.favorEma3On) { double v = GetEmaValue(symbol, tf, params.favorEma3Period); if(v > 0 && bid < v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma3Period) + " (Buy below)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+               }
+               
                double sl = params.slCandle ? NormalizeDouble(l - buffer * point, digits) : NormalizeDouble(entryPrice - params.slPoints * point, digits);
                double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice + params.tpPoints * point, digits) : 0;
                
@@ -336,7 +358,29 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
        } else if(m_breakDir == -1 && params.orderMode != MODE_BUY_ONLY) { // Break DOWN
            if(c > o && h >= m_rangeLow) {
                double entryPrice = NormalizeDouble(l - buffer * point, digits);
-               double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
+               
+               // Max distance from range check — skip if retest candle too large
+               if(params.maxDistRangeOn) {
+                   int distFromRange = (int)MathRound((m_rangeLow - entryPrice) / point);
+                   if(distFromRange > params.maxDistRange) {
+                       PrintFormat("[%s] SKIP SellStop: dist %d > max %d pts from range", 
+                                   EnumToString(tf), distFromRange, params.maxDistRange);
+                       m_cancelReason = "Max dist range (Sell " + IntegerToString(distFromRange) + ">" + IntegerToString(params.maxDistRange) + ")";
+                       if(params.contAfter1st) m_state = ORB_WAIT_BREAK;
+                       else m_state = ORB_DONE;
+                       return;
+                   }
+                }
+                
+                // Favor EMA check — skip if price not on favorable side of EMA
+                if(params.favorEma1On || params.favorEma2On || params.favorEma3On) {
+                    double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+                    if(params.favorEma1On) { double v = GetEmaValue(symbol, tf, params.favorEma1Period); if(v > 0 && ask > v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma1Period) + " (Sell above)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+                    if(params.favorEma2On) { double v = GetEmaValue(symbol, tf, params.favorEma2Period); if(v > 0 && ask > v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma2Period) + " (Sell above)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+                    if(params.favorEma3On) { double v = GetEmaValue(symbol, tf, params.favorEma3Period); if(v > 0 && ask > v) { m_cancelReason = "Favor EMA" + IntegerToString(params.favorEma3Period) + " (Sell above)"; if(params.contAfter1st) m_state=ORB_WAIT_BREAK; else m_state=ORB_DONE; return; } }
+                }
+                
+                double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
                double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice - params.tpPoints * point, digits) : 0;
                
                double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));

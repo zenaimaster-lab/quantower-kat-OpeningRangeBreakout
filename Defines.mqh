@@ -7,14 +7,14 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.03"
+#define EA_VERSION        "1.08"
 #define EA_BUILD_DATE     "08 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1240
+#define PANEL_HEIGHT      1245
 #define PANEL_X           20
 #define PANEL_Y           20
 
@@ -138,6 +138,16 @@ struct DashboardParams
    int    maxLoss;
    bool   bigMomentum;
    
+   bool   maxDistRangeOn;
+   int    maxDistRange;
+   
+   bool   favorEma1On;
+   int    favorEma1Period;
+   bool   favorEma2On;
+   int    favorEma2Period;
+   bool   favorEma3On;
+   int    favorEma3Period;
+   
    string comment;
    bool   isActive;
 
@@ -183,6 +193,14 @@ struct DashboardParams
       maxLossOn         = true;
       maxLoss           = 1;
       bigMomentum       = false;
+      maxDistRangeOn    = true;
+      maxDistRange      = 6000;
+      favorEma1On       = false;
+      favorEma1Period   = 9;
+      favorEma2On       = false;
+      favorEma2Period   = 21;
+      favorEma3On       = false;
+      favorEma3Period   = 34;
       comment           = "orb-trade";
       isActive          = true;
    }
