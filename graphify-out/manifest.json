@@ -1,90 +1,82 @@
 {
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\deploy.ps1": {
-    "mtime": 1778142374.15304,
-    "hash": "192e61eb1e92e205832cc610a287082f"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\deploy.ps1": {
+    "mtime": 1778229813.1266263,
+    "hash": "1c32db45cd66c0309036addf29dc3fb9"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\agents.md": {
-    "mtime": 1778200612.4907,
-    "hash": "cf25a83be9c08d5e053a7a2883aa7b3a"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\agents.md": {
+    "mtime": 1778229650.6662626,
+    "hash": "0352090b78ce91c8dacb4dfea5066665"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\README.md": {
-    "mtime": 1778183024.860776,
-    "hash": "ec89a07b354a1f9439d8a5c5c54ce7c2"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\README.md": {
+    "mtime": 1778229650.6652687,
+    "hash": "9dd375c9a09f1d9d36238fde8564e72f"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_18_15_UI_Removal.md": {
-    "mtime": 1778134522.2955527,
-    "hash": "d74ff3f365006adda013508038010497"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_18_15_UI_Removal.md": {
+    "mtime": 1778229650.6662626,
+    "hash": "46200385fd028cb3dbef50c0a31aa9bd"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_18_25_NewsManager_Simplification.md": {
-    "mtime": 1778135011.6964438,
-    "hash": "202cacb102fd3427bd0a6f05a4a17459"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_18_25_NewsManager_Simplification.md": {
+    "mtime": 1778229650.6662626,
+    "hash": "52a962ec05b99d8b2d22f077b13691d6"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_18_33_UI_Layout_and_CandleSrc_Cleanup.md": {
-    "mtime": 1778135598.4380708,
-    "hash": "9b96449dd9222fb8f325246886cb464b"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_18_33_UI_Layout_and_CandleSrc_Cleanup.md": {
+    "mtime": 1778229650.6672595,
+    "hash": "c4976dd6b6734f525066f5e78d898e52"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Add_ENTRY_Section.md": {
-    "mtime": 1778148419.3928616,
-    "hash": "ce4c6a4c4c187ae74df161e77007b745"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Add_ENTRY_Section.md": {
+    "mtime": 1778229650.6672595,
+    "hash": "c2fc206b802e66d405b896064d9fc6af"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Add_STATS_Tab.md": {
-    "mtime": 1778149524.2678568,
-    "hash": "c4479ee1af31f6d38feb8175620118e1"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Add_STATS_Tab.md": {
+    "mtime": 1778229650.6672595,
+    "hash": "32378950070239f70fd0b80595bd2c6b"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Adjust_Panel_Height.md": {
-    "mtime": 1778149922.6693788,
-    "hash": "635eef6e9920a4bf43f5e000fb5a5374"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Adjust_Panel_Height.md": {
+    "mtime": 1778229650.6672595,
+    "hash": "d1eb6fd29981fe59602efdaab0f90c84"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Cleanup_AutoRun.md": {
-    "mtime": 1778132252.149339,
-    "hash": "fc8a56184dc54fac8d2bf294de3f02cb"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Cleanup_AutoRun.md": {
+    "mtime": 1778229650.6672595,
+    "hash": "957520038f918d229241c9d27c6aa7d8"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Layout_Workflow_Fixes.md": {
-    "mtime": 1778145727.4621038,
-    "hash": "86d5d9166c859e11b02c353bed01fe0d"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Layout_Workflow_Fixes.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "f376aee7f96e2cc55ed7e94ab6fd920f"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Optimize_Tab_Order.md": {
-    "mtime": 1778149793.8634124,
-    "hash": "68bdc4d7591b6100ee485a6633a3c500"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Optimize_Tab_Order.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "2baae161948627a40b145251b9e3374b"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_ORB_Break_Retest_Refactor.md": {
-    "mtime": 1778167025.2590375,
-    "hash": "58860d1f85c4c6f8798b1f091ad6500b"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_ORB_Break_Retest_Refactor.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "da2f18b8227653f88cae440d50d493f9"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_ORB_Stats_Continue.md": {
-    "mtime": 1778169712.225181,
-    "hash": "5e09707d1baabe4c984854c810afb6de"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_ORB_Stats_Continue.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "0f64dc05cc2c62509bb51559fbc85ee6"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_session2.md": {
-    "mtime": 1778141999.8947868,
-    "hash": "5804d1356603066a4b63ec7e9b4d78ce"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_session2.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "2713e0541c3a9cc8715a1a7332278729"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Trailing_Trigger_Layout.md": {
-    "mtime": 1778146078.0544097,
-    "hash": "b011da63005e2ed4114cb5083076a02e"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Trailing_Trigger_Layout.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "90b9766caf53d6f68a34755054fbad77"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-07_Trailing_Trigger_Layout_Fix.md": {
-    "mtime": 1778146444.370628,
-    "hash": "a0291e5f463eff125e894888a05ba1bb"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Trailing_Trigger_Layout_Fix.md": {
+    "mtime": 1778229650.6683183,
+    "hash": "bb79fcfa75043dee19bfbb801765cbb3"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-08_Dashboard_FavorEMA_Refinement.md": {
-    "mtime": 1778200760.0728917,
-    "hash": "a1d250d2884c3353fcd1b96e5af69700"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-08_Dashboard_FavorEMA_Refinement.md": {
+    "mtime": 1778229650.6693182,
+    "hash": "e9d5c3f310f84383a876ddfac97dd2ed"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\diary\\2026-05-08_Legacy_Cleanup_Logic_Audit.md": {
-    "mtime": 1778178618.0159674,
-    "hash": "9f2aaeff4fb9c0242a24bc59467e9af5"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-08_Legacy_Cleanup_Logic_Audit.md": {
+    "mtime": 1778229650.6693182,
+    "hash": "e81b24ae9ad41ae46477ac03ebb369a5"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\docs\\Architecture.md": {
-    "mtime": 1778178592.138772,
-    "hash": "55d34db26336289740baba53958763d2"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\skill-mt5-workflow\\README.md": {
-    "mtime": 1778018187.117049,
-    "hash": "3336b691637f033964a1492a312e4487"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-ORB\\skill-mt5-workflow\\SKILL.md": {
-    "mtime": 1778145694.960802,
-    "hash": "d671df3da64116e089d08a516484557b"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\docs\\Architecture.md": {
+    "mtime": 1778229650.6693182,
+    "hash": "0f25ceb0b90cc29475317ed5d275f827"
   }
 }

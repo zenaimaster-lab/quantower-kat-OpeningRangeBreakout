@@ -1,5 +1,5 @@
 # Deploy to MetaTrader and compile
-$src = "c:\Users\kieuanhtuan\Documents\all. Coding\mt5-kat-ORB"
+$src = "c:\Users\kieuanhtuan\Documents\all. Coding\mt5-kat-OpenRangeBreakout"
 $dst = "C:\Users\kieuanhtuan\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Experts\KAT ORB Breakout"
 $mql5Root = "C:\Users\kieuanhtuan\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5"
 $compiler = "C:\Program Files\MetaTrader 5\MetaEditor64.exe"
