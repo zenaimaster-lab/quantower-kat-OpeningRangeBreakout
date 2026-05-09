@@ -33,7 +33,7 @@ public:
    double            NormalizeLot(string symbol, double lots);
    
    //--- Calculate risk/reward info for dashboard display
-   void              CalcRiskRewardInfo(string symbol, double riskPercent, int slPts, int tpPts,
+   void              CalcRiskRewardInfo(string symbol, bool riskModeOn, double riskPercent, double fixLot, int slPts, int tpPts,
                                         double &outBalance, double &outRiskAmt, 
                                         double &outRewardAmt, double &outLotSize);
 };
@@ -154,21 +154,21 @@ double CRiskManager::NormalizeLot(string symbol, double lots)
 //+------------------------------------------------------------------+
 //| Calculate risk/reward monetary values for display                  |
 //+------------------------------------------------------------------+
-void CRiskManager::CalcRiskRewardInfo(string symbol, double riskPercent, int slPts, int tpPts,
+void CRiskManager::CalcRiskRewardInfo(string symbol, bool riskModeOn, double riskPercent, double fixLot, int slPts, int tpPts,
                                       double &outBalance, double &outRiskAmt, 
                                       double &outRewardAmt, double &outLotSize)
 {
    outBalance   = AccountInfoDouble(ACCOUNT_BALANCE);
-   outRiskAmt   = outBalance * (riskPercent / 100.0);
+   outRiskAmt   = 0;
    outRewardAmt = 0;
    outLotSize   = 0;
    
    if(symbol == "" || slPts <= 0) return;
    
-   outLotSize = CalcLotSize(symbol, riskPercent, slPts + GetSpread(symbol), true);
-   
-   // Calculate reward: lot * tpPoints * valuePerPoint
-   int adjTP = tpPts + GetSpread(symbol);
+   if(riskModeOn)
+      outLotSize = CalcLotSize(symbol, riskPercent, slPts + GetSpread(symbol), true);
+   else
+      outLotSize = NormalizeLot(symbol, fixLot);
    
    double tickValue = GetTickValue(symbol);
    double tickSize  = GetTickSize(symbol);
@@ -177,6 +177,8 @@ void CRiskManager::CalcRiskRewardInfo(string symbol, double riskPercent, int slP
    if(tickValue > 0 && tickSize > 0 && point > 0)
    {
       double valuePerPoint = tickValue / tickSize * point;
+      outRiskAmt = outLotSize * (slPts + GetSpread(symbol)) * valuePerPoint;
+      int adjTP = tpPts + GetSpread(symbol);
       outRewardAmt = outLotSize * adjTP * valuePerPoint;
    }
 }

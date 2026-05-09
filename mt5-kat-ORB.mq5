@@ -378,7 +378,7 @@ void OnTimer()
         if (point > 0)
            displaySlPoints = (int)MathRound((candleHigh - candleLow) / point) + 2 * p.entryBufferPoints;
      }
-     g_riskMgr.CalcRiskRewardInfo(p.symbol,p.riskPercent,displaySlPoints,p.tpPoints,bal,rAmt,rwAmt,lot);
+     g_riskMgr.CalcRiskRewardInfo(p.symbol,p.riskModeOn,p.riskPercent,p.fixLot,displaySlPoints,p.tpPoints,bal,rAmt,rwAmt,lot);
      g_dashboard.UpdateBalanceInfo(bal,rAmt,rwAmt,lot);
      // v0.2: Equity + P/L merged line
      double equity=AccountInfoDouble(ACCOUNT_EQUITY);

@@ -21,9 +21,10 @@ private:
    CButton m_btnTabMain, m_btnTabM2, m_btnTabM5, m_btnTabStats;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
-   CEdit m_lblBalTag, m_lblBalVal, m_lblRskTag, m_lblRPc;
+   CEdit m_lblBalTag, m_lblBalVal;
+   CButton m_btnRiskMode, m_btnFixLot;
+   CEdit m_edtRisk, m_edtFixLot;
    CEdit m_lblRATag, m_lblRAVal, m_lblRwVal, m_lblLtTag, m_lblLtVal;
-   CEdit  m_edtRisk;
    CEdit m_lblTrTag, m_lblTrLine, m_lblBeLine;
    CEdit m_lblTrTrig, m_lblTrDist, m_lblTrStep;
    CEdit m_edtTTr, m_edtTDi, m_edtTSt;
@@ -98,7 +99,7 @@ private:
 
    SystemConfig m_config;
    ENUM_TAB m_activeTab;
-   bool m_slCandle, m_beOn;
+   bool m_slCandle, m_beOn, m_rMode;
    bool m_ufmEnabled, m_tmrEnabled, m_aucEnabled, m_aamEnabled, m_mdrEnabled;
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
    bool m_fem1Enabled, m_fem2Enabled, m_fem3Enabled;
@@ -163,6 +164,7 @@ private:
    void OnTrM(); void OnManP(); void OnCanA();
    void OnToggleGlobal(); void OnToggleM2(); void OnToggleM5();
    void OnTabMain(); void OnTabM2(); void OnTabM5();
+   void OnRiskModeToggle(); void OnLotModeToggle();
    void OnBrkEv();
    void OnBEToggle();
    void OnUfmToggle(); void UpdUfm();
@@ -197,7 +199,7 @@ public:
 
 };
 
-CDashboard::CDashboard() { m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_STATS;
+CDashboard::CDashboard() { m_rMode=true; m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_STATS;
    m_ufmEnabled=false; m_tmrEnabled=false; m_aucEnabled=false; m_aamEnabled=false; m_mdrEnabled=true; m_utcOff=-4; m_beOn=false;
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
    m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
@@ -292,9 +294,10 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    // ── RISK ──
    ML(m_lblBalTag,"lBa","Balance",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ML(m_lblBalVal,"vBa","$0.00",rx,cy,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblRskTag,"lRk","Risk (%)",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtRisk,"eRk","1.0",rx,cy,40,CTRL_HEIGHT);
-   ML(m_lblRPc,"lPc","%",rx+43,cy,18,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
+   MB(m_btnRiskMode,"bRm","Risk %",cx,cy,55,CTRL_HEIGHT+2,CLR_BTN_ON);
+   ME(m_edtRisk,"eRk","1.0",cx+60,cy,35,CTRL_HEIGHT);
+   MB(m_btnFixLot,"bFl","Fix lot",cx+105,cy,55,CTRL_HEIGHT+2,CLR_BTN_OFF);
+   ME(m_edtFixLot,"eFl","0.1",cx+165,cy,45,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblRATag,"lRA","Risk / Reward",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
    ML(m_lblRAVal,"vRA","-$0",rx,cy,70,CTRL_HEIGHT,CLR_MONEY_RED);
    ML(m_lblRwVal,"vRw","+$0",rx+75,cy,70,CTRL_HEIGHT,CLR_MONEY_GREEN); cy+=CTRL_HEIGHT+CTRL_GAP;
@@ -543,6 +546,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.tpPoints=(int)StringToInteger(m_edtTP.Text());
    p.slCandle=m_slCandle;
    p.riskPercent=StringToDouble(m_edtRisk.Text());
+   p.riskModeOn=m_rMode;
+   p.fixLot=StringToDouble(m_edtFixLot.Text());
    p.orderMode=m_om;
    p.trailMode=m_tm;
    p.trailTrigger=(int)StringToInteger(m_edtTTr.Text());
@@ -610,6 +615,10 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_edtTP.Text(IntegerToString(p.tpPoints));
    m_btnSLS.Text(m_slCandle?"SL by Candle✓":"SL by Candle"); 
    m_edtRisk.Text(DoubleToString(p.riskPercent,1));
+   m_edtFixLot.Text(DoubleToString(p.fixLot,2));
+   m_rMode=p.riskModeOn;
+   m_btnRiskMode.ColorBackground(m_rMode ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnFixLot.ColorBackground(!m_rMode ? CLR_BTN_ON : CLR_BTN_OFF);
    m_om=p.orderMode; UpdMode();
    m_tm=p.trailMode; UpdTrail();
    m_edtTTr.Text(IntegerToString(p.trailTrigger)); m_edtTDi.Text(IntegerToString(p.trailDistance));
@@ -661,8 +670,10 @@ void CDashboard::UpdateSpread(int s) { m_lblSpdVal.Text("Spread: "+IntegerToStri
 void CDashboard::UpdateStatus(string s) { m_lblStVal.Text(s); }
 void CDashboard::UpdateOrderStatus(string s) { m_lblOsVal.Text(s); }
 void CDashboard::UpdateNYClock(string t, string ap, string d) { m_lblClkVal.Text(t); m_lblClkAmPm.Text(ap); m_lblClkDate.Text(d); }
+void CDashboard::OnRiskModeToggle() { m_rMode=true; m_btnRiskMode.ColorBackground(CLR_BTN_ON); m_btnFixLot.ColorBackground(CLR_BTN_OFF); MarkDirty(); }
+void CDashboard::OnLotModeToggle() { m_rMode=false; m_btnRiskMode.ColorBackground(CLR_BTN_OFF); m_btnFixLot.ColorBackground(CLR_BTN_ON); MarkDirty(); }
 
-// ── DIRECT CLICK HANDLER — bypasses CAppDialog event routing ──
+// ── DIRECT CLICK HANDLER - bypasses CAppDialog event routing ──
 bool CDashboard::HandleDirectClick(const string &objName)
 {
    // v0.89: HandleDirectClick is now the SINGLE source of truth via Native Object Clicks.
@@ -683,6 +694,8 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnTabM5.Name())         { OnTabM5(); return true; }
    if(objName == m_btnTabStats.Name())      { OnTabStats(); return true; }
 
+   if(objName == m_btnRiskMode.Name())      { OnRiskModeToggle(); return true; }
+   if(objName == m_btnFixLot.Name())        { OnLotModeToggle(); return true; }
    if(objName == m_btnSLS.Name())           { OnSLS(); return true; }
    if(objName == m_btnBoth.Name())          { OnBoth(); return true; }
    if(objName == m_btnBuy.Name())           { OnBuyO(); return true; }
@@ -932,7 +945,7 @@ void CDashboard::UpdTabs() {
       
       CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlHide(m_lblTabNotice);
       CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
-      CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_lblRskTag); CtrlHide(m_edtRisk); CtrlHide(m_lblRPc);
+      CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_btnRiskMode); CtrlHide(m_edtRisk); CtrlHide(m_btnFixLot); CtrlHide(m_edtFixLot);
       CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
       CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
       CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
@@ -979,7 +992,7 @@ void CDashboard::UpdTabs() {
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
       
       CtrlShow(m_lblMdTag); CtrlShowBtn(m_btnBoth); CtrlShowBtn(m_btnBuy); CtrlShowBtn(m_btnSell);
-      CtrlShow(m_lblBalTag); CtrlShow(m_lblBalVal); CtrlShow(m_lblRskTag); CtrlShowEdit(m_edtRisk); CtrlShow(m_lblRPc);
+      CtrlShow(m_lblBalTag); CtrlShow(m_lblBalVal); CtrlShowBtn(m_btnRiskMode); CtrlShowEdit(m_edtRisk); CtrlShowBtn(m_btnFixLot); CtrlShowEdit(m_edtFixLot);
       CtrlShow(m_lblRATag); CtrlShow(m_lblRAVal); CtrlShow(m_lblRwVal); CtrlShow(m_lblLtTag); CtrlShow(m_lblLtVal);
       CtrlShow(m_lblSlTag); CtrlShowEdit(m_edtSL); CtrlShowEdit(m_edtTP); CtrlShowBtn(m_btnSLS);
       CtrlShow(m_lblTrTag); CtrlShowBtn(m_btnTrMode);
@@ -1055,7 +1068,7 @@ void CDashboard::Minimize(void)
    
    CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlHide(m_lblTabNotice);
    CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
-   CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_lblRskTag); CtrlHide(m_edtRisk); CtrlHide(m_lblRPc);
+   CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_btnRiskMode); CtrlHide(m_edtRisk); CtrlHide(m_btnFixLot); CtrlHide(m_edtFixLot);
    CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
    CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
    CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);

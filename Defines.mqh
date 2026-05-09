@@ -7,8 +7,8 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.10"
-#define EA_BUILD_DATE     "08 May 2026"
+#define EA_VERSION        "1.11"
+#define EA_BUILD_DATE     "09 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -108,6 +108,8 @@ struct DashboardParams
    bool   slCandle;
    int    entryBufferPoints;
    double riskPercent;
+   bool   riskModeOn;
+   double fixLot;
    ENUM_ORDER_MODE   orderMode;
    ENUM_EA_MODE      eaMode;
    ENUM_TRAIL_MODE   trailMode;
@@ -165,6 +167,8 @@ struct DashboardParams
       slCandle          = false;
       entryBufferPoints = 5;
       riskPercent       = 1.0;
+      riskModeOn        = true;
+      fixLot            = 0.1;
       orderMode         = MODE_BOTH;
       eaMode            = EA_AUTO;
       trailMode         = TM_CHASE;

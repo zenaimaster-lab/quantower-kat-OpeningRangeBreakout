@@ -345,7 +345,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                double sl = params.slCandle ? NormalizeDouble(l - buffer * point, digits) : NormalizeDouble(entryPrice - params.slPoints * point, digits);
                double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice + params.tpPoints * point, digits) : 0;
                
-               double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
+               double lot = params.riskModeOn ? m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point)) : m_riskMgr.NormalizeLot(symbol, params.fixLot);
                if(lot > 0) {
                    m_lastOrderTag = GenerateOrderTag(params.comment);
                    if(m_trade.BuyStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOrderTag)) {
@@ -388,7 +388,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                double sl = params.slCandle ? NormalizeDouble(h + (buffer + spread) * point, digits) : NormalizeDouble(entryPrice + params.slPoints * point, digits);
                double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice - params.tpPoints * point, digits) : 0;
                
-               double lot = m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point));
+               double lot = params.riskModeOn ? m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl)/point)) : m_riskMgr.NormalizeLot(symbol, params.fixLot);
                if(lot > 0) {
                    m_lastOrderTag = GenerateOrderTag(params.comment);
                    if(m_trade.SellStop(lot, entryPrice, symbol, sl, tp, ORDER_TIME_GTC, 0, m_lastOrderTag)) {
