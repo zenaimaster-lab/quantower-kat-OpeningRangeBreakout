@@ -21,16 +21,43 @@ input int             InpNyMinute          = 30;          // NY Open Minute
 input int             InpNySecond          = 0;           // NY Open Second
 input int             InpUtcOffset         = -4;          // Broker UTC Offset (NY Time)
 
-input group "------------- ORDER -------------"
-input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Timeframe
+input group "------------- GLOBAL SETTING -------------"
+input bool            InpGlobalOverride    = true;        // Override 2m & 5m with Global (Global Mode)
+input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Global Timeframe
 input int             InpSlPoints          = 1500;        // Stop Loss (Points)
 input int             InpTpPoints          = 1500;        // Take Profit (Points)
 input bool            InpSlCandle          = false;       // Use Candle Extremes for SL
 input ENUM_ORDER_MODE InpOrderMode         = MODE_BOTH;   // Allowed Trade Directions
 input int             InpEntryBufferPoints = 5;           // Entry/SL Buffer (Points)
-
-input group "------------- RISK -------------"
+input bool            InpCustomRetestOn    = true;        // Use Custom Retest Candle
+input int             InpCustomRetestMin   = 1;           // Retest Candle Timeframe (Min)
 input double          InpRiskPercent       = 1.0;         // Risk per Trade (%)
+input double          InpFixLot            = 0.1;         // Fix Lot Size
+input bool            InpRiskModeOn        = true;        // Risk Management (true=Risk%, false=Fix Lot)
+
+input group "------------- 2M SETTING -------------"
+input int             Inp2MSlPoints          = 1500;        // 2m: Stop Loss (Points)
+input int             Inp2MTpPoints          = 1500;        // 2m: Take Profit (Points)
+input bool            Inp2MSlCandle          = false;       // 2m: Use Candle Extremes for SL
+input ENUM_ORDER_MODE Inp2MOrderMode         = MODE_BOTH;   // 2m: Allowed Trade Directions
+input int             Inp2MEntryBufferPoints = 5;           // 2m: Entry/SL Buffer (Points)
+input bool            Inp2MCustomRetestOn    = true;        // 2m: Use Custom Retest Candle
+input int             Inp2MCustomRetestMin   = 1;           // 2m: Retest Candle Timeframe (Min)
+input double          Inp2MRiskPercent       = 1.0;         // 2m: Risk per Trade (%)
+input double          Inp2MFixLot            = 0.1;         // 2m: Fix Lot Size
+input bool            Inp2MRiskModeOn        = true;        // 2m: Risk Management (true=Risk%, false=Fix Lot)
+
+input group "------------- 5M SETTING -------------"
+input int             Inp5MSlPoints          = 1500;        // 5m: Stop Loss (Points)
+input int             Inp5MTpPoints          = 1500;        // 5m: Take Profit (Points)
+input bool            Inp5MSlCandle          = false;       // 5m: Use Candle Extremes for SL
+input ENUM_ORDER_MODE Inp5MOrderMode         = MODE_BOTH;   // 5m: Allowed Trade Directions
+input int             Inp5MEntryBufferPoints = 5;           // 5m: Entry/SL Buffer (Points)
+input bool            Inp5MCustomRetestOn    = true;        // 5m: Use Custom Retest Candle
+input int             Inp5MCustomRetestMin   = 1;           // 5m: Retest Candle Timeframe (Min)
+input double          Inp5MRiskPercent       = 1.0;         // 5m: Risk per Trade (%)
+input double          Inp5MFixLot            = 0.1;         // 5m: Fix Lot Size
+input bool            Inp5MRiskModeOn        = true;        // 5m: Risk Management (true=Risk%, false=Fix Lot)
 
 input group "------------- TRAIL -------------"
 input ENUM_TRAIL_MODE InpTrailMode         = TM_CHASE;    // Trailing Stop Mode
@@ -212,16 +239,35 @@ int OnInit()
    { Print("[Main] Dashboard creation FAILED"); return INIT_FAILED; }
 
    SystemConfig cfg;
+   cfg.globalOverride = InpGlobalOverride;
    cfg.main.nyHour=InpNyHour;cfg.main.nyMinute=InpNyMinute;cfg.main.nySecond=InpNySecond;
    cfg.main.utcOffset=InpUtcOffset;
-   cfg.main.timeframe=InpTimeframe;cfg.main.slPoints=InpSlPoints;cfg.main.tpPoints=InpTpPoints;
-   cfg.main.slCandle=InpSlCandle;cfg.main.riskPercent=InpRiskPercent;cfg.main.entryBufferPoints=InpEntryBufferPoints;
-   cfg.main.orderMode=InpOrderMode;cfg.main.trailMode=InpTrailMode;cfg.main.trailTrigger=InpTrailTrigger;
+   cfg.main.timeframe=InpTimeframe;
+   cfg.main.slPoints=InpSlPoints;cfg.main.tpPoints=InpTpPoints;
+   cfg.main.slCandle=InpSlCandle;cfg.main.entryBufferPoints=InpEntryBufferPoints;
+   cfg.main.orderMode=InpOrderMode;
+   cfg.main.customRetestOn=InpCustomRetestOn; cfg.main.customRetestMin=InpCustomRetestMin;
+   cfg.main.riskPercent=InpRiskPercent; cfg.main.fixLot=InpFixLot; cfg.main.riskModeOn=InpRiskModeOn;
+
+   cfg.main.trailMode=InpTrailMode;cfg.main.trailTrigger=InpTrailTrigger;
    cfg.main.trailDistance=InpTrailDistance;cfg.main.trailStep=InpTrailStep;
    cfg.main.beActivatePoints=InpBeActivatePts;cfg.main.beLockPoints=InpBeLockPts;cfg.main.beEnabled=InpBeEnabled;
-   // (Removed hardcoded overrides for unfavorMove, touchMid, etc. to use DashboardParams defaults)
-   cfg.m2 = cfg.main; cfg.m2.timeframe = PERIOD_M2; cfg.m2.comment = "orb-2m";
-   cfg.m5 = cfg.main; cfg.m5.timeframe = PERIOD_M5; cfg.m5.comment = "orb-5m";
+   
+   cfg.m2 = cfg.main; 
+   cfg.m2.timeframe = PERIOD_M2; cfg.m2.comment = "orb-2m";
+   cfg.m2.slPoints=Inp2MSlPoints; cfg.m2.tpPoints=Inp2MTpPoints;
+   cfg.m2.slCandle=Inp2MSlCandle; cfg.m2.entryBufferPoints=Inp2MEntryBufferPoints;
+   cfg.m2.orderMode=Inp2MOrderMode;
+   cfg.m2.customRetestOn=Inp2MCustomRetestOn; cfg.m2.customRetestMin=Inp2MCustomRetestMin;
+   cfg.m2.riskPercent=Inp2MRiskPercent; cfg.m2.fixLot=Inp2MFixLot; cfg.m2.riskModeOn=Inp2MRiskModeOn;
+
+   cfg.m5 = cfg.main; 
+   cfg.m5.timeframe = PERIOD_M5; cfg.m5.comment = "orb-5m";
+   cfg.m5.slPoints=Inp5MSlPoints; cfg.m5.tpPoints=Inp5MTpPoints;
+   cfg.m5.slCandle=Inp5MSlCandle; cfg.m5.entryBufferPoints=Inp5MEntryBufferPoints;
+   cfg.m5.orderMode=Inp5MOrderMode;
+   cfg.m5.customRetestOn=Inp5MCustomRetestOn; cfg.m5.customRetestMin=Inp5MCustomRetestMin;
+   cfg.m5.riskPercent=Inp5MRiskPercent; cfg.m5.fixLot=Inp5MFixLot; cfg.m5.riskModeOn=Inp5MRiskModeOn;
 
    g_dashboard.SetInitialParams(cfg);
    g_dashboard.Run(); EventSetTimer(1); g_initialized=true;
