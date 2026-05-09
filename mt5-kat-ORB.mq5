@@ -31,8 +31,8 @@ input ENUM_ORDER_MODE InpOrderMode         = MODE_BOTH;   // Allowed Trade Direc
 input int             InpEntryBufferPoints = 5;           // Entry/SL Buffer (Points)
 input bool            InpCustomRetestOn    = true;        // Use Custom Retest Candle
 input int             InpCustomRetestMin   = 1;           // Retest Candle Timeframe (Min)
-input double          InpRiskPercent       = 1.0;         // Risk per Trade (%)
-input double          InpFixLot            = 0.1;         // Fix Lot Size
+input double          InpRiskPercent       = 2.0;         // Risk per Trade (%)
+input double          InpFixLot            = 2.0;         // Fix Lot Size
 input bool            InpRiskModeOn        = true;        // Risk Management (true=Risk%, false=Fix Lot)
 
 input group "------------- 2M SETTING -------------"
@@ -43,8 +43,8 @@ input ENUM_ORDER_MODE Inp2MOrderMode         = MODE_BOTH;   // 2m: Allowed Trade
 input int             Inp2MEntryBufferPoints = 5;           // 2m: Entry/SL Buffer (Points)
 input bool            Inp2MCustomRetestOn    = true;        // 2m: Use Custom Retest Candle
 input int             Inp2MCustomRetestMin   = 1;           // 2m: Retest Candle Timeframe (Min)
-input double          Inp2MRiskPercent       = 1.0;         // 2m: Risk per Trade (%)
-input double          Inp2MFixLot            = 0.1;         // 2m: Fix Lot Size
+input double          Inp2MRiskPercent       = 2.0;         // 2m: Risk per Trade (%)
+input double          Inp2MFixLot            = 2.0;         // 2m: Fix Lot Size
 input bool            Inp2MRiskModeOn        = true;        // 2m: Risk Management (true=Risk%, false=Fix Lot)
 
 input group "------------- 5M SETTING -------------"
@@ -55,8 +55,8 @@ input ENUM_ORDER_MODE Inp5MOrderMode         = MODE_BOTH;   // 5m: Allowed Trade
 input int             Inp5MEntryBufferPoints = 5;           // 5m: Entry/SL Buffer (Points)
 input bool            Inp5MCustomRetestOn    = true;        // 5m: Use Custom Retest Candle
 input int             Inp5MCustomRetestMin   = 1;           // 5m: Retest Candle Timeframe (Min)
-input double          Inp5MRiskPercent       = 1.0;         // 5m: Risk per Trade (%)
-input double          Inp5MFixLot            = 0.1;         // 5m: Fix Lot Size
+input double          Inp5MRiskPercent       = 2.0;         // 5m: Risk per Trade (%)
+input double          Inp5MFixLot            = 2.0;         // 5m: Fix Lot Size
 input bool            Inp5MRiskModeOn        = true;        // 5m: Risk Management (true=Risk%, false=Fix Lot)
 
 input group "------------- TRAIL -------------"
