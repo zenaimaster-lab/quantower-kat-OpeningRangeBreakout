@@ -44,6 +44,7 @@ private:
    CButton m_btnAam;
    
    CEdit m_lblEntrySec;
+   CEdit m_lblRtcTag, m_edtRtc; CButton m_btnRtc;
    CEdit m_lblContTag; CButton m_btnCont;
    CEdit m_lblMaxSTag, m_edtMaxS; CButton m_btnMaxS;
    CEdit m_lblMaxLTag, m_edtMaxL; CButton m_btnMaxL;
@@ -103,7 +104,7 @@ private:
    bool m_ufmEnabled, m_tmrEnabled, m_aucEnabled, m_aamEnabled, m_mdrEnabled;
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
    bool m_fem1Enabled, m_fem2Enabled, m_fem3Enabled;
-   bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum;
+   bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum, m_rtcOn;
    int m_idxSepAfterPresets;
    int m_statusSepStart, m_statusSepEnd;
    int m_utcOff;
@@ -182,6 +183,7 @@ private:
    void OnContToggle(); void UpdCont();
    void OnMaxSToggle(); void UpdMaxS();
    void OnMaxLToggle(); void UpdMaxL();
+   void OnRtcToggle(); void UpdRtc();
    void OnBigMToggle(); void UpdBigM();
    
    void OnTabStats();
@@ -329,6 +331,10 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int smallBtnW = rw / 3;
    int smallBtnX = rx + rw - smallBtnW;
    ML(m_lblEntrySec,"lEnT","ENTRY",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8;
+   
+   ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cy,180,CTRL_HEIGHT);
+   MB(m_btnRtc,"bRtc","OFF",cx+160,cy,45,CTRL_HEIGHT+2,CLR_BTN_OFF);
+   ME(m_edtRtc,"eRtc","1",smallBtnX,cy,smallBtnW,CTRL_HEIGHT); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    
    ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cy,180,CTRL_HEIGHT);
    MB(m_btnCont,"bCo","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
@@ -569,6 +575,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.ema2Period=(int)StringToInteger(m_edtEma2.Text());
    p.ema3On=m_ema3Enabled;
    p.ema3Period=(int)StringToInteger(m_edtEma3.Text());
+   p.customRetestOn=m_rtcOn;
+   p.customRetestMin=(int)StringToInteger(m_edtRtc.Text());
    p.contAfter1st=m_contAfter1st;
    p.maxSuccessOn=m_maxSuccessOn;
    p.maxSuccess=(int)StringToInteger(m_edtMaxS.Text());
@@ -638,6 +646,8 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_edtEma2.Text(IntegerToString(p.ema2Period));
    m_ema3Enabled=p.ema3On; UpdEma3();
    m_edtEma3.Text(IntegerToString(p.ema3Period));
+   m_rtcOn=p.customRetestOn; UpdRtc();
+   m_edtRtc.Text(IntegerToString(p.customRetestMin));
    m_contAfter1st=p.contAfter1st; UpdCont();
    m_maxSuccessOn=p.maxSuccessOn; UpdMaxS();
    m_edtMaxS.Text(IntegerToString(p.maxSuccess));
@@ -713,6 +723,7 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnFem1.Name())          { OnFem1Toggle(); return true; }
    if(objName == m_btnFem2.Name())          { OnFem2Toggle(); return true; }
    if(objName == m_btnFem3.Name())          { OnFem3Toggle(); return true; }
+   if(objName == m_btnRtc.Name())           { OnRtcToggle(); return true; }
    if(objName == m_btnCont.Name())          { OnContToggle(); return true; }
    if(objName == m_btnMaxS.Name())          { OnMaxSToggle(); return true; }
    if(objName == m_btnMaxL.Name())          { OnMaxLToggle(); return true; }
@@ -880,6 +891,9 @@ void CDashboard::UpdFem2() { m_btnFem2.Text(m_fem2Enabled?ShortToString(0x2713):
 void CDashboard::OnFem3Toggle() { m_btnFem3.Pressed(false); m_fem3Enabled=!m_fem3Enabled; UpdFem3(); MarkDirty(); }
 void CDashboard::UpdFem3() { m_btnFem3.Text(m_fem3Enabled?ShortToString(0x2713):""); m_btnFem3.ColorBackground(m_fem3Enabled?CLR_SUCCESS:CLR_BTN_OFF); }
 
+void CDashboard::OnRtcToggle() { m_btnRtc.Pressed(false); m_rtcOn=!m_rtcOn; UpdRtc(); MarkDirty(); }
+void CDashboard::UpdRtc() { m_btnRtc.Text(m_rtcOn?"ON":"OFF"); m_btnRtc.ColorBackground(m_rtcOn?CLR_BTN_ON:CLR_BTN_OFF); }
+
 void CDashboard::OnContToggle() { m_btnCont.Pressed(false); m_contAfter1st=!m_contAfter1st; UpdCont(); MarkDirty(); }
 void CDashboard::UpdCont() { m_btnCont.Text(m_contAfter1st?"ON":"OFF"); m_btnCont.ColorBackground(m_contAfter1st?CLR_SUCCESS:CLR_BTN_OFF); }
 
@@ -952,7 +966,7 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
       CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
       CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
-      CtrlHide(m_lblEntrySec); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
+      CtrlHide(m_lblEntrySec); CtrlHide(m_lblRtcTag); CtrlHide(m_btnRtc); CtrlHide(m_edtRtc); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
       CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
       CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
       CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
@@ -999,7 +1013,7 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblTrTrig); CtrlShowEdit(m_edtTTr); CtrlShow(m_lblTrDist); CtrlShowEdit(m_edtTDi); CtrlShow(m_lblTrStep); CtrlShowEdit(m_edtTSt);
       CtrlShow(m_lblBETag); CtrlShowBtn(m_btnBE);
       CtrlShow(m_lblBeLine); CtrlShowEdit(m_edtBEA); CtrlShow(m_lblBELock); CtrlShowEdit(m_edtBEL);
-      CtrlShow(m_lblEntrySec); CtrlShow(m_lblContTag); CtrlShowBtn(m_btnCont);
+      CtrlShow(m_lblEntrySec); CtrlShow(m_lblRtcTag); CtrlShowBtn(m_btnRtc); CtrlShowEdit(m_edtRtc); CtrlShow(m_lblContTag); CtrlShowBtn(m_btnCont);
       CtrlShow(m_lblMaxSTag); CtrlShowEdit(m_edtMaxS); CtrlShowBtn(m_btnMaxS);
       CtrlShow(m_lblMaxLTag); CtrlShowEdit(m_edtMaxL); CtrlShowBtn(m_btnMaxL);
       CtrlShow(m_lblBigMTag); CtrlShowBtn(m_btnBigM);
@@ -1075,7 +1089,7 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
    CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
    CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
-   CtrlHide(m_lblEntrySec); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
+   CtrlHide(m_lblEntrySec); CtrlHide(m_lblRtcTag); CtrlHide(m_btnRtc); CtrlHide(m_edtRtc); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
    CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
    CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
    CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);

@@ -303,13 +303,32 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
        }
        if(hasPos) return;
        
-       int shift1 = 1;
-       datetime t1 = iTime(symbol, tf, shift1);
+       ENUM_TIMEFRAMES retestTf = tf;
+       if(params.customRetestOn) {
+           switch(params.customRetestMin) {
+               case 1: retestTf = PERIOD_M1; break;
+               case 2: retestTf = PERIOD_M2; break;
+               case 3: retestTf = PERIOD_M3; break;
+               case 4: retestTf = PERIOD_M4; break;
+               case 5: retestTf = PERIOD_M5; break;
+               case 6: retestTf = PERIOD_M6; break;
+               case 10: retestTf = PERIOD_M10; break;
+               case 12: retestTf = PERIOD_M12; break;
+               case 15: retestTf = PERIOD_M15; break;
+               case 20: retestTf = PERIOD_M20; break;
+               case 30: retestTf = PERIOD_M30; break;
+               case 60: retestTf = PERIOD_H1; break;
+               default: retestTf = PERIOD_M1; break;
+           }
+       }
        
-       double c = iClose(symbol, tf, shift1);
-       double o = iOpen(symbol, tf, shift1);
-       double h = iHigh(symbol, tf, shift1);
-       double l = iLow(symbol, tf, shift1);
+       int shift1 = 1;
+       datetime t1 = iTime(symbol, retestTf, shift1);
+       
+       double c = iClose(symbol, retestTf, shift1);
+       double o = iOpen(symbol, retestTf, shift1);
+       double h = iHigh(symbol, retestTf, shift1);
+       double l = iLow(symbol, retestTf, shift1);
        
        double point = GetPoint(symbol);
        int digits = GetDigits(symbol);
@@ -352,7 +371,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                        m_state = ORB_WAIT_ENTRY;
                        m_ordersActive = true;
                        m_placedTime = TimeTradeServer();
-                       m_entryReason = "M" + IntegerToString(PeriodSeconds(tf)/60) + " Break UP Retest";
+                       m_entryReason = "M" + IntegerToString(PeriodSeconds(tf)/60) + " Break UP Retest" + (params.customRetestOn ? " M" + IntegerToString(params.customRetestMin) : "");
                        DrawTradeLines(symbol, tf, 1, entryPrice, tp);
                        PrintFormat("[%s] BUY STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
                    }
@@ -395,7 +414,7 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                        m_state = ORB_WAIT_ENTRY;
                        m_ordersActive = true;
                        m_placedTime = TimeTradeServer();
-                       m_entryReason = "M" + IntegerToString(PeriodSeconds(tf)/60) + " Break DOWN Retest";
+                       m_entryReason = "M" + IntegerToString(PeriodSeconds(tf)/60) + " Break DOWN Retest" + (params.customRetestOn ? " M" + IntegerToString(params.customRetestMin) : "");
                        DrawTradeLines(symbol, tf, -1, entryPrice, tp);
                        PrintFormat("[%s] SELL STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
                    }
