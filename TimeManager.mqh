@@ -202,64 +202,55 @@ string CTimeManager::GetCountdownString(const DashboardParams &params)
 {
    if(!m_calculated) return "Not configured";
    
-   // Use real-time GMT for smooth countdown (not stale TimeTradeServer)
    datetime gmtNow = TimeGMT();
-   int brokerOffset = GetBrokerGMTOffset();
-   datetime realServerTime = gmtNow + brokerOffset;
-   
-   // Check weekend in NY time
    datetime nyTime = gmtNow + m_utcOffset * 3600;
    MqlDateTime nyDt; TimeToStruct(nyTime, nyDt);
+   
+   // Weekend in NY
    if(nyDt.day_of_week == 0 || nyDt.day_of_week == 6) {
        return "HAPPY WEEKEND!";
    }
    
-   int secs = (int)(m_targetTimeServer - realServerTime);
+   // Create today's NYO time in NY timezone
+   MqlDateTime nyTargetDt = nyDt;
+   nyTargetDt.hour = m_nyHour;
+   nyTargetDt.min = m_nyMinute;
+   nyTargetDt.sec = m_nySecond;
+   datetime nyTargetTime = StructToTime(nyTargetDt);
    
-   // Today's NYO hasn't arrived yet → countdown to it
-   if(secs > 0)
+   int secsToNYO = (int)(nyTargetTime - nyTime);
+   
+   // Before NYO today
+   if(secsToNYO > 0)
    {
-      int hours   = secs / 3600;
-      int minutes = (secs % 3600) / 60;
-      int seconds = secs % 60;
+      int hours   = secsToNYO / 3600;
+      int minutes = (secsToNYO % 3600) / 60;
+      int seconds = secsToNYO % 60;
       return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
    }
-   else
-   {
-      // After NYO
-      int elapsedSecs = -secs;
-      int windowSecs = params.afterMinutesOn ? (params.afterMinutes * 60) : (390 * 60);
-      
-      if (elapsedSecs <= windowSecs) {
-          return "TRADING WINDOW";
-      }
-      
-      if (nyDt.day_of_week == 5) {
-          return "HAPPY WEEKEND!";
-      }
-      
-      // Today's NYO and trading window have passed → calculate countdown to NEXT business day's NYO
-      for(int d = 1; d <= 7; d++)
-      {
-         datetime futureGmt = gmtNow + d * 86400;  // +d days in GMT
-         MqlDateTime futureDt;
-         TimeToStruct(futureGmt, futureDt);
-         
-         // Skip Saturday (6) and Sunday (0)
-         if(futureDt.day_of_week == 0 || futureDt.day_of_week == 6)
-            continue;
-         
-         datetime nextTarget = NYTimeToServerTimeForDate(m_nyHour, m_nyMinute, 
-                                                          m_nySecond, m_utcOffset, futureGmt);
-         int nextSecs = (int)(nextTarget - realServerTime);
-         if(nextSecs > 0)
-         {
-            int hours   = nextSecs / 3600;
-            int minutes = (nextSecs % 3600) / 60;
-            int seconds = nextSecs % 60;
-            return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
-         }
-      }
+   
+   // After NYO today
+   int elapsedSecs = -secsToNYO;
+   int windowSecs = params.afterMinutesOn ? (params.afterMinutes * 60) : (390 * 60);
+   
+   if (elapsedSecs <= windowSecs) {
+       return "TRADING WINDOW";
+   }
+   
+   // After Trading Window
+   if (nyDt.day_of_week == 5) {
+       return "HAPPY WEEKEND!";
+   }
+   
+   // Calculate countdown to NEXT business day's NYO (Tomorrow)
+   datetime nextNyTargetTime = nyTargetTime + 86400; // Tomorrow's NYO
+   int nextSecs = (int)(nextNyTargetTime - nyTime);
+   
+   if (nextSecs > 0) {
+      int hours   = nextSecs / 3600;
+      int minutes = (nextSecs % 3600) / 60;
+      int seconds = nextSecs % 60;
+      return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
    }
    
    return "---";
