@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.12"
+#define EA_VERSION        "1.13"
 #define EA_BUILD_DATE     "09 May 2026"
 extern int g_magic;
 #define EA_COMMENT_PREFIX "KAT_ORB_"
@@ -193,7 +193,7 @@ struct DashboardParams
       ema2Period        = 21;
       ema3On            = false;
       ema3Period        = 34;
-      customRetestOn    = false;
+      customRetestOn    = true;
       customRetestMin   = 1;
       contAfter1st      = true;
       maxSuccessOn      = true;

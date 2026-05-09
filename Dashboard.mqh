@@ -332,9 +332,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int smallBtnX = rx + rw - smallBtnW;
    ML(m_lblEntrySec,"lEnT","ENTRY",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8;
    
-   ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cy,180,CTRL_HEIGHT);
-   MB(m_btnRtc,"bRtc","OFF",cx+160,cy,45,CTRL_HEIGHT+2,CLR_BTN_OFF);
-   ME(m_edtRtc,"eRtc","1",smallBtnX,cy,smallBtnW,CTRL_HEIGHT); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cy,150,CTRL_HEIGHT);
+   ME(m_edtRtc,"eRtc","1",cx+155,cy,50,CTRL_HEIGHT);
+   MB(m_btnRtc,"bRtc","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    
    ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cy,180,CTRL_HEIGHT);
    MB(m_btnCont,"bCo","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
@@ -892,7 +892,7 @@ void CDashboard::OnFem3Toggle() { m_btnFem3.Pressed(false); m_fem3Enabled=!m_fem
 void CDashboard::UpdFem3() { m_btnFem3.Text(m_fem3Enabled?ShortToString(0x2713):""); m_btnFem3.ColorBackground(m_fem3Enabled?CLR_SUCCESS:CLR_BTN_OFF); }
 
 void CDashboard::OnRtcToggle() { m_btnRtc.Pressed(false); m_rtcOn=!m_rtcOn; UpdRtc(); MarkDirty(); }
-void CDashboard::UpdRtc() { m_btnRtc.Text(m_rtcOn?"ON":"OFF"); m_btnRtc.ColorBackground(m_rtcOn?CLR_BTN_ON:CLR_BTN_OFF); }
+void CDashboard::UpdRtc() { m_btnRtc.Text(m_rtcOn?"ON":"OFF"); m_btnRtc.ColorBackground(m_rtcOn?CLR_SUCCESS:CLR_BTN_OFF); }
 
 void CDashboard::OnContToggle() { m_btnCont.Pressed(false); m_contAfter1st=!m_contAfter1st; UpdCont(); MarkDirty(); }
 void CDashboard::UpdCont() { m_btnCont.Text(m_contAfter1st?"ON":"OFF"); m_btnCont.ColorBackground(m_contAfter1st?CLR_SUCCESS:CLR_BTN_OFF); }
