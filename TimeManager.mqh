@@ -38,7 +38,7 @@ public:
    
    //--- Info methods
    datetime          GetTargetTime() const { return m_targetTimeServer; }
-   string            GetCountdownString();
+   string            GetCountdownString(const DashboardParams &params);
    string            GetNYTimeString(int utcOffset);
    string            GetNYAmPmString(int utcOffset);
    string            GetNYDateString(int utcOffset);
@@ -198,7 +198,7 @@ datetime CTimeManager::NYTimeToServerTimeForDate(int nyHour, int nyMin, int nySe
 }
 
 //+------------------------------------------------------------------+
-string CTimeManager::GetCountdownString()
+string CTimeManager::GetCountdownString(const DashboardParams &params)
 {
    if(!m_calculated) return "Not configured";
    
@@ -206,6 +206,13 @@ string CTimeManager::GetCountdownString()
    datetime gmtNow = TimeGMT();
    int brokerOffset = GetBrokerGMTOffset();
    datetime realServerTime = gmtNow + brokerOffset;
+   
+   // Check weekend in NY time
+   datetime nyTime = gmtNow + m_utcOffset * 3600;
+   MqlDateTime nyDt; TimeToStruct(nyTime, nyDt);
+   if(nyDt.day_of_week == 0 || nyDt.day_of_week == 6) {
+       return "HAPPY WEEKEND!";
+   }
    
    int secs = (int)(m_targetTimeServer - realServerTime);
    
@@ -217,28 +224,41 @@ string CTimeManager::GetCountdownString()
       int seconds = secs % 60;
       return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
    }
-   
-   // Today's NYO has passed → calculate countdown to NEXT business day's NYO
-   // Try each day from tomorrow, skip Saturday(6) and Sunday(0)
-   for(int d = 1; d <= 7; d++)
+   else
    {
-      datetime futureGmt = gmtNow + d * 86400;  // +d days in GMT
-      MqlDateTime futureDt;
-      TimeToStruct(futureGmt, futureDt);
+      // After NYO
+      int elapsedSecs = -secs;
+      int windowSecs = params.afterMinutesOn ? (params.afterMinutes * 60) : (390 * 60);
       
-      // Skip Saturday (6) and Sunday (0)
-      if(futureDt.day_of_week == 0 || futureDt.day_of_week == 6)
-         continue;
+      if (elapsedSecs <= windowSecs) {
+          return "TRADING WINDOW";
+      }
       
-      datetime nextTarget = NYTimeToServerTimeForDate(m_nyHour, m_nyMinute, 
-                                                       m_nySecond, m_utcOffset, futureGmt);
-      int nextSecs = (int)(nextTarget - realServerTime);
-      if(nextSecs > 0)
+      if (nyDt.day_of_week == 5) {
+          return "HAPPY WEEKEND!";
+      }
+      
+      // Today's NYO and trading window have passed → calculate countdown to NEXT business day's NYO
+      for(int d = 1; d <= 7; d++)
       {
-         int hours   = nextSecs / 3600;
-         int minutes = (nextSecs % 3600) / 60;
-         int seconds = nextSecs % 60;
-         return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
+         datetime futureGmt = gmtNow + d * 86400;  // +d days in GMT
+         MqlDateTime futureDt;
+         TimeToStruct(futureGmt, futureDt);
+         
+         // Skip Saturday (6) and Sunday (0)
+         if(futureDt.day_of_week == 0 || futureDt.day_of_week == 6)
+            continue;
+         
+         datetime nextTarget = NYTimeToServerTimeForDate(m_nyHour, m_nyMinute, 
+                                                          m_nySecond, m_utcOffset, futureGmt);
+         int nextSecs = (int)(nextTarget - realServerTime);
+         if(nextSecs > 0)
+         {
+            int hours   = nextSecs / 3600;
+            int minutes = (nextSecs % 3600) / 60;
+            int seconds = nextSecs % 60;
+            return StringFormat("%02d:%02d:%02d", hours, minutes, seconds);
+         }
       }
    }
    

@@ -410,7 +410,7 @@ void OnTimer()
    g_newsMgr.SetNYO(p.nyHour,p.nyMinute,p.nySecond,p.utcOffset);
    g_newsMgr.Update();
    g_dashboard.UpdateNews(g_newsMgr.GetNextEventString());
-   g_dashboard.UpdateTimer(g_timeMgr.GetCountdownString());
+   g_dashboard.UpdateTimer(g_timeMgr.GetCountdownString(p));
    UpdateTradeStats();
    
    if(p.symbol!="")
