@@ -20,6 +20,9 @@ public:
    //--- Calculate lot size based on balance % risk and SL distance
    double            CalcLotSize(string symbol, double riskPercent, int slPoints, bool silent=false);
    
+   //--- Get account properties
+   virtual double    GetBalance();
+
    //--- Get symbol properties
    virtual double    GetTickValue(string symbol);
    virtual double    GetTickSize(string symbol);
@@ -46,7 +49,7 @@ double CRiskManager::CalcLotSize(string symbol, double riskPercent, int slPoints
    if(riskPercent <= 0 || slPoints <= 0) return GetMinLot(symbol);
    
    // Account balance risk amount
-   double balance    = AccountInfoDouble(ACCOUNT_BALANCE);
+   double balance    = GetBalance();
    double riskAmount = balance * (riskPercent / 100.0);
    
    // Adjust SL for spread if needed
@@ -87,6 +90,12 @@ double CRiskManager::CalcLotSize(string symbol, double riskPercent, int slPoints
                symbol, riskPercent, adjustedSL, lotSize);
    
    return lotSize;
+}
+
+//+------------------------------------------------------------------+
+double CRiskManager::GetBalance()
+{
+   return AccountInfoDouble(ACCOUNT_BALANCE);
 }
 
 //+------------------------------------------------------------------+
@@ -158,7 +167,7 @@ void CRiskManager::CalcRiskRewardInfo(string symbol, bool riskModeOn, double ris
                                       double &outBalance, double &outRiskAmt, 
                                       double &outRewardAmt, double &outLotSize)
 {
-   outBalance   = AccountInfoDouble(ACCOUNT_BALANCE);
+   outBalance   = GetBalance();
    outRiskAmt   = 0;
    outRewardAmt = 0;
    outLotSize   = 0;
