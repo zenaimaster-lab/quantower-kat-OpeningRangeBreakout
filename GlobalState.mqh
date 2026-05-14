@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                                  GlobalState.mqh   |
-//|              Singleton global state (replaces extern globals)      |
+//|              Global state object (single instance via extern)      |
 //+------------------------------------------------------------------+
 #ifndef __GLOBALSTATE_MQH__
 #define __GLOBALSTATE_MQH__
@@ -15,16 +15,8 @@ private:
    int    m_winsToday;
    int    m_lossesToday;
 
-   CGlobalState() : m_magic(0), m_winsToday(0), m_lossesToday(0) {}
-   CGlobalState(const CGlobalState &); // disable copy
-   void operator=(const CGlobalState &); // disable assign
-
 public:
-   static CGlobalState *Instance()
-   {
-      static CGlobalState instance;
-      return &instance;
-   }
+   CGlobalState() : m_magic(0), m_winsToday(0), m_lossesToday(0) {}
 
    int    Magic() const          { return m_magic; }
    void   SetMagic(int v)        { m_magic = v; }
@@ -35,5 +27,7 @@ public:
    int    LossesToday() const    { return m_lossesToday; }
    void   SetLossesToday(int v)  { m_lossesToday = v; }
 };
+
+extern CGlobalState g_gs;
 
 #endif // __GLOBALSTATE_MQH__

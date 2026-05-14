@@ -27,8 +27,7 @@ class COrderManager
 {
 private:
    CTrade            m_trade;
-   CRiskManager      m_defaultRiskMgr;
-   CRiskManager*     m_riskMgr;
+   CRiskManager      m_riskMgr;
 
    ENUM_ORB_STATE    m_state;
    datetime          m_nyoTime;
@@ -60,7 +59,7 @@ private:
    void              DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, double entry, double target);
    void              DeleteLines(ENUM_TIMEFRAMES tf);
 
-   int               Magic() const { return CGlobalState::Instance().Magic(); }
+   int               Magic() const { return g_gs.Magic(); }
 
 public:
                      COrderManager();
@@ -68,7 +67,6 @@ public:
 
    void              Init();
    void              ResetState();
-   void              SetRiskManager(CRiskManager* mgr) { m_riskMgr = (mgr != NULL) ? mgr : &m_defaultRiskMgr; }
 
    void              ProcessORB(const DashboardParams &params, datetime nyOpenTimeServer);
    void              CheckAutoCancel(const DashboardParams &params, datetime nyOpenTimeServer);
@@ -89,7 +87,7 @@ public:
 };
 
 //+------------------------------------------------------------------+
-COrderManager::COrderManager() { m_riskMgr = &m_defaultRiskMgr; ResetState(); }
+COrderManager::COrderManager() { ResetState(); }
 COrderManager::~COrderManager() {}
 
 void COrderManager::Init() { m_trade.SetExpertMagicNumber(Magic()); }
@@ -256,8 +254,8 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                                      : NormalizeDouble(entryPrice - params.slPoints * point, digits);
          double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice + params.tpPoints * point, digits) : 0;
          double lot = params.riskModeOn
-                      ? m_riskMgr->CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl) / point))
-                      : m_riskMgr->NormalizeLot(symbol, params.fixLot);
+                      ? m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl) / point))
+                      : m_riskMgr.NormalizeLot(symbol, params.fixLot);
 
          if(lot > 0)
          {
@@ -306,8 +304,8 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                                      : NormalizeDouble(entryPrice + params.slPoints * point, digits);
          double tp = (params.tpPoints > 0) ? NormalizeDouble(entryPrice - params.tpPoints * point, digits) : 0;
          double lot = params.riskModeOn
-                      ? m_riskMgr->CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl) / point))
-                      : m_riskMgr->NormalizeLot(symbol, params.fixLot);
+                      ? m_riskMgr.CalcLotSize(symbol, params.riskPercent, (int)MathRound(MathAbs(entryPrice - sl) / point))
+                      : m_riskMgr.NormalizeLot(symbol, params.fixLot);
 
          if(lot > 0)
          {
@@ -474,8 +472,8 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       }
       else
       {
-         bool limitHit = (p.maxSuccessOn && CGlobalState::Instance().WinsToday() >= p.maxSuccess)
-                      || (p.maxLossOn   && CGlobalState::Instance().LossesToday() >= p.maxLoss);
+          bool limitHit = (p.maxSuccessOn && g_gs.WinsToday() >= p.maxSuccess)
+                       || (p.maxLossOn   && g_gs.LossesToday() >= p.maxLoss);
          m_state = (p.contAfter1st && !limitHit) ? ORB_WAIT_BREAK : ORB_DONE;
       }
    }
@@ -492,8 +490,8 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       {
          m_ordersActive = false;
          m_lastOrderTag = "";
-         bool limitHit = (p.maxSuccessOn && CGlobalState::Instance().WinsToday() >= p.maxSuccess)
-                      || (p.maxLossOn   && CGlobalState::Instance().LossesToday() >= p.maxLoss);
+          bool limitHit = (p.maxSuccessOn && g_gs.WinsToday() >= p.maxSuccess)
+                       || (p.maxLossOn   && g_gs.LossesToday() >= p.maxLoss);
          m_state = (p.contAfter1st && !limitHit) ? ORB_WAIT_BREAK : ORB_DONE;
          PrintFormat("[%s] Order triggered. Resuming WAIT_BREAK=%s", symbol, (m_state == ORB_WAIT_BREAK) ? "true" : "false");
       }

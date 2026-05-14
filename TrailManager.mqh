@@ -26,7 +26,7 @@ public:
                      CTrailManager();
                     ~CTrailManager() {}
 
-   void              Init() { m_trade.SetExpertMagicNumber(CGlobalState::Instance().Magic()); }
+   void              Init() { m_trade.SetExpertMagicNumber(g_gs.Magic()); }
    void              Process(const DashboardParams &params);
    void              ForceBreakeven(const DashboardParams &params);
 
@@ -39,7 +39,7 @@ public:
 //+------------------------------------------------------------------+
 CTrailManager::CTrailManager()
 {
-   m_trade.SetExpertMagicNumber(CGlobalState::Instance().Magic());
+   m_trade.SetExpertMagicNumber(g_gs.Magic());
 }
 
 //+------------------------------------------------------------------+
@@ -52,7 +52,7 @@ void CTrailManager::Process(const DashboardParams &params)
    string symbol = params.symbol;
    if(symbol == "") return;
 
-   int magic = CGlobalState::Instance().Magic();
+   int magic = g_gs.Magic();
 
    if(params.beEnabled)
    {
@@ -144,7 +144,7 @@ void CTrailManager::ForceBreakeven(const DashboardParams &params)
    if(point <= 0) return;
 
    SPositionAggregate agg;
-   CPositionAggregator::Collect(symbol, CGlobalState::Instance().Magic(), agg);
+   CPositionAggregator::Collect(symbol, g_gs.Magic(), agg);
    if(agg.totalLots <= 0 || agg.ticketCount == 0) return;
 
    double lockDist = params.beLockPoints * point;

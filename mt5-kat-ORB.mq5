@@ -176,6 +176,7 @@ struct CORBRunner
    string          comment;
 };
 
+CGlobalState  g_gs;
 PresetParams g_presets[9];
 CDashboard    g_dashboard;
 CTimeManager  g_timeMgr;
@@ -230,7 +231,7 @@ DashboardParams BuildRunnerParams(const SystemConfig &cfg, int runnerIdx, string
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   CGlobalState::Instance()->SetMagic(InpMagicNumber);
+   g_gs.SetMagic(InpMagicNumber);
 
    g_runners[0].tf = PERIOD_M2; g_runners[0].comment = "orb-2m";
    g_runners[1].tf = PERIOD_M5; g_runners[1].comment = "orb-5m";
@@ -288,7 +289,7 @@ int OnInit()
    g_dashboard.Run();
    EventSetTimer(1);
    g_initialized = true;
-   PrintFormat("[Main] %s v%s | %s | Magic=%d", EA_NAME, EA_VERSION, Symbol(), CGlobalState::Instance()->Magic());
+   PrintFormat("[Main] %s v%s | %s | Magic=%d", EA_NAME, EA_VERSION, Symbol(), g_gs.Magic());
    return INIT_SUCCEEDED;
 }
 
@@ -344,7 +345,7 @@ void UpdateTradeStats()
       {
          ulong ticket = HistoryDealGetTicket(i);
          if(ticket <= 0) continue;
-         if(HistoryDealGetInteger(ticket, DEAL_MAGIC) != CGlobalState::Instance()->Magic()) continue;
+         if(HistoryDealGetInteger(ticket, DEAL_MAGIC) != g_gs.Magic()) continue;
          if(HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_OUT) continue;
 
          double profit = HistoryDealGetDouble(ticket, DEAL_PROFIT)
@@ -379,8 +380,8 @@ void UpdateTradeStats()
       }
    }
 
-   CGlobalState::Instance()->SetWinsToday(wToday);
-   CGlobalState::Instance()->SetLossesToday(lToday);
+   g_gs.SetWinsToday(wToday);
+   g_gs.SetLossesToday(lToday);
 
    string eR2 = g_runners[0].order.GetEntryReason();
    string cR2 = g_runners[0].order.GetCancelReason();
@@ -462,7 +463,7 @@ void UpdateDashboardExposure(const string &sym, double riskAmount, double riskPe
    double totalBuyLots = 0, totalSellLots = 0;
    double totalProfitAtTP = 0, totalLossAtSL = 0;
    double weightedEntry = 0, totalLots = 0;
-   int magic = CGlobalState::Instance()->Magic();
+   int magic = g_gs.Magic();
 
    for(int i = 0; i < PositionsTotal(); i++)
    {
