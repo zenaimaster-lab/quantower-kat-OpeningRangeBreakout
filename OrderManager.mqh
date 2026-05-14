@@ -507,20 +507,23 @@ bool COrderManager::CheckEmaFilters(const DashboardParams &params, int direction
    ENUM_TIMEFRAMES tf = params.timeframe;
    outReason = "";
 
-   struct SEmaRule { bool on; int period; string label; };
-   SEmaRule rules[3];
+   bool   emaOn[3];
+   int    emaPeriod[3];
+   string emaLabel;
 
    if(isEntry)
    {
-      rules[0] = { params.favorEma1On, params.favorEma1Period, "Favor EMA" };
-      rules[1] = { params.favorEma2On, params.favorEma2Period, "Favor EMA" };
-      rules[2] = { params.favorEma3On, params.favorEma3Period, "Favor EMA" };
+      emaOn[0] = params.favorEma1On; emaPeriod[0] = params.favorEma1Period;
+      emaOn[1] = params.favorEma2On; emaPeriod[1] = params.favorEma2Period;
+      emaOn[2] = params.favorEma3On; emaPeriod[2] = params.favorEma3Period;
+      emaLabel = "Favor EMA";
    }
    else
    {
-      rules[0] = { params.ema1On, params.ema1Period, "Price < EMA" };
-      rules[1] = { params.ema2On, params.ema2Period, "Price < EMA" };
-      rules[2] = { params.ema3On, params.ema3Period, "Price < EMA" };
+      emaOn[0] = params.ema1On; emaPeriod[0] = params.ema1Period;
+      emaOn[1] = params.ema2On; emaPeriod[1] = params.ema2Period;
+      emaOn[2] = params.ema3On; emaPeriod[2] = params.ema3Period;
+      emaLabel = "Price < EMA";
    }
 
    if(direction == 1) // Buy
@@ -528,11 +531,11 @@ bool COrderManager::CheckEmaFilters(const DashboardParams &params, int direction
       double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
       for(int i = 0; i < 3; i++)
       {
-         if(!rules[i].on) continue;
-         double v = GetEmaValue(symbol, tf, rules[i].period);
+         if(!emaOn[i]) continue;
+         double v = GetEmaValue(symbol, tf, emaPeriod[i]);
          if(v > 0 && bid < v)
          {
-            outReason = rules[i].label + IntegerToString(rules[i].period) + " (Buy below)";
+            outReason = emaLabel + IntegerToString(emaPeriod[i]) + " (Buy below)";
             return false;
          }
       }
@@ -542,11 +545,11 @@ bool COrderManager::CheckEmaFilters(const DashboardParams &params, int direction
       double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
       for(int i = 0; i < 3; i++)
       {
-         if(!rules[i].on) continue;
-         double v = GetEmaValue(symbol, tf, rules[i].period);
+         if(!emaOn[i]) continue;
+         double v = GetEmaValue(symbol, tf, emaPeriod[i]);
          if(v > 0 && ask > v)
          {
-            outReason = rules[i].label + IntegerToString(rules[i].period) + " (Sell above)";
+            outReason = emaLabel + IntegerToString(emaPeriod[i]) + " (Sell above)";
             return false;
          }
       }
