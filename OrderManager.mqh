@@ -402,13 +402,13 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
    }
 
    // 3. Price-based conditions
+   int magic = Magic();
    if(!shouldCancel && (p.unfavorMoveOn || p.touchMidOn))
    {
       double bid = GetBid(symbol);
       double ask = GetAsk(symbol);
       double point = GetPoint(symbol);
       double midPrice = (m_rangeHigh + m_rangeLow) / 2.0;
-      int magic = Magic();
 
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
@@ -438,7 +438,6 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
    if(!shouldCancel)
    {
       string filterReason = "";
-      int magic = Magic();
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
          ulong ticket = OrderGetTicket(i);
@@ -565,7 +564,10 @@ double COrderManager::GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period)
    if(h != INVALID_HANDLE)
    {
       double ema[1];
-      if(CopyBuffer(h, 0, 0, 1, ema) > 0) return ema[0];
+      double result = 0;
+      if(CopyBuffer(h, 0, 0, 1, ema) > 0) result = ema[0];
+      IndicatorRelease(h);
+      return result;
    }
    return 0;
 }

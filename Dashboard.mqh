@@ -202,9 +202,10 @@ public:
 };
 
 CDashboard::CDashboard() { m_rMode=true; m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_STATS;
-   m_ufmEnabled=false; m_tmrEnabled=false; m_aucEnabled=false; m_aamEnabled=false; m_mdrEnabled=true; m_utcOff=-4; m_beOn=false;
+   m_ufmEnabled=true; m_tmrEnabled=true; m_aucEnabled=false; m_aamEnabled=true; m_mdrEnabled=true; m_utcOff=-4; m_beOn=false;
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
    m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
+   m_contAfter1st=true; m_maxSuccessOn=true; m_maxLossOn=true; m_bigMomentum=false; m_rtcOn=true;
    m_dirty=true; m_cmdCount=0; PresetIndex=-1;
 
    m_lastClickMs=0; m_lastClickName=""; }

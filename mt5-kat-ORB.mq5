@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                   mt5-kat-ORB.mq5  |
 //|                            KAT Opening Range Breakout              |
-//|                                                      Version 1.20  |
+//|                                                      Version 1.21  |
 //+------------------------------------------------------------------+
 #property copyright   "KAT Opening Range Breakout"
 #property link        ""
