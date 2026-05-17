@@ -70,7 +70,7 @@ private:
    CEdit m_lblTotExpTag, m_lblTotExpVal;
    CEdit m_lblRtRrTag, m_lblRtRrLoss, m_lblRtRrPft, m_lblRtRrRiskPc;
    
-   CEdit m_lblEntryNum[6], m_lblEntryDesc[6];
+   CEdit m_lblEntryNum[9], m_lblEntryDesc[9];
    CEdit m_lblNetTodayTag, m_lblNetTodayVal, m_lblTodayWl;
    CEdit m_lblNetWeekTag, m_lblNetWeekVal, m_lblWeekWl;
    CEdit m_lblNetMonthTag, m_lblNetMonthVal, m_lblMonthWl;
@@ -417,14 +417,16 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    m_statusSepStart = si;
    cy = startCy; // Rewind Y coordinate to render STATUS below TABS!
 
-   // ── ORDERS ──
-   ML(m_lblOrdersSec,"lOrS","ORDERS",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lbl2mStTag,"l2sT","2m:",cx,cy,30,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl2mStVal,"v2sV","OFF",cx+32,cy,cw-32,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl5mStTag,"l5sT","5m:",cx,cy,30,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","OFF",cx+32,cy,cw-32,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl15mStTag,"l15sT","15m:",cx,cy,35,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl15mStVal,"v15sV","OFF",cx+37,cy,cw-37,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
+   // ── ORDERS (single row: 2m | 5m | 15m) ──
+   int ordColW = (cw - 60) / 3;
+   ML(m_lblOrdersSec,"lOrS","ORDERS",cx,cy,55,CTRL_HEIGHT);
+   ML(m_lbl2mStTag,"l2sT","2m:",cx+58,cy,22,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl2mStVal,"v2sV","OFF",cx+80,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
+   ML(m_lbl5mStTag,"l5sT","5m:",cx+58+ordColW,cy,22,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl5mStVal,"v5sV","OFF",cx+80+ordColW,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
+   ML(m_lbl15mStTag,"l15sT","15m:",cx+58+ordColW*2,cy,28,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mStVal,"v15sV","OFF",cx+86+ordColW*2,cy,ordColW-28,CTRL_HEIGHT,CLR_TEXT_DIM);
+   cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── EQUITY (keep compact) ──
@@ -445,7 +447,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── LAST DAY ENTRIES ──
    ML(m_lblLastEntrySec,"lLeS","LAST DAY ENTRIES",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   for(int ei=0; ei<6; ei++) {
+   for(int ei=0; ei<9; ei++) {
       string numId = "lEn" + IntegerToString(ei);
       string descId = "sEd" + IntegerToString(ei);
       ML(m_lblEntryNum[ei], numId, IntegerToString(ei+1)+".", cx, cy, 18, CTRL_HEIGHT, CLR_TEXT_BRIGHT);
@@ -842,7 +844,7 @@ void CDashboard::UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc)
 
 void CDashboard::UpdateStatsTab(const string &entries[], double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth)
 {
-   for(int ei=0; ei<6; ei++) {
+   for(int ei=0; ei<9; ei++) {
       if(ei < ArraySize(entries) && entries[ei] != "")
          m_lblEntryDesc[ei].Text(entries[ei]);
       else
@@ -1015,7 +1017,7 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
       CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
       CtrlShow(m_lblLastEntrySec);
-      for(int ei=0; ei<6; ei++) { CtrlShow(m_lblEntryNum[ei]); CtrlShow(m_lblEntryDesc[ei]); }
+      for(int ei=0; ei<9; ei++) { CtrlShow(m_lblEntryNum[ei]); CtrlShow(m_lblEntryDesc[ei]); }
       CtrlShow(m_lblTotalPlSec);
       CtrlShow(m_lblNetTodayTag); CtrlShow(m_lblNetTodayVal); CtrlShow(m_lblTodayWl);
       CtrlShow(m_lblNetWeekTag); CtrlShow(m_lblNetWeekVal); CtrlShow(m_lblWeekWl);
@@ -1070,7 +1072,7 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
       CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
       CtrlHide(m_lblLastEntrySec);
-      for(int ei=0; ei<6; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
+      for(int ei=0; ei<9; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
       CtrlHide(m_lblTotalPlSec);
       CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
       CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);

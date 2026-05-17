@@ -227,7 +227,7 @@ bool g_initialized = false;
 const string BE_LINE_NAME = "Aggregate_BE_Line";
 
 // Day-level entry tracking (persists until next NYO)
-string   g_dayEntries[6];
+string   g_dayEntries[9];
 int      g_dayEntryCount = 0;
 datetime g_dayEntriesNYO = 0;
 string   g_lastSeenEntry[3];
@@ -514,14 +514,14 @@ void AccumulateDayEntries(datetime nyoTime)
          g_lastSeenCancel[i] = g_runners[i].order.GetCancelReason();
       }
       g_dayEntryCount = 0;
-      for(int i = 0; i < 6; i++) g_dayEntries[i] = "";
+      for(int i = 0; i < 9; i++) g_dayEntries[i] = "";
       g_dayEntriesNYO = nyoTime;
    }
 
    // Capture new entries from runners (2m→5m→15m order)
    for(int ri = 0; ri < 3; ri++)
    {
-      if(g_dayEntryCount >= 6) break;
+      if(g_dayEntryCount >= 9) break;
 
       string eR = g_runners[ri].order.GetEntryReason();
       string cR = g_runners[ri].order.GetCancelReason();
@@ -536,7 +536,7 @@ void AccumulateDayEntries(datetime nyoTime)
       }
 
       // New cancel reason detected → record it
-      if(cR != "" && cR != g_lastSeenCancel[ri] && g_dayEntryCount < 6)
+      if(cR != "" && cR != g_lastSeenCancel[ri] && g_dayEntryCount < 9)
       {
          g_dayEntries[g_dayEntryCount] = cR;
          g_dayEntryCount++;
