@@ -54,6 +54,7 @@ private:
    ENUM_TIMEFRAMES   MapRetestMinutesToTimeframe(int minutes) const;
    bool              CheckEmaFilters(const DashboardParams &params, int direction, string &outReason, bool isEntry);
    double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
+   bool              HasPendingOrderForComment(string symbol, string commentPrefix);
 
    string            GenerateOrderTag(string prefix);
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
@@ -204,6 +205,13 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
 
    string symbol = params.symbol;
    ENUM_TIMEFRAMES tf = params.timeframe;
+
+   // Skip if a pending order already exists for this strategy (prevent duplicates)
+   if(HasPendingOrderForComment(symbol, params.comment))
+   {
+      PrintFormat("[%s] SKIP: Pending order already exists for %s", EnumToString(tf), params.comment);
+      return;
+   }
 
    // Skip if any position already open for this magic/symbol
    for(int i = PositionsTotal() - 1; i >= 0; i--)
@@ -687,6 +695,24 @@ double COrderManager::GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period)
       return result;
    }
    return 0;
+}
+
+//+------------------------------------------------------------------+
+//| Check if a pending order already exists for this strategy          |
+//+------------------------------------------------------------------+
+bool COrderManager::HasPendingOrderForComment(string symbol, string commentPrefix)
+{
+   int magic = Magic();
+   for(int i = OrdersTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = OrderGetTicket(i);
+      if(!OrderSelect(ticket)) continue;
+      if(OrderGetInteger(ORDER_MAGIC) != magic) continue;
+      if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
+      if(StringFind(OrderGetString(ORDER_COMMENT), commentPrefix) >= 0)
+         return true;
+   }
+   return false;
 }
 
 //+------------------------------------------------------------------+
