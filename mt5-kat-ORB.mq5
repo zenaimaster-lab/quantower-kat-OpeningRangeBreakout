@@ -284,6 +284,7 @@ DashboardParams BuildRunnerParams(const SystemConfig &cfg, int runnerIdx, string
    else if(runnerIdx == 1) p.comment = "orb-5m";
    else                    p.comment = "orb-15m";
    p.isActive  = true;
+   p.tfIndex   = runnerIdx; // 0=2m, 1=5m, 2=15m
    return p;
 }
 
@@ -487,6 +488,10 @@ void UpdateTradeStats()
 
    g_gs.SetWinsToday(wToday);
    g_gs.SetLossesToday(lToday);
+   // Per-TF W/L counters (0=2m, 1=5m, 2=15m)
+   g_gs.SetWinsTodayTF(0, w2mToday);  g_gs.SetLossesTodayTF(0, l2mToday);
+   g_gs.SetWinsTodayTF(1, w5mToday);  g_gs.SetLossesTodayTF(1, l5mToday);
+   g_gs.SetWinsTodayTF(2, w15mToday); g_gs.SetLossesTodayTF(2, l15mToday);
 
    // Cache P/L stats for later dashboard update
    g_plNetToday = netToday; g_plWToday = wToday; g_plLToday = lToday;

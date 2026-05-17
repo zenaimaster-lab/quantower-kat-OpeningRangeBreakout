@@ -588,8 +588,8 @@ void COrderManager::CheckAutoFlatten(const DashboardParams &p, datetime nyOpenTi
       }
       else
       {
-          bool limitHit = (p.maxSuccessOn && g_gs.WinsToday() >= p.maxSuccess)
-                       || (p.maxLossOn   && g_gs.LossesToday() >= p.maxLoss);
+          bool limitHit = (p.maxSuccessOn && g_gs.WinsTodayTF(p.tfIndex) >= p.maxSuccess)
+                       || (p.maxLossOn   && g_gs.LossesTodayTF(p.tfIndex) >= p.maxLoss);
          m_state = (p.contAfter1st && !limitHit) ? ORB_WAIT_BREAK : ORB_DONE;
       }
    }
@@ -617,8 +617,8 @@ void COrderManager::CheckAutoFlatten(const DashboardParams &p, datetime nyOpenTi
       {
          m_ordersActive = false;
          m_lastOrderTag = "";
-          bool limitHit = (p.maxSuccessOn && g_gs.WinsToday() >= p.maxSuccess)
-                       || (p.maxLossOn   && g_gs.LossesToday() >= p.maxLoss);
+          bool limitHit = (p.maxSuccessOn && g_gs.WinsTodayTF(p.tfIndex) >= p.maxSuccess)
+                       || (p.maxLossOn   && g_gs.LossesTodayTF(p.tfIndex) >= p.maxLoss);
          m_state = (p.contAfter1st && !limitHit) ? ORB_WAIT_BREAK : ORB_DONE;
          PrintFormat("[%s] Order/Pos closed. Resuming WAIT_BREAK=%s", symbol, (m_state == ORB_WAIT_BREAK) ? "true" : "false");
       }

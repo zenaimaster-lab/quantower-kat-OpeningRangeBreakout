@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.36"
+#define EA_VERSION        "1.37"
 #define EA_BUILD_DATE     "17 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -91,7 +91,6 @@ enum ENUM_TRAIL_MODE
 enum ENUM_DASHBOARD_CMD
 {
    CMD_NONE = 0,
-   CMD_CANCEL_ALL,
    CMD_PRESET
 };
 
@@ -157,6 +156,7 @@ struct DashboardParams
    
    string comment;
    bool   isActive;
+   int    tfIndex;  // 0=2m, 1=5m, 2=15m — for per-TF W/L tracking
 
 
    DashboardParams()
@@ -216,6 +216,7 @@ struct DashboardParams
       favorEma3Period   = 34;
       comment           = "orb-trade";
       isActive          = true;
+      tfIndex           = 0;
    }
 };
 

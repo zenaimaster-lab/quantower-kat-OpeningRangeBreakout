@@ -631,21 +631,29 @@ void CDashboard::SaveTab(ENUM_TAB tab)
 
 
    if (tab == TAB_MAIN) {
-       p.isActive = m_config.main.isActive;
-       p.nyHour = m_config.main.nyHour;
-       p.nyMinute = m_config.main.nyMinute;
-       p.nySecond = m_config.main.nySecond;
-       m_config.main = p;
-   } else if (tab == TAB_M2) {
-       p.isActive = m_config.m2.isActive;
-       m_config.m2 = p;
-   } else if (tab == TAB_M5) {
-       p.isActive = m_config.m5.isActive;
-       m_config.m5 = p;
-   } else if (tab == TAB_M15) {
-       p.isActive = m_config.m15.isActive;
-       m_config.m15 = p;
-   }
+        p.isActive = m_config.main.isActive;
+        p.nyHour = m_config.main.nyHour;
+        p.nyMinute = m_config.main.nyMinute;
+        p.nySecond = m_config.main.nySecond;
+        p.entryBufferPoints = m_config.main.entryBufferPoints;
+        p.tfIndex = m_config.main.tfIndex;
+        m_config.main = p;
+    } else if (tab == TAB_M2) {
+        p.isActive = m_config.m2.isActive;
+        p.entryBufferPoints = m_config.m2.entryBufferPoints;
+        p.tfIndex = m_config.m2.tfIndex;
+        m_config.m2 = p;
+    } else if (tab == TAB_M5) {
+        p.isActive = m_config.m5.isActive;
+        p.entryBufferPoints = m_config.m5.entryBufferPoints;
+        p.tfIndex = m_config.m5.tfIndex;
+        m_config.m5 = p;
+    } else if (tab == TAB_M15) {
+        p.isActive = m_config.m15.isActive;
+        p.entryBufferPoints = m_config.m15.entryBufferPoints;
+        p.tfIndex = m_config.m15.tfIndex;
+        m_config.m15 = p;
+    }
 }
 
 void CDashboard::LoadTab(ENUM_TAB tab)
@@ -982,15 +990,14 @@ void CDashboard::OnToggleM15() { m_btnToggleM15.Pressed(false); m_config.m15.isA
 void CDashboard::UpdToggles() {
    m_btnGlobal.Text(m_config.globalOverride ? "ON" : "OFF");
    m_btnGlobal.ColorBackground(m_config.globalOverride ? CLR_WARNING : CLR_BTN_OFF);
-   if(m_activeTab == TAB_M2) m_lblTabNotice.Text("2m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
-   else if(m_activeTab == TAB_M5) m_lblTabNotice.Text("5m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
-   else if(m_activeTab == TAB_M15) m_lblTabNotice.Text("15m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
    m_btnToggleM2.Text(m_config.m2.isActive ? "2m: ON" : "2m: OFF");
    m_btnToggleM2.ColorBackground(m_config.m2.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
    m_btnToggleM5.Text(m_config.m5.isActive ? "5m: ON" : "5m: OFF");
    m_btnToggleM5.ColorBackground(m_config.m5.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
    m_btnToggleM15.Text(m_config.m15.isActive ? "15m: ON" : "15m: OFF");
    m_btnToggleM15.ColorBackground(m_config.m15.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
+   // Refresh lock state when Global changes
+   UpdTabs();
 }
 
 void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_MAIN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
@@ -1119,16 +1126,35 @@ void CDashboard::UpdTabs() {
          CtrlShow(m_lblGlobalTag); CtrlShowBtn(m_btnGlobal); CtrlHide(m_lblTabNotice);
       } else if(m_activeTab==TAB_M2) {
          m_btnA1.Text("Set 2A"); m_btnA2.Text("Set 2B"); m_btnA3.Text("Set 2C");
-         m_lblTabNotice.Text("2m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
          CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
       } else if(m_activeTab==TAB_M5) {
          m_btnA1.Text("Set 5A"); m_btnA2.Text("Set 5B"); m_btnA3.Text("Set 5C");
-         m_lblTabNotice.Text("5m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
          CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
       } else {
          m_btnA1.Text("Set 15A"); m_btnA2.Text("Set 15B"); m_btnA3.Text("Set 15C");
-         m_lblTabNotice.Text("15m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
          CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
+      }
+      
+      // Lock/Unlock edit controls based on Global Override
+      bool locked = (m_activeTab != TAB_MAIN && m_config.globalOverride);
+      m_edtSL.ReadOnly(locked); m_edtTP.ReadOnly(locked);
+      m_edtRisk.ReadOnly(locked); m_edtFixLot.ReadOnly(locked);
+      m_edtTTr.ReadOnly(locked); m_edtTDi.ReadOnly(locked); m_edtTSt.ReadOnly(locked);
+      m_edtBEA.ReadOnly(locked); m_edtBEL.ReadOnly(locked);
+      m_edtUfmPts.ReadOnly(locked); m_edtAuc.ReadOnly(locked);
+      m_edtAfc.ReadOnly(locked); m_edtAam.ReadOnly(locked);
+      m_edtEma1.ReadOnly(locked); m_edtEma2.ReadOnly(locked); m_edtEma3.ReadOnly(locked);
+      m_edtRtc.ReadOnly(locked); m_edtMaxS.ReadOnly(locked); m_edtMaxL.ReadOnly(locked);
+      m_edtMdr.ReadOnly(locked); m_edtFem1.ReadOnly(locked); m_edtFem2.ReadOnly(locked); m_edtFem3.ReadOnly(locked);
+      
+      // Update notice text with lock status
+      if(m_activeTab != TAB_MAIN) {
+         string tfLabel = (m_activeTab==TAB_M2) ? "2m" : ((m_activeTab==TAB_M5) ? "5m" : "15m");
+         if(locked)
+            m_lblTabNotice.Text(tfLabel + " LOCKED (Global ON)");
+         else
+            m_lblTabNotice.Text(tfLabel + " setting, Global OFF");
+         m_lblTabNotice.Color(locked ? CLR_WARNING : CLR_TEXT_DIM);
       }
    }
 }
