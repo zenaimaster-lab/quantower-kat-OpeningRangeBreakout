@@ -694,15 +694,37 @@ string COrderManager::GenerateOrderTag(string prefix)
 //+------------------------------------------------------------------+
 void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low)
 {
-   string prefix = (tf == PERIOD_M2) ? "2m " : "5m ";
-   color colHigh = (tf == PERIOD_M2) ? clrDodgerBlue : clrLimeGreen;
-   color colLow  = (tf == PERIOD_M2) ? clrOrange : clrRed;
+   string prefix;
+   color colHigh, colLow;
+   if(tf == PERIOD_M2) { prefix = "2m "; colHigh = clrDodgerBlue; colLow = clrOrange; }
+   else if(tf == PERIOD_M5) { prefix = "5m "; colHigh = clrLimeGreen; colLow = clrRed; }
+   else { prefix = "15m "; colHigh = clrMagenta; colLow = clrGold; }
 
    string nameH = "ORB_H_" + EnumToString(tf);
    string nameL = "ORB_L_" + EnumToString(tf);
    datetime endTime = cTime + 3600;
-   datetime txtTime = (tf == PERIOD_M2) ? endTime : cTime;
-   int width = (tf == PERIOD_M5) ? 2 : 1;
+   // M15: center text, M2: right end, M5: left end
+   datetime txtTime;
+   ENUM_ANCHOR_POINT anchorH, anchorL;
+   if(tf == PERIOD_M15)
+   {
+      txtTime = cTime + (endTime - cTime) / 2;
+      anchorH = ANCHOR_CENTER;
+      anchorL = ANCHOR_CENTER;
+   }
+   else if(tf == PERIOD_M2)
+   {
+      txtTime = endTime;
+      anchorH = ANCHOR_LEFT_LOWER;
+      anchorL = ANCHOR_LEFT_UPPER;
+   }
+   else
+   {
+      txtTime = cTime;
+      anchorH = ANCHOR_RIGHT_LOWER;
+      anchorL = ANCHOR_RIGHT_UPPER;
+   }
+   int width = (tf == PERIOD_M15) ? 2 : ((tf == PERIOD_M5) ? 2 : 1);
    int digits = GetDigits(symbol);
 
    ObjectCreate(0, nameH, OBJ_TREND, 0, cTime, high, endTime, high);
@@ -716,7 +738,7 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    ObjectCreate(0, textH, OBJ_TEXT, 0, txtTime, high);
    ObjectSetString(0, textH, OBJPROP_TEXT, prefix + "H: " + DoubleToString(high, digits));
    ObjectSetInteger(0, textH, OBJPROP_COLOR, colHigh);
-   ObjectSetInteger(0, textH, OBJPROP_ANCHOR, (tf == PERIOD_M2) ? ANCHOR_LEFT_LOWER : ANCHOR_RIGHT_LOWER);
+   ObjectSetInteger(0, textH, OBJPROP_ANCHOR, anchorH);
    ObjectSetInteger(0, textH, OBJPROP_BACK, true);
 
    ObjectCreate(0, nameL, OBJ_TREND, 0, cTime, low, endTime, low);
@@ -730,14 +752,17 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    ObjectCreate(0, textL, OBJ_TEXT, 0, txtTime, low);
    ObjectSetString(0, textL, OBJPROP_TEXT, prefix + "L: " + DoubleToString(low, digits));
    ObjectSetInteger(0, textL, OBJPROP_COLOR, colLow);
-   ObjectSetInteger(0, textL, OBJPROP_ANCHOR, (tf == PERIOD_M2) ? ANCHOR_LEFT_UPPER : ANCHOR_RIGHT_UPPER);
+   ObjectSetInteger(0, textL, OBJPROP_ANCHOR, anchorL);
    ObjectSetInteger(0, textL, OBJPROP_BACK, true);
 }
 
 //+------------------------------------------------------------------+
 void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, double entry, double target)
 {
-   string prefix = (tf == PERIOD_M2) ? "2m " : "5m ";
+   string prefix;
+   if(tf == PERIOD_M2) prefix = "2m ";
+   else if(tf == PERIOD_M5) prefix = "5m ";
+   else prefix = "15m ";
    color colEntry = (dir == 1) ? clrDodgerBlue : clrOrangeRed;
    color colTarget = clrLimeGreen;
 

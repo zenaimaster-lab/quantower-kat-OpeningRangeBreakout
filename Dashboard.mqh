@@ -16,9 +16,9 @@ private:
    CEdit m_lblTimerTag, m_lblTimerVal;
    CEdit m_lblSlTag, m_lblMdTag;
    
-   CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5;
+   CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5, m_btnToggleM15;
    CEdit m_lblGlobalTag, m_lblTabNotice;
-   CButton m_btnTabMain, m_btnTabM2, m_btnTabM5, m_btnTabStats;
+   CButton m_btnTabMain, m_btnTabM2, m_btnTabM5, m_btnTabM15, m_btnTabStats;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
    CEdit m_lblBalTag, m_lblBalVal;
@@ -88,6 +88,10 @@ private:
    CEdit m_lbl5mPlSec, m_lbl5mNtTag, m_lbl5mNtVal, m_lbl5mTodayWl;
    CEdit m_lbl5mNwTag, m_lbl5mNwVal, m_lbl5mWeekWl;
    CEdit m_lbl5mNmTag, m_lbl5mNmVal, m_lbl5mMonthWl;
+   CEdit m_lbl15mStTag, m_lbl15mStVal;
+   CEdit m_lbl15mPlSec, m_lbl15mNtTag, m_lbl15mNtVal, m_lbl15mTodayWl;
+   CEdit m_lbl15mNwTag, m_lbl15mNwVal, m_lbl15mWeekWl;
+   CEdit m_lbl15mNmTag, m_lbl15mNmVal, m_lbl15mMonthWl;
    
    CPanel m_sep[25];
 
@@ -149,8 +153,10 @@ public:
    void UpdateStatsTab(string entryReason, string cancelReason, double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
    void Update2mStatus(string status, color clr);
    void Update5mStatus(string status, color clr);
+   void Update15mStatus(string status, color clr);
    void Update2mPL(double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
    void Update5mPL(double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
+   void Update15mPL(double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
    string FormatMoneyRound(double value);
    // v2.0: Command queue API (replaces 13+ boolean flags)
    bool HasCommand() const { return m_cmdCount > 0; }
@@ -165,7 +171,7 @@ private:
    void MSep(int idx,int x,int y,int w);
    void OnSLS(); void OnBoth(); void OnBuyO(); void OnSellO();
    void OnTrM(); void OnManP(); void OnCanA();
-   void OnToggleGlobal(); void OnToggleM2(); void OnToggleM5();
+   void OnToggleGlobal(); void OnToggleM2(); void OnToggleM5(); void OnToggleM15();
    void OnTabMain(); void OnTabM2(); void OnTabM5();
    void OnRiskModeToggle(); void OnLotModeToggle();
    void OnBrkEv();
@@ -189,7 +195,7 @@ private:
    void OnRtcToggle(); void UpdRtc();
    void OnBigMToggle(); void UpdBigM();
    
-   void OnTabStats();
+   void OnTabM15(); void OnTabStats();
    void OnA1(); void OnA2(); void OnA3();
 
 
@@ -269,17 +275,19 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
    
    // --- MAIN TOGGLES ---
-   int thw=(cw-4)/2;
-   MB(m_btnToggleM2,"bT2","Trade 2m: ON",cx,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS);
-   MB(m_btnToggleM5,"bT5","Trade 5m: ON",cx+thw+4,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS); cy+=CTRL_HEIGHT+4+SEC_PAD;
+   int thw=(cw-6)/3;
+   MB(m_btnToggleM2,"bT2","2m: ON",cx,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS);
+   MB(m_btnToggleM5,"bT5","5m: ON",cx+thw+3,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS);
+   MB(m_btnToggleM15,"bT15","15m: ON",cx+(thw+3)*2,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS); cy+=CTRL_HEIGHT+4+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // --- TABS ---
-   int tcw=(cw-12)/4;
+   int tcw=(cw-16)/5;
    MB(m_btnTabStats,"bTmSt","\xF0\x9F\x92\xB8",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
    MB(m_btnTabMain,"bTmMain","Global",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM2,"bTmM2","2m CONF",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM5,"bTmM5","5m CONF",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
+   MB(m_btnTabM2,"bTmM2","2m",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabM5,"bTmM5","5m",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabM15,"bTmM15","15m",cx+(tcw+4)*4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    int startCy = cy;
@@ -415,7 +423,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lbl2mStTag,"l2sT","2m:",cx,cy,30,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl2mStVal,"v2sV","OFF",cx+32,cy,cw-32,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lbl5mStTag,"l5sT","5m:",cx,cy,30,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","OFF",cx+32,cy,cw-32,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
+   ML(m_lbl5mStVal,"v5sV","OFF",cx+32,cy,cw-32,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl15mStTag,"l15sT","15m:",cx,cy,35,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mStVal,"v15sV","OFF",cx+37,cy,cw-37,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── EQUITY (keep compact) ──
@@ -478,7 +488,20 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lbl5mWeekWl,"s5nwW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lbl5mNmTag,"l5nmT","5m Month:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl5mNmVal,"s5nmV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl5mMonthWl,"s5nmW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl5mMonthWl,"s5nmW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+
+   // ── 15m P/L ──
+   ML(m_lbl15mPlSec,"l15pS","15m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_ORANGE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lbl15mNtTag,"l15nT","15m Today:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNtVal,"s15nV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl15mTodayWl,"s15nW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl15mNwTag,"l15nwT","15m Week:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNwVal,"s15nwV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl15mWeekWl,"s15nwW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl15mNmTag,"l15nmT","15m Month:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNmVal,"s15nmV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl15mMonthWl,"s15nmW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
 
    // Hidden legacy controls
    ML(m_lblOsTag,"lOs","",  -100,-100,10,10);
@@ -553,8 +576,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    DashboardParams p;
    p.symbol = m_lblSym.Text();
    p.utcOffset = m_utcOff;
-   p.timeframe = (tab == TAB_M5) ? PERIOD_M5 : PERIOD_M2;
-   p.comment = (tab == TAB_M5) ? "orb-5m" : "orb-2m";
+   p.timeframe = (tab == TAB_M15) ? PERIOD_M15 : ((tab == TAB_M5) ? PERIOD_M5 : PERIOD_M2);
+   p.comment = (tab == TAB_M15) ? "orb-15m" : ((tab == TAB_M5) ? "orb-5m" : "orb-2m");
    p.slPoints = (int)StringToInteger(m_edtSL.Text());
    p.tpPoints=(int)StringToInteger(m_edtTP.Text());
    p.slCandle=m_slCandle;
@@ -614,6 +637,9 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    } else if (tab == TAB_M5) {
        p.isActive = m_config.m5.isActive;
        m_config.m5 = p;
+   } else if (tab == TAB_M15) {
+       p.isActive = m_config.m15.isActive;
+       m_config.m15 = p;
    }
 }
 
@@ -624,6 +650,7 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    if (tab == TAB_MAIN) p = m_config.main;
    else if (tab == TAB_M2) p = m_config.m2;
    else if (tab == TAB_M5) p = m_config.m5;
+   else if (tab == TAB_M15) p = m_config.m15;
 
    m_slCandle = p.slCandle;
    m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
@@ -710,9 +737,11 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnGlobal.Name())        { OnToggleGlobal(); return true; }
    if(objName == m_btnToggleM2.Name())      { OnToggleM2(); return true; }
    if(objName == m_btnToggleM5.Name())      { OnToggleM5(); return true; }
+   if(objName == m_btnToggleM15.Name())     { OnToggleM15(); return true; }
    if(objName == m_btnTabMain.Name())       { OnTabMain(); return true; }
    if(objName == m_btnTabM2.Name())         { OnTabM2(); return true; }
    if(objName == m_btnTabM5.Name())         { OnTabM5(); return true; }
+   if(objName == m_btnTabM15.Name())        { OnTabM15(); return true; }
    if(objName == m_btnTabStats.Name())      { OnTabStats(); return true; }
 
    if(objName == m_btnRiskMode.Name())      { OnRiskModeToggle(); return true; }
@@ -860,6 +889,23 @@ void CDashboard::Update5mPL(double netToday, int wToday, int lToday, double netW
    m_lbl5mNmVal.Color(netMonth>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
    m_lbl5mMonthWl.Text("W/L: " + IntegerToString(wMonth) + "/" + IntegerToString(lMonth));
 }
+void CDashboard::Update15mStatus(string status, color clr) {
+   m_lbl15mStVal.Text(status);
+   m_lbl15mStVal.Color(clr);
+}
+void CDashboard::Update15mPL(double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth) {
+   m_lbl15mNtVal.Text((netToday>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netToday)));
+   m_lbl15mNtVal.Color(netToday>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
+   m_lbl15mTodayWl.Text("W/L: " + IntegerToString(wToday) + "/" + IntegerToString(lToday));
+   
+   m_lbl15mNwVal.Text((netWeek>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netWeek)));
+   m_lbl15mNwVal.Color(netWeek>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
+   m_lbl15mWeekWl.Text("W/L: " + IntegerToString(wWeek) + "/" + IntegerToString(lWeek));
+   
+   m_lbl15mNmVal.Text((netMonth>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netMonth)));
+   m_lbl15mNmVal.Color(netMonth>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
+   m_lbl15mMonthWl.Text("W/L: " + IntegerToString(wMonth) + "/" + IntegerToString(lMonth));
+}
 
 // ── HANDLERS ── (v2.0: all handlers call MarkDirty + PushCmd)
 void CDashboard::OnSLS() { m_btnSLS.Pressed(false); m_slCandle=!m_slCandle; m_btnSLS.Text(m_slCandle?"SL by Candle✓":"SL by Candle");
@@ -922,27 +968,33 @@ void CDashboard::UpdBigM() { m_btnBigM.Text(m_bigMomentum?"ON":"OFF"); m_btnBigM
 void CDashboard::OnToggleGlobal() { m_btnGlobal.Pressed(false); m_config.globalOverride=!m_config.globalOverride; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2.isActive=!m_config.m2.isActive; UpdToggles(); MarkDirty(); }
 void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5.isActive=!m_config.m5.isActive; UpdToggles(); MarkDirty(); }
+void CDashboard::OnToggleM15() { m_btnToggleM15.Pressed(false); m_config.m15.isActive=!m_config.m15.isActive; UpdToggles(); MarkDirty(); }
 
 void CDashboard::UpdToggles() {
    m_btnGlobal.Text(m_config.globalOverride ? "ON" : "OFF");
    m_btnGlobal.ColorBackground(m_config.globalOverride ? CLR_WARNING : CLR_BTN_OFF);
    if(m_activeTab == TAB_M2) m_lblTabNotice.Text("2m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
    else if(m_activeTab == TAB_M5) m_lblTabNotice.Text("5m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
-   m_btnToggleM2.Text(m_config.m2.isActive ? "Trade 2m: ON" : "Trade 2m: OFF");
+   else if(m_activeTab == TAB_M15) m_lblTabNotice.Text("15m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
+   m_btnToggleM2.Text(m_config.m2.isActive ? "2m: ON" : "2m: OFF");
    m_btnToggleM2.ColorBackground(m_config.m2.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
-   m_btnToggleM5.Text(m_config.m5.isActive ? "Trade 5m: ON" : "Trade 5m: OFF");
+   m_btnToggleM5.Text(m_config.m5.isActive ? "5m: ON" : "5m: OFF");
    m_btnToggleM5.ColorBackground(m_config.m5.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
+   m_btnToggleM15.Text(m_config.m15.isActive ? "15m: ON" : "15m: OFF");
+   m_btnToggleM15.ColorBackground(m_config.m15.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
 }
 
 void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_MAIN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
 void CDashboard::OnTabM2() { m_btnTabM2.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M2; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
 void CDashboard::OnTabM5() { m_btnTabM5.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M5; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabM15() { m_btnTabM15.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M15; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
 void CDashboard::OnTabStats() { m_btnTabStats.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_STATS; UpdTabs(); MarkDirty(); }
 
 void CDashboard::UpdTabs() {
    m_btnTabMain.ColorBackground(m_activeTab==TAB_MAIN ? CLR_BTN_ON : CLR_BTN_OFF);
    m_btnTabM2.ColorBackground(m_activeTab==TAB_M2 ? CLR_BTN_ON : CLR_BTN_OFF);
    m_btnTabM5.ColorBackground(m_activeTab==TAB_M5 ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabM15.ColorBackground(m_activeTab==TAB_M15 ? CLR_BTN_ON : CLR_BTN_OFF);
    m_btnTabStats.ColorBackground(m_activeTab==TAB_STATS ? CLR_BTN_ON : CLR_BTN_OFF);
    
    bool isStats = (m_activeTab == TAB_STATS);
@@ -951,6 +1003,7 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblOrdersSec);
       CtrlShow(m_lbl2mStTag); CtrlShow(m_lbl2mStVal);
       CtrlShow(m_lbl5mStTag); CtrlShow(m_lbl5mStVal);
+      CtrlShow(m_lbl15mStTag); CtrlShow(m_lbl15mStVal);
       CtrlShow(m_lblEqTag); CtrlShow(m_lblStatEquity); CtrlShow(m_lblPlTag); CtrlShow(m_lblStatPL);
       CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
       CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
@@ -969,6 +1022,10 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lbl5mNtTag); CtrlShow(m_lbl5mNtVal); CtrlShow(m_lbl5mTodayWl);
       CtrlShow(m_lbl5mNwTag); CtrlShow(m_lbl5mNwVal); CtrlShow(m_lbl5mWeekWl);
       CtrlShow(m_lbl5mNmTag); CtrlShow(m_lbl5mNmVal); CtrlShow(m_lbl5mMonthWl);
+      CtrlShow(m_lbl15mPlSec);
+      CtrlShow(m_lbl15mNtTag); CtrlShow(m_lbl15mNtVal); CtrlShow(m_lbl15mTodayWl);
+      CtrlShow(m_lbl15mNwTag); CtrlShow(m_lbl15mNwVal); CtrlShow(m_lbl15mWeekWl);
+      CtrlShow(m_lbl15mNmTag); CtrlShow(m_lbl15mNmVal); CtrlShow(m_lbl15mMonthWl);
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlShow(m_sep[i]);
       
       CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlHide(m_lblTabNotice);
@@ -1002,6 +1059,7 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lblOrdersSec);
       CtrlHide(m_lbl2mStTag); CtrlHide(m_lbl2mStVal);
       CtrlHide(m_lbl5mStTag); CtrlHide(m_lbl5mStVal);
+      CtrlHide(m_lbl15mStTag); CtrlHide(m_lbl15mStVal);
       CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
       CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
       CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
@@ -1018,6 +1076,9 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lbl5mPlSec); CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
       CtrlHide(m_lbl5mNwTag); CtrlHide(m_lbl5mNwVal); CtrlHide(m_lbl5mWeekWl);
       CtrlHide(m_lbl5mNmTag); CtrlHide(m_lbl5mNmVal); CtrlHide(m_lbl5mMonthWl);
+      CtrlHide(m_lbl15mPlSec); CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
+      CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
+      CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
       
       CtrlShow(m_lblMdTag); CtrlShowBtn(m_btnBoth); CtrlShowBtn(m_btnBuy); CtrlShowBtn(m_btnSell);
@@ -1053,17 +1114,21 @@ void CDashboard::UpdTabs() {
          m_btnA1.Text("Set 2A"); m_btnA2.Text("Set 2B"); m_btnA3.Text("Set 2C");
          m_lblTabNotice.Text("2m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
          CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
-      } else {
+      } else if(m_activeTab==TAB_M5) {
          m_btnA1.Text("Set 5A"); m_btnA2.Text("Set 5B"); m_btnA3.Text("Set 5C");
          m_lblTabNotice.Text("5m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
+         CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
+      } else {
+         m_btnA1.Text("Set 15A"); m_btnA2.Text("Set 15B"); m_btnA3.Text("Set 15C");
+         m_lblTabNotice.Text("15m setting, Global is " + (string)(m_config.globalOverride ? "ON" : "OFF"));
          CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
       }
    }
 }
 
-void CDashboard::OnA1(){ m_btnA1.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=0; else if(m_activeTab==TAB_M2) PresetIndex=3; else if(m_activeTab==TAB_M5) PresetIndex=6; PushCmd(CMD_PRESET); }
-void CDashboard::OnA2(){ m_btnA2.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=1; else if(m_activeTab==TAB_M2) PresetIndex=4; else if(m_activeTab==TAB_M5) PresetIndex=7; PushCmd(CMD_PRESET); }
-void CDashboard::OnA3(){ m_btnA3.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=2; else if(m_activeTab==TAB_M2) PresetIndex=5; else if(m_activeTab==TAB_M5) PresetIndex=8; PushCmd(CMD_PRESET); }
+void CDashboard::OnA1(){ m_btnA1.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=0; else if(m_activeTab==TAB_M2) PresetIndex=3; else if(m_activeTab==TAB_M5) PresetIndex=6; else if(m_activeTab==TAB_M15) PresetIndex=9; PushCmd(CMD_PRESET); }
+void CDashboard::OnA2(){ m_btnA2.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=1; else if(m_activeTab==TAB_M2) PresetIndex=4; else if(m_activeTab==TAB_M5) PresetIndex=7; else if(m_activeTab==TAB_M15) PresetIndex=10; PushCmd(CMD_PRESET); }
+void CDashboard::OnA3(){ m_btnA3.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=2; else if(m_activeTab==TAB_M2) PresetIndex=5; else if(m_activeTab==TAB_M5) PresetIndex=8; else if(m_activeTab==TAB_M15) PresetIndex=11; PushCmd(CMD_PRESET); }
 
 void CDashboard::Minimize(void)
 {
@@ -1071,14 +1136,15 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblVer); CtrlHide(m_lblSym); CtrlHide(m_lblMktStatus); CtrlHide(m_lblSpdVal);
    CtrlHide(m_lblClkTag); CtrlHide(m_lblClkVal); CtrlHide(m_lblClkAmPm); CtrlHide(m_lblClkDate);
    CtrlHide(m_lblTimerTag); CtrlHide(m_lblTimerVal);
-   CtrlHide(m_btnToggleM2); CtrlHide(m_btnToggleM5);
-   CtrlHide(m_btnTabMain); CtrlHide(m_btnTabM2); CtrlHide(m_btnTabM5); CtrlHide(m_btnTabStats);
+   CtrlHide(m_btnToggleM2); CtrlHide(m_btnToggleM5); CtrlHide(m_btnToggleM15);
+   CtrlHide(m_btnTabMain); CtrlHide(m_btnTabM2); CtrlHide(m_btnTabM5); CtrlHide(m_btnTabM15); CtrlHide(m_btnTabStats);
    
    for(int i=0; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
    
    CtrlHide(m_lblOrdersSec);
    CtrlHide(m_lbl2mStTag); CtrlHide(m_lbl2mStVal);
    CtrlHide(m_lbl5mStTag); CtrlHide(m_lbl5mStVal);
+   CtrlHide(m_lbl15mStTag); CtrlHide(m_lbl15mStVal);
    CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
    CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
    CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
@@ -1095,6 +1161,9 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lbl5mPlSec); CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
    CtrlHide(m_lbl5mNwTag); CtrlHide(m_lbl5mNwVal); CtrlHide(m_lbl5mWeekWl);
    CtrlHide(m_lbl5mNmTag); CtrlHide(m_lbl5mNmVal); CtrlHide(m_lbl5mMonthWl);
+   CtrlHide(m_lbl15mPlSec); CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
+   CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
+   CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
    
    CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlHide(m_lblTabNotice);
    CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
@@ -1129,8 +1198,8 @@ void CDashboard::Maximize(void)
    CtrlShow(m_lblVer); CtrlShow(m_lblSym); CtrlShow(m_lblMktStatus); CtrlShow(m_lblSpdVal);
    CtrlShow(m_lblClkTag); CtrlShow(m_lblClkVal); CtrlShow(m_lblClkAmPm); CtrlShow(m_lblClkDate);
    CtrlShow(m_lblTimerTag); CtrlShow(m_lblTimerVal);
-   CtrlShow(m_btnToggleM2); CtrlShow(m_btnToggleM5);
-   CtrlShow(m_btnTabMain); CtrlShow(m_btnTabM2); CtrlShow(m_btnTabM5); CtrlShow(m_btnTabStats);
+   CtrlShow(m_btnToggleM2); CtrlShow(m_btnToggleM5); CtrlShow(m_btnToggleM15);
+   CtrlShow(m_btnTabMain); CtrlShow(m_btnTabM2); CtrlShow(m_btnTabM5); CtrlShow(m_btnTabM15); CtrlShow(m_btnTabStats);
    for(int i=0; i<5; i++) CtrlShow(m_sep[i]); 
    UpdTabs(); 
 }

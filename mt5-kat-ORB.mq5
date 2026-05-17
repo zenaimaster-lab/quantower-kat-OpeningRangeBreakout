@@ -6,7 +6,7 @@
 #property copyright   "KAT Opening Range Breakout"
 #property link        ""
 #property description "KAT Opening Range Breakout"
-#property description "Automated Break & Retest range strategy on 2m/5m NYO candles."
+#property description "Automated Break & Retest range strategy on 2m/5m/15m NYO candles."
 #property description "Features: Auto-cancel pending, Global Trailing, Breakeven, Advanced Risk Management."
 
 #include "Defines.mqh"
@@ -58,6 +58,18 @@ input int             Inp5MCustomRetestMin   = 1;           // 5m: Retest Candle
 input double          Inp5MRiskPercent       = 2.0;         // 5m: Risk per Trade (%)
 input double          Inp5MFixLot            = 2.0;         // 5m: Fix Lot Size
 input bool            Inp5MRiskModeOn        = true;        // 5m: Risk Management (true=Risk%, false=Fix Lot)
+
+input group "------------- 15M SETTING -------------"
+input int             Inp15MSlPoints          = 1500;        // 15m: Stop Loss (Points)
+input int             Inp15MTpPoints          = 15000;       // 15m: Take Profit (Points)
+input bool            Inp15MSlCandle          = false;       // 15m: Use Candle Extremes for SL
+input ENUM_ORDER_MODE Inp15MOrderMode         = MODE_BOTH;   // 15m: Allowed Trade Directions
+input int             Inp15MEntryBufferPoints = 5;           // 15m: Entry/SL Buffer (Points)
+input bool            Inp15MCustomRetestOn    = true;        // 15m: Use Custom Retest Candle
+input int             Inp15MCustomRetestMin   = 1;           // 15m: Retest Candle Timeframe (Min)
+input double          Inp15MRiskPercent       = 2.0;         // 15m: Risk per Trade (%)
+input double          Inp15MFixLot            = 2.0;         // 15m: Fix Lot Size
+input bool            Inp15MRiskModeOn        = true;        // 15m: Risk Management (true=Risk%, false=Fix Lot)
 
 input group "------------- TRAIL -------------"
 input ENUM_TRAIL_MODE InpTrailMode         = TM_CHASE;    // Trailing Stop Mode
@@ -157,6 +169,33 @@ input int             Inp5C_TrDist         = 30;          // Set 5C: Trail Dista
 input int             Inp5C_TrStep         = 10;          // Set 5C: Trail Step
 input ENUM_TIMEFRAMES Inp5C_TF             = PERIOD_M5;   // Set 5C: Timeframe
 
+sinput string         sep_preset_15A       = "---------- SET 15A ----------"; // ---------- SET 15A ----------
+input int             Inp15A_SL             = 1500;        // Set 15A: Stop Loss
+input int             Inp15A_TP             = 15000;       // Set 15A: Take Profit
+input double          Inp15A_Risk           = 1.0;         // Set 15A: Risk %
+input int             Inp15A_TrTrig         = 1500;        // Set 15A: Trail Trigger
+input int             Inp15A_TrDist         = 500;         // Set 15A: Trail Distance
+input int             Inp15A_TrStep         = 1;           // Set 15A: Trail Step
+input ENUM_TIMEFRAMES Inp15A_TF             = PERIOD_M15;  // Set 15A: Timeframe
+
+sinput string         sep_preset_15B       = "---------- SET 15B ----------"; // ---------- SET 15B ----------
+input int             Inp15B_SL             = 300;         // Set 15B: Stop Loss
+input int             Inp15B_TP             = 600;         // Set 15B: Take Profit
+input double          Inp15B_Risk           = 0.5;         // Set 15B: Risk %
+input int             Inp15B_TrTrig         = 20;          // Set 15B: Trail Trigger
+input int             Inp15B_TrDist         = 15;          // Set 15B: Trail Distance
+input int             Inp15B_TrStep         = 3;           // Set 15B: Trail Step
+input ENUM_TIMEFRAMES Inp15B_TF             = PERIOD_M15;  // Set 15B: Timeframe
+
+sinput string         sep_preset_15C       = "---------- SET 15C ----------"; // ---------- SET 15C ----------
+input int             Inp15C_SL             = 800;         // Set 15C: Stop Loss
+input int             Inp15C_TP             = 1600;        // Set 15C: Take Profit
+input double          Inp15C_Risk           = 2.0;         // Set 15C: Risk %
+input int             Inp15C_TrTrig         = 50;          // Set 15C: Trail Trigger
+input int             Inp15C_TrDist         = 30;          // Set 15C: Trail Distance
+input int             Inp15C_TrStep         = 10;          // Set 15C: Trail Step
+input ENUM_TIMEFRAMES Inp15C_TF             = PERIOD_M15;  // Set 15C: Timeframe
+
 
 #include "Dashboard.mqh"
 #include "TimeManager.mqh"
@@ -177,12 +216,12 @@ struct CORBRunner
 };
 
 CGlobalState  g_gs;
-PresetParams g_presets[9];
+PresetParams g_presets[12];
 CDashboard    g_dashboard;
 CTimeManager  g_timeMgr;
 CRiskManager  g_riskMgr;
 CNewsManager  g_newsMgr;
-CORBRunner    g_runners[2]; // 0=M2, 1=M5
+CORBRunner    g_runners[3]; // 0=M2, 1=M5, 2=M15
 
 bool g_initialized = false;
 const string BE_LINE_NAME = "Aggregate_BE_Line";
@@ -218,10 +257,22 @@ int TimeDayOfWeek(datetime t){ MqlDateTime d; TimeToStruct(t,d); return d.day_of
 //+------------------------------------------------------------------+
 DashboardParams BuildRunnerParams(const SystemConfig &cfg, int runnerIdx, string sym)
 {
-   DashboardParams p = cfg.globalOverride ? cfg.main : (runnerIdx == 0 ? cfg.m2 : cfg.m5);
+   DashboardParams p;
+   if(cfg.globalOverride)
+      p = cfg.main;
+   else if(runnerIdx == 0)
+      p = cfg.m2;
+   else if(runnerIdx == 1)
+      p = cfg.m5;
+   else
+      p = cfg.m15;
    p.symbol    = sym;
-   p.timeframe = (runnerIdx == 0) ? PERIOD_M2 : PERIOD_M5;
-   p.comment   = (runnerIdx == 0) ? "orb-2m" : "orb-5m";
+   if(runnerIdx == 0)      p.timeframe = PERIOD_M2;
+   else if(runnerIdx == 1) p.timeframe = PERIOD_M5;
+   else                    p.timeframe = PERIOD_M15;
+   if(runnerIdx == 0)      p.comment = "orb-2m";
+   else if(runnerIdx == 1) p.comment = "orb-5m";
+   else                    p.comment = "orb-15m";
    p.isActive  = true;
    return p;
 }
@@ -233,9 +284,10 @@ int OnInit()
 {
    g_gs.SetMagic(InpMagicNumber);
 
-   g_runners[0].tf = PERIOD_M2; g_runners[0].comment = "orb-2m";
-   g_runners[1].tf = PERIOD_M5; g_runners[1].comment = "orb-5m";
-   for(int i = 0; i < 2; i++) { g_runners[i].order.Init(); g_runners[i].trail.Init(); }
+   g_runners[0].tf = PERIOD_M2;  g_runners[0].comment = "orb-2m";
+   g_runners[1].tf = PERIOD_M5;  g_runners[1].comment = "orb-5m";
+   g_runners[2].tf = PERIOD_M15; g_runners[2].comment = "orb-15m";
+   for(int i = 0; i < 3; i++) { g_runners[i].order.Init(); g_runners[i].trail.Init(); }
 
    g_newsMgr.SetNYO(InpNyHour, InpNyMinute, InpNySecond, InpUtcOffset);
 
@@ -249,6 +301,9 @@ int OnInit()
    InitPreset(g_presets[6], Inp5A_SL,Inp5A_TP,Inp5A_Risk,Inp5A_TrTrig,Inp5A_TrDist,Inp5A_TrStep,Inp5A_TF);
    InitPreset(g_presets[7], Inp5B_SL,Inp5B_TP,Inp5B_Risk,Inp5B_TrTrig,Inp5B_TrDist,Inp5B_TrStep,Inp5B_TF);
    InitPreset(g_presets[8], Inp5C_SL,Inp5C_TP,Inp5C_Risk,Inp5C_TrTrig,Inp5C_TrDist,Inp5C_TrStep,Inp5C_TF);
+   InitPreset(g_presets[9], Inp15A_SL,Inp15A_TP,Inp15A_Risk,Inp15A_TrTrig,Inp15A_TrDist,Inp15A_TrStep,Inp15A_TF);
+   InitPreset(g_presets[10], Inp15B_SL,Inp15B_TP,Inp15B_Risk,Inp15B_TrTrig,Inp15B_TrDist,Inp15B_TrStep,Inp15B_TF);
+   InitPreset(g_presets[11], Inp15C_SL,Inp15C_TP,Inp15C_Risk,Inp15C_TrTrig,Inp15C_TrDist,Inp15C_TrStep,Inp15C_TF);
 
    string pn = EA_NAME + "_" + IntegerToString(ChartID());
    if(!g_dashboard.CreatePanel(0,pn,0,PANEL_X,PANEL_Y,PANEL_WIDTH,PANEL_HEIGHT))
@@ -285,6 +340,14 @@ int OnInit()
    cfg.m5.customRetestOn=Inp5MCustomRetestOn; cfg.m5.customRetestMin=Inp5MCustomRetestMin;
    cfg.m5.riskPercent=Inp5MRiskPercent; cfg.m5.fixLot=Inp5MFixLot; cfg.m5.riskModeOn=Inp5MRiskModeOn;
 
+   cfg.m15 = cfg.main;
+   cfg.m15.timeframe = PERIOD_M15; cfg.m15.comment = "orb-15m";
+   cfg.m15.slPoints=Inp15MSlPoints; cfg.m15.tpPoints=Inp15MTpPoints;
+   cfg.m15.slCandle=Inp15MSlCandle; cfg.m15.entryBufferPoints=Inp15MEntryBufferPoints;
+   cfg.m15.orderMode=Inp15MOrderMode;
+   cfg.m15.customRetestOn=Inp15MCustomRetestOn; cfg.m15.customRetestMin=Inp15MCustomRetestMin;
+   cfg.m15.riskPercent=Inp15MRiskPercent; cfg.m15.fixLot=Inp15MFixLot; cfg.m15.riskModeOn=Inp15MRiskModeOn;
+
    g_dashboard.SetInitialParams(cfg);
    g_dashboard.Run();
    EventSetTimer(1);
@@ -310,9 +373,9 @@ void OnTick()
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym, SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
 
-   for(int i = 0; i < 2; i++)
+   for(int i = 0; i < 3; i++)
    {
-      if((i == 0 && cfg.m2.isActive) || (i == 1 && cfg.m5.isActive))
+      if((i == 0 && cfg.m2.isActive) || (i == 1 && cfg.m5.isActive) || (i == 2 && cfg.m15.isActive))
       {
          DashboardParams p = BuildRunnerParams(cfg, i, sym);
          g_runners[i].order.CheckAutoFlatten(p, g_timeMgr.GetTargetTime());
@@ -332,6 +395,8 @@ void UpdateTradeStats()
    double net2mToday=0,net2mWeek=0,net2mMonth=0;
    int w5mToday=0,l5mToday=0,w5mWeek=0,l5mWeek=0,w5mMonth=0,l5mMonth=0;
    double net5mToday=0,net5mWeek=0,net5mMonth=0;
+   int w15mToday=0,l15mToday=0,w15mWeek=0,l15mWeek=0,w15mMonth=0,l15mMonth=0;
+   double net15mToday=0,net15mWeek=0,net15mMonth=0;
 
    datetime now = TimeCurrent();
    datetime d1Start = iTime(Symbol(), PERIOD_D1, 0);
@@ -355,6 +420,7 @@ void UpdateTradeStats()
          string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
          bool is2m = (StringFind(comment, "2m") >= 0);
          bool is5m = (StringFind(comment, "5m") >= 0);
+         bool is15m = (StringFind(comment, "15m") >= 0);
 
          if(time >= d1Start)
          {
@@ -362,6 +428,7 @@ void UpdateTradeStats()
             if(profit > 0) wToday++; else lToday++;
             if(is2m) { net2mToday += profit; if(profit > 0) w2mToday++; else l2mToday++; }
             if(is5m) { net5mToday += profit; if(profit > 0) w5mToday++; else l5mToday++; }
+            if(is15m) { net15mToday += profit; if(profit > 0) w15mToday++; else l15mToday++; }
          }
          if(time >= w1Start)
          {
@@ -369,6 +436,7 @@ void UpdateTradeStats()
             if(profit > 0) wWeek++; else lWeek++;
             if(is2m) { net2mWeek += profit; if(profit > 0) w2mWeek++; else l2mWeek++; }
             if(is5m) { net5mWeek += profit; if(profit > 0) w5mWeek++; else l5mWeek++; }
+            if(is15m) { net15mWeek += profit; if(profit > 0) w15mWeek++; else l15mWeek++; }
          }
          if(time >= mn1Start)
          {
@@ -376,6 +444,7 @@ void UpdateTradeStats()
             if(profit > 0) wMonth++; else lMonth++;
             if(is2m) { net2mMonth += profit; if(profit > 0) w2mMonth++; else l2mMonth++; }
             if(is5m) { net5mMonth += profit; if(profit > 0) w5mMonth++; else l5mMonth++; }
+            if(is15m) { net15mMonth += profit; if(profit > 0) w15mMonth++; else l15mMonth++; }
          }
       }
    }
@@ -387,17 +456,22 @@ void UpdateTradeStats()
    string cR2 = g_runners[0].order.GetCancelReason();
    string eR5 = g_runners[1].order.GetEntryReason();
    string cR5 = g_runners[1].order.GetCancelReason();
+   string eR15 = g_runners[2].order.GetEntryReason();
+   string cR15 = g_runners[2].order.GetCancelReason();
 
    string entryR = "";
    if(eR2 != "") entryR += eR2;
    if(eR5 != "") entryR += (entryR != "" ? " | " : "") + eR5;
+   if(eR15 != "") entryR += (entryR != "" ? " | " : "") + eR15;
    string cancelR = "";
    if(cR2 != "") cancelR += cR2;
    if(cR5 != "") cancelR += (cancelR != "" ? " | " : "") + cR5;
+   if(cR15 != "") cancelR += (cancelR != "" ? " | " : "") + cR15;
 
    g_dashboard.UpdateStatsTab(entryR, cancelR, netToday, wToday, lToday, netWeek, wWeek, lWeek, netMonth, wMonth, lMonth);
    g_dashboard.Update2mPL(net2mToday, w2mToday, l2mToday, net2mWeek, w2mWeek, l2mWeek, net2mMonth, w2mMonth, l2mMonth);
    g_dashboard.Update5mPL(net5mToday, w5mToday, l5mToday, net5mWeek, w5mWeek, l5mWeek, net5mMonth, w5mMonth, l5mMonth);
+   g_dashboard.Update15mPL(net15mToday, w15mToday, l15mToday, net15mWeek, w15mWeek, l15mWeek, net15mMonth, w15mMonth, l15mMonth);
 }
 
 //+------------------------------------------------------------------+
@@ -534,8 +608,8 @@ void UpdateDashboardExposure(const string &sym, double riskAmount, double riskPe
 //+------------------------------------------------------------------+
 void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime nyoTime)
 {
-   bool active[2] = { cfg.m2.isActive, cfg.m5.isActive };
-   for(int i = 0; i < 2; i++)
+   bool active[3] = { cfg.m2.isActive, cfg.m5.isActive, cfg.m15.isActive };
+   for(int i = 0; i < 3; i++)
    {
       if(active[i])
       {
@@ -554,6 +628,8 @@ void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime n
                               active[0] ? g_runners[0].order.GetStatusColor() : CLR_TEXT_DIM);
    g_dashboard.Update5mStatus(active[1] ? g_runners[1].order.GetStatus() : "OFF",
                               active[1] ? g_runners[1].order.GetStatusColor() : CLR_TEXT_DIM);
+   g_dashboard.Update15mStatus(active[2] ? g_runners[2].order.GetStatus() : "OFF",
+                               active[2] ? g_runners[2].order.GetStatusColor() : CLR_TEXT_DIM);
 }
 
 //+------------------------------------------------------------------+
@@ -626,7 +702,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
          case CMD_PRESET:
          {
             int idx = g_dashboard.PresetIndex;
-            if(idx >= 0 && idx < 9) g_dashboard.ApplyPreset(g_presets[idx]);
+            if(idx >= 0 && idx < 12) g_dashboard.ApplyPreset(g_presets[idx]);
             g_dashboard.UpdateStatus("Preset applied ✓");
             break;
          }

@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.23"
+#define EA_VERSION        "1.25"
 #define EA_BUILD_DATE     "17 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -15,7 +15,7 @@
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1270
+#define PANEL_HEIGHT      1370
 #define PANEL_X           20
 #define PANEL_Y           20
 
@@ -73,7 +73,7 @@
 //--- Enums
 enum ENUM_ORDER_MODE    { MODE_BOTH=0, MODE_BUY_ONLY=1, MODE_SELL_ONLY=2 };
 enum ENUM_EA_MODE       { EA_AUTO=0, EA_MANUAL=1 };
-enum ENUM_TAB { TAB_MAIN=0, TAB_M2=1, TAB_M5=2, TAB_STATS=3 };
+enum ENUM_TAB { TAB_MAIN=0, TAB_M2=1, TAB_M5=2, TAB_M15=3, TAB_STATS=4 };
 
 
 // Consolidated trail mode
@@ -224,6 +224,7 @@ struct SystemConfig {
    DashboardParams main;
    DashboardParams m2;
    DashboardParams m5;
+   DashboardParams m15;
    
    SystemConfig() {
       globalOverride = true;
@@ -231,6 +232,8 @@ struct SystemConfig {
       m2.comment = "orb-2m";
       m5.timeframe = PERIOD_M5;
       m5.comment = "orb-5m";
+      m15.timeframe = PERIOD_M15;
+      m15.comment = "orb-15m";
    }
 };
 
