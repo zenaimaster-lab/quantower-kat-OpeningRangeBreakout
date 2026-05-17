@@ -428,10 +428,36 @@ void UpdateTradeStats()
                        + HistoryDealGetDouble(ticket, DEAL_COMMISSION)
                        + HistoryDealGetDouble(ticket, DEAL_SWAP);
          datetime time = (datetime)HistoryDealGetInteger(ticket, DEAL_TIME);
+
+         // MT5 replaces comment on exit deals with system text (e.g. "[sl]", "[tp]").
+         // To identify the timeframe, look up the ORIGINAL entry deal via DEAL_POSITION_ID.
          string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
          bool is2m = (StringFind(comment, "2m") >= 0);
          bool is5m = (StringFind(comment, "5m") >= 0);
          bool is15m = (StringFind(comment, "15m") >= 0);
+
+         // If exit deal comment doesn't contain timeframe info, look up the entry deal
+         if(!is2m && !is5m && !is15m)
+         {
+            long posId = HistoryDealGetInteger(ticket, DEAL_POSITION_ID);
+            if(posId > 0)
+            {
+               // Search all deals in history for the matching entry deal
+               for(int j = 0; j < total; j++)
+               {
+                  ulong entryTicket = HistoryDealGetTicket(j);
+                  if(entryTicket <= 0) continue;
+                  if(HistoryDealGetInteger(entryTicket, DEAL_POSITION_ID) != posId) continue;
+                  if(HistoryDealGetInteger(entryTicket, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+
+                  string entryComment = HistoryDealGetString(entryTicket, DEAL_COMMENT);
+                  is2m  = (StringFind(entryComment, "2m") >= 0);
+                  is5m  = (StringFind(entryComment, "5m") >= 0);
+                  is15m = (StringFind(entryComment, "15m") >= 0);
+                  break;
+               }
+            }
+         }
 
          if(time >= d1Start)
          {
