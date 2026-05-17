@@ -226,6 +226,17 @@ CORBRunner    g_runners[3]; // 0=M2, 1=M5, 2=M15
 bool g_initialized = false;
 const string BE_LINE_NAME = "Aggregate_BE_Line";
 
+// Day-level entry tracking (persists until next NYO)
+string   g_dayEntries[6];
+int      g_dayEntryCount = 0;
+datetime g_dayEntriesNYO = 0;
+string   g_lastSeenEntry[3];
+string   g_lastSeenCancel[3];
+
+// P/L stats cache (set by UpdateTradeStats, used by dashboard update)
+double g_plNetToday=0, g_plNetWeek=0, g_plNetMonth=0;
+int    g_plWToday=0, g_plLToday=0, g_plWWeek=0, g_plLWeek=0, g_plWMonth=0, g_plLMonth=0;
+
 //+------------------------------------------------------------------+
 //| Helpers                                                            |
 //+------------------------------------------------------------------+
@@ -452,25 +463,65 @@ void UpdateTradeStats()
    g_gs.SetWinsToday(wToday);
    g_gs.SetLossesToday(lToday);
 
-   // Build LAST ENTRIES: 6 slots, ordered 2m→5m→15m, entry then cancel for each
-   string entries[6];
-   for(int si = 0; si < 6; si++) entries[si] = "";
-   int slot = 0;
-   // Collect from runners in order: 2m(0), 5m(1), 15m(2)
-   for(int ri = 0; ri < 3 && slot < 6; ri++)
-   {
-      string eR = g_runners[ri].order.GetEntryReason();
-      string cR = g_runners[ri].order.GetCancelReason();
-      // Entry reason first (if exists)
-      if(eR != "" && slot < 6) { entries[slot] = eR; slot++; }
-      // Then cancel reason (if different from entry)
-      if(cR != "" && slot < 6) { entries[slot] = cR; slot++; }
-   }
+   // Cache P/L stats for later dashboard update
+   g_plNetToday = netToday; g_plWToday = wToday; g_plLToday = lToday;
+   g_plNetWeek = netWeek;   g_plWWeek = wWeek;   g_plLWeek = lWeek;
+   g_plNetMonth = netMonth;  g_plWMonth = wMonth;  g_plLMonth = lMonth;
 
-   g_dashboard.UpdateStatsTab(entries, netToday, wToday, lToday, netWeek, wWeek, lWeek, netMonth, wMonth, lMonth);
    g_dashboard.Update2mPL(net2mToday, w2mToday, l2mToday, net2mWeek, w2mWeek, l2mWeek, net2mMonth, w2mMonth, l2mMonth);
    g_dashboard.Update5mPL(net5mToday, w5mToday, l5mToday, net5mWeek, w5mWeek, l5mWeek, net5mMonth, w5mMonth, l5mMonth);
    g_dashboard.Update15mPL(net15mToday, w15mToday, l15mToday, net15mWeek, w15mWeek, l15mWeek, net15mMonth, w15mMonth, l15mMonth);
+}
+
+//+------------------------------------------------------------------+
+//| Accumulate day entries — reset only on new NYO                     |
+//+------------------------------------------------------------------+
+void AccumulateDayEntries(datetime nyoTime)
+{
+   // Reset on new trading day (new NYO detected)
+   if(nyoTime > 0 && nyoTime != g_dayEntriesNYO)
+   {
+      // Snapshot current runner reasons as "already seen" to avoid re-capturing old data
+      for(int i = 0; i < 3; i++)
+      {
+         g_lastSeenEntry[i]  = g_runners[i].order.GetEntryReason();
+         g_lastSeenCancel[i] = g_runners[i].order.GetCancelReason();
+      }
+      g_dayEntryCount = 0;
+      for(int i = 0; i < 6; i++) g_dayEntries[i] = "";
+      g_dayEntriesNYO = nyoTime;
+   }
+
+   // Capture new entries from runners (2m→5m→15m order)
+   for(int ri = 0; ri < 3; ri++)
+   {
+      if(g_dayEntryCount >= 6) break;
+
+      string eR = g_runners[ri].order.GetEntryReason();
+      string cR = g_runners[ri].order.GetCancelReason();
+
+      // New entry reason detected → record it
+      if(eR != "" && eR != g_lastSeenEntry[ri])
+      {
+         g_dayEntries[g_dayEntryCount] = eR;
+         g_dayEntryCount++;
+         g_lastSeenEntry[ri] = eR;
+         g_lastSeenCancel[ri] = ""; // reset cancel tracking for this cycle
+      }
+
+      // New cancel reason detected → record it
+      if(cR != "" && cR != g_lastSeenCancel[ri] && g_dayEntryCount < 6)
+      {
+         g_dayEntries[g_dayEntryCount] = cR;
+         g_dayEntryCount++;
+         g_lastSeenCancel[ri] = cR;
+      }
+   }
+
+   // Update dashboard with accumulated entries + cached P/L
+   g_dashboard.UpdateStatsTab(g_dayEntries, g_plNetToday, g_plWToday, g_plLToday,
+                              g_plNetWeek, g_plWWeek, g_plLWeek,
+                              g_plNetMonth, g_plWMonth, g_plLMonth);
 }
 
 //+------------------------------------------------------------------+
@@ -658,6 +709,9 @@ void OnTimer()
    g_timeMgr.CalculateTargetTime(p);
    datetime nyoTime = g_timeMgr.GetTargetTime();
    RunORBRunners(cfg, p, nyoTime);
+
+   // Accumulate day entries AFTER RunORBRunners so runners have latest state
+   AccumulateDayEntries(nyoTime);
 
    ChartRedraw();
 }

@@ -443,8 +443,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── LAST ENTRIES ──
-   ML(m_lblLastEntrySec,"lLeS","LAST ENTRIES",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
+   // ── LAST DAY ENTRIES ──
+   ML(m_lblLastEntrySec,"lLeS","LAST DAY ENTRIES",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
    for(int ei=0; ei<6; ei++) {
       string numId = "lEn" + IntegerToString(ei);
       string descId = "sEd" + IntegerToString(ei);
