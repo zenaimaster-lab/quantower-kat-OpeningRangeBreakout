@@ -457,7 +457,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── TOTAL P/L ──
    ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lblNetTodayTag,"lNtT","Today:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetTodayTag,"lNtT","Last day:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lblNetTodayVal,"sNtV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lblTodayWl,"sNtW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lblNetWeekTag,"lNwT","Week:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
@@ -470,7 +470,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── 2m P/L ──
    ML(m_lbl2mPlSec,"l2pS","2m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_CLOCK_BLUE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lbl2mNtTag,"l2nT","2m Today:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl2mNtTag,"l2nT","2m Last day:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl2mNtVal,"s2nV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lbl2mTodayWl,"s2nW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lbl2mNwTag,"l2nwT","2m Week:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
@@ -483,7 +483,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── 5m P/L ──
    ML(m_lbl5mPlSec,"l5pS","5m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_CLOCK_BLUE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lbl5mNtTag,"l5nT","5m Today:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl5mNtTag,"l5nT","5m Last day:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl5mNtVal,"s5nV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lbl5mTodayWl,"s5nW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lbl5mNwTag,"l5nwT","5m Week:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
@@ -496,7 +496,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── 15m P/L ──
    ML(m_lbl15mPlSec,"l15pS","15m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_ORANGE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lbl15mNtTag,"l15nT","15m Today:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNtTag,"l15nT","15m Last day:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl15mNtVal,"s15nV","$0",cx+80,cy,100,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lbl15mTodayWl,"s15nW","W/L: 0/0",cx+180,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
    ML(m_lbl15mNwTag,"l15nwT","15m Week:",cx,cy,80,CTRL_HEIGHT,CLR_TEXT);
