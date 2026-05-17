@@ -2,99 +2,91 @@
 
 ## 1. Frontend UI Architecture
 
-The EA uses a `CAppDialog`-based dashboard with 4 tabs (Main, 2m, 5m, Stats) rendered on the MT5 chart.
+The EA uses a custom `CAppDialog`-based dashboard with 5 tabs (Main, 2m, 5m, 15m, Stats) rendered directly on the MT5 chart.
 
-### Click Handling (The "3 Pillars" Fix)
-1. **Purged `EVENT_MAP`** — Eliminates MQL5's broken internal bounding-box hit testing.
+### Click Handling & UX
+1. **Purged `EVENT_MAP`** — Bypasses MQL5's default bounding-box hit testing for precision.
 2. **Native `CHARTEVENT_OBJECT_CLICK`** — `OnChartEvent` intercepts clicks instantly.
-3. **`HandleDirectClick` + Debouncing** — 500ms debounce guard prevents double-fires.
+3. **`HandleDirectClick` + Debouncing** — A 500ms debounce guard prevents UI double-fires.
+4. **Minimizable UI** — The dashboard can be collapsed to free up chart space while maintaining active logic.
 
 ### Tab Structure
-- **Main** — Symbol, schedule (NY Hour/Min/Sec), UTC offset, risk %, order mode, presets
-- **2m/5m** — Per-timeframe overrides for SL/TP, trail, auto-cancel, EMA filters
-- **Stats** — ORDERS status (2m/5m), LAST ENTRY reasons, TOTAL/2m/5m P/L
+- **Main:** Symbol selection, NY Open Schedule (Hour/Min/Sec), UTC offset, Global Risk %, Order Mode, and Presets.
+- **2m / 5m / 15m:** Per-timeframe overrides. Users configure unique SL/TP, trailing modes, auto-cancel parameters, and EMA filters.
+- **Stats:** Live feedback loop. Shows active ORDERS status, a chronological LAST ENTRIES log (1-6) detailing entry/cancel reasons, and P/L metrics (Net, Wins, Losses) broken down globally and by timeframe.
 
 ## 2. Data Flow
 
-```
+```text
 OnInit → SetInitialParams(SystemConfig) → Dashboard stores config
                                           ↓
-OnTimer (1s) → GetParams() → SystemConfig{main, m2, m5}
-   ├─ CalculateTargetTime(p)     → NYO countdown
-   ├─ ProcessORB(pm2, nyoTime)   → 2m state machine
-   ├─ ProcessORB(pm5, nyoTime)   → 5m state machine
-   ├─ CheckAutoCancel(pm2/pm5)   → Pending order cancellation (also in OnTick)
-   ├─ UpdateTradeStats()         → Per-TF win/loss/PL from deal history
-   └─ Trail/BE updates           → From OnTick for tick-level precision
+OnTimer (1s) → GetParams() → SystemConfig{main, m2, m5, m15}
+   ├─ CalculateTargetTime(p)      → NYO countdown calculation
+   ├─ RunORBRunners(cfg)          → Triggers process for active timeframes
+   │    ├─ ProcessORB(m2)         → 2m state machine
+   │    ├─ ProcessORB(m5)         → 5m state machine
+   │    └─ ProcessORB(m15)        → 15m state machine
+   ├─ CheckAutoFlatten(m2/m5/m15) → Auto-cancels / Max hold closures
+   ├─ UpdateTradeStats()          → Per-TF win/loss/PL parsed from MT5 deal history
+   └─ AccumulateDayEntries()      → Caches new entry/cancel reasons for Stats tab
 
-OnTick → CheckAutoCancel(pm2, pm5) + TrailManager.Process(pm2, pm5)
+OnTick → CheckAutoFlatten() + TrailManager.Process() for all active timeframes
 ```
 
 ### Global Override Logic
-When `globalOverride=true`, the main tab settings apply to both strategies.
-**Critical:** Both OnTick and OnTimer force `pm2.timeframe=PERIOD_M2` and `pm5.timeframe=PERIOD_M5` regardless of global override, ensuring EMA/candle calculations always use the correct timeframe.
+When `globalOverride=true`, the settings defined in the Main tab forcefully apply to all active strategies (2m, 5m, 15m). 
+**Critical Constraint:** The system explicitly sets `pm2.timeframe=PERIOD_M2`, `pm5.timeframe=PERIOD_M5`, and `pm15.timeframe=PERIOD_M15` before execution, ensuring that EMA and candle indexing *always* evaluate on the correct timeframe regardless of global inputs.
 
 ## 3. ORB State Machine (`COrderManager`)
 
-```
+```text
 ORB_WAIT_NYO → ORB_WAIT_CANDLE → ORB_WAIT_BREAK → ORB_WAIT_RETEST → ORB_WAIT_ENTRY → ORB_DONE
                                        ↑                                    │
-                                       └──── contAfter1st ────────────────┘
+                                       └──── contAfter1st ──────────────────┘
                                                                     ORB_STOPPED (afterMinutes timeout)
 ```
 
-| State | Condition to advance |
-|-------|---------------------|
-| WAIT_NYO | `now >= nyOpenTimeServer` |
-| WAIT_CANDLE | First candle after NYO has closed |
-| WAIT_BREAK | Candle body closes outside range H/L |
-| WAIT_RETEST | Opposite-color candle touches range boundary |
-| WAIT_ENTRY | Pending stop placed, waiting for fill or cancel |
-| STOPPED | afterMinutes expired — hard stop, no continuation |
-| DONE | Trade cycle complete |
+| State | Condition to Advance |
+|-------|----------------------|
+| `WAIT_NYO` | `now >= nyOpenTimeServer` |
+| `WAIT_CANDLE` | The first candle strictly after NYO completes forming. |
+| `WAIT_BREAK` | A candle body closes completely outside the captured H/L range. |
+| `WAIT_RETEST` | An opposite-color candle touches/penetrates the range boundary. |
+| `WAIT_ENTRY` | A pending stop order is placed; system awaits fill or a cancellation trigger. |
+| `STOPPED` | Strategy exceeded `afterMinutes` timeout — hard stop. |
+| `DONE` | Trade cycle complete (TP, SL, or manual close). |
 
-### Order Mode Filtering
-- `MODE_BOTH` — Both Buy Stop and Sell Stop allowed
-- `MODE_BUY_ONLY` — Only Break UP retest → Buy Stop
-- `MODE_SELL_ONLY` — Only Break DOWN retest → Sell Stop
+## 4. Auto-Flatten / Auto-Cancel System
 
-## 4. Auto Cancel System
+Evaluated continuously via `CheckAutoFlatten()`:
 
-Evaluated on every tick via `CheckAutoCancel()`:
-
-| Condition | Logic |
-|-----------|-------|
-| Unfilled Candles | `iBarShift(sym, tf, placedTime) >= N` |
-| After Minutes | `now >= nyoTime + N*60` → sets ORB_STOPPED |
-| Unfavor Move | BuyStop: `bid <= entry - Npts` / SellStop: `ask >= entry + Npts` |
-| Touch Mid | Price reaches `(rangeHigh + rangeLow) / 2` |
-| EMA 1/2/3 | BuyStop: `bid < EMA` / SellStop: `ask > EMA` (each EMA computed on correct TF) |
-
-### Cancel → State Transition
-- afterMinutes → `ORB_STOPPED` (no continuation)
-- Other cancels + `contAfter1st=true` → `ORB_WAIT_BREAK` (re-enter)
-- Other cancels + `contAfter1st=false` → `ORB_DONE`
-- Max Success/Loss hit → `ORB_DONE`
+| Condition | Logic / Action |
+|-----------|----------------|
+| **Unfilled Candles** | `iBarShift >= N` → Cancels pending order if not triggered in time. |
+| **Max Hold Candles** | `iBarShift(fill_time) >= N` → Flattens (market close) active trades if TP isn't hit in time. |
+| **After Minutes** | `now >= nyoTime + N*60` → Triggers `ORB_STOPPED`. |
+| **Unfavor Move** | Cancels if price moves `N` points away from the pending entry price. |
+| **Touch Mid** | Cancels if price retraces to exactly `(rangeHigh + rangeLow) / 2`. |
+| **EMA 1/2/3** | Cancels if price action crosses the defined moving averages (trend invalidation). |
 
 ## 5. Trail & Breakeven
 
 | Mode | Logic |
 |------|-------|
-| OFF | No trailing |
-| CHASE | trigger→distance→step classic trailing |
-| CANDLE_1/2/3 | Trail SL to candle[N] low (buy) or high (sell) |
-| Breakeven | Aggregate weighted avg entry + lock offset |
+| **OFF** | No trailing applied. |
+| **CHASE** | Classic step trailing (`trigger` → `distance` → `step`). |
+| **CANDLE_1/2/3** | Trails SL to the extreme (High/Low) of candle[N]. |
+| **Breakeven** | Calculates an aggregate volume-weighted average entry across all open positions. Sets a hard visual `BE_Line` on the chart. |
 
-## 6. Risk Management
+## 6. Risk Management & Stat Tracking
 
-- Lot size = `Balance * riskPercent / (SL_points * tickValue / tickSize)`
-- SL Candle mode: SL = retest candle extreme ± buffer
-- SL Points mode: SL = entry ± fixed points
-- Per-trade risk visualization in dashboard
+- **Lot Sizing:** Auto-calculated: `Balance * riskPercent / (SL_points * tickValue / tickSize)`.
+- **Per-TF Counters:** Win/Loss and P/L metrics are independently parsed from the `DEAL_COMMENT` history (e.g., `orb-2m`, `orb-15m`) ensuring accurate metrics even if MT5 replaces exit comments.
+- **Daily Limits:** Trades stop firing if `maxSuccess` or `maxLoss` thresholds are breached per timeframe.
 
 ## 7. Chart Objects
 
-All ORB lines/labels use `OBJPROP_BACK=true` to render behind the dashboard:
-- Range H/L lines (blue for 2m, green/red for 5m)
-- Entry/Target short marks (dash style)
-- BE line (yellow)
+All ORB visual lines/labels use `OBJPROP_BACK=true` to render neatly behind the UI dashboard:
+- Range H/L boundaries (Color coded by timeframe).
+- Dash-style entry and target marks.
+- Aggregate Breakeven line (`BE_Line` in Yellow).
