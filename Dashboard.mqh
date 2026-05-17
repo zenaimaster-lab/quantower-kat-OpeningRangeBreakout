@@ -70,8 +70,7 @@ private:
    CEdit m_lblTotExpTag, m_lblTotExpVal;
    CEdit m_lblRtRrTag, m_lblRtRrLoss, m_lblRtRrPft, m_lblRtRrRiskPc;
    
-   CEdit m_lblEntryReasonTag, m_lblEntryReasonVal;
-   CEdit m_lblCancelReasonTag, m_lblCancelReasonVal;
+   CEdit m_lblEntryNum[6], m_lblEntryDesc[6];
    CEdit m_lblNetTodayTag, m_lblNetTodayVal, m_lblTodayWl;
    CEdit m_lblNetWeekTag, m_lblNetWeekVal, m_lblWeekWl;
    CEdit m_lblNetMonthTag, m_lblNetMonthVal, m_lblMonthWl;
@@ -150,7 +149,7 @@ public:
    void UpdateTotalExposed(double lots, int type);
    void UpdateRealtimeRR(double profit, double loss, double theoreticalRisk);
    void UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc);
-   void UpdateStatsTab(string entryReason, string cancelReason, double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
+   void UpdateStatsTab(const string &entries[], double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
    void Update2mStatus(string status, color clr);
    void Update5mStatus(string status, color clr);
    void Update15mStatus(string status, color clr);
@@ -444,12 +443,16 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── LAST ENTRY ──
-   ML(m_lblLastEntrySec,"lLeS","LAST ENTRY",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lblEntryReasonTag,"lErT","Entry Reason:",cx,cy,100,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblEntryReasonVal,"sErV","--",cx+105,cy,cw-105,CTRL_HEIGHT,CLR_WARNING); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblCancelReasonTag,"lCrT","Cancel Reason:",cx,cy,100,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblCancelReasonVal,"sCrV","--",cx+105,cy,cw-105,CTRL_HEIGHT,CLR_WARNING); cy+=CTRL_HEIGHT+SEC_PAD;
+   // ── LAST ENTRIES ──
+   ML(m_lblLastEntrySec,"lLeS","LAST ENTRIES",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
+   for(int ei=0; ei<6; ei++) {
+      string numId = "lEn" + IntegerToString(ei);
+      string descId = "sEd" + IntegerToString(ei);
+      ML(m_lblEntryNum[ei], numId, IntegerToString(ei+1)+".", cx, cy, 18, CTRL_HEIGHT, CLR_TEXT_BRIGHT);
+      ML(m_lblEntryDesc[ei], descId, "--", cx+20, cy, cw-20, CTRL_HEIGHT, CLR_WARNING);
+      cy+=CTRL_HEIGHT+CTRL_GAP;
+   }
+   cy+=SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── TOTAL P/L ──
@@ -837,10 +840,14 @@ void CDashboard::UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc)
    else m_lblRtRrRiskPc.Color(CLR_ACCENT);
 }
 
-void CDashboard::UpdateStatsTab(string entryReason, string cancelReason, double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth)
+void CDashboard::UpdateStatsTab(const string &entries[], double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth)
 {
-   m_lblEntryReasonVal.Text(entryReason != "" ? entryReason : "--");
-   m_lblCancelReasonVal.Text(cancelReason != "" ? cancelReason : "--");
+   for(int ei=0; ei<6; ei++) {
+      if(ei < ArraySize(entries) && entries[ei] != "")
+         m_lblEntryDesc[ei].Text(entries[ei]);
+      else
+         m_lblEntryDesc[ei].Text("--");
+   }
    
    m_lblNetTodayVal.Text((netToday>=0?"+$":"-$") + FormatMoneyRound(MathAbs(netToday)));
    m_lblNetTodayVal.Color(netToday>=0 ? CLR_MONEY_GREEN : CLR_MONEY_RED);
@@ -1008,8 +1015,7 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
       CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
       CtrlShow(m_lblLastEntrySec);
-      CtrlShow(m_lblEntryReasonTag); CtrlShow(m_lblEntryReasonVal);
-      CtrlShow(m_lblCancelReasonTag); CtrlShow(m_lblCancelReasonVal);
+      for(int ei=0; ei<6; ei++) { CtrlShow(m_lblEntryNum[ei]); CtrlShow(m_lblEntryDesc[ei]); }
       CtrlShow(m_lblTotalPlSec);
       CtrlShow(m_lblNetTodayTag); CtrlShow(m_lblNetTodayVal); CtrlShow(m_lblTodayWl);
       CtrlShow(m_lblNetWeekTag); CtrlShow(m_lblNetWeekVal); CtrlShow(m_lblWeekWl);
@@ -1064,8 +1070,7 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
       CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
       CtrlHide(m_lblLastEntrySec);
-      CtrlHide(m_lblEntryReasonTag); CtrlHide(m_lblEntryReasonVal);
-      CtrlHide(m_lblCancelReasonTag); CtrlHide(m_lblCancelReasonVal);
+      for(int ei=0; ei<6; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
       CtrlHide(m_lblTotalPlSec);
       CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
       CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
@@ -1149,8 +1154,7 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
    CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
    CtrlHide(m_lblLastEntrySec);
-   CtrlHide(m_lblEntryReasonTag); CtrlHide(m_lblEntryReasonVal);
-   CtrlHide(m_lblCancelReasonTag); CtrlHide(m_lblCancelReasonVal);
+   for(int ei=0; ei<6; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
    CtrlHide(m_lblTotalPlSec);
    CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
    CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);

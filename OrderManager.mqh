@@ -42,6 +42,7 @@ private:
 
    string            m_entryReason;
    string            m_cancelReason;
+   int               m_entryBreakDir; // Track break direction for cancel reason
 
    //--- State handlers
    void              HandleWaitNyo(datetime nyOpenTimeServer);
@@ -105,6 +106,7 @@ void COrderManager::ResetState()
    m_placedTime = 0;
    m_entryReason = "";
    m_cancelReason = "";
+   m_entryBreakDir = 0;
 }
 
 //+------------------------------------------------------------------+
@@ -236,7 +238,7 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
             if(dist > params.maxDistRange)
             {
                PrintFormat("[%s] SKIP BuyStop: dist %d > max %d pts", EnumToString(tf), dist, params.maxDistRange);
-               m_cancelReason = "Max dist range (Buy " + IntegerToString(dist) + ">" + IntegerToString(params.maxDistRange) + ")";
+               m_cancelReason = "Up " + IntegerToString(PeriodSeconds(tf) / 60) + "m, stop Entry (Max dist " + IntegerToString(dist) + ">" + IntegerToString(params.maxDistRange) + ")";
                m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
                return;
             }
@@ -245,7 +247,7 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
          string filterReason = "";
          if(!CheckEmaFilters(params, 1, filterReason, true))
          {
-            m_cancelReason = filterReason;
+            m_cancelReason = "Up " + IntegerToString(PeriodSeconds(tf) / 60) + "m, " + filterReason;
             m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
             return;
          }
@@ -265,8 +267,9 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                m_state = ORB_WAIT_ENTRY;
                m_ordersActive = true;
                m_placedTime = TimeTradeServer();
-               m_entryReason = "M" + IntegerToString(PeriodSeconds(tf) / 60) + " Break UP Retest"
-                               + (params.customRetestOn ? " M" + IntegerToString(params.customRetestMin) : "");
+               m_entryBreakDir = 1;
+               m_entryReason = "Up " + IntegerToString(PeriodSeconds(tf) / 60) + "m"
+                               + (params.customRetestOn ? ", retest " + IntegerToString(params.customRetestMin) + "m" : "");
                DrawTradeLines(symbol, tf, 1, entryPrice, tp);
                PrintFormat("[%s] BUY STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
             }
@@ -286,7 +289,7 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
             if(dist > params.maxDistRange)
             {
                PrintFormat("[%s] SKIP SellStop: dist %d > max %d pts", EnumToString(tf), dist, params.maxDistRange);
-               m_cancelReason = "Max dist range (Sell " + IntegerToString(dist) + ">" + IntegerToString(params.maxDistRange) + ")";
+               m_cancelReason = "Down " + IntegerToString(PeriodSeconds(tf) / 60) + "m, stop Entry (Max dist " + IntegerToString(dist) + ">" + IntegerToString(params.maxDistRange) + ")";
                m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
                return;
             }
@@ -295,7 +298,7 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
          string filterReason = "";
          if(!CheckEmaFilters(params, -1, filterReason, true))
          {
-            m_cancelReason = filterReason;
+            m_cancelReason = "Down " + IntegerToString(PeriodSeconds(tf) / 60) + "m, " + filterReason;
             m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
             return;
          }
@@ -315,8 +318,9 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                m_state = ORB_WAIT_ENTRY;
                m_ordersActive = true;
                m_placedTime = TimeTradeServer();
-               m_entryReason = "M" + IntegerToString(PeriodSeconds(tf) / 60) + " Break DOWN Retest"
-                               + (params.customRetestOn ? " M" + IntegerToString(params.customRetestMin) : "");
+               m_entryBreakDir = -1;
+               m_entryReason = "Down " + IntegerToString(PeriodSeconds(tf) / 60) + "m"
+                               + (params.customRetestOn ? ", retest " + IntegerToString(params.customRetestMin) + "m" : "");
                DrawTradeLines(symbol, tf, -1, entryPrice, tp);
                PrintFormat("[%s] SELL STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
             }
@@ -559,7 +563,9 @@ void COrderManager::CheckAutoFlatten(const DashboardParams &p, datetime nyOpenTi
 
    if(shouldFlatten)
    {
-      m_cancelReason = reason;
+      string dir = (m_entryBreakDir == 1) ? "Up" : "Down";
+      string tfStr = IntegerToString(PeriodSeconds(p.timeframe) / 60) + "m";
+      m_cancelReason = dir + " " + tfStr + ", cancelled (" + reason + ")";
       PrintFormat("[OrderMgr] Auto Flatten Triggered: %s", reason);
       FlattenAll(symbol);
       m_lastOrderTag = "";

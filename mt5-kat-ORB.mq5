@@ -452,23 +452,22 @@ void UpdateTradeStats()
    g_gs.SetWinsToday(wToday);
    g_gs.SetLossesToday(lToday);
 
-   string eR2 = g_runners[0].order.GetEntryReason();
-   string cR2 = g_runners[0].order.GetCancelReason();
-   string eR5 = g_runners[1].order.GetEntryReason();
-   string cR5 = g_runners[1].order.GetCancelReason();
-   string eR15 = g_runners[2].order.GetEntryReason();
-   string cR15 = g_runners[2].order.GetCancelReason();
+   // Build LAST ENTRIES: 6 slots, ordered 2m→5m→15m, entry then cancel for each
+   string entries[6];
+   for(int si = 0; si < 6; si++) entries[si] = "";
+   int slot = 0;
+   // Collect from runners in order: 2m(0), 5m(1), 15m(2)
+   for(int ri = 0; ri < 3 && slot < 6; ri++)
+   {
+      string eR = g_runners[ri].order.GetEntryReason();
+      string cR = g_runners[ri].order.GetCancelReason();
+      // Entry reason first (if exists)
+      if(eR != "" && slot < 6) { entries[slot] = eR; slot++; }
+      // Then cancel reason (if different from entry)
+      if(cR != "" && slot < 6) { entries[slot] = cR; slot++; }
+   }
 
-   string entryR = "";
-   if(eR2 != "") entryR += eR2;
-   if(eR5 != "") entryR += (entryR != "" ? " | " : "") + eR5;
-   if(eR15 != "") entryR += (entryR != "" ? " | " : "") + eR15;
-   string cancelR = "";
-   if(cR2 != "") cancelR += cR2;
-   if(cR5 != "") cancelR += (cancelR != "" ? " | " : "") + cR5;
-   if(cR15 != "") cancelR += (cancelR != "" ? " | " : "") + cR15;
-
-   g_dashboard.UpdateStatsTab(entryR, cancelR, netToday, wToday, lToday, netWeek, wWeek, lWeek, netMonth, wMonth, lMonth);
+   g_dashboard.UpdateStatsTab(entries, netToday, wToday, lToday, netWeek, wWeek, lWeek, netMonth, wMonth, lMonth);
    g_dashboard.Update2mPL(net2mToday, w2mToday, l2mToday, net2mWeek, w2mWeek, l2mWeek, net2mMonth, w2mMonth, l2mMonth);
    g_dashboard.Update5mPL(net5mToday, w5mToday, l5mToday, net5mWeek, w5mWeek, l5mWeek, net5mMonth, w5mMonth, l5mMonth);
    g_dashboard.Update15mPL(net15mToday, w15mToday, l15mToday, net15mWeek, w15mWeek, l15mWeek, net15mMonth, w15mMonth, l15mMonth);
