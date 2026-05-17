@@ -417,15 +417,15 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    m_statusSepStart = si;
    cy = startCy; // Rewind Y coordinate to render STATUS below TABS!
 
-   // ── ORDERS (single row: 2m | 5m | 15m) ──
-   int ordColW = (cw - 60) / 3;
-   ML(m_lblOrdersSec,"lOrS","ORDERS",cx,cy,55,CTRL_HEIGHT);
-   ML(m_lbl2mStTag,"l2sT","2m:",cx+58,cy,22,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl2mStVal,"v2sV","OFF",cx+80,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
-   ML(m_lbl5mStTag,"l5sT","5m:",cx+58+ordColW,cy,22,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","OFF",cx+80+ordColW,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
-   ML(m_lbl15mStTag,"l15sT","15m:",cx+58+ordColW*2,cy,28,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl15mStVal,"v15sV","OFF",cx+86+ordColW*2,cy,ordColW-28,CTRL_HEIGHT,CLR_TEXT_DIM);
+   // ── ORDERS (single row: 2m | 5m | 15m — no header label) ──
+   int ordColW = cw / 3;
+   ML(m_lblOrdersSec,"lOrS","",cx,cy,1,CTRL_HEIGHT);
+   ML(m_lbl2mStTag,"l2sT","2m:",cx,cy,22,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl2mStVal,"v2sV","OFF",cx+22,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
+   ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cy,22,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl5mStVal,"v5sV","OFF",cx+ordColW+22,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
+   ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cy,28,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mStVal,"v15sV","OFF",cx+ordColW*2+28,cy,ordColW-28,CTRL_HEIGHT,CLR_TEXT_DIM);
    cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 

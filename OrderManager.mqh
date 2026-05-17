@@ -345,7 +345,7 @@ string COrderManager::GetStatus() const
       case ORB_WAIT_NYO:    return "Wait NYO";
       case ORB_WAIT_CANDLE: return "Wait Range";
       case ORB_WAIT_BREAK:  return "Wait Break";
-      case ORB_WAIT_RETEST: return (m_breakDir == 1) ? "Break Out ▲" : "Break Down ▼";
+      case ORB_WAIT_RETEST: return (m_breakDir == 1) ? "Break ▲" : "Break ▼";
       case ORB_WAIT_ENTRY:  return "Wait Entry";
       case ORB_STOPPED:     return "Stop Trading";
       case ORB_DONE:        return "Done";
