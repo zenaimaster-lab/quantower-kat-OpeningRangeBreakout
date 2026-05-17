@@ -25,7 +25,7 @@ input group "------------- GLOBAL SETTING -------------"
 input bool            InpGlobalOverride    = true;        // Override 2m & 5m with Global (Global Mode)
 input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Global Timeframe
 input int             InpSlPoints          = 1500;        // Stop Loss (Points)
-input int             InpTpPoints          = 1500;        // Take Profit (Points)
+input int             InpTpPoints          = 15000;       // Take Profit (Points)
 input bool            InpSlCandle          = false;       // Use Candle Extremes for SL
 input ENUM_ORDER_MODE InpOrderMode         = MODE_BOTH;   // Allowed Trade Directions
 input int             InpEntryBufferPoints = 5;           // Entry/SL Buffer (Points)
@@ -37,7 +37,7 @@ input bool            InpRiskModeOn        = true;        // Risk Management (tr
 
 input group "------------- 2M SETTING -------------"
 input int             Inp2MSlPoints          = 1500;        // 2m: Stop Loss (Points)
-input int             Inp2MTpPoints          = 1500;        // 2m: Take Profit (Points)
+input int             Inp2MTpPoints          = 15000;       // 2m: Take Profit (Points)
 input bool            Inp2MSlCandle          = false;       // 2m: Use Candle Extremes for SL
 input ENUM_ORDER_MODE Inp2MOrderMode         = MODE_BOTH;   // 2m: Allowed Trade Directions
 input int             Inp2MEntryBufferPoints = 5;           // 2m: Entry/SL Buffer (Points)
@@ -49,7 +49,7 @@ input bool            Inp2MRiskModeOn        = true;        // 2m: Risk Manageme
 
 input group "------------- 5M SETTING -------------"
 input int             Inp5MSlPoints          = 1500;        // 5m: Stop Loss (Points)
-input int             Inp5MTpPoints          = 1500;        // 5m: Take Profit (Points)
+input int             Inp5MTpPoints          = 15000;       // 5m: Take Profit (Points)
 input bool            Inp5MSlCandle          = false;       // 5m: Use Candle Extremes for SL
 input ENUM_ORDER_MODE Inp5MOrderMode         = MODE_BOTH;   // 5m: Allowed Trade Directions
 input int             Inp5MEntryBufferPoints = 5;           // 5m: Entry/SL Buffer (Points)
@@ -90,7 +90,7 @@ sinput string         sep_big_m            = "--------------------------------";
 input group "------------- PRESETS -------------"
 sinput string         sep_preset_mA        = "---------- SET mA ----------"; // ---------- SET mA ----------
 input int             InpmA_SL             = 1500;        // Set mA: Stop Loss
-input int             InpmA_TP             = 1500;        // Set mA: Take Profit
+input int             InpmA_TP             = 15000;       // Set mA: Take Profit
 input double          InpmA_Risk           = 1.0;         // Set mA: Risk %
 input int             InpmA_TrTrig         = 1500;        // Set mA: Trail Trigger
 input int             InpmA_TrDist         = 500;         // Set mA: Trail Distance
@@ -117,7 +117,7 @@ input ENUM_TIMEFRAMES InpmC_TF             = PERIOD_M5;   // Set mC: Timeframe
 
 sinput string         sep_preset_2A        = "---------- SET 2A ----------"; // ---------- SET 2A ----------
 input int             Inp2A_SL             = 1500;        // Set 2A: Stop Loss
-input int             Inp2A_TP             = 1500;        // Set 2A: Take Profit
+input int             Inp2A_TP             = 15000;       // Set 2A: Take Profit
 input double          Inp2A_Risk           = 1.0;         // Set 2A: Risk %
 input int             Inp2A_TrTrig         = 1500;        // Set 2A: Trail Trigger
 input int             Inp2A_TrDist         = 500;         // Set 2A: Trail Distance
@@ -144,7 +144,7 @@ input ENUM_TIMEFRAMES Inp2C_TF             = PERIOD_M2;   // Set 2C: Timeframe
 
 sinput string         sep_preset_5A        = "---------- SET 5A ----------"; // ---------- SET 5A ----------
 input int             Inp5A_SL             = 1500;        // Set 5A: Stop Loss
-input int             Inp5A_TP             = 1500;        // Set 5A: Take Profit
+input int             Inp5A_TP             = 15000;       // Set 5A: Take Profit
 input double          Inp5A_Risk           = 1.0;         // Set 5A: Risk %
 input int             Inp5A_TrTrig         = 1500;        // Set 5A: Trail Trigger
 input int             Inp5A_TrDist         = 500;         // Set 5A: Trail Distance
