@@ -419,15 +419,19 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── ORDERS (single row: 2m | 5m | 15m — no header label) ──
    int ordColW = cw / 3;
-   ML(m_lblOrdersSec,"lOrS","",cx,cy,1,CTRL_HEIGHT);
-   ML(m_lbl2mStTag,"l2sT","2m:",cx,cy,22,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl2mStVal,"v2sV","OFF",cx+22,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
-   ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cy,22,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","OFF",cx+ordColW+22,cy,ordColW-22,CTRL_HEIGHT,CLR_TEXT_DIM);
-   ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cy,28,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl15mStVal,"v15sV","OFF",cx+ordColW*2+28,cy,ordColW-28,CTRL_HEIGHT,CLR_TEXT_DIM);
-   cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cy -= 3; // Shift up to equalize top and bottom padding (15px each)
+   int rowH = CTRL_HEIGHT + 4; // Increase height to prevent vertical text clipping
+   
+   ML(m_lblOrdersSec,"lOrS","",cx,cy,1,rowH);
+   ML(m_lbl2mStTag,"l2sT","2m:",cx,cy,32,rowH,CLR_TEXT);
+   ML(m_lbl2mStVal,"v2sV","OFF",cx+32,cy,ordColW-32,rowH,CLR_TEXT_DIM);
+   ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cy,32,rowH,CLR_TEXT);
+   ML(m_lbl5mStVal,"v5sV","OFF",cx+ordColW+32,cy,ordColW-32,rowH,CLR_TEXT_DIM);
+   ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cy,38,rowH,CLR_TEXT);
+   ML(m_lbl15mStVal,"v15sV","OFF",cx+ordColW*2+38,cy,ordColW-38,rowH,CLR_TEXT_DIM);
+   
+   cy += rowH + 15; // Advance to exact position for perfectly centered separator
+   MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── EQUITY (keep compact) ──
    ML(m_lblEqTag,"lEqT","Equity:",cx,cy,50,CTRL_HEIGHT,CLR_TEXT);
@@ -458,7 +462,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── TOTAL P/L ──
-   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cy,cw,CTRL_HEIGHT); 
+   m_lblTotalPlSec.Font(FONT_NAME + " Bold");
+   cy+=CTRL_HEIGHT+CTRL_GAP+4;
    ML(m_lblNetTodayTag,"lNtT","Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lblNetTodayVal,"sNtV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lblTodayWl,"sNtW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
