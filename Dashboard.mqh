@@ -81,14 +81,14 @@ private:
    CEdit m_lbl5mStTag, m_lbl5mStVal;
    CEdit m_lblLastEntrySec;
    CEdit m_lblTotalPlSec;
-   CEdit m_lbl2mPlSec, m_lbl2mNtTag, m_lbl2mNtVal, m_lbl2mTodayWl;
+   CEdit m_lbl2mNtTag, m_lbl2mNtVal, m_lbl2mTodayWl;
    CEdit m_lbl2mNwTag, m_lbl2mNwVal, m_lbl2mWeekWl;
    CEdit m_lbl2mNmTag, m_lbl2mNmVal, m_lbl2mMonthWl;
-   CEdit m_lbl5mPlSec, m_lbl5mNtTag, m_lbl5mNtVal, m_lbl5mTodayWl;
+   CEdit m_lbl5mNtTag, m_lbl5mNtVal, m_lbl5mTodayWl;
    CEdit m_lbl5mNwTag, m_lbl5mNwVal, m_lbl5mWeekWl;
    CEdit m_lbl5mNmTag, m_lbl5mNmVal, m_lbl5mMonthWl;
    CEdit m_lbl15mStTag, m_lbl15mStVal;
-   CEdit m_lbl15mPlSec, m_lbl15mNtTag, m_lbl15mNtVal, m_lbl15mTodayWl;
+   CEdit m_lbl15mNtTag, m_lbl15mNtVal, m_lbl15mTodayWl;
    CEdit m_lbl15mNwTag, m_lbl15mNwVal, m_lbl15mWeekWl;
    CEdit m_lbl15mNmTag, m_lbl15mNmVal, m_lbl15mMonthWl;
    
@@ -462,9 +462,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── TOTAL P/L ──
-   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cy,cw,CTRL_HEIGHT); 
-   m_lblTotalPlSec.Font(FONT_NAME + " Bold");
-   cy+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
    ML(m_lblNetTodayTag,"lNtT","Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lblNetTodayVal,"sNtV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lblTodayWl,"sNtW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
@@ -477,7 +475,6 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── 2m P/L ──
-   ML(m_lbl2mPlSec,"l2pS","2m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_CLOCK_BLUE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
    ML(m_lbl2mNtTag,"l2nT","2m Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl2mNtVal,"s2nV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lbl2mTodayWl,"s2nW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
@@ -490,7 +487,6 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── 5m P/L ──
-   ML(m_lbl5mPlSec,"l5pS","5m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_CLOCK_BLUE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
    ML(m_lbl5mNtTag,"l5nT","5m Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl5mNtVal,"s5nV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lbl5mTodayWl,"s5nW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
@@ -503,7 +499,6 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
    // ── 15m P/L ──
-   ML(m_lbl15mPlSec,"l15pS","15m P/L",cx,cy,cw,CTRL_HEIGHT,CLR_ORANGE); cy+=CTRL_HEIGHT+CTRL_GAP+4;
    ML(m_lbl15mNtTag,"l15nT","15m Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lbl15mNtVal,"s15nV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lbl15mTodayWl,"s15nW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
@@ -1035,15 +1030,12 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblNetTodayTag); CtrlShow(m_lblNetTodayVal); CtrlShow(m_lblTodayWl);
       CtrlShow(m_lblNetWeekTag); CtrlShow(m_lblNetWeekVal); CtrlShow(m_lblWeekWl);
       CtrlShow(m_lblNetMonthTag); CtrlShow(m_lblNetMonthVal); CtrlShow(m_lblMonthWl);
-      CtrlShow(m_lbl2mPlSec);
       CtrlShow(m_lbl2mNtTag); CtrlShow(m_lbl2mNtVal); CtrlShow(m_lbl2mTodayWl);
       CtrlShow(m_lbl2mNwTag); CtrlShow(m_lbl2mNwVal); CtrlShow(m_lbl2mWeekWl);
       CtrlShow(m_lbl2mNmTag); CtrlShow(m_lbl2mNmVal); CtrlShow(m_lbl2mMonthWl);
-      CtrlShow(m_lbl5mPlSec);
       CtrlShow(m_lbl5mNtTag); CtrlShow(m_lbl5mNtVal); CtrlShow(m_lbl5mTodayWl);
       CtrlShow(m_lbl5mNwTag); CtrlShow(m_lbl5mNwVal); CtrlShow(m_lbl5mWeekWl);
       CtrlShow(m_lbl5mNmTag); CtrlShow(m_lbl5mNmVal); CtrlShow(m_lbl5mMonthWl);
-      CtrlShow(m_lbl15mPlSec);
       CtrlShow(m_lbl15mNtTag); CtrlShow(m_lbl15mNtVal); CtrlShow(m_lbl15mTodayWl);
       CtrlShow(m_lbl15mNwTag); CtrlShow(m_lbl15mNwVal); CtrlShow(m_lbl15mWeekWl);
       CtrlShow(m_lbl15mNmTag); CtrlShow(m_lbl15mNmVal); CtrlShow(m_lbl15mMonthWl);
@@ -1090,13 +1082,13 @@ void CDashboard::UpdTabs() {
       CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
       CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
       CtrlHide(m_lblNetMonthTag); CtrlHide(m_lblNetMonthVal); CtrlHide(m_lblMonthWl);
-      CtrlHide(m_lbl2mPlSec); CtrlHide(m_lbl2mNtTag); CtrlHide(m_lbl2mNtVal); CtrlHide(m_lbl2mTodayWl);
+      CtrlHide(m_lbl2mNtTag); CtrlHide(m_lbl2mNtVal); CtrlHide(m_lbl2mTodayWl);
       CtrlHide(m_lbl2mNwTag); CtrlHide(m_lbl2mNwVal); CtrlHide(m_lbl2mWeekWl);
       CtrlHide(m_lbl2mNmTag); CtrlHide(m_lbl2mNmVal); CtrlHide(m_lbl2mMonthWl);
-      CtrlHide(m_lbl5mPlSec); CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
+      CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
       CtrlHide(m_lbl5mNwTag); CtrlHide(m_lbl5mNwVal); CtrlHide(m_lbl5mWeekWl);
       CtrlHide(m_lbl5mNmTag); CtrlHide(m_lbl5mNmVal); CtrlHide(m_lbl5mMonthWl);
-      CtrlHide(m_lbl15mPlSec); CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
+      CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
       CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
       CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
@@ -1193,13 +1185,13 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
    CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
    CtrlHide(m_lblNetMonthTag); CtrlHide(m_lblNetMonthVal); CtrlHide(m_lblMonthWl);
-   CtrlHide(m_lbl2mPlSec); CtrlHide(m_lbl2mNtTag); CtrlHide(m_lbl2mNtVal); CtrlHide(m_lbl2mTodayWl);
+   CtrlHide(m_lbl2mNtTag); CtrlHide(m_lbl2mNtVal); CtrlHide(m_lbl2mTodayWl);
    CtrlHide(m_lbl2mNwTag); CtrlHide(m_lbl2mNwVal); CtrlHide(m_lbl2mWeekWl);
    CtrlHide(m_lbl2mNmTag); CtrlHide(m_lbl2mNmVal); CtrlHide(m_lbl2mMonthWl);
-   CtrlHide(m_lbl5mPlSec); CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
+   CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
    CtrlHide(m_lbl5mNwTag); CtrlHide(m_lbl5mNwVal); CtrlHide(m_lbl5mWeekWl);
    CtrlHide(m_lbl5mNmTag); CtrlHide(m_lbl5mNmVal); CtrlHide(m_lbl5mMonthWl);
-   CtrlHide(m_lbl15mPlSec); CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
+   CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
    CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
    CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
    
