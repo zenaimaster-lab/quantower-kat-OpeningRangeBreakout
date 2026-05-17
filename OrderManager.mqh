@@ -69,8 +69,8 @@ public:
    void              ResetState();
 
    void              ProcessORB(const DashboardParams &params, datetime nyOpenTimeServer);
-   void              CheckAutoCancel(const DashboardParams &params, datetime nyOpenTimeServer);
-   void              CancelAllPending(string symbol);
+   void              CheckAutoFlatten(const DashboardParams &params, datetime nyOpenTimeServer);
+   void              FlattenAll(string symbol);
    void              CleanupLines(ENUM_TIMEFRAMES tf);
 
    string            GetStatus() const;
@@ -353,7 +353,7 @@ color COrderManager::GetStatusColor() const
 }
 
 //+------------------------------------------------------------------+
-void COrderManager::CancelAllPending(string symbol)
+void COrderManager::FlattenAll(string symbol)
 {
    int magic = Magic();
    for(int i = OrdersTotal() - 1; i >= 0; i--)
@@ -366,50 +366,99 @@ void COrderManager::CancelAllPending(string symbol)
       if(m_trade.OrderDelete(ticket))
          PrintFormat("[OrderMgr] Cancelled pending #%d for %s", ticket, symbol);
    }
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket <= 0) continue;
+      if(PositionGetInteger(POSITION_MAGIC) != magic) continue;
+      if(PositionGetString(POSITION_SYMBOL) != symbol) continue;
+
+      if(m_trade.PositionClose(ticket))
+         PrintFormat("[OrderMgr] Closed position #%d for %s", ticket, symbol);
+   }
    m_ordersActive = false;
    if(m_state == ORB_WAIT_ENTRY) m_state = ORB_DONE;
 }
 
 //+------------------------------------------------------------------+
-void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTimeServer)
+void COrderManager::CheckAutoFlatten(const DashboardParams &p, datetime nyOpenTimeServer)
 {
    if(!m_ordersActive) return;
    string symbol = p.symbol;
    if(symbol == "") return;
 
-   bool shouldCancel = false;
+   bool shouldFlatten = false;
    string reason = "";
    datetime now = TimeTradeServer();
 
-   // 1. Unfilled candles
-   if(p.unfilledCandlesOn && m_placedTime > 0)
+   int magic = Magic();
+   
+   // Figure out if we have pending orders and/or open positions
+   bool hasPending = false;
+   bool hasPosition = false;
+   datetime earliestPosTime = 0;
+   
+   for(int i = OrdersTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = OrderGetTicket(i);
+      if(!OrderSelect(ticket)) continue;
+      if(OrderGetInteger(ORDER_MAGIC) != magic) continue;
+      if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
+      if(StringFind(OrderGetString(ORDER_COMMENT), m_lastOrderTag) < 0) continue;
+      hasPending = true;
+   }
+   
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket <= 0) continue;
+      if(PositionGetInteger(POSITION_MAGIC) != magic) continue;
+      if(PositionGetString(POSITION_SYMBOL) != symbol) continue;
+      if(StringFind(PositionGetString(POSITION_COMMENT), m_lastOrderTag) < 0) continue;
+      hasPosition = true;
+      datetime pt = (datetime)PositionGetInteger(POSITION_TIME);
+      if(earliestPosTime == 0 || pt < earliestPosTime) earliestPosTime = pt;
+   }
+
+   // 1. Unfilled candles (for pending orders only)
+   if(p.unfilledCandlesOn && hasPending && !hasPosition && m_placedTime > 0)
    {
       if(iBarShift(symbol, p.timeframe, m_placedTime) >= p.unfilledCandles)
       {
-         shouldCancel = true;
+         shouldFlatten = true;
          reason = "Unfilled candles > " + IntegerToString(p.unfilledCandles);
+      }
+   }
+   
+   // 1.b Filled candles (for open positions only)
+   if(!shouldFlatten && p.afterFilledCandlesOn && hasPosition && earliestPosTime > 0)
+   {
+      if(iBarShift(symbol, p.timeframe, earliestPosTime) >= p.afterFilledCandles)
+      {
+         shouldFlatten = true;
+         reason = "Filled candles > " + IntegerToString(p.afterFilledCandles);
       }
    }
 
    // 2. After minutes from NYO
-   if(!shouldCancel && p.afterMinutesOn && nyOpenTimeServer > 0)
+   if(!shouldFlatten && p.afterMinutesOn && nyOpenTimeServer > 0)
    {
       if(now >= nyOpenTimeServer + p.afterMinutes * 60)
       {
-         shouldCancel = true;
+         shouldFlatten = true;
          reason = "Passed " + IntegerToString(p.afterMinutes) + " mins after NY Open";
       }
    }
 
-   // 3. Price-based conditions
-   int magic = Magic();
-   if(!shouldCancel && (p.unfavorMoveOn || p.touchMidOn))
+   // 3. Price-based conditions (for both pending and open positions)
+   if(!shouldFlatten && (p.unfavorMoveOn || p.touchMidOn))
    {
       double bid = GetBid(symbol);
       double ask = GetAsk(symbol);
       double point = GetPoint(symbol);
       double midPrice = (m_rangeHigh + m_rangeLow) / 2.0;
 
+      // Check pending orders
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
          ulong ticket = OrderGetTicket(i);
@@ -423,21 +472,50 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
 
          if(type == ORDER_TYPE_BUY_STOP)
          {
-            if(p.unfavorMoveOn && bid <= openPrice - p.unfavorMovePts * point) { shouldCancel = true; reason = "Unfavor move (BuyStop)"; break; }
-            if(p.touchMidOn && bid <= midPrice)                               { shouldCancel = true; reason = "Touch Mid (BuyStop)"; break; }
+            if(p.unfavorMoveOn && bid <= openPrice - p.unfavorMovePts * point) { shouldFlatten = true; reason = "Unfavor move (BuyStop)"; break; }
+            if(p.touchMidOn && bid <= midPrice)                               { shouldFlatten = true; reason = "Touch Mid (BuyStop)"; break; }
          }
          else if(type == ORDER_TYPE_SELL_STOP)
          {
-            if(p.unfavorMoveOn && ask >= openPrice + p.unfavorMovePts * point) { shouldCancel = true; reason = "Unfavor move (SellStop)"; break; }
-            if(p.touchMidOn && ask >= midPrice)                               { shouldCancel = true; reason = "Touch Mid (SellStop)"; break; }
+            if(p.unfavorMoveOn && ask >= openPrice + p.unfavorMovePts * point) { shouldFlatten = true; reason = "Unfavor move (SellStop)"; break; }
+            if(p.touchMidOn && ask >= midPrice)                               { shouldFlatten = true; reason = "Touch Mid (SellStop)"; break; }
+         }
+      }
+      
+      // Check open positions
+      if(!shouldFlatten)
+      {
+         for(int i = PositionsTotal() - 1; i >= 0; i--)
+         {
+            ulong ticket = PositionGetTicket(i);
+            if(ticket <= 0) continue;
+            if(PositionGetInteger(POSITION_MAGIC) != magic) continue;
+            if(PositionGetString(POSITION_SYMBOL) != symbol) continue;
+            if(StringFind(PositionGetString(POSITION_COMMENT), m_lastOrderTag) < 0) continue;
+
+            ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+            double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+
+            if(type == POSITION_TYPE_BUY)
+            {
+               if(p.unfavorMoveOn && bid <= openPrice - p.unfavorMovePts * point) { shouldFlatten = true; reason = "Unfavor move (BuyPos)"; break; }
+               if(p.touchMidOn && bid <= midPrice)                               { shouldFlatten = true; reason = "Touch Mid (BuyPos)"; break; }
+            }
+            else if(type == POSITION_TYPE_SELL)
+            {
+               if(p.unfavorMoveOn && ask >= openPrice + p.unfavorMovePts * point) { shouldFlatten = true; reason = "Unfavor move (SellPos)"; break; }
+               if(p.touchMidOn && ask >= midPrice)                               { shouldFlatten = true; reason = "Touch Mid (SellPos)"; break; }
+            }
          }
       }
    }
 
-   // 4. Indicator-based auto cancel
-   if(!shouldCancel)
+   // 4. Indicator-based auto cancel/flatten
+   if(!shouldFlatten)
    {
       string filterReason = "";
+      
+      // First check pending orders
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
          ulong ticket = OrderGetTicket(i);
@@ -450,18 +528,40 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
          int direction = (type == ORDER_TYPE_BUY_STOP) ? 1 : -1;
          if(!CheckEmaFilters(p, direction, filterReason, false))
          {
-            shouldCancel = true;
+            shouldFlatten = true;
             reason = filterReason;
             break;
          }
       }
+      
+      // If not flattened by pending orders, check positions
+      if(!shouldFlatten)
+      {
+         for(int i = PositionsTotal() - 1; i >= 0; i--)
+         {
+            ulong ticket = PositionGetTicket(i);
+            if(ticket <= 0) continue;
+            if(PositionGetInteger(POSITION_MAGIC) != magic) continue;
+            if(PositionGetString(POSITION_SYMBOL) != symbol) continue;
+            if(StringFind(PositionGetString(POSITION_COMMENT), m_lastOrderTag) < 0) continue;
+
+            ENUM_POSITION_TYPE type = (ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+            int direction = (type == POSITION_TYPE_BUY) ? 1 : -1;
+            if(!CheckEmaFilters(p, direction, filterReason, false))
+            {
+               shouldFlatten = true;
+               reason = filterReason;
+               break;
+            }
+         }
+      }
    }
 
-   if(shouldCancel)
+   if(shouldFlatten)
    {
       m_cancelReason = reason;
-      PrintFormat("[OrderMgr] Auto Cancel Triggered: %s", reason);
-      CancelAllPending(symbol);
+      PrintFormat("[OrderMgr] Auto Flatten Triggered: %s", reason);
+      FlattenAll(symbol);
       m_lastOrderTag = "";
 
       bool hardStop = p.afterMinutesOn && nyOpenTimeServer > 0 && now >= nyOpenTimeServer + p.afterMinutes * 60;
@@ -478,6 +578,7 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
    }
    else if(m_lastOrderTag != "")
    {
+      // Keep checking if any order or position is active
       bool exists = false;
       for(int i = OrdersTotal() - 1; i >= 0; i--)
       {
@@ -487,12 +588,22 @@ void COrderManager::CheckAutoCancel(const DashboardParams &p, datetime nyOpenTim
       }
       if(!exists)
       {
+         for(int i = PositionsTotal() - 1; i >= 0; i--)
+         {
+            ulong ticket = PositionGetTicket(i);
+            if(ticket > 0 && PositionGetString(POSITION_COMMENT) == m_lastOrderTag)
+            { exists = true; break; }
+         }
+      }
+      
+      if(!exists)
+      {
          m_ordersActive = false;
          m_lastOrderTag = "";
           bool limitHit = (p.maxSuccessOn && g_gs.WinsToday() >= p.maxSuccess)
                        || (p.maxLossOn   && g_gs.LossesToday() >= p.maxLoss);
          m_state = (p.contAfter1st && !limitHit) ? ORB_WAIT_BREAK : ORB_DONE;
-         PrintFormat("[%s] Order triggered. Resuming WAIT_BREAK=%s", symbol, (m_state == ORB_WAIT_BREAK) ? "true" : "false");
+         PrintFormat("[%s] Order/Pos closed. Resuming WAIT_BREAK=%s", symbol, (m_state == ORB_WAIT_BREAK) ? "true" : "false");
       }
    }
 }

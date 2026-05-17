@@ -315,7 +315,7 @@ void OnTick()
       if((i == 0 && cfg.m2.isActive) || (i == 1 && cfg.m5.isActive))
       {
          DashboardParams p = BuildRunnerParams(cfg, i, sym);
-         g_runners[i].order.CheckAutoCancel(p, g_timeMgr.GetTargetTime());
+         g_runners[i].order.CheckAutoFlatten(p, g_timeMgr.GetTargetTime());
          g_runners[i].trail.Process(p);
       }
    }
@@ -541,7 +541,7 @@ void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime n
       {
          DashboardParams pm = BuildRunnerParams(cfg, i, p.symbol);
          g_runners[i].order.ProcessORB(pm, nyoTime);
-         g_runners[i].order.CheckAutoCancel(pm, nyoTime);
+         g_runners[i].order.CheckAutoFlatten(pm, nyoTime);
       }
       else
       {

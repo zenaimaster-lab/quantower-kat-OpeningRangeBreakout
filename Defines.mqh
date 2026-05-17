@@ -7,8 +7,8 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.21"
-#define EA_BUILD_DATE     "16 May 2026"
+#define EA_VERSION        "1.23"
+#define EA_BUILD_DATE     "17 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
 #include "GlobalState.mqh"
@@ -125,6 +125,8 @@ struct DashboardParams
    bool   touchMidOn;
    int    unfilledCandles;
    bool   unfilledCandlesOn;
+   int    afterFilledCandles;
+   bool   afterFilledCandlesOn;
    int    afterMinutes;
    bool   afterMinutesOn;
    bool   ema1On;
@@ -166,7 +168,7 @@ struct DashboardParams
       utcOffset         = -4;
       timeframe         = PERIOD_M2;
       slPoints          = 1500;
-      tpPoints          = 1500;
+      tpPoints          = 15000;
       slCandle          = false;
       entryBufferPoints = 5;
       riskPercent       = 1.0;
@@ -186,6 +188,8 @@ struct DashboardParams
       touchMidOn        = true;
       unfilledCandles   = 2;
       unfilledCandlesOn = false;
+      afterFilledCandles = 5;
+      afterFilledCandlesOn = true;
       afterMinutes      = 60;
       afterMinutesOn    = true;
       ema1On            = false;
