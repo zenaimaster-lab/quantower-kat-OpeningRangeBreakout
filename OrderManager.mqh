@@ -167,13 +167,13 @@ void COrderManager::HandleWaitBreak(const DashboardParams &params)
    {
       m_breakDir = 1;
       m_state = ORB_WAIT_RETEST;
-      PrintFormat("[%s] Breakout UP detected. Waiting for retest.", EnumToString(tf));
+      PrintFormat("[%s] Break Out detected. Waiting for retest.", EnumToString(tf));
    }
    else if(c < m_rangeLow)
    {
       m_breakDir = -1;
       m_state = ORB_WAIT_RETEST;
-      PrintFormat("[%s] Breakout DOWN detected. Waiting for retest.", EnumToString(tf));
+      PrintFormat("[%s] Break Down detected. Waiting for retest.", EnumToString(tf));
    }
 }
 
