@@ -430,13 +430,13 @@ void COrderManager::CheckAutoFlatten(const DashboardParams &p, datetime nyOpenTi
       }
    }
    
-   // 1.b Filled candles (for open positions only)
-   if(!shouldFlatten && p.afterFilledCandlesOn && hasPosition && earliestPosTime > 0)
+   // 1.b After filled minutes (close position if TP not hit within X minutes)
+   if(!shouldFlatten && p.afterFilledMinutesOn && hasPosition && earliestPosTime > 0)
    {
-      if(iBarShift(symbol, p.timeframe, earliestPosTime) >= p.afterFilledCandles)
+      if(now - earliestPosTime >= p.afterFilledMinutes * 60)
       {
          shouldFlatten = true;
-         reason = "Filled candles > " + IntegerToString(p.afterFilledCandles);
+         reason = "No TP after " + IntegerToString(p.afterFilledMinutes) + " min";
       }
    }
 

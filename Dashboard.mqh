@@ -381,8 +381,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    MB(m_btnFem3,"bFm3","",cx+325,cy,24,CTRL_HEIGHT,CLR_BTN_OFF); cy+=CTRL_HEIGHT+SEC_PAD;
    cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
-   // ── AUTO FLATTEN ALL ORDER ──
-   ML(m_lblExpTag,"lExT","AUTO FLATTEN ALL ORDER",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8; // Thêm khoảng trống dưới title
+   // ── AUTO FLATTEN/CANCEL ALL ORDERS ──
+   ML(m_lblExpTag,"lExT","AUTO FLATTEN/CANCEL ALL ORDERS",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8; // Thêm khoảng trống dưới title
    ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtUfmPts,"eUfm","8000",cx+155,cy,50,CTRL_HEIGHT);
    MB(m_btnUfm,"bUfm","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
@@ -391,7 +391,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtAuc,"eAuc","2",cx+155,cy,50,CTRL_HEIGHT);
    MB(m_btnAuc,"bAuc","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblAfcTag,"lAfc","After filled candles",cx,cy,150,CTRL_HEIGHT);
+   ML(m_lblAfcTag,"lAfc","After filled (min)",cx,cy,150,CTRL_HEIGHT);
    ME(m_edtAfc,"eAfc","5",cx+155,cy,50,CTRL_HEIGHT);
    MB(m_btnAfc,"bAfc","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
    ML(m_lblEma1Tag,"lEm1","Unfavor EMA",cx,cy,95,CTRL_HEIGHT);
@@ -597,8 +597,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.touchMidOn=m_tmrEnabled;
    p.unfilledCandlesOn=m_aucEnabled;
    p.unfilledCandles=(int)StringToInteger(m_edtAuc.Text());
-   p.afterFilledCandlesOn=m_afcEnabled;
-   p.afterFilledCandles=(int)StringToInteger(m_edtAfc.Text());
+   p.afterFilledMinutesOn=m_afcEnabled;
+   p.afterFilledMinutes=(int)StringToInteger(m_edtAfc.Text());
    p.afterMinutesOn=m_aamEnabled;
    p.afterMinutes=(int)StringToInteger(m_edtAam.Text());
    p.ema1On=m_ema1Enabled;
@@ -674,8 +674,8 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_tmrEnabled=p.touchMidOn; UpdTmr();
    m_aucEnabled=p.unfilledCandlesOn; UpdAuc();
    m_edtAuc.Text(IntegerToString(p.unfilledCandles));
-   m_afcEnabled=p.afterFilledCandlesOn; UpdAfc();
-   m_edtAfc.Text(IntegerToString(p.afterFilledCandles));
+   m_afcEnabled=p.afterFilledMinutesOn; UpdAfc();
+   m_edtAfc.Text(IntegerToString(p.afterFilledMinutes));
    m_aamEnabled=p.afterMinutesOn; UpdAam();
    m_edtAam.Text(IntegerToString(p.afterMinutes));
    m_ema1Enabled=p.ema1On; UpdEma1();
