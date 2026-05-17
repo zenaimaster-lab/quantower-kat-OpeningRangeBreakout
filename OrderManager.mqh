@@ -213,11 +213,14 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
       return;
    }
 
-   // Skip if any position already open for this magic/symbol
+   // Skip if a position already open for this SAME strategy (filter by comment prefix)
    for(int i = PositionsTotal() - 1; i >= 0; i--)
    {
       ulong ticket = PositionGetTicket(i);
-      if(PositionGetInteger(POSITION_MAGIC) == Magic() && PositionGetString(POSITION_SYMBOL) == symbol)
+      if(ticket <= 0) continue;
+      if(PositionGetInteger(POSITION_MAGIC) != Magic()) continue;
+      if(PositionGetString(POSITION_SYMBOL) != symbol) continue;
+      if(StringFind(PositionGetString(POSITION_COMMENT), params.comment) >= 0)
          return;
    }
 

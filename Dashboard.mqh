@@ -1156,7 +1156,7 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
    CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
    CtrlHide(m_lblLastEntrySec);
-   for(int ei=0; ei<6; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
+   for(int ei=0; ei<9; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
    CtrlHide(m_lblTotalPlSec);
    CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
    CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
