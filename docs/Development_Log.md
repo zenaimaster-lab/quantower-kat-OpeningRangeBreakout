@@ -1,5 +1,23 @@
 # Development and Fix Log
 
+## 2026-05-18_NYO_Time_Sync_Fix.md
+
+# Session Diary: NYO Time Sync Fix
+**Date:** 18 May 2026
+**Version:** 1.41
+
+## Objective
+Fix a critical bug where the EA calculates the NY Open time incorrectly due to sub-second tick delays between `TimeTradeServer()` and `TimeGMT()`, causing the Opening Range Breakout lines to draw very early (e.g., 9:00 or 9:15 NYT).
+
+## Changes Made
+- **TimeManager.mqh**:
+  - Updated `GetBrokerGMTOffset()` to round the computed broker offset to the nearest 15 minutes (900 seconds). This eliminates 1-2 second inaccuracies caused by MT5 tick delays.
+  - Previously, an offset of 10799 seconds instead of 10800 caused `m_nyoTime` to be computed as 15:29:59 instead of 15:30:00. This caused `iBarShift` to match the *preceding* candle (e.g., the 15:15 candle for M15, or 15:00 for H1/M30), completely misaligning the range calculation.
+- **mt5-kat-ORB.mq5**:
+  - Fixed misleading tooltip on the `InpNyHour` parameter from `(Broker Time)` to `(NY Time)` to prevent user confusion.
+- **Defines.mqh**:
+  - Bumped `EA_VERSION` to 1.41 and updated `EA_BUILD_DATE` to 18 May 2026.
+
 
 ## 2026-05-07_18_15_UI_Removal.md
 

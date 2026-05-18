@@ -1,7 +1,7 @@
-# Graph Report - mt5-kat-OpenRangeBreakout  (2026-05-08)
+# Graph Report - mt5-kat-OpeningRangeBreakout  (2026-05-19)
 
 ## Corpus Check
-- 1 files · ~5,065 words
+- 1 files · ~7,437 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `401005d5`
+- Built from commit: `6dafac94`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -67,7 +67,7 @@ Nodes (17): CalcLotSize(), CalcRiskRewardInfo(), CRiskManager, GetLotStep(), Get
 
 ### Community 2 - "Community 2"
 Cohesion: 0.12
-Nodes (4): CtrlShowBtn(), OnA1(), OnMaxLToggle(), UpdMaxL()
+Nodes (4): CtrlShowBtn(), OnA1(), OnBigMToggle(), UpdBigM()
 
 ### Community 3 - "Community 3"
 Cohesion: 0.12
@@ -107,7 +107,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **Why does `ProcessORB()` connect `Community 4` to `Community 1`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `HandleDirectClick()` connect `Community 0` to `Community 2`, `Community 9`, `Community 10`, `Community 11`, `Community 12`?**
+- **Why does `HandleDirectClick()` connect `Community 0` to `Community 2`, `Community 9`, `Community 11`, `Community 12`, `Community 13`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **Are the 6 inferred relationships involving `GetPoint()` (e.g. with `ProcessORB()` and `CheckAutoCancel()`) actually correct?**
   _`GetPoint()` has 6 INFERRED edges - model-reasoned connections that need verification._

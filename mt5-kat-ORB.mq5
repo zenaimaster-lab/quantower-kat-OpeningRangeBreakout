@@ -15,7 +15,7 @@ input int             InpMagicNumber       = 202605011;   // Magic Number
 input ENUM_EA_MODE    InpEaMode            = EA_AUTO;     // EA Operating Mode
 
 input group "------------- SCHEDULE -------------"
-input int             InpNyHour            = 9;           // NY Open Hour (Broker Time)
+input int             InpNyHour            = 9;           // NY Open Hour (NY Time)
 input int             InpNyMinute          = 30;          // NY Open Minute
 input int             InpNySecond          = 0;           // NY Open Second
 input int             InpUtcOffset         = -4;          // Broker UTC Offset (NY Time)

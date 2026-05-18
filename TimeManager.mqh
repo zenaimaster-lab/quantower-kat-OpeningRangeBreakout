@@ -78,7 +78,16 @@ int CTimeManager::GetBrokerGMTOffset()
    // Positive = server ahead of GMT (e.g., GMT+2 returns 7200)
    datetime serverTime = TimeTradeServer();
    datetime gmtTime    = TimeGMT();
-   return (int)(serverTime - gmtTime);
+   int offset = (int)(serverTime - gmtTime);
+   
+   // Round to nearest 15 minutes (900 seconds) to prevent tick-delay inaccuracies
+   // that could cause the calculated time to be a few seconds early (e.g. 15:29:59)
+   int remainder = offset % 900;
+   if(remainder > 450) offset += (900 - remainder);
+   else if(remainder < -450) offset -= (900 + remainder);
+   else offset -= remainder;
+   
+   return offset;
 }
 
 //+------------------------------------------------------------------+

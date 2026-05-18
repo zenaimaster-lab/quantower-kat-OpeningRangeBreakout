@@ -1,82 +1,22 @@
 {
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\deploy.ps1": {
-    "mtime": 1778229813.1266263,
-    "hash": "1c32db45cd66c0309036addf29dc3fb9"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpeningRangeBreakout\\deploy.ps1": {
+    "mtime": 1778742168.0215797,
+    "hash": "1b039cb8230f66c716e70b7e75955822"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\agents.md": {
-    "mtime": 1778229650.6662626,
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpeningRangeBreakout\\agents.md": {
+    "mtime": 1778584068.0640037,
     "hash": "0352090b78ce91c8dacb4dfea5066665"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\README.md": {
-    "mtime": 1778229650.6652687,
-    "hash": "9dd375c9a09f1d9d36238fde8564e72f"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpeningRangeBreakout\\README.md": {
+    "mtime": 1778997492.437041,
+    "hash": "b4cb4799815e31404e12bf1bb09d8dc5"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_18_15_UI_Removal.md": {
-    "mtime": 1778229650.6662626,
-    "hash": "46200385fd028cb3dbef50c0a31aa9bd"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpeningRangeBreakout\\docs\\Architecture.md": {
+    "mtime": 1778997494.455084,
+    "hash": "324dcd8d77c61e3eb7d4cd4158974619"
   },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_18_25_NewsManager_Simplification.md": {
-    "mtime": 1778229650.6662626,
-    "hash": "52a962ec05b99d8b2d22f077b13691d6"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_18_33_UI_Layout_and_CandleSrc_Cleanup.md": {
-    "mtime": 1778229650.6672595,
-    "hash": "c4976dd6b6734f525066f5e78d898e52"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Add_ENTRY_Section.md": {
-    "mtime": 1778229650.6672595,
-    "hash": "c2fc206b802e66d405b896064d9fc6af"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Add_STATS_Tab.md": {
-    "mtime": 1778229650.6672595,
-    "hash": "32378950070239f70fd0b80595bd2c6b"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Adjust_Panel_Height.md": {
-    "mtime": 1778229650.6672595,
-    "hash": "d1eb6fd29981fe59602efdaab0f90c84"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Cleanup_AutoRun.md": {
-    "mtime": 1778229650.6672595,
-    "hash": "957520038f918d229241c9d27c6aa7d8"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Layout_Workflow_Fixes.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "f376aee7f96e2cc55ed7e94ab6fd920f"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Optimize_Tab_Order.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "2baae161948627a40b145251b9e3374b"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_ORB_Break_Retest_Refactor.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "da2f18b8227653f88cae440d50d493f9"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_ORB_Stats_Continue.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "0f64dc05cc2c62509bb51559fbc85ee6"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_session2.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "2713e0541c3a9cc8715a1a7332278729"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Trailing_Trigger_Layout.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "90b9766caf53d6f68a34755054fbad77"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-07_Trailing_Trigger_Layout_Fix.md": {
-    "mtime": 1778229650.6683183,
-    "hash": "bb79fcfa75043dee19bfbb801765cbb3"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-08_Dashboard_FavorEMA_Refinement.md": {
-    "mtime": 1778229650.6693182,
-    "hash": "e9d5c3f310f84383a876ddfac97dd2ed"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\diary\\2026-05-08_Legacy_Cleanup_Logic_Audit.md": {
-    "mtime": 1778229650.6693182,
-    "hash": "e81b24ae9ad41ae46477ac03ebb369a5"
-  },
-  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpenRangeBreakout\\docs\\Architecture.md": {
-    "mtime": 1778229650.6693182,
-    "hash": "0f25ceb0b90cc29475317ed5d275f827"
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\mt5-kat-OpeningRangeBreakout\\docs\\Development_Log.md": {
+    "mtime": 1778997573.1949322,
+    "hash": "5193a7f76c1a4243227e3c9b052443d0"
   }
 }
