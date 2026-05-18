@@ -738,22 +738,22 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
    string nameH = "ORB_H_" + EnumToString(tf);
    string nameL = "ORB_L_" + EnumToString(tf);
    datetime endTime = cTime + 3600;
-   // M15: center text, M2: right end, M5: left end
+   // M15: center text, 5m: right end, 2m: left end
    datetime txtTime;
    ENUM_ANCHOR_POINT anchorH, anchorL;
    if(tf == PERIOD_M15)
    {
       txtTime = cTime + (endTime - cTime) / 2;
-      anchorH = ANCHOR_CENTER;
-      anchorL = ANCHOR_CENTER;
+      anchorH = ANCHOR_LOWER; // Text above line
+      anchorL = ANCHOR_UPPER; // Text below line
    }
-   else if(tf == PERIOD_M2)
+   else if(tf == PERIOD_M5)
    {
       txtTime = endTime;
       anchorH = ANCHOR_LEFT_LOWER;
       anchorL = ANCHOR_LEFT_UPPER;
    }
-   else
+   else // M2
    {
       txtTime = cTime;
       anchorH = ANCHOR_RIGHT_LOWER;
