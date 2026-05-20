@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.45"
+#define EA_VERSION        "1.47"
 #define EA_BUILD_DATE     "20 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -15,7 +15,7 @@
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1370
+#define PANEL_HEIGHT      1180
 #define PANEL_X           20
 #define PANEL_Y           20
 
@@ -58,7 +58,6 @@
 #define CLR_MONEY_GREEN   C'100,220,140'
 #define CLR_MONEY_RED     C'240,90,90'
 #define CLR_FLATTEN       C'200,50,50'
-#define CLR_PRESET        C'70,50,120'
 #define CLR_PURPLE        C'110,40,160'
 #define CLR_NEWS_RED      C'255,70,70'
 #define CLR_MKT_OPEN      C'40,220,120'
@@ -86,13 +85,6 @@ enum ENUM_TRAIL_MODE
    TM_CANDLE_3  = 4    // Trail SL to candle[3]
 };
 
-
-// Command queue enum
-enum ENUM_DASHBOARD_CMD
-{
-   CMD_NONE = 0,
-   CMD_PRESET
-};
 
 //--- Data structs
 struct DashboardParams

@@ -109,18 +109,15 @@ private:
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
    bool m_fem1Enabled, m_fem2Enabled, m_fem3Enabled;
    bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum, m_rtcOn;
-   int m_idxSepAfterPresets;
    int m_statusSepStart, m_statusSepEnd;
    int m_utcOff;
    ENUM_ORDER_MODE m_om;
    ENUM_TRAIL_MODE m_tm;
    bool m_dirty;
-   ENUM_DASHBOARD_CMD m_cmdQueue[16];   // v2.0: command queue
-   int m_cmdCount;                      // v2.0: commands in queue
    uint m_lastClickMs;                  // v0.75: debounce — last click timestamp
    string m_lastClickName;              // v0.75: debounce — last clicked object
    void MarkDirty() { m_dirty = true; } // v2.0: called by any UI interaction
-   void PushCmd(ENUM_DASHBOARD_CMD cmd) { if(m_cmdCount < 16) { m_cmdQueue[m_cmdCount] = cmd; m_cmdCount++; } }public:
+public:
    CDashboard();
   ~CDashboard() {}
    bool CreatePanel(long chart,string name,int subwin,int x,int y,int w,int h);
@@ -154,10 +151,7 @@ private:
    void Update15mPL(double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth);
    string FormatMoneyRound(double value);
    // v2.0: Command queue API (replaces 13+ boolean flags)
-   bool HasCommand() const { return m_cmdCount > 0; }
-   ENUM_DASHBOARD_CMD PopCommand() { if(m_cmdCount <= 0) return CMD_NONE; m_cmdCount--; return m_cmdQueue[m_cmdCount]; }
    void MarkDirtyPublic() { MarkDirty(); }
-   void PushCmdPublic(ENUM_DASHBOARD_CMD cmd) { PushCmd(cmd); }
 private:
    bool ML(CEdit &l,string n,string t,int x,int y,int w,int h,color c=CLR_TEXT,int fs=FONT_SIZE);
    bool ME(CEdit &e,string n,string t,int x,int y,int w,int h);
@@ -207,7 +201,7 @@ CDashboard::CDashboard() { m_rMode=true; m_slCandle=false; m_om=MODE_BOTH; m_tm=
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
    m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
    m_contAfter1st=true; m_maxSuccessOn=true; m_maxLossOn=true; m_bigMomentum=false; m_rtcOn=true;
-   m_dirty=true; m_cmdCount=0;
+   m_dirty=true;
 
    m_lastClickMs=0; m_lastClickName=""; }
 

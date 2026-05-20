@@ -42,59 +42,6 @@ input int             InpBeActivatePts     = 200;         // Breakeven Activatio
 input int             InpBeLockPts         = 50;          // Breakeven Lock Profit (Points)
 input bool            InpBeEnabled         = false;       // Enable Breakeven
 
-input group "------------- AUTO CANCEL -------------"
-input bool            InpExpireEnabled     = false;       // Enable Expiration by Candles
-input int             InpExpireCandles     = 2;           // Cancel after N Unfilled Candles
-
-input int             Inp5A_TrStep         = 1;           // Set 5A: Trail Step
-input ENUM_TIMEFRAMES Inp5A_TF             = PERIOD_M5;   // Set 5A: Timeframe
-
-sinput string         sep_preset_5B        = "---------- SET 5B ----------"; // ---------- SET 5B ----------
-input int             Inp5B_SL             = 300;         // Set 5B: Stop Loss
-input int             Inp5B_TP             = 600;         // Set 5B: Take Profit
-input double          Inp5B_Risk           = 0.5;         // Set 5B: Risk %
-input int             Inp5B_TrTrig         = 20;          // Set 5B: Trail Trigger
-input int             Inp5B_TrDist         = 15;          // Set 5B: Trail Distance
-input int             Inp5B_TrStep         = 3;           // Set 5B: Trail Step
-input ENUM_TIMEFRAMES Inp5B_TF             = PERIOD_M5;   // Set 5B: Timeframe
-
-sinput string         sep_preset_5C        = "---------- SET 5C ----------"; // ---------- SET 5C ----------
-input int             Inp5C_SL             = 800;         // Set 5C: Stop Loss
-input int             Inp5C_TP             = 1600;        // Set 5C: Take Profit
-input double          Inp5C_Risk           = 2.0;         // Set 5C: Risk %
-input int             Inp5C_TrTrig         = 50;          // Set 5C: Trail Trigger
-input int             Inp5C_TrDist         = 30;          // Set 5C: Trail Distance
-input int             Inp5C_TrStep         = 10;          // Set 5C: Trail Step
-input ENUM_TIMEFRAMES Inp5C_TF             = PERIOD_M5;   // Set 5C: Timeframe
-
-sinput string         sep_preset_15A       = "---------- SET 15A ----------"; // ---------- SET 15A ----------
-input int             Inp15A_SL             = 1500;        // Set 15A: Stop Loss
-input int             Inp15A_TP             = 15000;       // Set 15A: Take Profit
-input double          Inp15A_Risk           = 1.0;         // Set 15A: Risk %
-input int             Inp15A_TrTrig         = 1500;        // Set 15A: Trail Trigger
-input int             Inp15A_TrDist         = 500;         // Set 15A: Trail Distance
-input int             Inp15A_TrStep         = 1;           // Set 15A: Trail Step
-input ENUM_TIMEFRAMES Inp15A_TF             = PERIOD_M15;  // Set 15A: Timeframe
-
-sinput string         sep_preset_15B       = "---------- SET 15B ----------"; // ---------- SET 15B ----------
-input int             Inp15B_SL             = 300;         // Set 15B: Stop Loss
-input int             Inp15B_TP             = 600;         // Set 15B: Take Profit
-input double          Inp15B_Risk           = 0.5;         // Set 15B: Risk %
-input int             Inp15B_TrTrig         = 20;          // Set 15B: Trail Trigger
-input int             Inp15B_TrDist         = 15;          // Set 15B: Trail Distance
-input int             Inp15B_TrStep         = 3;           // Set 15B: Trail Step
-input ENUM_TIMEFRAMES Inp15B_TF             = PERIOD_M15;  // Set 15B: Timeframe
-
-sinput string         sep_preset_15C       = "---------- SET 15C ----------"; // ---------- SET 15C ----------
-input int             Inp15C_SL             = 800;         // Set 15C: Stop Loss
-input int             Inp15C_TP             = 1600;        // Set 15C: Take Profit
-input double          Inp15C_Risk           = 2.0;         // Set 15C: Risk %
-input int             Inp15C_TrTrig         = 50;          // Set 15C: Trail Trigger
-input int             Inp15C_TrDist         = 30;          // Set 15C: Trail Distance
-input int             Inp15C_TrStep         = 10;          // Set 15C: Trail Step
-input ENUM_TIMEFRAMES Inp15C_TF             = PERIOD_M15;  // Set 15C: Timeframe
-
-
 #include "Dashboard.mqh"
 #include "TimeManager.mqh"
 #include "RiskManager.mqh"
