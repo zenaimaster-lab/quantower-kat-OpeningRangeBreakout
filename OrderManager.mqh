@@ -431,15 +431,15 @@ string COrderManager::GetStatus() const
 {
    switch(m_state)
    {
-      case ORB_WAIT_NYO:    return "Wait NYO";
-      case ORB_WAIT_CANDLE: return "Wait Range";
-      case ORB_WAIT_BREAK:  return "Wait Break";
-      case ORB_WAIT_RETEST: return (m_breakDir == 1) ? "Break ▲" : "Break ▼";
-      case ORB_WAIT_ENTRY:  return "Wait Entry";
-      case ORB_STOPPED:     return "Stop Trading";
-      case ORB_DONE:        return "Done";
+      case ORB_WAIT_NYO:    return "Awaiting NY Open";
+      case ORB_WAIT_CANDLE: return "Defining Range";
+      case ORB_WAIT_BREAK:  return "Scanning Breakout";
+      case ORB_WAIT_RETEST: return (m_breakDir == 1) ? "Bullish Break ▲" : "Bearish Break ▼";
+      case ORB_WAIT_ENTRY:  return "Awaiting Retest";
+      case ORB_STOPPED:     return "Trading Paused";
+      case ORB_DONE:        return "Session Complete";
    }
-   return "Idle";
+   return "Inactive";
 }
 
 color COrderManager::GetStatusColor() const

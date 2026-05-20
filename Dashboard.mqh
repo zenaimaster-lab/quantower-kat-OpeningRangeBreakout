@@ -485,13 +485,13 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    
    ML(m_lblOrdersSec,"lOrS","",cx,cyStatus,1,rowH);
    ML(m_lbl2mStTag,"l2sT","2m:",cx,cyStatus,28,rowH,CLR_TEXT);
-   ML(m_lbl2mStVal,"v2sV","OFF",cx+28,cyStatus,ordColW-28,rowH,CLR_TEXT_DIM);
+   ML(m_lbl2mStVal,"v2sV","Inactive",cx+28,cyStatus,ordColW-28,rowH,CLR_TEXT_DIM);
    ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cyStatus,28,rowH,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","OFF",cx+ordColW+28,cyStatus,ordColW-28,rowH,CLR_TEXT_DIM);
+   ML(m_lbl5mStVal,"v5sV","Inactive",cx+ordColW+28,cyStatus,ordColW-28,rowH,CLR_TEXT_DIM);
    ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cyStatus,32,rowH,CLR_TEXT);
-   ML(m_lbl15mStVal,"v15sV","OFF",cx+ordColW*2+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
+   ML(m_lbl15mStVal,"v15sV","Inactive",cx+ordColW*2+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
    ML(m_lbl30mStTag,"l30sT","30m:",cx+ordColW*3,cyStatus,32,rowH,CLR_TEXT);
-   ML(m_lbl30mStVal,"v30sV","OFF",cx+ordColW*3+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
+   ML(m_lbl30mStVal,"v30sV","Inactive",cx+ordColW*3+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
    
    cyStatus += rowH + 15; // Centered separator
    MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 10

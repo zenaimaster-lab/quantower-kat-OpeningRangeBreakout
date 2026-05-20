@@ -217,7 +217,7 @@ string CTimeManager::GetCountdownString(const DashboardParams &params)
    
    // Weekend in NY
    if(nyDt.day_of_week == 0 || nyDt.day_of_week == 6) {
-       return "HAPPY WEEKEND!";
+       return "Happy Weekend! ✨";
    }
    
    // Create today's NYO time in NY timezone
@@ -243,12 +243,12 @@ string CTimeManager::GetCountdownString(const DashboardParams &params)
    int windowSecs = params.afterMinutesOn ? (params.afterMinutes * 60) : (390 * 60);
    
    if (elapsedSecs <= windowSecs) {
-       return "TRADING WINDOW";
+       return "Trading Session Active";
    }
    
    // After Trading Window
    if (nyDt.day_of_week == 5) {
-       return "HAPPY WEEKEND!";
+       return "Happy Weekend! ✨";
    }
    
    // Calculate countdown to NEXT business day's NYO (Tomorrow)

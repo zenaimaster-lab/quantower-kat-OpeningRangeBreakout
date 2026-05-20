@@ -827,43 +827,36 @@ string FormatAttemptString(const CTradeAttempt &attempt)
 {
    if(attempt.placeTime == 0) return "";
    
-   string entryReason = attempt.entryReason;
-   StringTrimLeft(entryReason);
-   StringTrimRight(entryReason);
+   string dirStr = (attempt.direction == 1) ? "Up" : "Down";
+   string tfStr = "2m";
+   if(attempt.timeframeStr == "M5") tfStr = "5m";
+   else if(attempt.timeframeStr == "M15") tfStr = "15m";
+   else if(attempt.timeframeStr == "M30") tfStr = "30m";
+   
+   string entryReason = dirStr + " " + tfStr;
+   SystemConfig cfg = g_dashboard.GetParams();
+   if(cfg.main.customRetestOn)
+   {
+      entryReason += ", retest " + IntegerToString(cfg.main.customRetestMin) + "m";
+   }
    
    if(attempt.status == "Pending")
    {
-      return entryReason + " | pending";
+      return entryReason + " | Pending";
    }
    if(attempt.status == "Active")
    {
-      return entryReason + " | active";
+      return entryReason + " | Active";
    }
    if(attempt.status == "Cancelled")
    {
-      return entryReason + " | cancelled";
+      return entryReason + " | Cancelled";
    }
    if(attempt.status == "Closed")
    {
       int scaledPts = (int)MathRound(attempt.profitPoints / 100.0);
       string sign = (scaledPts >= 0) ? "+" : "";
-      
-      if(attempt.exitReason == "failed")
-      {
-         return entryReason + " | failed " + IntegerToString(scaledPts);
-      }
-      else if(attempt.exitReason == "trailing")
-      {
-         return entryReason + " | trailing, " + sign + IntegerToString(scaledPts);
-      }
-      else if(attempt.exitReason == "TP")
-      {
-         return entryReason + " | TP, " + sign + IntegerToString(scaledPts);
-      }
-      else
-      {
-         return entryReason + " | closed, " + sign + IntegerToString(scaledPts);
-      }
+      return entryReason + " | Closed, " + sign + IntegerToString(scaledPts);
    }
    return entryReason;
 }
@@ -1332,13 +1325,13 @@ void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime n
    }
 
    // Update status lines
-   g_dashboard.Update2mStatus(active[0] ? g_runners[0].order.GetStatus() : "OFF",
+   g_dashboard.Update2mStatus(active[0] ? g_runners[0].order.GetStatus() : "Inactive",
                               active[0] ? g_runners[0].order.GetStatusColor() : CLR_TEXT_DIM);
-   g_dashboard.Update5mStatus(active[1] ? g_runners[1].order.GetStatus() : "OFF",
+   g_dashboard.Update5mStatus(active[1] ? g_runners[1].order.GetStatus() : "Inactive",
                               active[1] ? g_runners[1].order.GetStatusColor() : CLR_TEXT_DIM);
-   g_dashboard.Update15mStatus(active[2] ? g_runners[2].order.GetStatus() : "OFF",
+   g_dashboard.Update15mStatus(active[2] ? g_runners[2].order.GetStatus() : "Inactive",
                                active[2] ? g_runners[2].order.GetStatusColor() : CLR_TEXT_DIM);
-   g_dashboard.Update30mStatus(active[3] ? g_runners[3].order.GetStatus() : "OFF",
+   g_dashboard.Update30mStatus(active[3] ? g_runners[3].order.GetStatus() : "Inactive",
                                active[3] ? g_runners[3].order.GetStatusColor() : CLR_TEXT_DIM);
 }
 

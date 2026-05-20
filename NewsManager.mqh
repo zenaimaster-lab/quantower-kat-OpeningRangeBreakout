@@ -85,7 +85,7 @@ void CNewsManager::Update()
 //+------------------------------------------------------------------+
 string CNewsManager::GetNextEventString()
 {
-   if(m_nextEvent.time == 0) return "No upcoming events";
+   if(m_nextEvent.time == 0) return "No Upcoming Events";
    
    // Convert GMT event time to NY time for display
    datetime nyTime = m_nextEvent.time + m_utcOffset * 3600;
