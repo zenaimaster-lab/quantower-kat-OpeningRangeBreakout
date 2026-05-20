@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.54"
+#define EA_VERSION        "1.56"
 #define EA_BUILD_DATE     "20 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -148,6 +148,7 @@ struct DashboardParams
 
    bool   obsRange5mOn;
    bool   obsRange15mOn;
+   bool   obsPrevDayHLOn;
    bool   obsEma1On;
    int    obsEma1Period;
    bool   obsEma2On;
@@ -218,13 +219,14 @@ struct DashboardParams
       favorEma3Period   = 34;
       obsRange5mOn      = true;
       obsRange15mOn     = true;
+      obsPrevDayHLOn    = true;
       obsEma1On         = true;
       obsEma1Period     = 250;
       obsEma2On         = true;
       obsEma2Period     = 255;
       obsEma3On         = true;
       obsEma3Period     = 34;
-      obsMaxDist        = 2000;
+      obsMaxDist        = 1600;
       comment           = "orb-trade";
       isActive          = true;
       tfIndex           = 0;

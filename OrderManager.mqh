@@ -847,6 +847,28 @@ bool COrderManager::CheckObstacles(const DashboardParams &p, double price, strin
       }
    }
 
+   // Previous Day H/L Obstacle
+   if(p.obsPrevDayHLOn)
+   {
+      double prevHigh = iHigh(symbol, PERIOD_D1, 1);
+      double prevLow = iLow(symbol, PERIOD_D1, 1);
+      if(prevHigh > 0 && prevLow > 0)
+      {
+         double distH = MathAbs(price - prevHigh) / point;
+         double distL = MathAbs(price - prevLow) / point;
+         if(distH < p.obsMaxDist)
+         {
+            outReason = "Prev Day High obstacle (" + IntegerToString((int)MathRound(distH)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+         if(distL < p.obsMaxDist)
+         {
+            outReason = "Prev Day Low obstacle (" + IntegerToString((int)MathRound(distL)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
    // 3. EMA1 M2 Obstacle
    if(p.obsEma1On && p.obsEma1Period > 0)
    {
