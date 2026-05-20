@@ -209,6 +209,10 @@ void OnDeinit(const int reason)
 {
    EventKillTimer();
    ObjectDelete(0, BE_LINE_NAME);
+   ObjectDelete(0, "OB_PREV_DAY_HIGH");
+   ObjectDelete(0, "OB_PREV_DAY_LOW");
+   ObjectDelete(0, "OB_DAY_VWAP");
+   ObjectDelete(0, "OB_WEEK_VWAP");
    g_dashboard.Destroy(reason);
 }
 
@@ -960,6 +964,163 @@ void DrawNYOLines(int utcOffset)
 }
 
 //+------------------------------------------------------------------+
+//| Draw Day/Week VWAP and Prev Day High/Low lines on the chart      |
+//+------------------------------------------------------------------+
+void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
+{
+   if(sym == "") return;
+   
+   double point = SymbolInfoDouble(sym, SYMBOL_POINT);
+   if(point <= 0) return;
+
+   // Previous Day H/L
+   if(cfg.main.obsPrevDayHLOn)
+   {
+      double prevHigh = iHigh(sym, PERIOD_D1, 1);
+      double prevLow = iLow(sym, PERIOD_D1, 1);
+      datetime dayStart = iTime(sym, PERIOD_D1, 0);
+      if(dayStart == 0)
+      {
+         MqlDateTime dt;
+         TimeToStruct(TimeCurrent(), dt);
+         dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
+      }
+      
+      if(prevHigh > 0 && prevLow > 0)
+      {
+         datetime endTime = TimeCurrent() + 7200; // extend a bit to the right
+         
+         // Prev Day High
+         string namePDH = "OB_PREV_DAY_HIGH";
+         if(ObjectFind(0, namePDH) < 0)
+         {
+            ObjectCreate(0, namePDH, OBJ_TREND, 0, dayStart, prevHigh, endTime, prevHigh);
+            ObjectSetInteger(0, namePDH, OBJPROP_COLOR, clrMediumSlateBlue);
+            ObjectSetInteger(0, namePDH, OBJPROP_STYLE, STYLE_DOT);
+            ObjectSetInteger(0, namePDH, OBJPROP_WIDTH, 1);
+            ObjectSetInteger(0, namePDH, OBJPROP_RAY_RIGHT, false);
+            ObjectSetInteger(0, namePDH, OBJPROP_BACK, true);
+            ObjectSetInteger(0, namePDH, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, namePDH, OBJPROP_PRICE, 0, prevHigh);
+            ObjectSetDouble(0, namePDH, OBJPROP_PRICE, 1, prevHigh);
+            ObjectSetInteger(0, namePDH, OBJPROP_TIME, 0, dayStart);
+            ObjectSetInteger(0, namePDH, OBJPROP_TIME, 1, endTime);
+         }
+         
+         // Prev Day Low
+         string namePDL = "OB_PREV_DAY_LOW";
+         if(ObjectFind(0, namePDL) < 0)
+         {
+            ObjectCreate(0, namePDL, OBJ_TREND, 0, dayStart, prevLow, endTime, prevLow);
+            ObjectSetInteger(0, namePDL, OBJPROP_COLOR, clrMediumSlateBlue);
+            ObjectSetInteger(0, namePDL, OBJPROP_STYLE, STYLE_DOT);
+            ObjectSetInteger(0, namePDL, OBJPROP_WIDTH, 1);
+            ObjectSetInteger(0, namePDL, OBJPROP_RAY_RIGHT, false);
+            ObjectSetInteger(0, namePDL, OBJPROP_BACK, true);
+            ObjectSetInteger(0, namePDL, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, namePDL, OBJPROP_PRICE, 0, prevLow);
+            ObjectSetDouble(0, namePDL, OBJPROP_PRICE, 1, prevLow);
+            ObjectSetInteger(0, namePDL, OBJPROP_TIME, 0, dayStart);
+            ObjectSetInteger(0, namePDL, OBJPROP_TIME, 1, endTime);
+         }
+      }
+   }
+   else
+   {
+      ObjectDelete(0, "OB_PREV_DAY_HIGH");
+      ObjectDelete(0, "OB_PREV_DAY_LOW");
+   }
+
+   // Day VWAP
+   if(cfg.main.obsDayVwapOn)
+   {
+      double dVwapVal = g_runners[0].order.GetDayVwapValue(sym, PERIOD_M1);
+      datetime dayStart = iTime(sym, PERIOD_D1, 0);
+      if(dayStart == 0)
+      {
+         MqlDateTime dt;
+         TimeToStruct(TimeCurrent(), dt);
+         dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
+      }
+      
+      if(dVwapVal > 0)
+      {
+         datetime endTime = TimeCurrent() + 7200;
+         string nameDV = "OB_DAY_VWAP";
+         if(ObjectFind(0, nameDV) < 0)
+         {
+            ObjectCreate(0, nameDV, OBJ_TREND, 0, dayStart, dVwapVal, endTime, dVwapVal);
+            ObjectSetInteger(0, nameDV, OBJPROP_COLOR, clrGold);
+            ObjectSetInteger(0, nameDV, OBJPROP_STYLE, STYLE_DOT);
+            ObjectSetInteger(0, nameDV, OBJPROP_WIDTH, 1);
+            ObjectSetInteger(0, nameDV, OBJPROP_RAY_RIGHT, false);
+            ObjectSetInteger(0, nameDV, OBJPROP_BACK, true);
+            ObjectSetInteger(0, nameDV, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, nameDV, OBJPROP_PRICE, 0, dVwapVal);
+            ObjectSetDouble(0, nameDV, OBJPROP_PRICE, 1, dVwapVal);
+            ObjectSetInteger(0, nameDV, OBJPROP_TIME, 0, dayStart);
+            ObjectSetInteger(0, nameDV, OBJPROP_TIME, 1, endTime);
+         }
+      }
+   }
+   else
+   {
+      ObjectDelete(0, "OB_DAY_VWAP");
+   }
+
+   // Week VWAP
+   if(cfg.main.obsWeekVwapOn)
+   {
+      double wVwapVal = g_runners[0].order.GetWeekVwapValue(sym, PERIOD_M1);
+      datetime weekStart = iTime(sym, PERIOD_W1, 0);
+      if(weekStart == 0)
+      {
+         MqlDateTime dt;
+         TimeToStruct(TimeCurrent(), dt);
+         int daysToSubtract = (dt.day_of_week == 0) ? 6 : (dt.day_of_week - 1);
+         datetime dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
+         weekStart = dayStart - (daysToSubtract * 86400);
+      }
+      
+      if(wVwapVal > 0)
+      {
+         datetime endTime = TimeCurrent() + 7200;
+         string nameWV = "OB_WEEK_VWAP";
+         if(ObjectFind(0, nameWV) < 0)
+         {
+            ObjectCreate(0, nameWV, OBJ_TREND, 0, weekStart, wVwapVal, endTime, wVwapVal);
+            ObjectSetInteger(0, nameWV, OBJPROP_COLOR, clrMagenta);
+            ObjectSetInteger(0, nameWV, OBJPROP_STYLE, STYLE_DOT);
+            ObjectSetInteger(0, nameWV, OBJPROP_WIDTH, 1);
+            ObjectSetInteger(0, nameWV, OBJPROP_RAY_RIGHT, false);
+            ObjectSetInteger(0, nameWV, OBJPROP_BACK, true);
+            ObjectSetInteger(0, nameWV, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, nameWV, OBJPROP_PRICE, 0, wVwapVal);
+            ObjectSetDouble(0, nameWV, OBJPROP_PRICE, 1, wVwapVal);
+            ObjectSetInteger(0, nameWV, OBJPROP_TIME, 0, weekStart);
+            ObjectSetInteger(0, nameWV, OBJPROP_TIME, 1, endTime);
+         }
+      }
+   }
+   else
+   {
+      ObjectDelete(0, "OB_WEEK_VWAP");
+   }
+}
+
+//+------------------------------------------------------------------+
 //| Update dashboard risk / reward / lot section                       |
 //+------------------------------------------------------------------+
 double UpdateDashboardRisk(const DashboardParams &p)
@@ -1098,6 +1259,8 @@ void OnTimer()
 
    DashboardParams p = cfg.main;
    string sym = (p.symbol != "") ? p.symbol : Symbol();
+
+   DrawVwapAndPrevDayHL(cfg, sym);
 
    g_dashboard.UpdateNYClock(g_timeMgr.GetNYTimeString(p.utcOffset),
                              g_timeMgr.GetNYAmPmString(p.utcOffset),

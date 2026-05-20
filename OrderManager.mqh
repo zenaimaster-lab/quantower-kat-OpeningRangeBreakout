@@ -59,8 +59,6 @@ private:
    bool              GetRangeLines(string symbol, ENUM_TIMEFRAMES tf, datetime nyoTime, double &high, double &low);
    double            GetM2EmaValue(string sym, int period);
    double            CalculateVWAP(string symbol, ENUM_TIMEFRAMES tf, int startShift);
-   double            GetDayVwapValue(string sym, ENUM_TIMEFRAMES tf);
-   double            GetWeekVwapValue(string sym, ENUM_TIMEFRAMES tf);
 
    string            GenerateOrderTag(string prefix);
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
@@ -80,6 +78,8 @@ public:
    void              CheckAutoFlatten(const DashboardParams &params, datetime nyOpenTimeServer);
    void              FlattenAll(string symbol);
    void              CleanupLines(ENUM_TIMEFRAMES tf);
+   double            GetDayVwapValue(string sym, ENUM_TIMEFRAMES tf);
+   double            GetWeekVwapValue(string sym, ENUM_TIMEFRAMES tf);
 
    string            GetStatus() const;
    color             GetStatusColor() const;
