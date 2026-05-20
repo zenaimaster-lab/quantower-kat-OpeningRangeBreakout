@@ -961,6 +961,27 @@ bool COrderManager::CheckObstacles(const DashboardParams &p, double price, strin
       }
    }
 
+   // 2.b Range 30m Obstacle
+   if(p.obsRange30mOn)
+   {
+      double rHigh = 0, rLow = 0;
+      if(GetRangeLines(symbol, PERIOD_M30, m_nyoTime, rHigh, rLow))
+      {
+         double distH = MathAbs(price - rHigh) / point;
+         double distL = MathAbs(price - rLow) / point;
+         if(distH < p.obsMaxDist)
+         {
+            outReason = "30m Range High obstacle (" + IntegerToString((int)MathRound(distH)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+         if(distL < p.obsMaxDist)
+         {
+            outReason = "30m Range Low obstacle (" + IntegerToString((int)MathRound(distL)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
    // Previous Day H/L Obstacle
    if(p.obsPrevDayHLOn)
    {

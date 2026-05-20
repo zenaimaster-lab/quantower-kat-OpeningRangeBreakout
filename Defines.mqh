@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.66"
+#define EA_VERSION        "1.67"
 #define EA_BUILD_DATE     "21 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -149,6 +149,7 @@ struct DashboardParams
 
    bool   obsRange5mOn;
    bool   obsRange15mOn;
+   bool   obsRange30mOn;
    bool   obsPrevDayHLOn;
    bool   obsEma1On;
    int    obsEma1Period;
@@ -222,6 +223,7 @@ struct DashboardParams
       favorEma3Period   = 34;
       obsRange5mOn      = true;
       obsRange15mOn     = true;
+      obsRange30mOn     = true;
       obsPrevDayHLOn    = true;
       obsEma1On         = true;
       obsEma1Period     = 250;

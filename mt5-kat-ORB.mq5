@@ -46,6 +46,7 @@ input group "------------- OBSTACLE FILTER -------------"
 input int             InpObsMaxDist        = 1600;        // Max dist to obstacle (Points)
 input bool            InpObsRange5mOn      = true;        // Block on 5m Range obstacle
 input bool            InpObsRange15mOn     = true;        // Block on 15m Range obstacle
+input bool            InpObsRange30mOn     = true;        // Block on 30m Range obstacle
 input bool            InpObsPrevDayHLOn    = true;        // Block on Prev Day H/L obstacle
 input bool            InpObsDayVwapOn      = true;        // Block on Day VWAP obstacle
 input bool            InpObsWeekVwapOn     = true;        // Block on Week VWAP obstacle
@@ -186,7 +187,7 @@ int OnInit()
    cfg.main.beActivatePoints=InpBeActivatePts; cfg.main.beLockPoints=InpBeLockPts; cfg.main.beEnabled=InpBeEnabled;
 
    cfg.main.obsMaxDist=InpObsMaxDist;
-   cfg.main.obsRange5mOn=InpObsRange5mOn; cfg.main.obsRange15mOn=InpObsRange15mOn;
+   cfg.main.obsRange5mOn=InpObsRange5mOn; cfg.main.obsRange15mOn=InpObsRange15mOn; cfg.main.obsRange30mOn=InpObsRange30mOn;
    cfg.main.obsPrevDayHLOn=InpObsPrevDayHLOn;
    cfg.main.obsDayVwapOn=InpObsDayVwapOn;
    cfg.main.obsWeekVwapOn=InpObsWeekVwapOn;
