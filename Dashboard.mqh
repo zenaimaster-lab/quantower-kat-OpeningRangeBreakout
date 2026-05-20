@@ -479,19 +479,27 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int cyStatus = startCy;
 
    // ── ORDERS (single row: 2m | 5m | 15m — no header label) ──
-   int ordColW = cw / 4;
+   int colW = cw / 2;
    cyStatus -= 3; // Shift up to equalize top and bottom padding
    int rowH = CTRL_HEIGHT + 4; // Increase height to prevent vertical text clipping
    
-   ML(m_lblOrdersSec,"lOrS","",cx,cyStatus,1,rowH);
-   ML(m_lbl2mStTag,"l2sT","2m:",cx,cyStatus,28,rowH,CLR_TEXT);
-   ML(m_lbl2mStVal,"v2sV","Inactive",cx+28,cyStatus,ordColW-28,rowH,CLR_TEXT_DIM);
-   ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cyStatus,28,rowH,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","Inactive",cx+ordColW+28,cyStatus,ordColW-28,rowH,CLR_TEXT_DIM);
-   ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cyStatus,32,rowH,CLR_TEXT);
-   ML(m_lbl15mStVal,"v15sV","Inactive",cx+ordColW*2+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
-   ML(m_lbl30mStTag,"l30sT","30m:",cx+ordColW*3,cyStatus,32,rowH,CLR_TEXT);
-   ML(m_lbl30mStVal,"v30sV","Inactive",cx+ordColW*3+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
+   // Row 1: 2m (Left) and 15m (Right)
+   ML(m_lblOrdersSec,"lOrS","",cx,cyStatus,1,rowH * 2 + 4);
+   
+   ML(m_lbl2mStTag,"l2sT","2m:",cx,cyStatus,32,rowH,CLR_TEXT);
+   ML(m_lbl2mStVal,"v2sV","Inactive",cx+32,cyStatus,colW-32,rowH,CLR_TEXT_DIM);
+   
+   ML(m_lbl15mStTag,"l15sT","15m:",cx+colW,cyStatus,36,rowH,CLR_TEXT);
+   ML(m_lbl15mStVal,"v15sV","Inactive",cx+colW+36,cyStatus,colW-36,rowH,CLR_TEXT_DIM);
+   
+   cyStatus += rowH + 4; // Move to Row 2
+   
+   // Row 2: 5m (Left) and 30m (Right)
+   ML(m_lbl5mStTag,"l5sT","5m:",cx,cyStatus,32,rowH,CLR_TEXT);
+   ML(m_lbl5mStVal,"v5sV","Inactive",cx+32,cyStatus,colW-32,rowH,CLR_TEXT_DIM);
+   
+   ML(m_lbl30mStTag,"l30sT","30m:",cx+colW,cyStatus,36,rowH,CLR_TEXT);
+   ML(m_lbl30mStVal,"v30sV","Inactive",cx+colW+36,cyStatus,colW-36,rowH,CLR_TEXT_DIM);
    
    cyStatus += rowH + 15; // Centered separator
    MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 10
