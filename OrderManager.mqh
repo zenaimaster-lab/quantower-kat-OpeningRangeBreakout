@@ -177,33 +177,44 @@ void COrderManager::HandleWaitCandle(const DashboardParams &params, datetime now
 
    string symbol = params.symbol;
    ENUM_TIMEFRAMES tf = params.timeframe;
-   int shift = iBarShift(symbol, tf, m_nyoTime, false);
-   if(shift < 0) return;
-   
-   datetime cTime = iTime(symbol, tf, shift);
-   if(cTime < m_nyoTime)
-   {
-      if(shift > 0)
-      {
-         datetime nextTime = iTime(symbol, tf, shift - 1);
-         if(nextTime >= m_nyoTime)
-         {
-            shift = shift - 1;
-            cTime = nextTime;
-         }
-         else return;
-      }
-      else return;
-   }
 
-   if(now >= cTime + PeriodSeconds(tf))
+   if(now >= m_nyoTime + PeriodSeconds(tf))
    {
-      m_rangeHigh = iHigh(symbol, tf, shift);
-      m_rangeLow  = iLow(symbol, tf, shift);
-      m_candleTime = cTime;
-      DrawORBLines(symbol, tf, cTime, m_rangeHigh, m_rangeLow);
-      m_state = ORB_WAIT_BREAK;
-      PrintFormat("[%s] ORB Range formed: H=%.5f L=%.5f", EnumToString(tf), m_rangeHigh, m_rangeLow);
+      datetime startRange = m_nyoTime;
+      datetime endRange   = m_nyoTime + PeriodSeconds(tf) - 1;
+
+      // Strict M1 synchronization guards to prevent caching pre-market or incomplete bars
+      int expectedBars = (int)(PeriodSeconds(tf) / 60);
+      datetime times[];
+      int copiedT = CopyTime(symbol, PERIOD_M1, startRange, endRange, times);
+      if(copiedT <= 0) return;
+      if(times[0] < startRange) return; // Prevent copying pre-market bars
+
+      int elapsedAfterClose = (int)(now - (startRange + PeriodSeconds(tf)));
+      bool strict = (elapsedAfterClose < 60);
+      if(strict && copiedT < expectedBars) return; // Wait for full synchronization on bar close
+
+      double highs[], lows[];
+      int copiedH = CopyHigh(symbol, PERIOD_M1, startRange, endRange, highs);
+      int copiedL = CopyLow(symbol, PERIOD_M1, startRange, endRange, lows);
+
+      if(copiedH > 0 && copiedL > 0 && copiedH == copiedT && copiedL == copiedT)
+      {
+         double maxH = highs[0];
+         double minL = lows[0];
+         for(int k = 1; k < copiedH; k++) {
+            if(highs[k] > maxH) maxH = highs[k];
+         }
+         for(int k = 1; k < copiedL; k++) {
+            if(lows[k] < minL) minL = lows[k];
+         }
+         m_rangeHigh = maxH;
+         m_rangeLow  = minL;
+         m_candleTime = startRange;
+         DrawORBLines(symbol, tf, startRange, m_rangeHigh, m_rangeLow);
+         m_state = ORB_WAIT_BREAK;
+         PrintFormat("[%s] ORB Range formed (M1-based): H=%.5f L=%.5f", EnumToString(tf), m_rangeHigh, m_rangeLow);
+      }
    }
 }
 
@@ -806,28 +817,39 @@ bool COrderManager::GetRangeLines(string symbol, ENUM_TIMEFRAMES tf, datetime ny
    datetime now = TimeTradeServer();
    if(now < nyoTime + PeriodSeconds(tf)) return false; // Bar not closed yet
 
-   int shift = iBarShift(symbol, tf, nyoTime, false);
-   if(shift < 0) return false;
+   datetime startRange = nyoTime;
+   datetime endRange   = nyoTime + PeriodSeconds(tf) - 1;
 
-   datetime cTime = iTime(symbol, tf, shift);
-   if(cTime < nyoTime)
+   // Strict M1 synchronization guards to prevent caching pre-market or incomplete bars
+   int expectedBars = (int)(PeriodSeconds(tf) / 60);
+   datetime times[];
+   int copiedT = CopyTime(symbol, PERIOD_M1, startRange, endRange, times);
+   if(copiedT <= 0) return false;
+   if(times[0] < startRange) return false; // Prevent copying pre-market bars
+
+   int elapsedAfterClose = (int)(now - (startRange + PeriodSeconds(tf)));
+   bool strict = (elapsedAfterClose < 60);
+   if(strict && copiedT < expectedBars) return false; // Wait for full synchronization on bar close
+
+   double highs[], lows[];
+   int copiedH = CopyHigh(symbol, PERIOD_M1, startRange, endRange, highs);
+   int copiedL = CopyLow(symbol, PERIOD_M1, startRange, endRange, lows);
+
+   if(copiedH > 0 && copiedL > 0 && copiedH == copiedT && copiedL == copiedT)
    {
-      if(shift > 0)
-      {
-         datetime nextTime = iTime(symbol, tf, shift - 1);
-         if(nextTime >= nyoTime)
-         {
-            shift = shift - 1;
-            cTime = nextTime;
-         }
-         else return false;
+      double maxH = highs[0];
+      double minL = lows[0];
+      for(int k = 1; k < copiedH; k++) {
+         if(highs[k] > maxH) maxH = highs[k];
       }
-      else return false;
+      for(int k = 1; k < copiedL; k++) {
+         if(lows[k] < minL) minL = lows[k];
+      }
+      high = maxH;
+      low  = minL;
+      return true;
    }
-
-   high = iHigh(symbol, tf, shift);
-   low = iLow(symbol, tf, shift);
-   return true;
+   return false;
 }
 
 //+------------------------------------------------------------------+
