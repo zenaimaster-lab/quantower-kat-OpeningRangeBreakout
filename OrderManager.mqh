@@ -177,8 +177,24 @@ void COrderManager::HandleWaitCandle(const DashboardParams &params, datetime now
 
    string symbol = params.symbol;
    ENUM_TIMEFRAMES tf = params.timeframe;
-   int shift = iBarShift(symbol, tf, m_nyoTime);
+   int shift = iBarShift(symbol, tf, m_nyoTime, false);
+   if(shift < 0) return;
+   
    datetime cTime = iTime(symbol, tf, shift);
+   if(cTime < m_nyoTime)
+   {
+      if(shift > 0)
+      {
+         datetime nextTime = iTime(symbol, tf, shift - 1);
+         if(nextTime >= m_nyoTime)
+         {
+            shift = shift - 1;
+            cTime = nextTime;
+         }
+         else return;
+      }
+      else return;
+   }
 
    if(now >= cTime + PeriodSeconds(tf))
    {
@@ -790,8 +806,24 @@ bool COrderManager::GetRangeLines(string symbol, ENUM_TIMEFRAMES tf, datetime ny
    datetime now = TimeTradeServer();
    if(now < nyoTime + PeriodSeconds(tf)) return false; // Bar not closed yet
 
-   int shift = iBarShift(symbol, tf, nyoTime);
+   int shift = iBarShift(symbol, tf, nyoTime, false);
    if(shift < 0) return false;
+
+   datetime cTime = iTime(symbol, tf, shift);
+   if(cTime < nyoTime)
+   {
+      if(shift > 0)
+      {
+         datetime nextTime = iTime(symbol, tf, shift - 1);
+         if(nextTime >= nyoTime)
+         {
+            shift = shift - 1;
+            cTime = nextTime;
+         }
+         else return false;
+      }
+      else return false;
+   }
 
    high = iHigh(symbol, tf, shift);
    low = iLow(symbol, tf, shift);
