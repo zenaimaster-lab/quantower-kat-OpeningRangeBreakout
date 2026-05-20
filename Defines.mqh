@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.50"
+#define EA_VERSION        "1.51"
 #define EA_BUILD_DATE     "20 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
@@ -270,5 +270,21 @@ int TimeframeToIndex(ENUM_TIMEFRAMES tf)
    }
 }
 
+
+//--- Trade Attempt structure for dashboard stats tracking
+struct CTradeAttempt
+{
+   ulong    orderTicket;
+   long     positionId;
+   datetime placeTime;
+   string   symbol;
+   string   timeframeStr;
+   int      direction;
+   string   entryReason;
+   string   status;
+   double   profitPoints;
+   string   exitReason;
+   datetime resolveTime;
+};
 
 #endif // __DEFINES_MQH__

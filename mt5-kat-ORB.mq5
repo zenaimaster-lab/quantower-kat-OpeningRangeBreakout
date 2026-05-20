@@ -72,17 +72,25 @@ bool g_initialized = false;
 const string BE_LINE_NAME = "Aggregate_BE_Line";
 
 // Day-level entry tracking (persists until next NYO)
-string   g_dayEntries[9];
-int      g_dayEntryCount = 0;
-datetime g_dayEntriesNYO = 0;
-string   g_lastSeenEntry[3];
-string   g_lastSeenCancel[3];
+string        g_dayEntries[9];
+int           g_dayEntryCount = 0;
+datetime      g_dayEntriesNYO = 0;
+CTradeAttempt g_attempts[9];
+string        g_lastSeenEntry[3];
+string        g_lastSeenCancel[3];
 
 // P/L stats cache (set by UpdateTradeStats, used by dashboard update)
 double g_plNetToday=0, g_plNetWeek=0, g_plNetMonth=0;
 int    g_plWToday=0, g_plLToday=0, g_plWWeek=0, g_plLWeek=0, g_plWMonth=0, g_plLMonth=0;
 
 void UpdateTradeStats();
+void PopulateAttemptsFromHistory();
+void RegisterNewPendingOrders();
+void RegisterNewActivePositions();
+void UpdateAttempts();
+string FormatAttemptString(const CTradeAttempt &attempt);
+void RegisterAttemptInMemory(const CTradeAttempt &att);
+void SortAttemptsChronologically();
 
 //+------------------------------------------------------------------+
 //| Helpers                                                            |
@@ -165,6 +173,7 @@ int OnInit()
    cfg.m15Active = true;
 
    g_dashboard.SetInitialParams(cfg);
+   PopulateAttemptsFromHistory();
    g_dashboard.Run();
    EventSetTimer(1);
    g_initialized = true;
@@ -320,47 +329,545 @@ void AccumulateDayEntries(datetime nyoTime)
    // Reset on new trading day (new NYO detected)
    if(nyoTime > 0 && nyoTime != g_dayEntriesNYO)
    {
-      // Snapshot current runner reasons as "already seen" to avoid re-capturing old data
-      for(int i = 0; i < 3; i++)
+      for(int i = 0; i < 9; i++)
       {
-         g_lastSeenEntry[i]  = g_runners[i].order.GetEntryReason();
-         g_lastSeenCancel[i] = g_runners[i].order.GetCancelReason();
+         ZeroMemory(g_attempts[i]);
+         g_attempts[i].placeTime = 0;
+         g_dayEntries[i] = "";
       }
-      g_dayEntryCount = 0;
-      for(int i = 0; i < 9; i++) g_dayEntries[i] = "";
       g_dayEntriesNYO = nyoTime;
    }
 
-   // Capture new entries from runners (2m→5m→15m order)
-   for(int ri = 0; ri < 3; ri++)
+   // Run lifecycle updates
+   RegisterNewPendingOrders();
+   RegisterNewActivePositions();
+   UpdateAttempts();
+
+   // Format each attempt string into the dashboard array
+   for(int i = 0; i < 9; i++)
    {
-      if(g_dayEntryCount >= 9) break;
-
-      string eR = g_runners[ri].order.GetEntryReason();
-      string cR = g_runners[ri].order.GetCancelReason();
-
-      // New entry reason detected → record it
-      if(eR != "" && eR != g_lastSeenEntry[ri])
-      {
-         g_dayEntries[g_dayEntryCount] = eR;
-         g_dayEntryCount++;
-         g_lastSeenEntry[ri] = eR;
-         g_lastSeenCancel[ri] = ""; // reset cancel tracking for this cycle
-      }
-
-      // New cancel reason detected → record it
-      if(cR != "" && cR != g_lastSeenCancel[ri] && g_dayEntryCount < 9)
-      {
-         g_dayEntries[g_dayEntryCount] = cR;
-         g_dayEntryCount++;
-         g_lastSeenCancel[ri] = cR;
-      }
+      g_dayEntries[i] = FormatAttemptString(g_attempts[i]);
    }
 
-   // Update dashboard with accumulated entries + cached P/L
+   // Update dashboard with attempts list + cached P/L
    g_dashboard.UpdateStatsTab(g_dayEntries, g_plNetToday, g_plWToday, g_plLToday,
                               g_plNetWeek, g_plWWeek, g_plLWeek,
                               g_plNetMonth, g_plWMonth, g_plLMonth);
+}
+
+//+------------------------------------------------------------------+
+//| Populate attempts from history for today                         |
+//+------------------------------------------------------------------+
+void PopulateAttemptsFromHistory()
+{
+   for(int i = 0; i < 9; i++)
+   {
+      ZeroMemory(g_attempts[i]);
+      g_attempts[i].placeTime = 0;
+      g_dayEntries[i] = "";
+   }
+
+   datetime now = TimeCurrent();
+   datetime todayStart = iTime(Symbol(), PERIOD_D1, 0);
+   if(todayStart == 0) todayStart = now - 86400;
+
+   // Select history since start of today
+   if(!HistorySelect(todayStart, now + 3600)) return;
+
+   // 1. Gather all historical cancelled orders of today
+   int totalOrders = HistoryOrdersTotal();
+   for(int i = 0; i < totalOrders; i++)
+   {
+      ulong ticket = HistoryOrderGetTicket(i);
+      if(ticket <= 0) continue;
+      if(HistoryOrderGetInteger(ticket, ORDER_MAGIC) != g_gs.Magic()) continue;
+      if(HistoryOrderGetString(ticket, ORDER_SYMBOL) != Symbol()) continue;
+
+      long state = HistoryOrderGetInteger(ticket, ORDER_STATE);
+      if(state == ORDER_STATE_CANCELED)
+      {
+         CTradeAttempt att;
+         ZeroMemory(att);
+         att.orderTicket = ticket;
+         att.positionId = 0;
+         att.placeTime = (datetime)HistoryOrderGetInteger(ticket, ORDER_TIME_SETUP);
+         att.symbol = Symbol();
+         
+         string comment = HistoryOrderGetString(ticket, ORDER_COMMENT);
+         att.timeframeStr = "M2";
+         if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
+         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         
+         long type = HistoryOrderGetInteger(ticket, ORDER_TYPE);
+         att.direction = (type == ORDER_TYPE_BUY_LIMIT || type == ORDER_TYPE_BUY_STOP || type == ORDER_TYPE_BUY) ? 1 : -1;
+         att.entryReason = comment;
+         att.status = "Cancelled";
+         att.exitReason = "cancelled";
+         att.resolveTime = (datetime)HistoryOrderGetInteger(ticket, ORDER_TIME_DONE);
+         
+         RegisterAttemptInMemory(att);
+      }
+   }
+
+   // 2. Gather all historical closed positions of today
+   int totalDeals = HistoryDealsTotal();
+   for(int i = 0; i < totalDeals; i++)
+   {
+      ulong ticket = HistoryDealGetTicket(i);
+      if(ticket <= 0) continue;
+      if(HistoryDealGetInteger(ticket, DEAL_MAGIC) != g_gs.Magic()) continue;
+      if(HistoryDealGetString(ticket, DEAL_SYMBOL) != Symbol()) continue;
+      if(HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_OUT) continue;
+
+      long posId = HistoryDealGetInteger(ticket, DEAL_POSITION_ID);
+      if(posId <= 0) continue;
+
+      // Find the entry deal for this position
+      ulong entryTicket = 0;
+      for(int j = 0; j < totalDeals; j++)
+      {
+         ulong t = HistoryDealGetTicket(j);
+         if(HistoryDealGetInteger(t, DEAL_POSITION_ID) == posId && HistoryDealGetInteger(t, DEAL_ENTRY) == DEAL_ENTRY_IN)
+         {
+            entryTicket = t;
+            break;
+         }
+      }
+
+      if(entryTicket > 0)
+      {
+         CTradeAttempt att;
+         ZeroMemory(att);
+         att.positionId = posId;
+         att.placeTime = (datetime)HistoryDealGetInteger(entryTicket, DEAL_TIME);
+         att.symbol = Symbol();
+         
+         string comment = HistoryDealGetString(entryTicket, DEAL_COMMENT);
+         att.timeframeStr = "M2";
+         if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
+         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         
+         long type = HistoryDealGetInteger(entryTicket, DEAL_TYPE);
+         att.direction = (type == DEAL_TYPE_BUY) ? 1 : -1;
+         att.entryReason = comment;
+         att.status = "Closed";
+         att.resolveTime = (datetime)HistoryDealGetInteger(ticket, DEAL_TIME);
+
+         double profit = HistoryDealGetDouble(ticket, DEAL_PROFIT)
+                       + HistoryDealGetDouble(ticket, DEAL_COMMISSION)
+                       + HistoryDealGetDouble(ticket, DEAL_SWAP);
+         
+         double entryPrice = HistoryDealGetDouble(entryTicket, DEAL_PRICE);
+         double exitPrice = HistoryDealGetDouble(ticket, DEAL_PRICE);
+         double pt = SymbolInfoDouble(Symbol(), SYMBOL_POINT);
+         double diffPoints = 0;
+         if(pt > 0 && entryPrice > 0)
+         {
+            if(att.direction == 1)
+               diffPoints = (exitPrice - entryPrice) / pt;
+            else
+               diffPoints = (entryPrice - exitPrice) / pt;
+         }
+         att.profitPoints = diffPoints;
+
+         string dealComment = HistoryDealGetString(ticket, DEAL_COMMENT);
+         if(StringFind(dealComment, "[sl]") >= 0)
+         {
+            if(diffPoints > 0)
+               att.exitReason = "trailing";
+            else
+               att.exitReason = "failed";
+         }
+         else if(StringFind(dealComment, "[tp]") >= 0)
+         {
+            att.exitReason = "TP";
+         }
+         else
+         {
+            att.exitReason = "closed";
+         }
+
+         RegisterAttemptInMemory(att);
+      }
+   }
+   
+   SortAttemptsChronologically();
+}
+
+//+------------------------------------------------------------------+
+//| Register active pending orders                                     |
+//+------------------------------------------------------------------+
+void RegisterNewPendingOrders()
+{
+   int magic = g_gs.Magic();
+   int total = OrdersTotal();
+   for(int i = 0; i < total; i++)
+   {
+      ulong ticket = OrderGetTicket(i);
+      if(ticket <= 0) continue;
+      if(OrderGetInteger(ORDER_MAGIC) != magic) continue;
+      if(OrderGetString(ORDER_SYMBOL) != Symbol()) continue;
+
+      bool alreadyTracked = false;
+      for(int j = 0; j < 9; j++)
+      {
+         if(g_attempts[j].placeTime > 0 && g_attempts[j].orderTicket == ticket)
+         {
+            alreadyTracked = true;
+            break;
+         }
+      }
+
+      if(!alreadyTracked)
+      {
+         CTradeAttempt att;
+         ZeroMemory(att);
+         att.orderTicket = ticket;
+         att.positionId = 0;
+         att.placeTime = (datetime)OrderGetInteger(ORDER_TIME_SETUP);
+         att.symbol = Symbol();
+         
+         string comment = OrderGetString(ORDER_COMMENT);
+         att.timeframeStr = "M2";
+         if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
+         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         
+         long type = OrderGetInteger(ORDER_TYPE);
+         att.direction = (type == ORDER_TYPE_BUY_LIMIT || type == ORDER_TYPE_BUY_STOP) ? 1 : -1;
+         
+         int tfIdx = 0;
+         if(att.timeframeStr == "M5") tfIdx = 1;
+         else if(att.timeframeStr == "M15") tfIdx = 2;
+         string reason = g_runners[tfIdx].order.GetEntryReason();
+         if(reason == "") reason = comment;
+         att.entryReason = reason;
+         
+         att.status = "Pending";
+         
+         RegisterAttemptInMemory(att);
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Register active positions                                         |
+//+------------------------------------------------------------------+
+void RegisterNewActivePositions()
+{
+   int magic = g_gs.Magic();
+   int total = PositionsTotal();
+   for(int i = 0; i < total; i++)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket <= 0) continue;
+      if(PositionGetInteger(POSITION_MAGIC) != magic) continue;
+      if(PositionGetString(POSITION_SYMBOL) != Symbol()) continue;
+
+      long posId = PositionGetInteger(POSITION_IDENTIFIER);
+      
+      int matchIdx = -1;
+      for(int j = 0; j < 9; j++)
+      {
+         if(g_attempts[j].placeTime > 0 && g_attempts[j].orderTicket == (ulong)posId)
+         {
+            matchIdx = j;
+            break;
+         }
+      }
+
+      if(matchIdx >= 0)
+      {
+         g_attempts[matchIdx].positionId = posId;
+         g_attempts[matchIdx].status = "Active";
+      }
+      else
+      {
+         bool alreadyTracked = false;
+         for(int j = 0; j < 9; j++)
+         {
+            if(g_attempts[j].placeTime > 0 && g_attempts[j].positionId == posId)
+            {
+               alreadyTracked = true;
+               break;
+            }
+         }
+
+         if(!alreadyTracked)
+         {
+            CTradeAttempt att;
+            ZeroMemory(att);
+            att.orderTicket = (ulong)posId;
+            att.positionId = posId;
+            att.placeTime = (datetime)PositionGetInteger(POSITION_TIME);
+            att.symbol = Symbol();
+            
+            string comment = PositionGetString(POSITION_COMMENT);
+            att.timeframeStr = "M2";
+            if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
+            else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+            
+            long type = PositionGetInteger(POSITION_TYPE);
+            att.direction = (type == POSITION_TYPE_BUY) ? 1 : -1;
+            
+            int tfIdx = 0;
+            if(att.timeframeStr == "M5") tfIdx = 1;
+            else if(att.timeframeStr == "M15") tfIdx = 2;
+            string reason = g_runners[tfIdx].order.GetEntryReason();
+            if(reason == "") reason = comment;
+            att.entryReason = reason;
+            
+            att.status = "Active";
+            
+            RegisterAttemptInMemory(att);
+         }
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Update attempts in real time                                      |
+//+------------------------------------------------------------------+
+void UpdateAttempts()
+{
+   datetime now = TimeCurrent();
+   datetime todayStart = iTime(Symbol(), PERIOD_D1, 0);
+   if(todayStart == 0) todayStart = now - 86400;
+
+   HistorySelect(todayStart, now + 3600);
+
+   for(int i = 0; i < 9; i++)
+   {
+      if(g_attempts[i].placeTime == 0) continue;
+
+      if(g_attempts[i].status == "Pending")
+      {
+         bool activeOrderExists = false;
+         int totalOrders = OrdersTotal();
+         for(int o = 0; o < totalOrders; o++)
+         {
+            if(OrderGetTicket(o) == g_attempts[i].orderTicket)
+            {
+               activeOrderExists = true;
+               break;
+            }
+         }
+
+         if(!activeOrderExists)
+         {
+            if(HistoryOrderSelect(g_attempts[i].orderTicket))
+            {
+               long state = HistoryOrderGetInteger(g_attempts[i].orderTicket, ORDER_STATE);
+               if(state == ORDER_STATE_CANCELED)
+               {
+                  g_attempts[i].status = "Cancelled";
+                  g_attempts[i].exitReason = "cancelled";
+                  g_attempts[i].resolveTime = (datetime)HistoryOrderGetInteger(g_attempts[i].orderTicket, ORDER_TIME_DONE);
+               }
+            }
+         }
+      }
+
+      if(g_attempts[i].status == "Active")
+      {
+         bool activePositionExists = false;
+         int totalPos = PositionsTotal();
+         for(int p = 0; p < totalPos; p++)
+         {
+            ulong ticket = PositionGetTicket(p);
+            if(ticket > 0 && PositionGetInteger(POSITION_MAGIC) == g_gs.Magic() && PositionGetInteger(POSITION_IDENTIFIER) == g_attempts[i].positionId)
+            {
+               activePositionExists = true;
+               break;
+            }
+         }
+
+         if(!activePositionExists)
+         {
+            int totalDeals = HistoryDealsTotal();
+            ulong exitTicket = 0;
+            for(int d = 0; d < totalDeals; d++)
+            {
+               ulong t = HistoryDealGetTicket(d);
+               if(HistoryDealGetInteger(t, DEAL_POSITION_ID) == g_attempts[i].positionId && HistoryDealGetInteger(t, DEAL_ENTRY) == DEAL_ENTRY_OUT)
+               {
+                  exitTicket = t;
+                  break;
+               }
+            }
+
+            if(exitTicket > 0)
+            {
+               g_attempts[i].status = "Closed";
+               g_attempts[i].resolveTime = (datetime)HistoryDealGetInteger(exitTicket, DEAL_TIME);
+
+               double entryPrice = 0;
+               for(int d = 0; d < totalDeals; d++)
+               {
+                  ulong t = HistoryDealGetTicket(d);
+                  if(HistoryDealGetInteger(t, DEAL_POSITION_ID) == g_attempts[i].positionId && HistoryDealGetInteger(t, DEAL_ENTRY) == DEAL_ENTRY_IN)
+                  {
+                     entryPrice = HistoryDealGetDouble(t, DEAL_PRICE);
+                     break;
+                  }
+               }
+
+               double exitPrice = HistoryDealGetDouble(exitTicket, DEAL_PRICE);
+               double pt = SymbolInfoDouble(Symbol(), SYMBOL_POINT);
+               double diffPoints = 0;
+               if(pt > 0 && entryPrice > 0)
+               {
+                  if(g_attempts[i].direction == 1)
+                     diffPoints = (exitPrice - entryPrice) / pt;
+                  else
+                     diffPoints = (entryPrice - exitPrice) / pt;
+               }
+               g_attempts[i].profitPoints = diffPoints;
+
+               string dealComment = HistoryDealGetString(exitTicket, DEAL_COMMENT);
+               if(StringFind(dealComment, "[sl]") >= 0)
+               {
+                  if(diffPoints > 0)
+                     g_attempts[i].exitReason = "trailing";
+                  else
+                     g_attempts[i].exitReason = "failed";
+               }
+               else if(StringFind(dealComment, "[tp]") >= 0)
+               {
+                  g_attempts[i].exitReason = "TP";
+               }
+               else
+               {
+                  g_attempts[i].exitReason = "closed";
+               }
+            }
+         }
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Format attempt data into string                                   |
+//+------------------------------------------------------------------+
+string FormatAttemptString(const CTradeAttempt &attempt)
+{
+   if(attempt.placeTime == 0) return "";
+   
+   string entryReason = attempt.entryReason;
+   StringTrimLeft(entryReason);
+   StringTrimRight(entryReason);
+   
+   if(attempt.status == "Pending")
+   {
+      return entryReason + " | pending";
+   }
+   if(attempt.status == "Active")
+   {
+      return entryReason + " | active";
+   }
+   if(attempt.status == "Cancelled")
+   {
+      return entryReason + " | cancelled";
+   }
+   if(attempt.status == "Closed")
+   {
+      int scaledPts = (int)MathRound(attempt.profitPoints / 100.0);
+      string sign = (scaledPts >= 0) ? "+" : "";
+      
+      if(attempt.exitReason == "failed")
+      {
+         return entryReason + " | failed " + IntegerToString(scaledPts);
+      }
+      else if(attempt.exitReason == "trailing")
+      {
+         return entryReason + " | trailing, " + sign + IntegerToString(scaledPts);
+      }
+      else if(attempt.exitReason == "TP")
+      {
+         return entryReason + " | TP, " + sign + IntegerToString(scaledPts);
+      }
+      else
+      {
+         return entryReason + " | closed, " + sign + IntegerToString(scaledPts);
+      }
+   }
+   return entryReason;
+}
+
+//+------------------------------------------------------------------+
+//| Register or overwrite attempt in local memory array              |
+//+------------------------------------------------------------------+
+void RegisterAttemptInMemory(const CTradeAttempt &att)
+{
+   int matchIdx = -1;
+   for(int i = 0; i < 9; i++)
+   {
+      if(g_attempts[i].placeTime > 0 && 
+         g_attempts[i].timeframeStr == att.timeframeStr && 
+         g_attempts[i].direction == att.direction && 
+         (g_attempts[i].status == "Pending" || g_attempts[i].status == "Cancelled"))
+      {
+         matchIdx = i;
+         break;
+      }
+   }
+
+   if(matchIdx >= 0)
+   {
+      g_attempts[matchIdx] = att;
+   }
+   else
+   {
+      int emptyIdx = -1;
+      for(int i = 0; i < 9; i++)
+      {
+         if(g_attempts[i].placeTime == 0)
+         {
+            emptyIdx = i;
+            break;
+         }
+      }
+
+      if(emptyIdx >= 0)
+      {
+         g_attempts[emptyIdx] = att;
+      }
+      else
+      {
+         for(int i = 0; i < 8; i++)
+         {
+            g_attempts[i] = g_attempts[i+1];
+         }
+         g_attempts[8] = att;
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Sort attempts chronologically                                     |
+//+------------------------------------------------------------------+
+void SortAttemptsChronologically()
+{
+   for(int i = 0; i < 8; i++)
+   {
+      for(int j = 0; j < 8 - i; j++)
+      {
+         if(g_attempts[j].placeTime > 0 && g_attempts[j+1].placeTime > 0)
+         {
+            if(g_attempts[j].placeTime > g_attempts[j+1].placeTime)
+            {
+               CTradeAttempt temp = g_attempts[j];
+               g_attempts[j] = g_attempts[j+1];
+               g_attempts[j+1] = temp;
+            }
+         }
+         else if(g_attempts[j].placeTime == 0 && g_attempts[j+1].placeTime > 0)
+         {
+            CTradeAttempt temp = g_attempts[j];
+            g_attempts[j] = g_attempts[j+1];
+            g_attempts[j+1] = temp;
+         }
+      }
+   }
 }
 
 //+------------------------------------------------------------------+
