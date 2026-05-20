@@ -82,6 +82,8 @@ string   g_lastSeenCancel[3];
 double g_plNetToday=0, g_plNetWeek=0, g_plNetMonth=0;
 int    g_plWToday=0, g_plLToday=0, g_plWWeek=0, g_plLWeek=0, g_plWMonth=0, g_plLMonth=0;
 
+void UpdateTradeStats();
+
 //+------------------------------------------------------------------+
 //| Helpers                                                            |
 //+------------------------------------------------------------------+
@@ -182,6 +184,10 @@ void OnDeinit(const int reason)
 void OnTick()
 {
    if(!g_initialized) return;
+
+   // Force immediate trade stats refresh on every tick to avoid limit-check race conditions
+   UpdateTradeStats();
+
    SystemConfig cfg = g_dashboard.GetParams();
    string sym = (cfg.main.symbol != "") ? cfg.main.symbol : Symbol();
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym, SYMBOL_SPREAD));
@@ -581,5 +587,11 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
 //+------------------------------------------------------------------+
 void OnTradeTransaction(const MqlTradeTransaction &trans,const MqlTradeRequest &request,const MqlTradeResult &result)
 {
+   if(!g_initialized) return;
+   // Immediately update stats when deals are added (trade closes or opens)
+   if(trans.type == TRADE_TRANSACTION_DEAL_ADD)
+   {
+      UpdateTradeStats();
+   }
 }
 //+------------------------------------------------------------------+

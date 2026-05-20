@@ -118,6 +118,21 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
    datetime now = TimeTradeServer();
    if(nyOpenTimeServer == 0 || now < nyOpenTimeServer) return;
 
+   // Safeguard: Check if max successful/loss limit has been hit before running wait handlers
+   if(!m_ordersActive)
+   {
+      bool limitHit = (params.maxSuccessOn && g_gs.WinsTodayTF(params.tfIndex) >= params.maxSuccess)
+                   || (params.maxLossOn   && g_gs.LossesTodayTF(params.tfIndex) >= params.maxLoss);
+      if(limitHit && m_state != ORB_DONE && m_state != ORB_STOPPED)
+      {
+         m_state = ORB_DONE;
+         PrintFormat("[%s] Limit hit (Wins=%d/%d, Losses=%d/%d). State forced to ORB_DONE.", 
+                     EnumToString(params.timeframe), 
+                     g_gs.WinsTodayTF(params.tfIndex), params.maxSuccess,
+                     g_gs.LossesTodayTF(params.tfIndex), params.maxLoss);
+      }
+   }
+
    HandleWaitNyo(nyOpenTimeServer);
    HandleWaitCandle(params, now);
    HandleWaitBreak(params);

@@ -7,6 +7,8 @@
 #include <Controls\ComboBox.mqh>
 #include "Defines.mqh"
 
+#define CONFIG_GAP (CTRL_GAP + 3)
+
 class CDashboard : public CAppDialog
 {
 private:
@@ -285,114 +287,114 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int mb=(rw-6)/3;
     MB(m_btnBoth,"bBt","Both",rx,cyOrder,mb,CTRL_HEIGHT+2,CLR_PURPLE);
     MB(m_btnBuy,"bBy","Buy",rx+mb+3,cyOrder,mb,CTRL_HEIGHT+2);
-    MB(m_btnSell,"bSe","Sell",rx+(mb+3)*2,cyOrder,mb,CTRL_HEIGHT+2); cyOrder+=CTRL_HEIGHT+2+8+SEC_PAD;
+    MB(m_btnSell,"bSe","Sell",rx+(mb+3)*2,cyOrder,mb,CTRL_HEIGHT+2); cyOrder+=CTRL_HEIGHT+2+11+SEC_PAD;
    cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 5
 
    // ── RISK ──
    ML(m_lblBalTag,"lBa","Balance",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblBalVal,"vBa","$0.00",rx,cyOrder,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblBalVal,"vBa","$0.00",rx,cyOrder,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cyOrder+=CTRL_HEIGHT+CONFIG_GAP;
    MB(m_btnRiskMode,"bRm","Risk %",cx,cyOrder,55,CTRL_HEIGHT+2,CLR_BTN_ON);
    ME(m_edtRisk,"eRk","1.0",cx+60,cyOrder,35,CTRL_HEIGHT);
    MB(m_btnFixLot,"bFl","Fix lot",cx+105,cyOrder,55,CTRL_HEIGHT+2,CLR_BTN_OFF);
-   ME(m_edtFixLot,"eFl","0.1",cx+165,cyOrder,45,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ME(m_edtFixLot,"eFl","0.1",cx+165,cyOrder,45,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+CONFIG_GAP;
    ML(m_lblRATag,"lRA","Risk / Reward",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
    ML(m_lblRAVal,"vRA","-$0",rx,cyOrder,70,CTRL_HEIGHT,CLR_MONEY_RED);
-   ML(m_lblRwVal,"vRw","+$0",rx+75,cyOrder,70,CTRL_HEIGHT,CLR_MONEY_GREEN); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblRwVal,"vRw","+$0",rx+75,cyOrder,70,CTRL_HEIGHT,CLR_MONEY_GREEN); cyOrder+=CTRL_HEIGHT+CONFIG_GAP;
    ML(m_lblLtTag,"lLt","Lot size",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblLtVal,"vLt","0.00",rx,cyOrder,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cyOrder+=CTRL_HEIGHT+SEC_PAD;
+   ML(m_lblLtVal,"vLt","0.00",rx,cyOrder,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cyOrder+=CTRL_HEIGHT+SEC_PAD+2;
    cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 6
 
    // ── SL/TP & TRAIL / BE ──
    ML(m_lblSlTag,"lSl","SL / TP",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
    ME(m_edtSL,"eSl","1500",rx,cyOrder,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","1500",rx+59,cyOrder,55,CTRL_HEIGHT);
-   MB(m_btnSLS,"bSs","SL by Candle",rx+120,cyOrder,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cyOrder+=CTRL_HEIGHT+10;
+   MB(m_btnSLS,"bSs","SL by Candle",rx+120,cyOrder,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cyOrder+=CTRL_HEIGHT+13;
    ML(m_lblTrTag,"lTr","Trailing mode",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnTrMode,"bTm","ON",rx,cyOrder,rw,CTRL_HEIGHT+2,CLR_BTN_ON); cyOrder+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnTrMode,"bTm","ON",rx,cyOrder,rw,CTRL_HEIGHT+2,CLR_BTN_ON); cyOrder+=CTRL_HEIGHT+2+CONFIG_GAP;
    ML(m_lblTrTrig,"lTL","Trigger",cx,cyOrder,55,CTRL_HEIGHT);
    ME(m_edtTTr,"eTTr","1500",cx+55,cyOrder,50,CTRL_HEIGHT);
    ML(m_lblTrDist,"lDi","Distance",cx+108,cyOrder,65,CTRL_HEIGHT);
    ME(m_edtTDi,"eTDi","500",cx+173,cyOrder,50,CTRL_HEIGHT);
    ML(m_lblTrStep,"lStp","Step",cx+226,cyOrder,35,CTRL_HEIGHT);
-   ME(m_edtTSt,"eTSt","1",cx+261,cyOrder,50,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ME(m_edtTSt,"eTSt","1",cx+261,cyOrder,50,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+CONFIG_GAP;
    ML(m_lblBETag,"lBeT","Breakeven",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnBE,"bBE","OFF",rx,cyOrder,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cyOrder+=CTRL_HEIGHT+2+CTRL_GAP;
+   MB(m_btnBE,"bBE","OFF",rx,cyOrder,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cyOrder+=CTRL_HEIGHT+2+CONFIG_GAP;
    ML(m_lblBeLine,"lBL","BE Trigger",cx,cyOrder,85,CTRL_HEIGHT);
    ME(m_edtBEA,"eBA","200",cx+87,cyOrder,42,CTRL_HEIGHT);
    ML(m_lblBELock,"lPl","+",cx+131,cyOrder,14,CTRL_HEIGHT);
-   ME(m_edtBEL,"eBL","50",cx+147,cyOrder,42,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+SEC_PAD;
-   cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 7
+   ME(m_edtBEL,"eBL","50",cx+147,cyOrder,42,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+SEC_PAD+2;
+   cyOrder+=SEC_PAD; MSep(si++,-100,-100,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 7
 
 
    // ── TAB: ENTRY ──
-   int cyEntry = startCy;
-   int smallBtnW = rw / 3;
-   int smallBtnX = rx + rw - smallBtnW;
-   ML(m_lblEntrySec,"lEnT","ENTRY",cx,cyEntry,cw,CTRL_HEIGHT); cyEntry+=CTRL_HEIGHT+CTRL_GAP+8;
-   
-   ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cyEntry,150,CTRL_HEIGHT);
-   ME(m_edtRtc,"eRtc","1",cx+155,cyEntry,50,CTRL_HEIGHT);
-   MB(m_btnRtc,"bRtc","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cyEntry,180,CTRL_HEIGHT);
-   MB(m_btnCont,"bCo","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblMaxSTag,"lMs","Max succesful order",cx,cyEntry,150,CTRL_HEIGHT);
-   ME(m_edtMaxS,"eMs","2",cx+155,cyEntry,50,CTRL_HEIGHT);
-   MB(m_btnMaxS,"bMs","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblMaxLTag,"lMl","Max loss order",cx,cyEntry,150,CTRL_HEIGHT);
-   ME(m_edtMaxL,"eMl","1",cx+155,cyEntry,50,CTRL_HEIGHT);
-   MB(m_btnMaxL,"bMl","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblBigMTag,"lBm","Big momentum only",cx,cyEntry,180,CTRL_HEIGHT);
-   MB(m_btnBigM,"bBm","OFF",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblAamTag,"lAam","Trading window (min)",cx,cyEntry,150,CTRL_HEIGHT);
-   ME(m_edtAam,"eAam","60",cx+155,cyEntry,50,CTRL_HEIGHT);
-   MB(m_btnAam,"bAam","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblMdrTag,"lMdr","Max dist from range",cx,cyEntry,150,CTRL_HEIGHT);
-   ME(m_edtMdr,"eMdr","6000",cx+155,cyEntry,50,CTRL_HEIGHT);
-   MB(m_btnMdr,"bMdr","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
-   
-   ML(m_lblFemTag,"lFem","Favor EMA",cx,cyEntry,95,CTRL_HEIGHT);
-   ME(m_edtFem1,"eFm1","9",cx+124,cyEntry,38,CTRL_HEIGHT);
-   MB(m_btnFem1,"bFm1","",cx+163,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblFemPlus1,"lFp1","+",cx+189,cyEntry,14,CTRL_HEIGHT);
-   ME(m_edtFem2,"eFm2","21",cx+205,cyEntry,38,CTRL_HEIGHT);
-   MB(m_btnFem2,"bFm2","",cx+244,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblFemPlus2,"lFp2","+",cx+270,cyEntry,14,CTRL_HEIGHT);
-   ME(m_edtFem3,"eFm3","34",cx+286,cyEntry,38,CTRL_HEIGHT);
-   MB(m_btnFem3,"bFm3","",cx+325,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF); cyEntry+=CTRL_HEIGHT+SEC_PAD;
-   cyEntry+=SEC_PAD; MSep(si++,cx,cyEntry,cw); cyEntry+=SEP_GAP+SEC_PAD; // si = 8
+    int cyEntry = startCy;
+    int smallBtnW = rw / 3;
+    int smallBtnX = rx + rw - smallBtnW;
+    ML(m_lblEntrySec,"lEnT","ENTRY",cx,cyEntry,cw,CTRL_HEIGHT); cyEntry+=CTRL_HEIGHT+CONFIG_GAP+8;
+    
+    ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cyEntry,150,CTRL_HEIGHT);
+    ME(m_edtRtc,"eRtc","1",cx+155,cyEntry,50,CTRL_HEIGHT);
+    MB(m_btnRtc,"bRtc","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cyEntry,180,CTRL_HEIGHT);
+    MB(m_btnCont,"bCo","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblMaxSTag,"lMs","Max succesful order",cx,cyEntry,150,CTRL_HEIGHT);
+    ME(m_edtMaxS,"eMs","2",cx+155,cyEntry,50,CTRL_HEIGHT);
+    MB(m_btnMaxS,"bMs","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblMaxLTag,"lMl","Max loss order",cx,cyEntry,150,CTRL_HEIGHT);
+    ME(m_edtMaxL,"eMl","1",cx+155,cyEntry,50,CTRL_HEIGHT);
+    MB(m_btnMaxL,"bMl","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblBigMTag,"lBm","Big momentum only",cx,cyEntry,180,CTRL_HEIGHT);
+    MB(m_btnBigM,"bBm","OFF",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblAamTag,"lAam","Trading window (min)",cx,cyEntry,150,CTRL_HEIGHT);
+    ME(m_edtAam,"eAam","60",cx+155,cyEntry,50,CTRL_HEIGHT);
+    MB(m_btnAam,"bAam","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblMdrTag,"lMdr","Max dist from range",cx,cyEntry,150,CTRL_HEIGHT);
+    ME(m_edtMdr,"eMdr","6000",cx+155,cyEntry,50,CTRL_HEIGHT);
+    MB(m_btnMdr,"bMdr","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CONFIG_GAP;
+    
+    ML(m_lblFemTag,"lFem","Favor EMA",cx,cyEntry,95,CTRL_HEIGHT);
+    ME(m_edtFem1,"eFm1","9",cx+124,cyEntry,38,CTRL_HEIGHT);
+    MB(m_btnFem1,"bFm1","",cx+163,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF);
+    ML(m_lblFemPlus1,"lFp1","+",cx+189,cyEntry,14,CTRL_HEIGHT);
+    ME(m_edtFem2,"eFm2","21",cx+205,cyEntry,38,CTRL_HEIGHT);
+    MB(m_btnFem2,"bFm2","",cx+244,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF);
+    ML(m_lblFemPlus2,"lFp2","+",cx+270,cyEntry,14,CTRL_HEIGHT);
+    ME(m_edtFem3,"eFm3","34",cx+286,cyEntry,38,CTRL_HEIGHT);
+    MB(m_btnFem3,"bFm3","",cx+325,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF); cyEntry+=CTRL_HEIGHT+SEC_PAD;
+    cyEntry+=SEC_PAD; MSep(si++,-100,-100,cw); cyEntry+=SEP_GAP+SEC_PAD; // si = 8
 
 
    // ── TAB: FLATTEN ──
-   int cyFlatten = startCy;
-   ML(m_lblExpTag,"lExT","AUTO FLATTEN/CANCEL ALL ORDERS",cx,cyFlatten,cw,CTRL_HEIGHT); cyFlatten+=CTRL_HEIGHT+CTRL_GAP+8;
-   ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cyFlatten,150,CTRL_HEIGHT);
-   ME(m_edtUfmPts,"eUfm","8000",cx+155,cyFlatten,50,CTRL_HEIGHT);
-   MB(m_btnUfm,"bUfm","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblTmrTag,"lTmr","Touch middle range",cx,cyFlatten,150,CTRL_HEIGHT);
-   MB(m_btnTmr,"bTmr","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cyFlatten,150,CTRL_HEIGHT);
-   ME(m_edtAuc,"eAuc","2",cx+155,cyFlatten,50,CTRL_HEIGHT);
-   MB(m_btnAuc,"bAuc","OFF",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblAfcTag,"lAfc","After filled (min)",cx,cyFlatten,150,CTRL_HEIGHT);
-   ME(m_edtAfc,"eAfc","5",cx+155,cyFlatten,50,CTRL_HEIGHT);
-   MB(m_btnAfc,"bAfc","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblEma1Tag,"lEm1","Unfavor EMA",cx,cyFlatten,95,CTRL_HEIGHT);
-   ML(m_lblEma2Tag,"lEm2","",-100,-100,10,10);
-   ML(m_lblEma3Tag,"lEm3","",-100,-100,10,10);
-   ME(m_edtEma1,"eEm1","9",cx+124,cyFlatten,38,CTRL_HEIGHT);
-   MB(m_btnEma1,"bEm1","",cx+163,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblEmaPlus1,"lEp1","+",cx+189,cyFlatten,14,CTRL_HEIGHT);
-   ME(m_edtEma2,"eEm2","21",cx+205,cyFlatten,38,CTRL_HEIGHT);
-   MB(m_btnEma2,"bEm2","",cx+244,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblEmaPlus2,"lEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
-   ME(m_edtEma3,"eEm3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
-   MB(m_btnEma3,"bEm3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+SEC_PAD;
-   cyFlatten+=SEC_PAD; MSep(si++,cx,cyFlatten,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 9
+    int cyFlatten = startCy;
+    ML(m_lblExpTag,"lExT","AUTO FLATTEN/CANCEL ALL ORDERS",cx,cyFlatten,cw,CTRL_HEIGHT); cyFlatten+=CTRL_HEIGHT+CONFIG_GAP+8;
+    ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cyFlatten,150,CTRL_HEIGHT);
+    ME(m_edtUfmPts,"eUfm","8000",cx+155,cyFlatten,50,CTRL_HEIGHT);
+    MB(m_btnUfm,"bUfm","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblTmrTag,"lTmr","Touch middle range",cx,cyFlatten,150,CTRL_HEIGHT);
+    MB(m_btnTmr,"bTmr","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cyFlatten,150,CTRL_HEIGHT);
+    ME(m_edtAuc,"eAuc","2",cx+155,cyFlatten,50,CTRL_HEIGHT);
+    MB(m_btnAuc,"bAuc","OFF",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblAfcTag,"lAfc","After filled (min)",cx,cyFlatten,150,CTRL_HEIGHT);
+    ME(m_edtAfc,"eAfc","5",cx+155,cyFlatten,50,CTRL_HEIGHT);
+    MB(m_btnAfc,"bAfc","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblEma1Tag,"lEm1","Unfavor EMA",cx,cyFlatten,95,CTRL_HEIGHT);
+    ML(m_lblEma2Tag,"lEm2","",-100,-100,10,10);
+    ML(m_lblEma3Tag,"lEm3","",-100,-100,10,10);
+    ME(m_edtEma1,"eEm1","9",cx+124,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnEma1,"bEm1","",cx+163,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF);
+    ML(m_lblEmaPlus1,"lEp1","+",cx+189,cyFlatten,14,CTRL_HEIGHT);
+    ME(m_edtEma2,"eEm2","21",cx+205,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnEma2,"bEm2","",cx+244,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF);
+    ML(m_lblEmaPlus2,"lEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
+    ME(m_edtEma3,"eEm3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnEma3,"bEm3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+SEC_PAD;
+    cyFlatten+=SEC_PAD; MSep(si++,-100,-100,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 9
 
 
    // ── TAB: STATS ──
@@ -1057,7 +1059,7 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblTrTrig); CtrlShowEdit(m_edtTTr); CtrlShow(m_lblTrDist); CtrlShowEdit(m_edtTDi); CtrlShow(m_lblTrStep); CtrlShowEdit(m_edtTSt);
       CtrlShow(m_lblBETag); CtrlShowBtn(m_btnBE);
       CtrlShow(m_lblBeLine); CtrlShowEdit(m_edtBEA); CtrlShow(m_lblBELock); CtrlShowEdit(m_edtBEL);
-      CtrlShow(m_sep[5]); CtrlShow(m_sep[6]); CtrlShow(m_sep[7]);
+      CtrlShow(m_sep[5]); CtrlShow(m_sep[6]);
    }
    else if(m_activeTab == TAB_ENTRY) {
       CtrlShow(m_lblEntrySec);
@@ -1070,7 +1072,6 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblMdrTag); CtrlShowEdit(m_edtMdr); CtrlShowBtn(m_btnMdr);
       CtrlShow(m_lblFemTag); CtrlShowEdit(m_edtFem1); CtrlShowBtn(m_btnFem1); CtrlShowEdit(m_edtFem2); CtrlShowBtn(m_btnFem2); CtrlShowEdit(m_edtFem3); CtrlShowBtn(m_btnFem3);
       CtrlShow(m_lblFemPlus1); CtrlShow(m_lblFemPlus2);
-      CtrlShow(m_sep[8]);
    }
    else if(m_activeTab == TAB_FLATTEN) {
       CtrlShow(m_lblExpTag);
@@ -1082,7 +1083,6 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblEmaPlus1); CtrlShow(m_lblEmaPlus2);
       CtrlShow(m_lblEma2Tag); CtrlShowEdit(m_edtEma2); CtrlShowBtn(m_btnEma2);
       CtrlShow(m_lblEma3Tag); CtrlShowEdit(m_edtEma3); CtrlShowBtn(m_btnEma3);
-      CtrlShow(m_sep[9]);
    }
 }
 
