@@ -210,9 +210,13 @@ void OnDeinit(const int reason)
    EventKillTimer();
    ObjectDelete(0, BE_LINE_NAME);
    ObjectDelete(0, "OB_PREV_DAY_HIGH");
+   ObjectDelete(0, "OB_PREV_DAY_HIGH_TXT");
    ObjectDelete(0, "OB_PREV_DAY_LOW");
+   ObjectDelete(0, "OB_PREV_DAY_LOW_TXT");
    ObjectDelete(0, "OB_DAY_VWAP");
+   ObjectDelete(0, "OB_DAY_VWAP_TXT");
    ObjectDelete(0, "OB_WEEK_VWAP");
+   ObjectDelete(0, "OB_WEEK_VWAP_TXT");
    g_dashboard.Destroy(reason);
 }
 
@@ -972,6 +976,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
    
    double point = SymbolInfoDouble(sym, SYMBOL_POINT);
    if(point <= 0) return;
+   int digits = (int)SymbolInfoInteger(sym, SYMBOL_DIGITS);
 
    // Previous Day H/L
    if(cfg.main.obsPrevDayHLOn)
@@ -988,10 +993,12 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
       
       if(prevHigh > 0 && prevLow > 0)
       {
-         datetime endTime = TimeCurrent() + 7200; // extend a bit to the right
+         datetime endTime = TimeCurrent() + 1800; // extend 30 mins to the right
+         datetime textTime = endTime;             // text label exactly at the right end of the line
          
          // Prev Day High
          string namePDH = "OB_PREV_DAY_HIGH";
+         string namePDH_Txt = "OB_PREV_DAY_HIGH_TXT";
          if(ObjectFind(0, namePDH) < 0)
          {
             ObjectCreate(0, namePDH, OBJ_TREND, 0, dayStart, prevHigh, endTime, prevHigh);
@@ -1010,8 +1017,26 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
             ObjectSetInteger(0, namePDH, OBJPROP_TIME, 1, endTime);
          }
          
+         if(ObjectFind(0, namePDH_Txt) < 0)
+         {
+            ObjectCreate(0, namePDH_Txt, OBJ_TEXT, 0, textTime, prevHigh);
+            ObjectSetString(0, namePDH_Txt, OBJPROP_TEXT, "Previous Day High (" + DoubleToString(prevHigh, digits) + ")");
+            ObjectSetInteger(0, namePDH_Txt, OBJPROP_COLOR, clrMediumSlateBlue);
+            ObjectSetInteger(0, namePDH_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+            ObjectSetInteger(0, namePDH_Txt, OBJPROP_FONTSIZE, 8);
+            ObjectSetInteger(0, namePDH_Txt, OBJPROP_BACK, true);
+            ObjectSetInteger(0, namePDH_Txt, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, namePDH_Txt, OBJPROP_PRICE, prevHigh);
+            ObjectSetInteger(0, namePDH_Txt, OBJPROP_TIME, textTime);
+            ObjectSetString(0, namePDH_Txt, OBJPROP_TEXT, "Previous Day High (" + DoubleToString(prevHigh, digits) + ")");
+         }
+         
          // Prev Day Low
          string namePDL = "OB_PREV_DAY_LOW";
+         string namePDL_Txt = "OB_PREV_DAY_LOW_TXT";
          if(ObjectFind(0, namePDL) < 0)
          {
             ObjectCreate(0, namePDL, OBJ_TREND, 0, dayStart, prevLow, endTime, prevLow);
@@ -1029,12 +1054,31 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
             ObjectSetInteger(0, namePDL, OBJPROP_TIME, 0, dayStart);
             ObjectSetInteger(0, namePDL, OBJPROP_TIME, 1, endTime);
          }
+         
+         if(ObjectFind(0, namePDL_Txt) < 0)
+         {
+            ObjectCreate(0, namePDL_Txt, OBJ_TEXT, 0, textTime, prevLow);
+            ObjectSetString(0, namePDL_Txt, OBJPROP_TEXT, "Previous Day Low (" + DoubleToString(prevLow, digits) + ")");
+            ObjectSetInteger(0, namePDL_Txt, OBJPROP_COLOR, clrMediumSlateBlue);
+            ObjectSetInteger(0, namePDL_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
+            ObjectSetInteger(0, namePDL_Txt, OBJPROP_FONTSIZE, 8);
+            ObjectSetInteger(0, namePDL_Txt, OBJPROP_BACK, true);
+            ObjectSetInteger(0, namePDL_Txt, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, namePDL_Txt, OBJPROP_PRICE, prevLow);
+            ObjectSetInteger(0, namePDL_Txt, OBJPROP_TIME, textTime);
+            ObjectSetString(0, namePDL_Txt, OBJPROP_TEXT, "Previous Day Low (" + DoubleToString(prevLow, digits) + ")");
+         }
       }
    }
    else
    {
       ObjectDelete(0, "OB_PREV_DAY_HIGH");
+      ObjectDelete(0, "OB_PREV_DAY_HIGH_TXT");
       ObjectDelete(0, "OB_PREV_DAY_LOW");
+      ObjectDelete(0, "OB_PREV_DAY_LOW_TXT");
    }
 
    // Day VWAP
@@ -1051,8 +1095,10 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
       
       if(dVwapVal > 0)
       {
-         datetime endTime = TimeCurrent() + 7200;
+         datetime endTime = TimeCurrent() + 1800;
+         datetime textTime = endTime;
          string nameDV = "OB_DAY_VWAP";
+         string nameDV_Txt = "OB_DAY_VWAP_TXT";
          if(ObjectFind(0, nameDV) < 0)
          {
             ObjectCreate(0, nameDV, OBJ_TREND, 0, dayStart, dVwapVal, endTime, dVwapVal);
@@ -1070,11 +1116,29 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
             ObjectSetInteger(0, nameDV, OBJPROP_TIME, 0, dayStart);
             ObjectSetInteger(0, nameDV, OBJPROP_TIME, 1, endTime);
          }
+         
+         if(ObjectFind(0, nameDV_Txt) < 0)
+         {
+            ObjectCreate(0, nameDV_Txt, OBJ_TEXT, 0, textTime, dVwapVal);
+            ObjectSetString(0, nameDV_Txt, OBJPROP_TEXT, "Day VWAP (" + DoubleToString(dVwapVal, digits) + ")");
+            ObjectSetInteger(0, nameDV_Txt, OBJPROP_COLOR, clrGold);
+            ObjectSetInteger(0, nameDV_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+            ObjectSetInteger(0, nameDV_Txt, OBJPROP_FONTSIZE, 8);
+            ObjectSetInteger(0, nameDV_Txt, OBJPROP_BACK, true);
+            ObjectSetInteger(0, nameDV_Txt, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, nameDV_Txt, OBJPROP_PRICE, dVwapVal);
+            ObjectSetInteger(0, nameDV_Txt, OBJPROP_TIME, textTime);
+            ObjectSetString(0, nameDV_Txt, OBJPROP_TEXT, "Day VWAP (" + DoubleToString(dVwapVal, digits) + ")");
+         }
       }
    }
    else
    {
       ObjectDelete(0, "OB_DAY_VWAP");
+      ObjectDelete(0, "OB_DAY_VWAP_TXT");
    }
 
    // Week VWAP
@@ -1093,8 +1157,10 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
       
       if(wVwapVal > 0)
       {
-         datetime endTime = TimeCurrent() + 7200;
+         datetime endTime = TimeCurrent() + 1800;
+         datetime textTime = endTime;
          string nameWV = "OB_WEEK_VWAP";
+         string nameWV_Txt = "OB_WEEK_VWAP_TXT";
          if(ObjectFind(0, nameWV) < 0)
          {
             ObjectCreate(0, nameWV, OBJ_TREND, 0, weekStart, wVwapVal, endTime, wVwapVal);
@@ -1112,11 +1178,29 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
             ObjectSetInteger(0, nameWV, OBJPROP_TIME, 0, weekStart);
             ObjectSetInteger(0, nameWV, OBJPROP_TIME, 1, endTime);
          }
+         
+         if(ObjectFind(0, nameWV_Txt) < 0)
+         {
+            ObjectCreate(0, nameWV_Txt, OBJ_TEXT, 0, textTime, wVwapVal);
+            ObjectSetString(0, nameWV_Txt, OBJPROP_TEXT, "Week VWAP (" + DoubleToString(wVwapVal, digits) + ")");
+            ObjectSetInteger(0, nameWV_Txt, OBJPROP_COLOR, clrMagenta);
+            ObjectSetInteger(0, nameWV_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
+            ObjectSetInteger(0, nameWV_Txt, OBJPROP_FONTSIZE, 8);
+            ObjectSetInteger(0, nameWV_Txt, OBJPROP_BACK, true);
+            ObjectSetInteger(0, nameWV_Txt, OBJPROP_SELECTABLE, false);
+         }
+         else
+         {
+            ObjectSetDouble(0, nameWV_Txt, OBJPROP_PRICE, wVwapVal);
+            ObjectSetInteger(0, nameWV_Txt, OBJPROP_TIME, textTime);
+            ObjectSetString(0, nameWV_Txt, OBJPROP_TEXT, "Week VWAP (" + DoubleToString(wVwapVal, digits) + ")");
+         }
       }
    }
    else
    {
       ObjectDelete(0, "OB_WEEK_VWAP");
+      ObjectDelete(0, "OB_WEEK_VWAP_TXT");
    }
 }
 
