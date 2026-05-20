@@ -281,7 +281,8 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                m_entryBreakDir = 1;
                m_entryReason = "Up " + IntegerToString(PeriodSeconds(tf) / 60) + "m"
                                + (params.customRetestOn ? ", retest " + IntegerToString(params.customRetestMin) + "m" : "");
-               DrawTradeLines(symbol, tf, 1, entryPrice, tp);
+               double triggerSLPrice = (params.trailTrigger > 0) ? NormalizeDouble(entryPrice + params.trailTrigger * point, digits) : 0;
+               DrawTradeLines(symbol, tf, 1, entryPrice, triggerSLPrice);
                PrintFormat("[%s] BUY STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
             }
          }
@@ -332,7 +333,8 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                m_entryBreakDir = -1;
                m_entryReason = "Down " + IntegerToString(PeriodSeconds(tf) / 60) + "m"
                                + (params.customRetestOn ? ", retest " + IntegerToString(params.customRetestMin) + "m" : "");
-               DrawTradeLines(symbol, tf, -1, entryPrice, tp);
+               double triggerSLPrice = (params.trailTrigger > 0) ? NormalizeDouble(entryPrice - params.trailTrigger * point, digits) : 0;
+               DrawTradeLines(symbol, tf, -1, entryPrice, triggerSLPrice);
                PrintFormat("[%s] SELL STOP placed at %.5f on retest", EnumToString(tf), entryPrice);
             }
          }
@@ -834,7 +836,7 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
 
       string textT = nameT + "_TXT";
       ObjectCreate(0, textT, OBJ_TEXT, 0, tEnd, target);
-      ObjectSetString(0, textT, OBJPROP_TEXT, prefix + "Target: " + DoubleToString(target, digits));
+      ObjectSetString(0, textT, OBJPROP_TEXT, prefix + "Trigger Trailing SL: " + DoubleToString(target, digits));
       ObjectSetInteger(0, textT, OBJPROP_COLOR, colTarget);
       ObjectSetInteger(0, textT, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
       ObjectSetInteger(0, textT, OBJPROP_FONTSIZE, 8);

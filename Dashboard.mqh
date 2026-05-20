@@ -210,22 +210,25 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    if(!CAppDialog::Create(chart,name,subwin,x,y,x+w,y+h)) return false;
    Caption(EA_NAME);
    
-   // Customize caption bar: hide X button, enlarge Minimize button
-   for(int i=ObjectsTotal(chart,subwin)-1;i>=0;i--)
-   { string n=ObjectName(chart,i,subwin);
-     // The CAppDialog creates buttons named "Close" and "Minimize" with suffix
-     if(StringFind(n,"Close") >= 0) {
-        ObjectSetInteger(chart, n, OBJPROP_XSIZE, 0);
-        ObjectSetInteger(chart, n, OBJPROP_YSIZE, 0);
-        ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, -100);
-        ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, -100);
-     }
-     if(StringFind(n,"Minimize") >= 0) {
-        ObjectSetString(chart, n, OBJPROP_TEXT, "Minimize");
-        ObjectSetInteger(chart, n, OBJPROP_XSIZE, 70);
-        ObjectSetInteger(chart, n, OBJPROP_FONTSIZE, 8);
-     }
-   }
+   // Customize caption bar: show X button, show Minimize button
+    for(int i=ObjectsTotal(chart,subwin)-1;i>=0;i--)
+    { string n=ObjectName(chart,i,subwin);
+      // The CAppDialog creates buttons named "Close" and "Minimize" with suffix
+      if(StringFind(n,"Close") >= 0) {
+         ObjectSetInteger(chart, n, OBJPROP_XSIZE, 20);
+         ObjectSetInteger(chart, n, OBJPROP_YSIZE, 20);
+         ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, w - 24);
+         ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, 6);
+      }
+      if(StringFind(n,"Minimize") >= 0) {
+         ObjectSetString(chart, n, OBJPROP_TEXT, "Minimize");
+         ObjectSetInteger(chart, n, OBJPROP_XSIZE, 60);
+         ObjectSetInteger(chart, n, OBJPROP_YSIZE, 20);
+         ObjectSetInteger(chart, n, OBJPROP_FONTSIZE, 8);
+         ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, w - 88);
+         ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, 6);
+      }
+    }
    
    int colored=0;
    for(int i=ObjectsTotal(chart,subwin)-1;i>=0;i--)
@@ -267,7 +270,8 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // --- TABS (Consolidated: Stats, Order, Entry, Flatten) ---
    int tcw=(cw-12)/4;
-   MB(m_btnTabStats,"bTmSt","\xF0\x9F\x92\xB8",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
+    MB(m_btnTabStats,"bTmSt","O",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
+    m_btnTabStats.Color(CLR_GOLD);
    MB(m_btnTabOrder,"bTmOrd","ORDER",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
    MB(m_btnTabEntry,"bTmEnt","ENTRY",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
    MB(m_btnTabFlatten,"bTmFlt","FLATTEN",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
@@ -279,9 +283,9 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int cyOrder = startCy;
    ML(m_lblMdTag,"lMd","Order mode",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
    int mb=(rw-6)/3;
-   MB(m_btnBoth,"bBt","BOTH",rx,cyOrder,mb,CTRL_HEIGHT+2,CLR_BTN_ON);
-   MB(m_btnBuy,"bBy","BUY",rx+mb+3,cyOrder,mb,CTRL_HEIGHT+2);
-   MB(m_btnSell,"bSe","SELL",rx+(mb+3)*2,cyOrder,mb,CTRL_HEIGHT+2); cyOrder+=CTRL_HEIGHT+2+8+SEC_PAD;
+    MB(m_btnBoth,"bBt","Both",rx,cyOrder,mb,CTRL_HEIGHT+2,CLR_PURPLE);
+    MB(m_btnBuy,"bBy","Buy",rx+mb+3,cyOrder,mb,CTRL_HEIGHT+2);
+    MB(m_btnSell,"bSe","Sell",rx+(mb+3)*2,cyOrder,mb,CTRL_HEIGHT+2); cyOrder+=CTRL_HEIGHT+2+8+SEC_PAD;
    cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 5
 
    // ── RISK ──
@@ -877,7 +881,7 @@ void CDashboard::OnSLS() { m_btnSLS.Pressed(false); m_slCandle=!m_slCandle; m_bt
 void CDashboard::OnBoth() { m_btnBoth.Pressed(false); m_om=MODE_BOTH; UpdMode(); MarkDirty(); }
 void CDashboard::OnBuyO() { m_btnBuy.Pressed(false); m_om=MODE_BUY_ONLY; UpdMode(); MarkDirty(); }
 void CDashboard::OnSellO(){ m_btnSell.Pressed(false); m_om=MODE_SELL_ONLY; UpdMode(); MarkDirty(); }
-void CDashboard::UpdMode(){ m_btnBoth.ColorBackground(m_om==MODE_BOTH?CLR_BTN_ON:CLR_BTN_OFF);
+void CDashboard::UpdMode(){ m_btnBoth.ColorBackground(m_om==MODE_BOTH?CLR_PURPLE:CLR_BTN_OFF);
    m_btnBuy.ColorBackground(m_om==MODE_BUY_ONLY?CLR_BUY:CLR_BTN_OFF);
    m_btnSell.ColorBackground(m_om==MODE_SELL_ONLY?CLR_SELL:CLR_BTN_OFF); }
 void CDashboard::OnTrM() {
