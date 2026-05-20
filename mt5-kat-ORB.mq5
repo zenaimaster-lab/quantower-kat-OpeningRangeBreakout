@@ -1042,7 +1042,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          if(ObjectFind(0, namePDH_Txt) < 0)
          {
             ObjectCreate(0, namePDH_Txt, OBJ_TEXT, 0, textTime, prevHigh);
-            ObjectSetString(0, namePDH_Txt, OBJPROP_TEXT, "Previous Day High (" + DoubleToString(prevHigh, digits) + ")");
+            ObjectSetString(0, namePDH_Txt, OBJPROP_TEXT, "Prev Day High");
             ObjectSetInteger(0, namePDH_Txt, OBJPROP_COLOR, clrMediumSlateBlue);
             ObjectSetInteger(0, namePDH_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
             ObjectSetInteger(0, namePDH_Txt, OBJPROP_FONTSIZE, 8);
@@ -1053,7 +1053,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          {
             ObjectSetDouble(0, namePDH_Txt, OBJPROP_PRICE, prevHigh);
             ObjectSetInteger(0, namePDH_Txt, OBJPROP_TIME, textTime);
-            ObjectSetString(0, namePDH_Txt, OBJPROP_TEXT, "Previous Day High (" + DoubleToString(prevHigh, digits) + ")");
+            ObjectSetString(0, namePDH_Txt, OBJPROP_TEXT, "Prev Day High");
          }
          
          // Prev Day Low
@@ -1080,7 +1080,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          if(ObjectFind(0, namePDL_Txt) < 0)
          {
             ObjectCreate(0, namePDL_Txt, OBJ_TEXT, 0, textTime, prevLow);
-            ObjectSetString(0, namePDL_Txt, OBJPROP_TEXT, "Previous Day Low (" + DoubleToString(prevLow, digits) + ")");
+            ObjectSetString(0, namePDL_Txt, OBJPROP_TEXT, "Prev Day Low");
             ObjectSetInteger(0, namePDL_Txt, OBJPROP_COLOR, clrMediumSlateBlue);
             ObjectSetInteger(0, namePDL_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
             ObjectSetInteger(0, namePDL_Txt, OBJPROP_FONTSIZE, 8);
@@ -1091,7 +1091,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          {
             ObjectSetDouble(0, namePDL_Txt, OBJPROP_PRICE, prevLow);
             ObjectSetInteger(0, namePDL_Txt, OBJPROP_TIME, textTime);
-            ObjectSetString(0, namePDL_Txt, OBJPROP_TEXT, "Previous Day Low (" + DoubleToString(prevLow, digits) + ")");
+            ObjectSetString(0, namePDL_Txt, OBJPROP_TEXT, "Prev Day Low");
          }
       }
    }
@@ -1135,7 +1135,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          if(ObjectFind(0, nameDV_Txt) < 0)
          {
             ObjectCreate(0, nameDV_Txt, OBJ_TEXT, 0, textTime, dVwapVal);
-            ObjectSetString(0, nameDV_Txt, OBJPROP_TEXT, "Day VWAP (" + DoubleToString(dVwapVal, digits) + ")");
+            ObjectSetString(0, nameDV_Txt, OBJPROP_TEXT, "Day VWAP");
             ObjectSetInteger(0, nameDV_Txt, OBJPROP_COLOR, clrGold);
             ObjectSetInteger(0, nameDV_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
             ObjectSetInteger(0, nameDV_Txt, OBJPROP_FONTSIZE, 8);
@@ -1146,7 +1146,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          {
             ObjectSetDouble(0, nameDV_Txt, OBJPROP_PRICE, dVwapVal);
             ObjectSetInteger(0, nameDV_Txt, OBJPROP_TIME, textTime);
-            ObjectSetString(0, nameDV_Txt, OBJPROP_TEXT, "Day VWAP (" + DoubleToString(dVwapVal, digits) + ")");
+            ObjectSetString(0, nameDV_Txt, OBJPROP_TEXT, "Day VWAP");
          }
       }
    }
@@ -1188,7 +1188,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          if(ObjectFind(0, nameWV_Txt) < 0)
          {
             ObjectCreate(0, nameWV_Txt, OBJ_TEXT, 0, textTime, wVwapVal);
-            ObjectSetString(0, nameWV_Txt, OBJPROP_TEXT, "Week VWAP (" + DoubleToString(wVwapVal, digits) + ")");
+            ObjectSetString(0, nameWV_Txt, OBJPROP_TEXT, "Week VWAP");
             ObjectSetInteger(0, nameWV_Txt, OBJPROP_COLOR, clrMagenta);
             ObjectSetInteger(0, nameWV_Txt, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
             ObjectSetInteger(0, nameWV_Txt, OBJPROP_FONTSIZE, 8);
@@ -1199,7 +1199,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          {
             ObjectSetDouble(0, nameWV_Txt, OBJPROP_PRICE, wVwapVal);
             ObjectSetInteger(0, nameWV_Txt, OBJPROP_TIME, textTime);
-            ObjectSetString(0, nameWV_Txt, OBJPROP_TEXT, "Week VWAP (" + DoubleToString(wVwapVal, digits) + ")");
+            ObjectSetString(0, nameWV_Txt, OBJPROP_TEXT, "Week VWAP");
          }
       }
    }
@@ -1297,12 +1297,12 @@ void UpdateDashboardExposure(const string &sym, double riskAmount, double riskPe
          ObjectSetInteger(0, BE_LINE_NAME, OBJPROP_STYLE, STYLE_SOLID);
          ObjectSetInteger(0, BE_LINE_NAME, OBJPROP_WIDTH, 1);
          ObjectSetInteger(0, BE_LINE_NAME, OBJPROP_BACK, true);
-         ObjectSetString(0, BE_LINE_NAME, OBJPROP_TEXT, "BE: " + DoubleToString(beLine, digits));
+         ObjectSetString(0, BE_LINE_NAME, OBJPROP_TEXT, "BE");
       }
       else
       {
          ObjectSetDouble(0, BE_LINE_NAME, OBJPROP_PRICE, beLine);
-         ObjectSetString(0, BE_LINE_NAME, OBJPROP_TEXT, "BE: " + DoubleToString(beLine, digits));
+         ObjectSetString(0, BE_LINE_NAME, OBJPROP_TEXT, "BE");
       }
    }
    else

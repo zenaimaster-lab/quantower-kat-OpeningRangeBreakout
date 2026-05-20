@@ -1216,9 +1216,10 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
 
    string textH = nameH + "_TXT";
    ObjectCreate(0, textH, OBJ_TEXT, 0, txtTime, high);
-   ObjectSetString(0, textH, OBJPROP_TEXT, prefix + "H: " + DoubleToString(high, digits));
+   ObjectSetString(0, textH, OBJPROP_TEXT, prefix + "H");
    ObjectSetInteger(0, textH, OBJPROP_COLOR, colHigh);
    ObjectSetInteger(0, textH, OBJPROP_ANCHOR, anchorH);
+   ObjectSetInteger(0, textH, OBJPROP_FONTSIZE, 8);
    ObjectSetInteger(0, textH, OBJPROP_BACK, true);
 
    ObjectCreate(0, nameL, OBJ_TREND, 0, cTime, low, endTime, low);
@@ -1230,9 +1231,10 @@ void COrderManager::DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTi
 
    string textL = nameL + "_TXT";
    ObjectCreate(0, textL, OBJ_TEXT, 0, txtTime, low);
-   ObjectSetString(0, textL, OBJPROP_TEXT, prefix + "L: " + DoubleToString(low, digits));
+   ObjectSetString(0, textL, OBJPROP_TEXT, prefix + "L");
    ObjectSetInteger(0, textL, OBJPROP_COLOR, colLow);
    ObjectSetInteger(0, textL, OBJPROP_ANCHOR, anchorL);
+   ObjectSetInteger(0, textL, OBJPROP_FONTSIZE, 8);
    ObjectSetInteger(0, textL, OBJPROP_BACK, true);
 }
 
@@ -1263,7 +1265,7 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
 
    string textE = nameE + "_TXT";
    ObjectCreate(0, textE, OBJ_TEXT, 0, tEnd, entry);
-   ObjectSetString(0, textE, OBJPROP_TEXT, prefix + ((dir == 1) ? "Buy Stop: " : "Sell Stop: ") + DoubleToString(entry, digits));
+   ObjectSetString(0, textE, OBJPROP_TEXT, prefix + ((dir == 1) ? "Buy Stop" : "Sell Stop"));
    ObjectSetInteger(0, textE, OBJPROP_COLOR, colEntry);
    ObjectSetInteger(0, textE, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
    ObjectSetInteger(0, textE, OBJPROP_FONTSIZE, 8);
@@ -1280,7 +1282,7 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
 
       string textT = nameT + "_TXT";
       ObjectCreate(0, textT, OBJ_TEXT, 0, tEnd, target);
-      ObjectSetString(0, textT, OBJPROP_TEXT, prefix + "Trigger Trailing SL: " + DoubleToString(target, digits));
+      ObjectSetString(0, textT, OBJPROP_TEXT, prefix + "Trigger");
       ObjectSetInteger(0, textT, OBJPROP_COLOR, colTarget);
       ObjectSetInteger(0, textT, OBJPROP_ANCHOR, ANCHOR_LEFT_UPPER);
       ObjectSetInteger(0, textT, OBJPROP_FONTSIZE, 8);
