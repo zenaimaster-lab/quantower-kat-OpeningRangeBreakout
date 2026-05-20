@@ -64,6 +64,14 @@ private:
    CEdit m_lblFemTag, m_edtFem1, m_edtFem2, m_edtFem3;
    CButton m_btnFem1, m_btnFem2, m_btnFem3;
    CEdit m_lblEmaPlus1, m_lblEmaPlus2, m_lblFemPlus1, m_lblFemPlus2;
+   
+   CEdit m_lblObsTag;
+   CEdit m_lblObsMaxDistTag, m_edtObsMaxDist;
+   CEdit m_lblObsR5mTag; CButton m_btnObsR5m;
+   CEdit m_lblObsR15mTag; CButton m_btnObsR15m;
+   CEdit m_lblObsEmaTag, m_edtObsEma1, m_edtObsEma2, m_edtObsEma3;
+   CButton m_btnObsEma1, m_btnObsEma2, m_btnObsEma3;
+   CEdit m_lblObsEmaPlus1, m_lblObsEmaPlus2;
 
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
    CEdit m_lblEqTag, m_lblPlTag;
@@ -110,6 +118,8 @@ private:
    bool m_ufmEnabled, m_tmrEnabled, m_aucEnabled, m_afcEnabled, m_aamEnabled, m_mdrEnabled;
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
    bool m_fem1Enabled, m_fem2Enabled, m_fem3Enabled;
+   bool m_obsRange5mOn, m_obsRange15mOn;
+   bool m_obsEma1On, m_obsEma2On, m_obsEma3On;
    bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum, m_rtcOn;
    int m_statusSepStart, m_statusSepEnd;
    int m_utcOff;
@@ -178,6 +188,12 @@ private:
    void OnFem2Toggle(); void UpdFem2();
    void OnFem3Toggle(); void UpdFem3();
    
+   void OnObsR5mToggle(); void UpdObsR5m();
+   void OnObsR15mToggle(); void UpdObsR15m();
+   void OnObsEma1Toggle(); void UpdObsEma1();
+   void OnObsEma2Toggle(); void UpdObsEma2();
+   void OnObsEma3Toggle(); void UpdObsEma3();
+
    void OnContToggle(); void UpdCont();
    void OnMaxSToggle(); void UpdMaxS();
    void OnMaxLToggle(); void UpdMaxL();
@@ -201,8 +217,9 @@ public:
 CDashboard::CDashboard() { m_rMode=true; m_slCandle=false; m_om=MODE_BOTH; m_tm=TM_OFF; m_activeTab=TAB_STATS;
    m_ufmEnabled=true; m_tmrEnabled=true; m_aucEnabled=false; m_afcEnabled=true; m_aamEnabled=true; m_mdrEnabled=true; m_utcOff=-4; m_beOn=false;
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
-   m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
-   m_contAfter1st=true; m_maxSuccessOn=true; m_maxLossOn=true; m_bigMomentum=false; m_rtcOn=true;
+    m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
+    m_obsRange5mOn=true; m_obsRange15mOn=true; m_obsEma1On=true; m_obsEma2On=true; m_obsEma3On=true;
+    m_contAfter1st=true; m_maxSuccessOn=true; m_maxLossOn=true; m_bigMomentum=false; m_rtcOn=true;
    m_dirty=true;
 
    m_lastClickMs=0; m_lastClickName=""; }
@@ -395,6 +412,25 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
     ME(m_edtEma3,"eEm3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
     MB(m_btnEma3,"bEm3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+SEC_PAD;
     cyFlatten+=SEC_PAD; MSep(si++,-100,-100,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 9
+
+    // ── TAB: FLATTEN - OBSTACLES ──
+    ML(m_lblObsTag,"lObT","OBSTACLE FILTER",cx,cyFlatten,cw,CTRL_HEIGHT); cyFlatten+=CTRL_HEIGHT+CONFIG_GAP+8;
+    ML(m_lblObsMaxDistTag,"lObMd","Max dist to obstacle",cx,cyFlatten,150,CTRL_HEIGHT);
+    ME(m_edtObsMaxDist,"eObMd","2000",cx+155,cyFlatten,50,CTRL_HEIGHT); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblObsR5mTag,"lObR5","Obstacle Range 5m",cx,cyFlatten,150,CTRL_HEIGHT);
+    MB(m_btnObsR5m,"bObR5","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblObsR15mTag,"lObR15","Obstacle Range 15m",cx,cyFlatten,150,CTRL_HEIGHT);
+    MB(m_btnObsR15m,"bObR15","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblObsEmaTag,"lObEm","Obstacle EMA (2m)",cx,cyFlatten,115,CTRL_HEIGHT);
+    ML(m_lblObsEmaPlus1,"lOEp1","+",cx+189,cyFlatten,14,CTRL_HEIGHT);
+    ML(m_lblObsEmaPlus2,"lOEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
+    ME(m_edtObsEma1,"eObE1","250",cx+124,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnObsEma1,"bObE1","",cx+163,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON);
+    ME(m_edtObsEma2,"eObE2","255",cx+205,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnObsEma2,"bObE2","",cx+244,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON);
+    ME(m_edtObsEma3,"eObE3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnObsEma3,"bObE3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+SEC_PAD;
+    cyFlatten+=SEC_PAD; MSep(si++,-100,-100,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 10
 
 
    // ── TAB: STATS ──
@@ -614,6 +650,16 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.favorEma3On=m_fem3Enabled;
    p.favorEma3Period=(int)StringToInteger(m_edtFem3.Text());
 
+   p.obsRange5mOn=m_obsRange5mOn;
+   p.obsRange15mOn=m_obsRange15mOn;
+   p.obsEma1On=m_obsEma1On;
+   p.obsEma1Period=(int)StringToInteger(m_edtObsEma1.Text());
+   p.obsEma2On=m_obsEma2On;
+   p.obsEma2Period=(int)StringToInteger(m_edtObsEma2.Text());
+   p.obsEma3On=m_obsEma3On;
+   p.obsEma3Period=(int)StringToInteger(m_edtObsEma3.Text());
+   p.obsMaxDist=(int)StringToInteger(m_edtObsMaxDist.Text());
+
    p.isActive = m_config.main.isActive;
    p.nyHour = m_config.main.nyHour;
    p.nyMinute = m_config.main.nyMinute;
@@ -676,6 +722,16 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_edtFem2.Text(IntegerToString(p.favorEma2Period));
    m_fem3Enabled=p.favorEma3On; UpdFem3();
    m_edtFem3.Text(IntegerToString(p.favorEma3Period));
+
+   m_obsRange5mOn=p.obsRange5mOn; UpdObsR5m();
+   m_obsRange15mOn=p.obsRange15mOn; UpdObsR15m();
+   m_obsEma1On=p.obsEma1On; UpdObsEma1();
+   m_edtObsEma1.Text(IntegerToString(p.obsEma1Period));
+   m_obsEma2On=p.obsEma2On; UpdObsEma2();
+   m_edtObsEma2.Text(IntegerToString(p.obsEma2Period));
+   m_obsEma3On=p.obsEma3On; UpdObsEma3();
+   m_edtObsEma3.Text(IntegerToString(p.obsEma3Period));
+   m_edtObsMaxDist.Text(IntegerToString(p.obsMaxDist));
 }
 
 void CDashboard::SetInitialParams(const SystemConfig &cfg)
@@ -743,6 +799,11 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnMaxS.Name())          { OnMaxSToggle(); return true; }
    if(objName == m_btnMaxL.Name())          { OnMaxLToggle(); return true; }
    if(objName == m_btnBigM.Name())          { OnBigMToggle(); return true; }
+   if(objName == m_btnObsR5m.Name())        { OnObsR5mToggle(); return true; }
+   if(objName == m_btnObsR15m.Name())       { OnObsR15mToggle(); return true; }
+   if(objName == m_btnObsEma1.Name())       { OnObsEma1Toggle(); return true; }
+   if(objName == m_btnObsEma2.Name())       { OnObsEma2Toggle(); return true; }
+   if(objName == m_btnObsEma3.Name())       { OnObsEma3Toggle(); return true; }
    return false;
 }
 
@@ -921,6 +982,17 @@ void CDashboard::UpdFem2() { m_btnFem2.Text(m_fem2Enabled?ShortToString(0x2713):
 void CDashboard::OnFem3Toggle() { m_btnFem3.Pressed(false); m_fem3Enabled=!m_fem3Enabled; UpdFem3(); MarkDirty(); }
 void CDashboard::UpdFem3() { m_btnFem3.Text(m_fem3Enabled?ShortToString(0x2713):""); m_btnFem3.ColorBackground(m_fem3Enabled?CLR_SUCCESS:CLR_BTN_OFF); }
 
+void CDashboard::OnObsR5mToggle() { m_btnObsR5m.Pressed(false); m_obsRange5mOn=!m_obsRange5mOn; UpdObsR5m(); MarkDirty(); }
+void CDashboard::UpdObsR5m() { m_btnObsR5m.Text(m_obsRange5mOn?"ON":"OFF"); m_btnObsR5m.ColorBackground(m_obsRange5mOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::OnObsR15mToggle() { m_btnObsR15m.Pressed(false); m_obsRange15mOn=!m_obsRange15mOn; UpdObsR15m(); MarkDirty(); }
+void CDashboard::UpdObsR15m() { m_btnObsR15m.Text(m_obsRange15mOn?"ON":"OFF"); m_btnObsR15m.ColorBackground(m_obsRange15mOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::OnObsEma1Toggle() { m_btnObsEma1.Pressed(false); m_obsEma1On=!m_obsEma1On; UpdObsEma1(); MarkDirty(); }
+void CDashboard::UpdObsEma1() { m_btnObsEma1.Text(m_obsEma1On?ShortToString(0x2713):""); m_btnObsEma1.ColorBackground(m_obsEma1On?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::OnObsEma2Toggle() { m_btnObsEma2.Pressed(false); m_obsEma2On=!m_obsEma2On; UpdObsEma2(); MarkDirty(); }
+void CDashboard::UpdObsEma2() { m_btnObsEma2.Text(m_obsEma2On?ShortToString(0x2713):""); m_btnObsEma2.ColorBackground(m_obsEma2On?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::OnObsEma3Toggle() { m_btnObsEma3.Pressed(false); m_obsEma3On=!m_obsEma3On; UpdObsEma3(); MarkDirty(); }
+void CDashboard::UpdObsEma3() { m_btnObsEma3.Text(m_obsEma3On?ShortToString(0x2713):""); m_btnObsEma3.ColorBackground(m_obsEma3On?CLR_SUCCESS:CLR_BTN_OFF); }
+
 void CDashboard::OnRtcToggle() { m_btnRtc.Pressed(false); m_rtcOn=!m_rtcOn; UpdRtc(); MarkDirty(); }
 void CDashboard::UpdRtc() { m_btnRtc.Text(m_rtcOn?"ON":"OFF"); m_btnRtc.ColorBackground(m_rtcOn?CLR_SUCCESS:CLR_BTN_OFF); }
 
@@ -998,6 +1070,16 @@ void CDashboard::UpdTabs() {
    CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
    CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
    CtrlHide(m_sep[9]);
+
+   CtrlHide(m_lblObsTag);
+   CtrlHide(m_lblObsMaxDistTag); CtrlHide(m_edtObsMaxDist);
+   CtrlHide(m_lblObsR5mTag); CtrlHide(m_btnObsR5m);
+   CtrlHide(m_lblObsR15mTag); CtrlHide(m_btnObsR15m);
+   CtrlHide(m_lblObsEmaTag); CtrlHide(m_lblObsEmaPlus1); CtrlHide(m_lblObsEmaPlus2);
+   CtrlHide(m_edtObsEma1); CtrlHide(m_btnObsEma1);
+   CtrlHide(m_edtObsEma2); CtrlHide(m_btnObsEma2);
+   CtrlHide(m_edtObsEma3); CtrlHide(m_btnObsEma3);
+   CtrlHide(m_sep[10]);
 
    // --- STATS TAB CONTROLS ---
    CtrlHide(m_lblOrdersSec);
@@ -1083,6 +1165,17 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblEmaPlus1); CtrlShow(m_lblEmaPlus2);
       CtrlShow(m_lblEma2Tag); CtrlShowEdit(m_edtEma2); CtrlShowBtn(m_btnEma2);
       CtrlShow(m_lblEma3Tag); CtrlShowEdit(m_edtEma3); CtrlShowBtn(m_btnEma3);
+      CtrlShow(m_sep[9]);
+
+      CtrlShow(m_lblObsTag);
+      CtrlShow(m_lblObsMaxDistTag); CtrlShowEdit(m_edtObsMaxDist);
+      CtrlShow(m_lblObsR5mTag); CtrlShowBtn(m_btnObsR5m);
+      CtrlShow(m_lblObsR15mTag); CtrlShowBtn(m_btnObsR15m);
+      CtrlShow(m_lblObsEmaTag); CtrlShow(m_lblObsEmaPlus1); CtrlShow(m_lblObsEmaPlus2);
+      CtrlShowEdit(m_edtObsEma1); CtrlShowBtn(m_btnObsEma1);
+      CtrlShowEdit(m_edtObsEma2); CtrlShowBtn(m_btnObsEma2);
+      CtrlShowEdit(m_edtObsEma3); CtrlShowBtn(m_btnObsEma3);
+      CtrlShow(m_sep[10]);
    }
 }
 
@@ -1129,6 +1222,15 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblEmaPlus1); CtrlHide(m_lblEmaPlus2);
    CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
    CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
+
+   CtrlHide(m_lblObsTag);
+   CtrlHide(m_lblObsMaxDistTag); CtrlHide(m_edtObsMaxDist);
+   CtrlHide(m_lblObsR5mTag); CtrlHide(m_btnObsR5m);
+   CtrlHide(m_lblObsR15mTag); CtrlHide(m_btnObsR15m);
+   CtrlHide(m_lblObsEmaTag); CtrlHide(m_lblObsEmaPlus1); CtrlHide(m_lblObsEmaPlus2);
+   CtrlHide(m_edtObsEma1); CtrlHide(m_btnObsEma1);
+   CtrlHide(m_edtObsEma2); CtrlHide(m_btnObsEma2);
+   CtrlHide(m_edtObsEma3); CtrlHide(m_btnObsEma3);
 
    // --- STATS TAB CONTROLS ---
    CtrlHide(m_lblOrdersSec);

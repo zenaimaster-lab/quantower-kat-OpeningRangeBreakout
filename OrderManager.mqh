@@ -55,6 +55,9 @@ private:
    bool              CheckEmaFilters(const DashboardParams &params, int direction, string &outReason, bool isEntry);
    double            GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period);
    bool              HasPendingOrderForComment(string symbol, string commentPrefix);
+   bool              CheckObstacles(const DashboardParams &p, double price, string &outReason);
+   bool              GetRangeLines(string symbol, ENUM_TIMEFRAMES tf, datetime nyoTime, double &high, double &low);
+   double            GetM2EmaValue(string sym, int period);
 
    string            GenerateOrderTag(string prefix);
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
@@ -270,6 +273,15 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
             }
          }
 
+         string obsReason = "";
+         if(CheckObstacles(params, entryPrice, obsReason))
+         {
+            PrintFormat("[%s] SKIP BuyStop: Obstacle detected near entryPrice %.5f. %s", EnumToString(tf), entryPrice, obsReason);
+            m_cancelReason = "Up " + IntegerToString(PeriodSeconds(tf) / 60) + "m, skip Entry (" + obsReason + ")";
+            m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
+            return;
+         }
+
          string filterReason = "";
          if(!CheckEmaFilters(params, 1, filterReason, true))
          {
@@ -320,6 +332,15 @@ void COrderManager::HandleWaitRetest(const DashboardParams &params)
                m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
                return;
             }
+         }
+
+         string obsReason = "";
+         if(CheckObstacles(params, entryPrice, obsReason))
+         {
+            PrintFormat("[%s] SKIP SellStop: Obstacle detected near entryPrice %.5f. %s", EnumToString(tf), entryPrice, obsReason);
+            m_cancelReason = "Down " + IntegerToString(PeriodSeconds(tf) / 60) + "m, skip Entry (" + obsReason + ")";
+            m_state = params.contAfter1st ? ORB_WAIT_BREAK : ORB_DONE;
+            return;
          }
 
          string filterReason = "";
@@ -565,7 +586,29 @@ void COrderManager::CheckAutoFlatten(const DashboardParams &p, datetime nyOpenTi
             break;
          }
       }
-      
+
+      // Obstacle filter cancel for pending orders
+      if(!shouldFlatten)
+      {
+         for(int i = OrdersTotal() - 1; i >= 0; i--)
+         {
+            ulong ticket = OrderGetTicket(i);
+            if(!OrderSelect(ticket)) continue;
+            if(OrderGetInteger(ORDER_MAGIC) != magic) continue;
+            if(OrderGetString(ORDER_SYMBOL) != symbol) continue;
+            if(StringFind(OrderGetString(ORDER_COMMENT), m_lastOrderTag) < 0) continue;
+
+            double openPrice = OrderGetDouble(ORDER_PRICE_OPEN);
+            string obsReason = "";
+            if(CheckObstacles(p, openPrice, obsReason))
+            {
+               shouldFlatten = true;
+               reason = obsReason;
+               break;
+            }
+         }
+      }
+
       // If not flattened by pending orders, check positions
       if(!shouldFlatten)
       {
@@ -715,6 +758,141 @@ double COrderManager::GetEmaValue(string sym, ENUM_TIMEFRAMES tf, int period)
       return result;
    }
    return 0;
+}
+
+//+------------------------------------------------------------------+
+//| Get custom timeframe range lines dynamically                     |
+//+------------------------------------------------------------------+
+bool COrderManager::GetRangeLines(string symbol, ENUM_TIMEFRAMES tf, datetime nyoTime, double &high, double &low)
+{
+   if(nyoTime == 0) return false;
+   datetime now = TimeTradeServer();
+   if(now < nyoTime + PeriodSeconds(tf)) return false; // Bar not closed yet
+
+   int shift = iBarShift(symbol, tf, nyoTime);
+   if(shift < 0) return false;
+
+   high = iHigh(symbol, tf, shift);
+   low = iLow(symbol, tf, shift);
+   return true;
+}
+
+//+------------------------------------------------------------------+
+//| Get M2 EMA value at index 1                                      |
+//+------------------------------------------------------------------+
+double COrderManager::GetM2EmaValue(string sym, int period)
+{
+   if(period <= 0) return 0;
+   int h = iMA(sym, PERIOD_M2, period, 0, MODE_EMA, PRICE_CLOSE);
+   if(h != INVALID_HANDLE)
+   {
+      double ema[1];
+      double result = 0;
+      if(CopyBuffer(h, 0, 1, 1, ema) > 0) result = ema[0];
+      IndicatorRelease(h);
+      return result;
+   }
+   return 0;
+}
+
+//+------------------------------------------------------------------+
+//| Check if there is any obstacle within obsMaxDist of the price    |
+//+------------------------------------------------------------------+
+bool COrderManager::CheckObstacles(const DashboardParams &p, double price, string &outReason)
+{
+   outReason = "";
+   string symbol = p.symbol;
+   double point = GetPoint(symbol);
+   if(point <= 0) return false;
+
+   // 1. Range 5m Obstacle
+   if(p.obsRange5mOn)
+   {
+      double rHigh = 0, rLow = 0;
+      if(GetRangeLines(symbol, PERIOD_M5, m_nyoTime, rHigh, rLow))
+      {
+         double distH = MathAbs(price - rHigh) / point;
+         double distL = MathAbs(price - rLow) / point;
+         if(distH < p.obsMaxDist)
+         {
+            outReason = "5m Range High obstacle (" + IntegerToString((int)MathRound(distH)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+         if(distL < p.obsMaxDist)
+         {
+            outReason = "5m Range Low obstacle (" + IntegerToString((int)MathRound(distL)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   // 2. Range 15m Obstacle
+   if(p.obsRange15mOn)
+   {
+      double rHigh = 0, rLow = 0;
+      if(GetRangeLines(symbol, PERIOD_M15, m_nyoTime, rHigh, rLow))
+      {
+         double distH = MathAbs(price - rHigh) / point;
+         double distL = MathAbs(price - rLow) / point;
+         if(distH < p.obsMaxDist)
+         {
+            outReason = "15m Range High obstacle (" + IntegerToString((int)MathRound(distH)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+         if(distL < p.obsMaxDist)
+         {
+            outReason = "15m Range Low obstacle (" + IntegerToString((int)MathRound(distL)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   // 3. EMA1 M2 Obstacle
+   if(p.obsEma1On && p.obsEma1Period > 0)
+   {
+      double emaVal = GetM2EmaValue(symbol, p.obsEma1Period);
+      if(emaVal > 0)
+      {
+         double dist = MathAbs(price - emaVal) / point;
+         if(dist < p.obsMaxDist)
+         {
+            outReason = "M2 EMA " + IntegerToString(p.obsEma1Period) + " obstacle (" + IntegerToString((int)MathRound(dist)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   // 4. EMA2 M2 Obstacle
+   if(p.obsEma2On && p.obsEma2Period > 0)
+   {
+      double emaVal = GetM2EmaValue(symbol, p.obsEma2Period);
+      if(emaVal > 0)
+      {
+         double dist = MathAbs(price - emaVal) / point;
+         if(dist < p.obsMaxDist)
+         {
+            outReason = "M2 EMA " + IntegerToString(p.obsEma2Period) + " obstacle (" + IntegerToString((int)MathRound(dist)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   // 5. EMA3 M2 Obstacle
+   if(p.obsEma3On && p.obsEma3Period > 0)
+   {
+      double emaVal = GetM2EmaValue(symbol, p.obsEma3Period);
+      if(emaVal > 0)
+      {
+         double dist = MathAbs(price - emaVal) / point;
+         if(dist < p.obsMaxDist)
+         {
+            outReason = "M2 EMA " + IntegerToString(p.obsEma3Period) + " obstacle (" + IntegerToString((int)MathRound(dist)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   return false;
 }
 
 //+------------------------------------------------------------------+

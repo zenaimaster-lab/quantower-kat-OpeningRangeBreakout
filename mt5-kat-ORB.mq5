@@ -42,6 +42,17 @@ input int             InpBeActivatePts     = 200;         // Breakeven Activatio
 input int             InpBeLockPts         = 50;          // Breakeven Lock Profit (Points)
 input bool            InpBeEnabled         = false;       // Enable Breakeven
 
+input group "------------- OBSTACLE FILTER -------------"
+input int             InpObsMaxDist        = 2000;        // Max dist to obstacle (Points)
+input bool            InpObsRange5mOn      = true;        // Block on 5m Range obstacle
+input bool            InpObsRange15mOn     = true;        // Block on 15m Range obstacle
+input bool            InpObsEma1On         = true;        // Block on EMA 1 obstacle
+input int             InpObsEma1Period     = 250;         // EMA 1 Period (M2)
+input bool            InpObsEma2On         = true;        // Block on EMA 2 obstacle
+input int             InpObsEma2Period     = 255;         // EMA 2 Period (M2)
+input bool            InpObsEma3On         = true;        // Block on EMA 3 obstacle
+input int             InpObsEma3Period     = 34;          // EMA 3 Period (M2)
+
 #include "Dashboard.mqh"
 #include "TimeManager.mqh"
 #include "RiskManager.mqh"
@@ -167,6 +178,12 @@ int OnInit()
    cfg.main.trailMode=InpTrailMode; cfg.main.trailTrigger=InpTrailTrigger;
    cfg.main.trailDistance=InpTrailDistance; cfg.main.trailStep=InpTrailStep;
    cfg.main.beActivatePoints=InpBeActivatePts; cfg.main.beLockPoints=InpBeLockPts; cfg.main.beEnabled=InpBeEnabled;
+
+   cfg.main.obsMaxDist=InpObsMaxDist;
+   cfg.main.obsRange5mOn=InpObsRange5mOn; cfg.main.obsRange15mOn=InpObsRange15mOn;
+   cfg.main.obsEma1On=InpObsEma1On; cfg.main.obsEma1Period=InpObsEma1Period;
+   cfg.main.obsEma2On=InpObsEma2On; cfg.main.obsEma2Period=InpObsEma2Period;
+   cfg.main.obsEma3On=InpObsEma3On; cfg.main.obsEma3Period=InpObsEma3Period;
 
    cfg.m2Active = true;
    cfg.m5Active = true;
