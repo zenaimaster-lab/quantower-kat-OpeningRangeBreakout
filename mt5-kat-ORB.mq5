@@ -251,8 +251,8 @@ void UpdateTradeStats()
          // To identify the timeframe, look up the ORIGINAL entry deal via DEAL_POSITION_ID.
          string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
          bool is2m = (StringFind(comment, "2m") >= 0);
-         bool is5m = (StringFind(comment, "5m") >= 0);
          bool is15m = (StringFind(comment, "15m") >= 0);
+         bool is5m = !is15m && (StringFind(comment, "5m") >= 0);
 
          // If exit deal comment doesn't contain timeframe info, look up the entry deal
          if(!is2m && !is5m && !is15m)
@@ -270,8 +270,8 @@ void UpdateTradeStats()
 
                   string entryComment = HistoryDealGetString(entryTicket, DEAL_COMMENT);
                   is2m  = (StringFind(entryComment, "2m") >= 0);
-                  is5m  = (StringFind(entryComment, "5m") >= 0);
                   is15m = (StringFind(entryComment, "15m") >= 0);
+                  is5m  = !is15m && (StringFind(entryComment, "5m") >= 0);
                   break;
                }
             }
@@ -374,10 +374,15 @@ void PopulateAttemptsFromHistory()
    // Select history since start of today
    if(!HistorySelect(todayStart, now + 3600)) return;
 
+   CTradeAttempt temp_history[100];
+   int temp_count = 0;
+
    // 1. Gather all historical cancelled orders of today
    int totalOrders = HistoryOrdersTotal();
    for(int i = 0; i < totalOrders; i++)
    {
+      if(temp_count >= 100) break;
+      
       ulong ticket = HistoryOrderGetTicket(i);
       if(ticket <= 0) continue;
       if(HistoryOrderGetInteger(ticket, ORDER_MAGIC) != g_gs.Magic()) continue;
@@ -395,8 +400,8 @@ void PopulateAttemptsFromHistory()
          
          string comment = HistoryOrderGetString(ticket, ORDER_COMMENT);
          att.timeframeStr = "M2";
-         if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
-         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
          
          long type = HistoryOrderGetInteger(ticket, ORDER_TYPE);
          att.direction = (type == ORDER_TYPE_BUY_LIMIT || type == ORDER_TYPE_BUY_STOP || type == ORDER_TYPE_BUY) ? 1 : -1;
@@ -405,7 +410,8 @@ void PopulateAttemptsFromHistory()
          att.exitReason = "cancelled";
          att.resolveTime = (datetime)HistoryOrderGetInteger(ticket, ORDER_TIME_DONE);
          
-         RegisterAttemptInMemory(att);
+         temp_history[temp_count] = att;
+         temp_count++;
       }
    }
 
@@ -413,6 +419,8 @@ void PopulateAttemptsFromHistory()
    int totalDeals = HistoryDealsTotal();
    for(int i = 0; i < totalDeals; i++)
    {
+      if(temp_count >= 100) break;
+      
       ulong ticket = HistoryDealGetTicket(i);
       if(ticket <= 0) continue;
       if(HistoryDealGetInteger(ticket, DEAL_MAGIC) != g_gs.Magic()) continue;
@@ -444,8 +452,8 @@ void PopulateAttemptsFromHistory()
          
          string comment = HistoryDealGetString(entryTicket, DEAL_COMMENT);
          att.timeframeStr = "M2";
-         if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
-         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
          
          long type = HistoryDealGetInteger(entryTicket, DEAL_TYPE);
          att.direction = (type == DEAL_TYPE_BUY) ? 1 : -1;
@@ -453,10 +461,6 @@ void PopulateAttemptsFromHistory()
          att.status = "Closed";
          att.resolveTime = (datetime)HistoryDealGetInteger(ticket, DEAL_TIME);
 
-         double profit = HistoryDealGetDouble(ticket, DEAL_PROFIT)
-                       + HistoryDealGetDouble(ticket, DEAL_COMMISSION)
-                       + HistoryDealGetDouble(ticket, DEAL_SWAP);
-         
          double entryPrice = HistoryDealGetDouble(entryTicket, DEAL_PRICE);
          double exitPrice = HistoryDealGetDouble(ticket, DEAL_PRICE);
          double pt = SymbolInfoDouble(Symbol(), SYMBOL_POINT);
@@ -487,10 +491,31 @@ void PopulateAttemptsFromHistory()
             att.exitReason = "closed";
          }
 
-         RegisterAttemptInMemory(att);
+         temp_history[temp_count] = att;
+         temp_count++;
       }
    }
-   
+
+   // 3. Sort temp_history chronologically by placeTime
+   for(int i = 0; i < temp_count - 1; i++)
+   {
+      for(int j = 0; j < temp_count - 1 - i; j++)
+      {
+         if(temp_history[j].placeTime > temp_history[j+1].placeTime)
+         {
+            CTradeAttempt temp = temp_history[j];
+            temp_history[j] = temp_history[j+1];
+            temp_history[j+1] = temp;
+         }
+      }
+   }
+
+   // 4. Register them in memory in chronological order
+   for(int i = 0; i < temp_count; i++)
+   {
+      RegisterAttemptInMemory(temp_history[i]);
+   }
+
    SortAttemptsChronologically();
 }
 
@@ -529,8 +554,8 @@ void RegisterNewPendingOrders()
          
          string comment = OrderGetString(ORDER_COMMENT);
          att.timeframeStr = "M2";
-         if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
-         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
          
          long type = OrderGetInteger(ORDER_TYPE);
          att.direction = (type == ORDER_TYPE_BUY_LIMIT || type == ORDER_TYPE_BUY_STOP) ? 1 : -1;
@@ -603,8 +628,8 @@ void RegisterNewActivePositions()
             
             string comment = PositionGetString(POSITION_COMMENT);
             att.timeframeStr = "M2";
-            if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
-            else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+            if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+            else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
             
             long type = PositionGetInteger(POSITION_TYPE);
             att.direction = (type == POSITION_TYPE_BUY) ? 1 : -1;
@@ -803,11 +828,24 @@ void RegisterAttemptInMemory(const CTradeAttempt &att)
    {
       if(g_attempts[i].placeTime > 0 && 
          g_attempts[i].timeframeStr == att.timeframeStr && 
-         g_attempts[i].direction == att.direction && 
-         (g_attempts[i].status == "Pending" || g_attempts[i].status == "Cancelled"))
+         g_attempts[i].direction == att.direction)
       {
-         matchIdx = i;
-         break;
+         // 1. If existing is Pending, we always match and overwrite it
+         if(g_attempts[i].status == "Pending")
+         {
+            matchIdx = i;
+            break;
+         }
+         // 2. If existing is Cancelled or Closed, we overwrite it if the time difference is less than 15 minutes (900s)
+         if(g_attempts[i].status == "Cancelled" || g_attempts[i].status == "Closed")
+         {
+            datetime prevTime = (g_attempts[i].resolveTime > 0) ? g_attempts[i].resolveTime : g_attempts[i].placeTime;
+            if(MathAbs(att.placeTime - prevTime) < 900)
+            {
+               matchIdx = i;
+               break;
+            }
+         }
       }
    }
 
