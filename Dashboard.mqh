@@ -422,19 +422,19 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    ML(m_lblStatEquity,"sEq","$0",cx+52,cyStatus,85,CTRL_HEIGHT,clrWhite);
    ML(m_lblPlTag,"lPlT","P/L:",cx+142,cyStatus,30,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lblStatPL,"sPL","+$0",cx+175,cyStatus,75,CTRL_HEIGHT,CLR_SUCCESS);
-   cyStatus+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblTotExpTag,"lTeT","Total exposed:",cx,cyStatus,100,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblTotExpVal,"sTeV","0.00",cx+105,cyStatus,rw,CTRL_HEIGHT,CLR_TEXT_DIM);
-   cyStatus+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblRtRrTag,"lRtT","Realtime R:R",cx,cyStatus,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblRtRrLoss,"sRtL","-$0",rx,cyStatus,65,CTRL_HEIGHT,CLR_MONEY_RED);
-   ML(m_lblRtRrPft,"sRtP","+$0",rx+68,cyStatus,65,CTRL_HEIGHT,CLR_MONEY_GREEN);
-   ML(m_lblRtRrRiskPc,"sRtPc","{0.0%}",cx+cw-45,cyStatus,45,CTRL_HEIGHT,CLR_ACCENT);
    cyStatus+=CTRL_HEIGHT+SEC_PAD;
+    
+    // Removed/Off-screen legacy exposure & R:R lines
+    ML(m_lblTotExpTag,"lTeT","",-100,-100,10,10);
+    ML(m_lblTotExpVal,"sTeV","",-100,-100,10,10);
+    ML(m_lblRtRrTag,"lRtT","",-100,-100,10,10);
+    ML(m_lblRtRrLoss,"sRtL","",-100,-100,10,10);
+    ML(m_lblRtRrPft,"sRtP","",-100,-100,10,10);
+    ML(m_lblRtRrRiskPc,"sRtPc","",-100,-100,10,10);
    cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 11
 
    // ── LAST DAY ENTRIES ──
-   ML(m_lblLastEntrySec,"lLeS","LAST DAY ENTRIES",cx,cyStatus,cw,CTRL_HEIGHT); cyStatus+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lblLastEntrySec,"lLeS","",-100,-100,10,10);
    for(int ei=0; ei<9; ei++) {
       string numId = "lEn" + IntegerToString(ei);
       string descId = "sEd" + IntegerToString(ei);
@@ -446,7 +446,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 12
 
    // ── TOTAL P/L ──
-   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cyStatus,cw,CTRL_HEIGHT); cyStatus+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lblTotalPlSec,"lTpS","",-100,-100,10,10);
    ML(m_lblNetTodayTag,"lNtT","Last day:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
    ML(m_lblNetTodayVal,"sNtV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
    ML(m_lblTodayWl,"sNtW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
