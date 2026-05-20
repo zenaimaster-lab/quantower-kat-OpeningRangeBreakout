@@ -80,7 +80,7 @@ CDashboard    g_dashboard;
 CTimeManager  g_timeMgr;
 CRiskManager  g_riskMgr;
 CNewsManager  g_newsMgr;
-CORBRunner    g_runners[3]; // 0=M2, 1=M5, 2=M15
+CORBRunner    g_runners[4]; // 0=M2, 1=M5, 2=M15, 3=M30
 
 bool g_initialized = false;
 const string BE_LINE_NAME = "Aggregate_BE_Line";
@@ -90,8 +90,8 @@ string        g_dayEntries[9];
 int           g_dayEntryCount = 0;
 datetime      g_dayEntriesNYO = 0;
 CTradeAttempt g_attempts[9];
-string        g_lastSeenEntry[3];
-string        g_lastSeenCancel[3];
+string        g_lastSeenEntry[4];
+string        g_lastSeenCancel[4];
 
 // P/L stats cache (set by UpdateTradeStats, used by dashboard update)
 double g_plNetToday=0, g_plNetWeek=0, g_plNetMonth=0;
@@ -141,12 +141,14 @@ DashboardParams BuildRunnerParams(const SystemConfig &cfg, int runnerIdx, string
    p.symbol    = sym;
    if(runnerIdx == 0)      p.timeframe = PERIOD_M2;
    else if(runnerIdx == 1) p.timeframe = PERIOD_M5;
-   else                    p.timeframe = PERIOD_M15;
+   else if(runnerIdx == 2) p.timeframe = PERIOD_M15;
+   else                    p.timeframe = PERIOD_M30;
    if(runnerIdx == 0)      p.comment = "orb-2m";
    else if(runnerIdx == 1) p.comment = "orb-5m";
-   else                    p.comment = "orb-15m";
+   else if(runnerIdx == 2) p.comment = "orb-15m";
+   else                    p.comment = "orb-30m";
    p.isActive  = true;
-   p.tfIndex   = runnerIdx; // 0=2m, 1=5m, 2=15m
+   p.tfIndex   = runnerIdx; // 0=2m, 1=5m, 2=15m, 3=30m
    return p;
 }
 
@@ -160,7 +162,8 @@ int OnInit()
    g_runners[0].tf = PERIOD_M2;  g_runners[0].comment = "orb-2m";
    g_runners[1].tf = PERIOD_M5;  g_runners[1].comment = "orb-5m";
    g_runners[2].tf = PERIOD_M15; g_runners[2].comment = "orb-15m";
-   for(int i = 0; i < 3; i++) { g_runners[i].order.Init(); g_runners[i].trail.Init(); }
+   g_runners[3].tf = PERIOD_M30; g_runners[3].comment = "orb-30m";
+   for(int i = 0; i < 4; i++) { g_runners[i].order.Init(); g_runners[i].trail.Init(); }
 
    g_newsMgr.SetNYO(InpNyHour, InpNyMinute, InpNySecond, InpUtcOffset);
 
@@ -233,9 +236,9 @@ void OnTick()
    g_dashboard.UpdateSpread((int)SymbolInfoInteger(sym, SYMBOL_SPREAD));
    g_dashboard.UpdateMarketStatus(IsMarketOpen(sym));
 
-   for(int i = 0; i < 3; i++)
+   for(int i = 0; i < 4; i++)
    {
-      if((i == 0 && cfg.m2Active) || (i == 1 && cfg.m5Active) || (i == 2 && cfg.m15Active))
+      if((i == 0 && cfg.m2Active) || (i == 1 && cfg.m5Active) || (i == 2 && cfg.m15Active) || (i == 3 && cfg.m30Active))
       {
          DashboardParams p = BuildRunnerParams(cfg, i, sym);
          g_runners[i].order.CheckAutoFlatten(p, g_timeMgr.GetTargetTime());
@@ -257,6 +260,8 @@ void UpdateTradeStats()
    double net5mToday=0,net5mWeek=0,net5mMonth=0;
    int w15mToday=0,l15mToday=0,w15mWeek=0,l15mWeek=0,w15mMonth=0,l15mMonth=0;
    double net15mToday=0,net15mWeek=0,net15mMonth=0;
+   int w30mToday=0,l30mToday=0,w30mWeek=0,l30mWeek=0,w30mMonth=0,l30mMonth=0;
+   double net30mToday=0,net30mWeek=0,net30mMonth=0;
 
    datetime now = TimeCurrent();
    datetime d1Start = iTime(Symbol(), PERIOD_D1, 0);
@@ -283,10 +288,11 @@ void UpdateTradeStats()
          string comment = HistoryDealGetString(ticket, DEAL_COMMENT);
          bool is2m = (StringFind(comment, "2m") >= 0);
          bool is15m = (StringFind(comment, "15m") >= 0);
-         bool is5m = !is15m && (StringFind(comment, "5m") >= 0);
+         bool is30m = (StringFind(comment, "30m") >= 0);
+         bool is5m = !is15m && !is30m && (StringFind(comment, "5m") >= 0);
 
          // If exit deal comment doesn't contain timeframe info, look up the entry deal
-         if(!is2m && !is5m && !is15m)
+         if(!is2m && !is5m && !is15m && !is30m)
          {
             long posId = HistoryDealGetInteger(ticket, DEAL_POSITION_ID);
             if(posId > 0)
@@ -302,7 +308,8 @@ void UpdateTradeStats()
                   string entryComment = HistoryDealGetString(entryTicket, DEAL_COMMENT);
                   is2m  = (StringFind(entryComment, "2m") >= 0);
                   is15m = (StringFind(entryComment, "15m") >= 0);
-                  is5m  = !is15m && (StringFind(entryComment, "5m") >= 0);
+                  is30m = (StringFind(entryComment, "30m") >= 0);
+                  is5m  = !is15m && !is30m && (StringFind(entryComment, "5m") >= 0);
                   break;
                }
             }
@@ -315,6 +322,7 @@ void UpdateTradeStats()
             if(is2m) { net2mToday += profit; if(profit > 0) w2mToday++; else l2mToday++; }
             if(is5m) { net5mToday += profit; if(profit > 0) w5mToday++; else l5mToday++; }
             if(is15m) { net15mToday += profit; if(profit > 0) w15mToday++; else l15mToday++; }
+            if(is30m) { net30mToday += profit; if(profit > 0) w30mToday++; else l30mToday++; }
          }
          if(time >= w1Start)
          {
@@ -323,6 +331,7 @@ void UpdateTradeStats()
             if(is2m) { net2mWeek += profit; if(profit > 0) w2mWeek++; else l2mWeek++; }
             if(is5m) { net5mWeek += profit; if(profit > 0) w5mWeek++; else l5mWeek++; }
             if(is15m) { net15mWeek += profit; if(profit > 0) w15mWeek++; else l15mWeek++; }
+            if(is30m) { net30mWeek += profit; if(profit > 0) w30mWeek++; else l30mWeek++; }
          }
          if(time >= mn1Start)
          {
@@ -331,16 +340,18 @@ void UpdateTradeStats()
             if(is2m) { net2mMonth += profit; if(profit > 0) w2mMonth++; else l2mMonth++; }
             if(is5m) { net5mMonth += profit; if(profit > 0) w5mMonth++; else l5mMonth++; }
             if(is15m) { net15mMonth += profit; if(profit > 0) w15mMonth++; else l15mMonth++; }
+            if(is30m) { net30mMonth += profit; if(profit > 0) w30mMonth++; else l30mMonth++; }
          }
       }
    }
 
    g_gs.SetWinsToday(wToday);
    g_gs.SetLossesToday(lToday);
-   // Per-TF W/L counters (0=2m, 1=5m, 2=15m)
+   // Per-TF W/L counters (0=2m, 1=5m, 2=15m, 3=30m)
    g_gs.SetWinsTodayTF(0, w2mToday);  g_gs.SetLossesTodayTF(0, l2mToday);
    g_gs.SetWinsTodayTF(1, w5mToday);  g_gs.SetLossesTodayTF(1, l5mToday);
    g_gs.SetWinsTodayTF(2, w15mToday); g_gs.SetLossesTodayTF(2, l15mToday);
+   g_gs.SetWinsTodayTF(3, w30mToday); g_gs.SetLossesTodayTF(3, l30mToday);
 
    // Cache P/L stats for later dashboard update
    g_plNetToday = netToday; g_plWToday = wToday; g_plLToday = lToday;
@@ -350,6 +361,7 @@ void UpdateTradeStats()
    g_dashboard.Update2mPL(net2mToday, w2mToday, l2mToday, net2mWeek, w2mWeek, l2mWeek, net2mMonth, w2mMonth, l2mMonth);
    g_dashboard.Update5mPL(net5mToday, w5mToday, l5mToday, net5mWeek, w5mWeek, l5mWeek, net5mMonth, w5mMonth, l5mMonth);
    g_dashboard.Update15mPL(net15mToday, w15mToday, l15mToday, net15mWeek, w15mWeek, l15mWeek, net15mMonth, w15mMonth, l15mMonth);
+   g_dashboard.Update30mPL(net30mToday, w30mToday, l30mToday, net30mWeek, w30mWeek, l30mWeek, net30mMonth, w30mMonth, l30mMonth);
 }
 
 //+------------------------------------------------------------------+
@@ -431,7 +443,8 @@ void PopulateAttemptsFromHistory()
          
          string comment = HistoryOrderGetString(ticket, ORDER_COMMENT);
          att.timeframeStr = "M2";
-         if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         if(StringFind(comment, "30m") >= 0) att.timeframeStr = "M30";
+         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
          else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
          
          long type = HistoryOrderGetInteger(ticket, ORDER_TYPE);
@@ -483,7 +496,8 @@ void PopulateAttemptsFromHistory()
          
          string comment = HistoryDealGetString(entryTicket, DEAL_COMMENT);
          att.timeframeStr = "M2";
-         if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         if(StringFind(comment, "30m") >= 0) att.timeframeStr = "M30";
+         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
          else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
          
          long type = HistoryDealGetInteger(entryTicket, DEAL_TYPE);
@@ -585,7 +599,8 @@ void RegisterNewPendingOrders()
          
          string comment = OrderGetString(ORDER_COMMENT);
          att.timeframeStr = "M2";
-         if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+         if(StringFind(comment, "30m") >= 0) att.timeframeStr = "M30";
+         else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
          else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
          
          long type = OrderGetInteger(ORDER_TYPE);
@@ -594,6 +609,7 @@ void RegisterNewPendingOrders()
          int tfIdx = 0;
          if(att.timeframeStr == "M5") tfIdx = 1;
          else if(att.timeframeStr == "M15") tfIdx = 2;
+         else if(att.timeframeStr == "M30") tfIdx = 3;
          string reason = g_runners[tfIdx].order.GetEntryReason();
          if(reason == "") reason = comment;
          att.entryReason = reason;
@@ -659,7 +675,8 @@ void RegisterNewActivePositions()
             
             string comment = PositionGetString(POSITION_COMMENT);
             att.timeframeStr = "M2";
-            if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
+            if(StringFind(comment, "30m") >= 0) att.timeframeStr = "M30";
+            else if(StringFind(comment, "15m") >= 0) att.timeframeStr = "M15";
             else if(StringFind(comment, "5m") >= 0) att.timeframeStr = "M5";
             
             long type = PositionGetInteger(POSITION_TYPE);
@@ -668,6 +685,7 @@ void RegisterNewActivePositions()
             int tfIdx = 0;
             if(att.timeframeStr == "M5") tfIdx = 1;
             else if(att.timeframeStr == "M15") tfIdx = 2;
+            else if(att.timeframeStr == "M30") tfIdx = 3;
             string reason = g_runners[tfIdx].order.GetEntryReason();
             if(reason == "") reason = comment;
             att.entryReason = reason;
@@ -1297,8 +1315,8 @@ void UpdateDashboardExposure(const string &sym, double riskAmount, double riskPe
 //+------------------------------------------------------------------+
 void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime nyoTime)
 {
-   bool active[3] = { cfg.m2Active, cfg.m5Active, cfg.m15Active };
-   for(int i = 0; i < 3; i++)
+   bool active[4] = { cfg.m2Active, cfg.m5Active, cfg.m15Active, cfg.m30Active };
+   for(int i = 0; i < 4; i++)
    {
       if(active[i])
       {
@@ -1319,6 +1337,8 @@ void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime n
                               active[1] ? g_runners[1].order.GetStatusColor() : CLR_TEXT_DIM);
    g_dashboard.Update15mStatus(active[2] ? g_runners[2].order.GetStatus() : "OFF",
                                active[2] ? g_runners[2].order.GetStatusColor() : CLR_TEXT_DIM);
+   g_dashboard.Update30mStatus(active[3] ? g_runners[3].order.GetStatus() : "OFF",
+                               active[3] ? g_runners[3].order.GetStatusColor() : CLR_TEXT_DIM);
 }
 
 //+------------------------------------------------------------------+

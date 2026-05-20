@@ -7,17 +7,18 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.64"
-#define EA_BUILD_DATE     "20 May 2026"
+#define EA_VERSION        "1.66"
+#define EA_BUILD_DATE     "21 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
 #include "GlobalState.mqh"
 
 //--- Panel dimensions
 #define PANEL_WIDTH       370
-#define PANEL_HEIGHT      1180
+#define PANEL_HEIGHT      1270
 #define PANEL_X           20
 #define PANEL_Y           20
+#define PANEL_GRID_PAD    10
 
 //--- Control sizing
 #define CTRL_HEIGHT       22
@@ -161,7 +162,7 @@ struct DashboardParams
    
    string comment;
    bool   isActive;
-   int    tfIndex;  // 0=2m, 1=5m, 2=15m — for per-TF W/L tracking
+   int    tfIndex;  // 0=2m, 1=5m, 2=15m, 3=30m — for per-TF W/L tracking
 
 
    DashboardParams()
@@ -242,11 +243,13 @@ struct SystemConfig {
    bool m2Active;
    bool m5Active;
    bool m15Active;
+   bool m30Active;
    
    SystemConfig() {
       m2Active = true;
       m5Active = true;
       m15Active = true;
+      m30Active = true;
    }
 };
 
@@ -267,6 +270,7 @@ string TimeframeToString(ENUM_TIMEFRAMES tf)
       case PERIOD_M2:  return "M2";
       case PERIOD_M5:  return "M5";
       case PERIOD_M15: return "M15";
+      case PERIOD_M30: return "M30";
       default:         return "M2";
    }
 }
@@ -280,6 +284,7 @@ ENUM_TIMEFRAMES StringToTimeframe(string s)
    if(s == "M2")  return PERIOD_M2;
    if(s == "M5")  return PERIOD_M5;
    if(s == "M15") return PERIOD_M15;
+   if(s == "M30") return PERIOD_M30;
    return PERIOD_M2;
 }
 
@@ -291,6 +296,7 @@ int TimeframeToIndex(ENUM_TIMEFRAMES tf)
       case PERIOD_M2:  return 1;
       case PERIOD_M5:  return 2;
       case PERIOD_M15: return 3;
+      case PERIOD_M30: return 4;
       default:         return 1;
    }
 }
