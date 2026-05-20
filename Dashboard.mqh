@@ -84,7 +84,7 @@ private:
    CEdit m_lblTotExpTag, m_lblTotExpVal;
    CEdit m_lblRtRrTag, m_lblRtRrLoss, m_lblRtRrPft, m_lblRtRrRiskPc;
    
-   CEdit m_lblEntryNum[9], m_lblEntryDesc[9];
+   CEdit m_lblEntryNum[8], m_lblEntryDesc[8];
    CEdit m_lblNetTodayTag, m_lblNetTodayVal, m_lblTodayWl;
    CEdit m_lblNetWeekTag, m_lblNetWeekVal, m_lblWeekWl;
    CEdit m_lblNetMonthTag, m_lblNetMonthVal, m_lblMonthWl;
@@ -452,20 +452,20 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
     
     // Row 4: Obstacle EMA
     ML(m_lblObsEmaTag,"lObEm","Obstacle EMA",cx,cyFlatten,115,CTRL_HEIGHT);
-    ML(m_lblObsEmaPlus1,"lOEp1","+",cx+189,cyFlatten,14,CTRL_HEIGHT);
-    ML(m_lblObsEmaPlus2,"lOEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
-    ME(m_edtObsEma1,"eObE1","250",cx+124,cyFlatten,38,CTRL_HEIGHT);
-    MB(m_btnObsEma1,"bObE1","",cx+163,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON);
-    ME(m_edtObsEma2,"eObE2","255",cx+205,cyFlatten,38,CTRL_HEIGHT);
-    MB(m_btnObsEma2,"bObE2","",cx+244,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON);
-    ME(m_edtObsEma3,"eObE3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
-    MB(m_btnObsEma3,"bObE3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblObsEmaPlus1,"lOEp1","+",cx+184,cyFlatten,14,CTRL_HEIGHT);
+    ML(m_lblObsEmaPlus2,"lOEp2","+",cx+265,cyFlatten,14,CTRL_HEIGHT);
+    ME(m_edtObsEma1,"eObE1","250",cx+119,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnObsEma1,"bObE1","",cx+158,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON);
+    ME(m_edtObsEma2,"eObE2","255",cx+200,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnObsEma2,"bObE2","",cx+239,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON);
+    ME(m_edtObsEma3,"eObE3","34",cx+281,cyFlatten,38,CTRL_HEIGHT);
+    MB(m_btnObsEma3,"bObE3","",cx+320,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
     
     // Row 5: Obstacle Range (5m, 15m, 30m) - BELOW EMA
     ML(m_lblObsRangeTag,"lObRgT","Obstacle Range",cx,cyFlatten,115,CTRL_HEIGHT);
-    MB(m_btnObsR5m,"bObR5","5m: ON",cx+124,cyFlatten,62,CTRL_HEIGHT+2,CLR_BTN_ON);
-    MB(m_btnObsR15m,"bObR15","15m: ON",cx+205,cyFlatten,62,CTRL_HEIGHT+2,CLR_BTN_ON);
-    MB(m_btnObsR30m,"bObR30","30m: ON",cx+286,cyFlatten,62,CTRL_HEIGHT+2,CLR_BTN_ON);
+    MB(m_btnObsR5m,"bObR5","5m: ON",cx+116,cyFlatten,73,CTRL_HEIGHT+2,CLR_PURPLE);
+    MB(m_btnObsR15m,"bObR15","15m: ON",cx+194,cyFlatten,73,CTRL_HEIGHT+2,CLR_PURPLE);
+    MB(m_btnObsR30m,"bObR30","30m: ON",cx+272,cyFlatten,72,CTRL_HEIGHT+2,CLR_PURPLE);
     // Legacy / unused range tags off-screen
     ML(m_lblObsR5mTag,"lObR5L","-100",-100,-100,10,10);
     ML(m_lblObsR15mTag,"lObR15L","-100",-100,-100,10,10);
@@ -522,7 +522,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    // ── LAST DAY ENTRIES ──
    ML(m_lblLastEntrySec,"lLeS","",-100,-100,10,10);
-   for(int ei=0; ei<9; ei++) {
+   for(int ei=0; ei<8; ei++) {
       string numId = "lEn" + IntegerToString(ei);
       string descId = "sEd" + IntegerToString(ei);
       ML(m_lblEntryNum[ei], numId, IntegerToString(ei+1)+".", cx, cyStatus, 18, CTRL_HEIGHT, CLR_TEXT_BRIGHT);
@@ -942,7 +942,7 @@ void CDashboard::UpdateRealtimeRiskPercent(double riskPc, double maxRiskPc)
 
 void CDashboard::UpdateStatsTab(const string &entries[], double netToday, int wToday, int lToday, double netWeek, int wWeek, int lWeek, double netMonth, int wMonth, int lMonth)
 {
-   for(int ei=0; ei<9; ei++) {
+   for(int ei=0; ei<8; ei++) {
       if(ei < ArraySize(entries) && entries[ei] != "")
          m_lblEntryDesc[ei].Text(entries[ei]);
       else
@@ -1076,11 +1076,11 @@ void CDashboard::OnFem3Toggle() { m_btnFem3.Pressed(false); m_fem3Enabled=!m_fem
 void CDashboard::UpdFem3() { m_btnFem3.Text(m_fem3Enabled?ShortToString(0x2713):""); m_btnFem3.ColorBackground(m_fem3Enabled?CLR_SUCCESS:CLR_BTN_OFF); }
 
 void CDashboard::OnObsR5mToggle() { m_btnObsR5m.Pressed(false); m_obsRange5mOn=!m_obsRange5mOn; UpdObsR5m(); MarkDirty(); }
-void CDashboard::UpdObsR5m() { m_btnObsR5m.Text(m_obsRange5mOn?"5m: ON":"5m: OFF"); m_btnObsR5m.ColorBackground(m_obsRange5mOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::UpdObsR5m() { m_btnObsR5m.Text(m_obsRange5mOn?"5m: ON":"5m: OFF"); m_btnObsR5m.ColorBackground(m_obsRange5mOn?CLR_PURPLE:CLR_BTN_OFF); }
 void CDashboard::OnObsR15mToggle() { m_btnObsR15m.Pressed(false); m_obsRange15mOn=!m_obsRange15mOn; UpdObsR15m(); MarkDirty(); }
-void CDashboard::UpdObsR15m() { m_btnObsR15m.Text(m_obsRange15mOn?"15m: ON":"15m: OFF"); m_btnObsR15m.ColorBackground(m_obsRange15mOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::UpdObsR15m() { m_btnObsR15m.Text(m_obsRange15mOn?"15m: ON":"15m: OFF"); m_btnObsR15m.ColorBackground(m_obsRange15mOn?CLR_PURPLE:CLR_BTN_OFF); }
 void CDashboard::OnObsR30mToggle() { m_btnObsR30m.Pressed(false); m_obsRange30mOn=!m_obsRange30mOn; UpdObsR30m(); MarkDirty(); }
-void CDashboard::UpdObsR30m() { m_btnObsR30m.Text(m_obsRange30mOn?"30m: ON":"30m: OFF"); m_btnObsR30m.ColorBackground(m_obsRange30mOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::UpdObsR30m() { m_btnObsR30m.Text(m_obsRange30mOn?"30m: ON":"30m: OFF"); m_btnObsR30m.ColorBackground(m_obsRange30mOn?CLR_PURPLE:CLR_BTN_OFF); }
 void CDashboard::OnObsPrevDayHLToggle() { m_btnObsPrevDayHL.Pressed(false); m_obsPrevDayHLOn=!m_obsPrevDayHLOn; UpdObsPrevDayHL(); MarkDirty(); }
 void CDashboard::UpdObsPrevDayHL() { m_btnObsPrevDayHL.Text(m_obsPrevDayHLOn?"ON":"OFF"); m_btnObsPrevDayHL.ColorBackground(m_obsPrevDayHLOn?CLR_SUCCESS:CLR_BTN_OFF); }
 void CDashboard::OnObsDayVwapToggle() { m_btnObsDayVwap.Pressed(false); m_obsDayVwapOn=!m_obsDayVwapOn; UpdObsDayVwap(); MarkDirty(); }
@@ -1200,7 +1200,7 @@ void CDashboard::UpdTabs() {
    CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
    CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
    CtrlHide(m_lblLastEntrySec);
-   for(int ei=0; ei<9; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
+   for(int ei=0; ei<8; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
    CtrlHide(m_lblTotalPlSec);
    CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
    CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
@@ -1230,7 +1230,7 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblTotExpTag); CtrlShow(m_lblTotExpVal);
       CtrlShow(m_lblRtRrTag); CtrlShow(m_lblRtRrLoss); CtrlShow(m_lblRtRrPft); CtrlShow(m_lblRtRrRiskPc);
       CtrlShow(m_lblLastEntrySec);
-      for(int ei=0; ei<9; ei++) { CtrlShow(m_lblEntryNum[ei]); CtrlShow(m_lblEntryDesc[ei]); }
+      for(int ei=0; ei<8; ei++) { CtrlShow(m_lblEntryNum[ei]); CtrlShow(m_lblEntryDesc[ei]); }
       CtrlShow(m_lblTotalPlSec);
       CtrlShow(m_lblNetTodayTag); CtrlShow(m_lblNetTodayVal); CtrlShow(m_lblTodayWl);
       CtrlShow(m_lblNetWeekTag); CtrlShow(m_lblNetWeekVal); CtrlShow(m_lblWeekWl);
@@ -1368,7 +1368,7 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
    CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
    CtrlHide(m_lblLastEntrySec);
-   for(int ei=0; ei<9; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
+   for(int ei=0; ei<8; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
    CtrlHide(m_lblTotalPlSec);
    CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
    CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);

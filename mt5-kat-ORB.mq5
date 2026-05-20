@@ -87,10 +87,10 @@ bool g_initialized = false;
 const string BE_LINE_NAME = "Aggregate_BE_Line";
 
 // Day-level entry tracking (persists until next NYO)
-string        g_dayEntries[9];
+string        g_dayEntries[8];
 int           g_dayEntryCount = 0;
 datetime      g_dayEntriesNYO = 0;
-CTradeAttempt g_attempts[9];
+CTradeAttempt g_attempts[8];
 string        g_lastSeenEntry[4];
 string        g_lastSeenCancel[4];
 
@@ -373,7 +373,7 @@ void AccumulateDayEntries(datetime nyoTime)
    // Reset on new trading day (new NYO detected)
    if(nyoTime > 0 && nyoTime != g_dayEntriesNYO)
    {
-      for(int i = 0; i < 9; i++)
+      for(int i = 0; i < 8; i++)
       {
          ZeroMemory(g_attempts[i]);
          g_attempts[i].placeTime = 0;
@@ -388,7 +388,7 @@ void AccumulateDayEntries(datetime nyoTime)
    UpdateAttempts();
 
    // Format each attempt string into the dashboard array
-   for(int i = 0; i < 9; i++)
+   for(int i = 0; i < 8; i++)
    {
       g_dayEntries[i] = FormatAttemptString(g_attempts[i]);
    }
@@ -404,7 +404,7 @@ void AccumulateDayEntries(datetime nyoTime)
 //+------------------------------------------------------------------+
 void PopulateAttemptsFromHistory()
 {
-   for(int i = 0; i < 9; i++)
+   for(int i = 0; i < 8; i++)
    {
       ZeroMemory(g_attempts[i]);
       g_attempts[i].placeTime = 0;
@@ -580,7 +580,7 @@ void RegisterNewPendingOrders()
       if(OrderGetString(ORDER_SYMBOL) != Symbol()) continue;
 
       bool alreadyTracked = false;
-      for(int j = 0; j < 9; j++)
+      for(int j = 0; j < 8; j++)
       {
          if(g_attempts[j].placeTime > 0 && g_attempts[j].orderTicket == ticket)
          {
@@ -639,7 +639,7 @@ void RegisterNewActivePositions()
       long posId = PositionGetInteger(POSITION_IDENTIFIER);
       
       int matchIdx = -1;
-      for(int j = 0; j < 9; j++)
+      for(int j = 0; j < 8; j++)
       {
          if(g_attempts[j].placeTime > 0 && g_attempts[j].orderTicket == (ulong)posId)
          {
@@ -656,7 +656,7 @@ void RegisterNewActivePositions()
       else
       {
          bool alreadyTracked = false;
-         for(int j = 0; j < 9; j++)
+         for(int j = 0; j < 8; j++)
          {
             if(g_attempts[j].placeTime > 0 && g_attempts[j].positionId == posId)
             {
@@ -710,7 +710,7 @@ void UpdateAttempts()
 
    HistorySelect(todayStart, now + 3600);
 
-   for(int i = 0; i < 9; i++)
+   for(int i = 0; i < 8; i++)
    {
       if(g_attempts[i].placeTime == 0) continue;
 
@@ -867,7 +867,7 @@ string FormatAttemptString(const CTradeAttempt &attempt)
 void RegisterAttemptInMemory(const CTradeAttempt &att)
 {
    int matchIdx = -1;
-   for(int i = 0; i < 9; i++)
+   for(int i = 0; i < 8; i++)
    {
       if(g_attempts[i].placeTime > 0 && 
          g_attempts[i].timeframeStr == att.timeframeStr && 
@@ -899,7 +899,7 @@ void RegisterAttemptInMemory(const CTradeAttempt &att)
    else
    {
       int emptyIdx = -1;
-      for(int i = 0; i < 9; i++)
+      for(int i = 0; i < 8; i++)
       {
          if(g_attempts[i].placeTime == 0)
          {
@@ -914,11 +914,11 @@ void RegisterAttemptInMemory(const CTradeAttempt &att)
       }
       else
       {
-         for(int i = 0; i < 8; i++)
+         for(int i = 0; i < 7; i++)
          {
             g_attempts[i] = g_attempts[i+1];
          }
-         g_attempts[8] = att;
+         g_attempts[7] = att;
       }
    }
 }
@@ -928,9 +928,9 @@ void RegisterAttemptInMemory(const CTradeAttempt &att)
 //+------------------------------------------------------------------+
 void SortAttemptsChronologically()
 {
-   for(int i = 0; i < 8; i++)
+   for(int i = 0; i < 7; i++)
    {
-      for(int j = 0; j < 8 - i; j++)
+      for(int j = 0; j < 7 - i; j++)
       {
          if(g_attempts[j].placeTime > 0 && g_attempts[j+1].placeTime > 0)
          {
