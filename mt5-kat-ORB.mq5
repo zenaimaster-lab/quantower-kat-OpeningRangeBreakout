@@ -978,6 +978,9 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
    if(point <= 0) return;
    int digits = (int)SymbolInfoInteger(sym, SYMBOL_DIGITS);
 
+   datetime drawStart = iTime(sym, Period(), 6);
+   if(drawStart == 0) drawStart = TimeCurrent() - 6 * PeriodSeconds(Period());
+
    // Previous Day H/L
    if(cfg.main.obsPrevDayHLOn)
    {
@@ -1085,13 +1088,6 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
    if(cfg.main.obsDayVwapOn)
    {
       double dVwapVal = g_runners[0].order.GetDayVwapValue(sym, PERIOD_M1);
-      datetime dayStart = iTime(sym, PERIOD_D1, 0);
-      if(dayStart == 0)
-      {
-         MqlDateTime dt;
-         TimeToStruct(TimeCurrent(), dt);
-         dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
-      }
       
       if(dVwapVal > 0)
       {
@@ -1101,7 +1097,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          string nameDV_Txt = "OB_DAY_VWAP_TXT";
          if(ObjectFind(0, nameDV) < 0)
          {
-            ObjectCreate(0, nameDV, OBJ_TREND, 0, dayStart, dVwapVal, endTime, dVwapVal);
+            ObjectCreate(0, nameDV, OBJ_TREND, 0, drawStart, dVwapVal, endTime, dVwapVal);
             ObjectSetInteger(0, nameDV, OBJPROP_COLOR, clrGold);
             ObjectSetInteger(0, nameDV, OBJPROP_STYLE, STYLE_DOT);
             ObjectSetInteger(0, nameDV, OBJPROP_WIDTH, 1);
@@ -1113,7 +1109,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          {
             ObjectSetDouble(0, nameDV, OBJPROP_PRICE, 0, dVwapVal);
             ObjectSetDouble(0, nameDV, OBJPROP_PRICE, 1, dVwapVal);
-            ObjectSetInteger(0, nameDV, OBJPROP_TIME, 0, dayStart);
+            ObjectSetInteger(0, nameDV, OBJPROP_TIME, 0, drawStart);
             ObjectSetInteger(0, nameDV, OBJPROP_TIME, 1, endTime);
          }
          
@@ -1145,15 +1141,6 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
    if(cfg.main.obsWeekVwapOn)
    {
       double wVwapVal = g_runners[0].order.GetWeekVwapValue(sym, PERIOD_M1);
-      datetime weekStart = iTime(sym, PERIOD_W1, 0);
-      if(weekStart == 0)
-      {
-         MqlDateTime dt;
-         TimeToStruct(TimeCurrent(), dt);
-         int daysToSubtract = (dt.day_of_week == 0) ? 6 : (dt.day_of_week - 1);
-         datetime dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
-         weekStart = dayStart - (daysToSubtract * 86400);
-      }
       
       if(wVwapVal > 0)
       {
@@ -1163,7 +1150,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          string nameWV_Txt = "OB_WEEK_VWAP_TXT";
          if(ObjectFind(0, nameWV) < 0)
          {
-            ObjectCreate(0, nameWV, OBJ_TREND, 0, weekStart, wVwapVal, endTime, wVwapVal);
+            ObjectCreate(0, nameWV, OBJ_TREND, 0, drawStart, wVwapVal, endTime, wVwapVal);
             ObjectSetInteger(0, nameWV, OBJPROP_COLOR, clrMagenta);
             ObjectSetInteger(0, nameWV, OBJPROP_STYLE, STYLE_DOT);
             ObjectSetInteger(0, nameWV, OBJPROP_WIDTH, 1);
@@ -1175,7 +1162,7 @@ void DrawVwapAndPrevDayHL(const SystemConfig &cfg, string sym)
          {
             ObjectSetDouble(0, nameWV, OBJPROP_PRICE, 0, wVwapVal);
             ObjectSetDouble(0, nameWV, OBJPROP_PRICE, 1, wVwapVal);
-            ObjectSetInteger(0, nameWV, OBJPROP_TIME, 0, weekStart);
+            ObjectSetInteger(0, nameWV, OBJPROP_TIME, 0, drawStart);
             ObjectSetInteger(0, nameWV, OBJPROP_TIME, 1, endTime);
          }
          
