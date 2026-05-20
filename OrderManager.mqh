@@ -58,6 +58,9 @@ private:
    bool              CheckObstacles(const DashboardParams &p, double price, string &outReason);
    bool              GetRangeLines(string symbol, ENUM_TIMEFRAMES tf, datetime nyoTime, double &high, double &low);
    double            GetM2EmaValue(string sym, int period);
+   double            CalculateVWAP(string symbol, ENUM_TIMEFRAMES tf, int startShift);
+   double            GetDayVwapValue(string sym, ENUM_TIMEFRAMES tf);
+   double            GetWeekVwapValue(string sym, ENUM_TIMEFRAMES tf);
 
    string            GenerateOrderTag(string prefix);
    void              DrawORBLines(string symbol, ENUM_TIMEFRAMES tf, datetime cTime, double high, double low);
@@ -134,6 +137,24 @@ void COrderManager::ProcessORB(const DashboardParams &params, datetime nyOpenTim
                      g_gs.WinsTodayTF(params.tfIndex), params.maxSuccess,
                      g_gs.LossesTodayTF(params.tfIndex), params.maxLoss);
       }
+   }
+
+   // If trading window has passed and no active trade is running, stop state progression
+   if(!m_ordersActive && params.afterMinutesOn && now >= nyOpenTimeServer + params.afterMinutes * 60)
+   {
+      if(m_state != ORB_STOPPED && m_state != ORB_DONE)
+      {
+         if(m_state == ORB_WAIT_NYO)      m_state = ORB_WAIT_CANDLE;
+         if(m_state == ORB_WAIT_CANDLE)   HandleWaitCandle(params, now);
+         
+         if(m_state == ORB_WAIT_BREAK || m_state == ORB_WAIT_RETEST || m_state == ORB_WAIT_ENTRY)
+         {
+            m_state = ORB_STOPPED;
+            PrintFormat("[%s] Trading window closed (Passed %d mins). State set to ORB_STOPPED.", 
+                        EnumToString(params.timeframe), params.afterMinutes);
+         }
+      }
+      return;
    }
 
    HandleWaitNyo(nyOpenTimeServer);
@@ -796,6 +817,99 @@ double COrderManager::GetM2EmaValue(string sym, int period)
 }
 
 //+------------------------------------------------------------------+
+//| Calculate VWAP from a starting shift to current shift           |
+//+------------------------------------------------------------------+
+double COrderManager::CalculateVWAP(string symbol, ENUM_TIMEFRAMES tf, int startShift)
+{
+   if(startShift < 0) return 0;
+   
+   double highArray[];
+   double lowArray[];
+   double closeArray[];
+   long volumeArray[];
+   
+   int toCopy = startShift + 1;
+   
+   int copied = CopyHigh(symbol, tf, 0, toCopy, highArray);
+   if(copied <= 0) return 0;
+   
+   if(CopyLow(symbol, tf, 0, toCopy, lowArray) <= 0) return 0;
+   if(CopyClose(symbol, tf, 0, toCopy, closeArray) <= 0) return 0;
+   if(CopyTickVolume(symbol, tf, 0, toCopy, volumeArray) <= 0) return 0;
+   
+   double sumPV = 0;
+   long sumV = 0;
+   
+   for(int i = 0; i < copied; i++)
+   {
+      double typPrice = (highArray[i] + lowArray[i] + closeArray[i]) / 3.0;
+      long vol = volumeArray[i];
+      sumPV += typPrice * vol;
+      sumV += vol;
+   }
+   
+   return (sumV > 0) ? (sumPV / sumV) : 0;
+}
+
+//+------------------------------------------------------------------+
+//| Get Day VWAP value                                               |
+//+------------------------------------------------------------------+
+double COrderManager::GetDayVwapValue(string sym, ENUM_TIMEFRAMES tf)
+{
+   datetime dayStart = iTime(sym, PERIOD_D1, 0);
+   if(dayStart == 0)
+   {
+      MqlDateTime dt;
+      TimeToStruct(TimeCurrent(), dt);
+      dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
+   }
+   
+   int startShift = iBarShift(sym, tf, dayStart, false);
+   if(startShift < 0) startShift = 0;
+   
+   double vwap = CalculateVWAP(sym, tf, startShift);
+   if(vwap > 0) return vwap;
+   
+   if(tf != _Period)
+   {
+      startShift = iBarShift(sym, _Period, dayStart, false);
+      if(startShift < 0) startShift = 0;
+      vwap = CalculateVWAP(sym, _Period, startShift);
+   }
+   return vwap;
+}
+
+//+------------------------------------------------------------------+
+//| Get Week VWAP value                                              |
+//+------------------------------------------------------------------+
+double COrderManager::GetWeekVwapValue(string sym, ENUM_TIMEFRAMES tf)
+{
+   datetime weekStart = iTime(sym, PERIOD_W1, 0);
+   if(weekStart == 0)
+   {
+      MqlDateTime dt;
+      TimeToStruct(TimeCurrent(), dt);
+      int daysToSubtract = (dt.day_of_week == 0) ? 6 : (dt.day_of_week - 1);
+      datetime dayStart = TimeCurrent() - (dt.hour * 3600 + dt.min * 60 + dt.sec);
+      weekStart = dayStart - (daysToSubtract * 86400);
+   }
+   
+   int startShift = iBarShift(sym, tf, weekStart, false);
+   if(startShift < 0) startShift = 0;
+   
+   double vwap = CalculateVWAP(sym, tf, startShift);
+   if(vwap > 0) return vwap;
+   
+   if(tf != _Period)
+   {
+      startShift = iBarShift(sym, _Period, weekStart, false);
+      if(startShift < 0) startShift = 0;
+      vwap = CalculateVWAP(sym, _Period, startShift);
+   }
+   return vwap;
+}
+
+//+------------------------------------------------------------------+
 //| Check if there is any obstacle within obsMaxDist of the price    |
 //+------------------------------------------------------------------+
 bool COrderManager::CheckObstacles(const DashboardParams &p, double price, string &outReason)
@@ -909,6 +1023,36 @@ bool COrderManager::CheckObstacles(const DashboardParams &p, double price, strin
          if(dist < p.obsMaxDist)
          {
             outReason = "M2 EMA " + IntegerToString(p.obsEma3Period) + " obstacle (" + IntegerToString((int)MathRound(dist)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   // Day VWAP Obstacle
+   if(p.obsDayVwapOn)
+   {
+      double dVwapVal = GetDayVwapValue(symbol, PERIOD_M1);
+      if(dVwapVal > 0)
+      {
+         double dist = MathAbs(price - dVwapVal) / point;
+         if(dist < p.obsMaxDist)
+         {
+            outReason = "Day VWAP obstacle (" + IntegerToString((int)MathRound(dist)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
+            return true;
+         }
+      }
+   }
+
+   // Week VWAP Obstacle
+   if(p.obsWeekVwapOn)
+   {
+      double wVwapVal = GetWeekVwapValue(symbol, PERIOD_M1);
+      if(wVwapVal > 0)
+      {
+         double dist = MathAbs(price - wVwapVal) / point;
+         if(dist < p.obsMaxDist)
+         {
+            outReason = "Week VWAP obstacle (" + IntegerToString((int)MathRound(dist)) + " < " + IntegerToString(p.obsMaxDist) + " pts)";
             return true;
          }
       }

@@ -70,6 +70,8 @@ private:
     CEdit m_lblObsR5mTag; CButton m_btnObsR5m;
     CEdit m_lblObsR15mTag; CButton m_btnObsR15m;
     CEdit m_lblObsPrevDayHLTag; CButton m_btnObsPrevDayHL;
+    CEdit m_lblObsDayVwapTag; CButton m_btnObsDayVwap;
+    CEdit m_lblObsWeekVwapTag; CButton m_btnObsWeekVwap;
    CEdit m_lblObsEmaTag, m_edtObsEma1, m_edtObsEma2, m_edtObsEma3;
    CButton m_btnObsEma1, m_btnObsEma2, m_btnObsEma3;
    CEdit m_lblObsEmaPlus1, m_lblObsEmaPlus2;
@@ -119,7 +121,7 @@ private:
    bool m_ufmEnabled, m_tmrEnabled, m_aucEnabled, m_afcEnabled, m_aamEnabled, m_mdrEnabled;
    bool m_ema1Enabled, m_ema2Enabled, m_ema3Enabled;
    bool m_fem1Enabled, m_fem2Enabled, m_fem3Enabled;
-    bool m_obsRange5mOn, m_obsRange15mOn, m_obsPrevDayHLOn;
+     bool m_obsRange5mOn, m_obsRange15mOn, m_obsPrevDayHLOn, m_obsDayVwapOn, m_obsWeekVwapOn;
    bool m_obsEma1On, m_obsEma2On, m_obsEma3On;
    bool m_contAfter1st, m_maxSuccessOn, m_maxLossOn, m_bigMomentum, m_rtcOn;
    int m_statusSepStart, m_statusSepEnd;
@@ -191,7 +193,9 @@ private:
    
     void OnObsR5mToggle(); void UpdObsR5m();
     void OnObsR15mToggle(); void UpdObsR15m();
-    void OnObsPrevDayHLToggle(); void UpdObsPrevDayHL();
+     void OnObsPrevDayHLToggle(); void UpdObsPrevDayHL();
+     void OnObsDayVwapToggle(); void UpdObsDayVwap();
+     void OnObsWeekVwapToggle(); void UpdObsWeekVwap();
    void OnObsEma1Toggle(); void UpdObsEma1();
    void OnObsEma2Toggle(); void UpdObsEma2();
    void OnObsEma3Toggle(); void UpdObsEma3();
@@ -220,7 +224,7 @@ CDashboard::CDashboard() { m_rMode=true; m_slCandle=false; m_om=MODE_BOTH; m_tm=
    m_ufmEnabled=true; m_tmrEnabled=true; m_aucEnabled=false; m_afcEnabled=true; m_aamEnabled=true; m_mdrEnabled=true; m_utcOff=-4; m_beOn=false;
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
     m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
-     m_obsRange5mOn=true; m_obsRange15mOn=true; m_obsPrevDayHLOn=true; m_obsEma1On=true; m_obsEma2On=true; m_obsEma3On=true;
+      m_obsRange5mOn=true; m_obsRange15mOn=true; m_obsPrevDayHLOn=true; m_obsDayVwapOn=true; m_obsWeekVwapOn=true; m_obsEma1On=true; m_obsEma2On=true; m_obsEma3On=true;
     m_contAfter1st=true; m_maxSuccessOn=true; m_maxLossOn=true; m_bigMomentum=false; m_rtcOn=true;
    m_dirty=true;
 
@@ -425,6 +429,10 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
     MB(m_btnObsR15m,"bObR15","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
     ML(m_lblObsPrevDayHLTag,"lObPD","Prev Day H/L",cx,cyFlatten,150,CTRL_HEIGHT);
     MB(m_btnObsPrevDayHL,"bObPD","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblObsDayVwapTag,"lObDV","Obstacle Day VWAP",cx,cyFlatten,150,CTRL_HEIGHT);
+    MB(m_btnObsDayVwap,"bObDV","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
+    ML(m_lblObsWeekVwapTag,"lObWV","Obstacle Week VWAP",cx,cyFlatten,150,CTRL_HEIGHT);
+    MB(m_btnObsWeekVwap,"bObWV","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CONFIG_GAP;
     ML(m_lblObsEmaTag,"lObEm","Obstacle EMA",cx,cyFlatten,115,CTRL_HEIGHT);
     ML(m_lblObsEmaPlus1,"lOEp1","+",cx+189,cyFlatten,14,CTRL_HEIGHT);
     ML(m_lblObsEmaPlus2,"lOEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
@@ -657,6 +665,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.obsRange5mOn=m_obsRange5mOn;
    p.obsRange15mOn=m_obsRange15mOn;
    p.obsPrevDayHLOn=m_obsPrevDayHLOn;
+   p.obsDayVwapOn=m_obsDayVwapOn;
+   p.obsWeekVwapOn=m_obsWeekVwapOn;
    p.obsEma1On=m_obsEma1On;
    p.obsEma1Period=(int)StringToInteger(m_edtObsEma1.Text());
    p.obsEma2On=m_obsEma2On;
@@ -731,6 +741,8 @@ void CDashboard::LoadTab(ENUM_TAB tab)
    m_obsRange5mOn=p.obsRange5mOn; UpdObsR5m();
    m_obsRange15mOn=p.obsRange15mOn; UpdObsR15m();
    m_obsPrevDayHLOn=p.obsPrevDayHLOn; UpdObsPrevDayHL();
+   m_obsDayVwapOn=p.obsDayVwapOn; UpdObsDayVwap();
+   m_obsWeekVwapOn=p.obsWeekVwapOn; UpdObsWeekVwap();
    m_obsEma1On=p.obsEma1On; UpdObsEma1();
    m_edtObsEma1.Text(IntegerToString(p.obsEma1Period));
    m_obsEma2On=p.obsEma2On; UpdObsEma2();
@@ -808,6 +820,8 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnObsR5m.Name())        { OnObsR5mToggle(); return true; }
    if(objName == m_btnObsR15m.Name())       { OnObsR15mToggle(); return true; }
    if(objName == m_btnObsPrevDayHL.Name())   { OnObsPrevDayHLToggle(); return true; }
+   if(objName == m_btnObsDayVwap.Name())     { OnObsDayVwapToggle(); return true; }
+   if(objName == m_btnObsWeekVwap.Name())    { OnObsWeekVwapToggle(); return true; }
    if(objName == m_btnObsEma1.Name())       { OnObsEma1Toggle(); return true; }
    if(objName == m_btnObsEma2.Name())       { OnObsEma2Toggle(); return true; }
    if(objName == m_btnObsEma3.Name())       { OnObsEma3Toggle(); return true; }
@@ -995,6 +1009,10 @@ void CDashboard::OnObsR15mToggle() { m_btnObsR15m.Pressed(false); m_obsRange15mO
 void CDashboard::UpdObsR15m() { m_btnObsR15m.Text(m_obsRange15mOn?"ON":"OFF"); m_btnObsR15m.ColorBackground(m_obsRange15mOn?CLR_SUCCESS:CLR_BTN_OFF); }
 void CDashboard::OnObsPrevDayHLToggle() { m_btnObsPrevDayHL.Pressed(false); m_obsPrevDayHLOn=!m_obsPrevDayHLOn; UpdObsPrevDayHL(); MarkDirty(); }
 void CDashboard::UpdObsPrevDayHL() { m_btnObsPrevDayHL.Text(m_obsPrevDayHLOn?"ON":"OFF"); m_btnObsPrevDayHL.ColorBackground(m_obsPrevDayHLOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::OnObsDayVwapToggle() { m_btnObsDayVwap.Pressed(false); m_obsDayVwapOn=!m_obsDayVwapOn; UpdObsDayVwap(); MarkDirty(); }
+void CDashboard::UpdObsDayVwap() { m_btnObsDayVwap.Text(m_obsDayVwapOn?"ON":"OFF"); m_btnObsDayVwap.ColorBackground(m_obsDayVwapOn?CLR_SUCCESS:CLR_BTN_OFF); }
+void CDashboard::OnObsWeekVwapToggle() { m_btnObsWeekVwap.Pressed(false); m_obsWeekVwapOn=!m_obsWeekVwapOn; UpdObsWeekVwap(); MarkDirty(); }
+void CDashboard::UpdObsWeekVwap() { m_btnObsWeekVwap.Text(m_obsWeekVwapOn?"ON":"OFF"); m_btnObsWeekVwap.ColorBackground(m_obsWeekVwapOn?CLR_SUCCESS:CLR_BTN_OFF); }
 void CDashboard::OnObsEma1Toggle() { m_btnObsEma1.Pressed(false); m_obsEma1On=!m_obsEma1On; UpdObsEma1(); MarkDirty(); }
 void CDashboard::UpdObsEma1() { m_btnObsEma1.Text(m_obsEma1On?ShortToString(0x2713):""); m_btnObsEma1.ColorBackground(m_obsEma1On?CLR_SUCCESS:CLR_BTN_OFF); }
 void CDashboard::OnObsEma2Toggle() { m_btnObsEma2.Pressed(false); m_obsEma2On=!m_obsEma2On; UpdObsEma2(); MarkDirty(); }
@@ -1085,6 +1103,8 @@ void CDashboard::UpdTabs() {
    CtrlHide(m_lblObsR5mTag); CtrlHide(m_btnObsR5m);
    CtrlHide(m_lblObsR15mTag); CtrlHide(m_btnObsR15m);
    CtrlHide(m_lblObsPrevDayHLTag); CtrlHide(m_btnObsPrevDayHL);
+   CtrlHide(m_lblObsDayVwapTag); CtrlHide(m_btnObsDayVwap);
+   CtrlHide(m_lblObsWeekVwapTag); CtrlHide(m_btnObsWeekVwap);
    CtrlHide(m_lblObsEmaTag); CtrlHide(m_lblObsEmaPlus1); CtrlHide(m_lblObsEmaPlus2);
    CtrlHide(m_edtObsEma1); CtrlHide(m_btnObsEma1);
    CtrlHide(m_edtObsEma2); CtrlHide(m_btnObsEma2);
@@ -1182,6 +1202,8 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblObsR5mTag); CtrlShowBtn(m_btnObsR5m);
       CtrlShow(m_lblObsR15mTag); CtrlShowBtn(m_btnObsR15m);
       CtrlShow(m_lblObsPrevDayHLTag); CtrlShowBtn(m_btnObsPrevDayHL);
+      CtrlShow(m_lblObsDayVwapTag); CtrlShowBtn(m_btnObsDayVwap);
+      CtrlShow(m_lblObsWeekVwapTag); CtrlShowBtn(m_btnObsWeekVwap);
       CtrlShow(m_lblObsEmaTag); CtrlShow(m_lblObsEmaPlus1); CtrlShow(m_lblObsEmaPlus2);
       CtrlShowEdit(m_edtObsEma1); CtrlShowBtn(m_btnObsEma1);
       CtrlShowEdit(m_edtObsEma2); CtrlShowBtn(m_btnObsEma2);
@@ -1239,6 +1261,8 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblObsR5mTag); CtrlHide(m_btnObsR5m);
    CtrlHide(m_lblObsR15mTag); CtrlHide(m_btnObsR15m);
    CtrlHide(m_lblObsPrevDayHLTag); CtrlHide(m_btnObsPrevDayHL);
+   CtrlHide(m_lblObsDayVwapTag); CtrlHide(m_btnObsDayVwap);
+   CtrlHide(m_lblObsWeekVwapTag); CtrlHide(m_btnObsWeekVwap);
    CtrlHide(m_lblObsEmaTag); CtrlHide(m_lblObsEmaPlus1); CtrlHide(m_lblObsEmaPlus2);
    CtrlHide(m_edtObsEma1); CtrlHide(m_btnObsEma1);
    CtrlHide(m_edtObsEma2); CtrlHide(m_btnObsEma2);
