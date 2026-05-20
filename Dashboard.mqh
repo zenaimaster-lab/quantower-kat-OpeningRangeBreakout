@@ -235,23 +235,24 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    if(!CAppDialog::Create(chart,name,subwin,x,y,x+w,y+h)) return false;
    Caption(EA_NAME);
    
-   // Customize caption bar: show X button, show Minimize button
+   // Customize caption bar: hide original Minimize button, and transform Close button to "Minimize" button
     for(int i=ObjectsTotal(chart,subwin)-1;i>=0;i--)
     { string n=ObjectName(chart,i,subwin);
       // The CAppDialog creates buttons named "Close" and "Minimize" with suffix
       if(StringFind(n,"Close") >= 0) {
-         ObjectSetInteger(chart, n, OBJPROP_XSIZE, 20);
-         ObjectSetInteger(chart, n, OBJPROP_YSIZE, 20);
-         ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, w - 24);
-         ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, 6);
-      }
-      if(StringFind(n,"Minimize") >= 0) {
          ObjectSetString(chart, n, OBJPROP_TEXT, "Minimize");
          ObjectSetInteger(chart, n, OBJPROP_XSIZE, 60);
          ObjectSetInteger(chart, n, OBJPROP_YSIZE, 20);
          ObjectSetInteger(chart, n, OBJPROP_FONTSIZE, 8);
-         ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, w - 88);
+         ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, w - 64);
          ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, 6);
+      }
+      if(StringFind(n,"Minimize") >= 0) {
+         ObjectSetInteger(chart, n, OBJPROP_XSIZE, 0);
+         ObjectSetInteger(chart, n, OBJPROP_YSIZE, 0);
+         ObjectSetInteger(chart, n, OBJPROP_XDISTANCE, -100);
+         ObjectSetInteger(chart, n, OBJPROP_YDISTANCE, -100);
+         ObjectSetInteger(chart, n, OBJPROP_HIDDEN, true);
       }
     }
    
@@ -417,7 +418,7 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
     ML(m_lblEmaPlus2,"lEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
     ME(m_edtEma3,"eEm3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
     MB(m_btnEma3,"bEm3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+SEC_PAD;
-    cyFlatten+=SEC_PAD; MSep(si++,-100,-100,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 9
+    cyFlatten+=SEC_PAD; MSep(si++,cx,cyFlatten,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 9
 
     // ── TAB: FLATTEN - OBSTACLES ──
     ML(m_lblObsTag,"lObT","OBSTACLE FILTER",cx,cyFlatten,cw,CTRL_HEIGHT); cyFlatten+=CTRL_HEIGHT+CONFIG_GAP+8;
