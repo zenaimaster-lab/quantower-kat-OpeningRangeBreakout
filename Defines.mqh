@@ -7,8 +7,8 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.42"
-#define EA_BUILD_DATE     "19 May 2026"
+#define EA_VERSION        "1.44"
+#define EA_BUILD_DATE     "20 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
 #include "GlobalState.mqh"
@@ -73,7 +73,7 @@
 //--- Enums
 enum ENUM_ORDER_MODE    { MODE_BOTH=0, MODE_BUY_ONLY=1, MODE_SELL_ONLY=2 };
 enum ENUM_EA_MODE       { EA_AUTO=0, EA_MANUAL=1 };
-enum ENUM_TAB { TAB_MAIN=0, TAB_M2=1, TAB_M5=2, TAB_M15=3, TAB_STATS=4 };
+enum ENUM_TAB { TAB_STATS=0, TAB_ORDER=1, TAB_ENTRY=2, TAB_FLATTEN=3 };
 
 
 // Consolidated trail mode
@@ -221,32 +221,16 @@ struct DashboardParams
 };
 
 struct SystemConfig {
-   bool globalOverride;
    DashboardParams main;
-   DashboardParams m2;
-   DashboardParams m5;
-   DashboardParams m15;
+   bool m2Active;
+   bool m5Active;
+   bool m15Active;
    
    SystemConfig() {
-      globalOverride = true;
-      m2.timeframe = PERIOD_M2;
-      m2.comment = "orb-2m";
-      m5.timeframe = PERIOD_M5;
-      m5.comment = "orb-5m";
-      m15.timeframe = PERIOD_M15;
-      m15.comment = "orb-15m";
+      m2Active = true;
+      m5Active = true;
+      m15Active = true;
    }
-};
-
-struct PresetParams
-{
-   int    sl;
-   int    tp;
-   double risk;
-   int    trailTrigger;
-   int    trailDist;
-   int    trailStep;
-   ENUM_TIMEFRAMES tf;
 };
 
 struct NewsEvent
@@ -256,19 +240,6 @@ struct NewsEvent
    bool     isNYO;
    NewsEvent() { name = ""; time = 0; isNYO = false; }
 };
-
-//--- Helper: Initialize a preset (eliminates copy-paste in OnInit)
-void InitPreset(PresetParams &pr, int sl, int tp, double risk,
-                int trig, int dist, int step, ENUM_TIMEFRAMES tf)
-{
-   pr.sl          = sl;
-   pr.tp          = tp;
-   pr.risk        = risk;
-   pr.trailTrigger = trig;
-   pr.trailDist   = dist;
-   pr.trailStep   = step;
-   pr.tf          = tf;
-}
 
 //--- Timeframe utilities
 string TimeframeToString(ENUM_TIMEFRAMES tf)

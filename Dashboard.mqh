@@ -16,9 +16,8 @@ private:
    CEdit m_lblTimerTag, m_lblTimerVal;
    CEdit m_lblSlTag, m_lblMdTag;
    
-   CButton m_btnGlobal, m_btnToggleM2, m_btnToggleM5, m_btnToggleM15;
-   CEdit m_lblGlobalTag, m_lblTabNotice;
-   CButton m_btnTabMain, m_btnTabM2, m_btnTabM5, m_btnTabM15, m_btnTabStats;
+    CButton m_btnToggleM2, m_btnToggleM5, m_btnToggleM15;
+    CButton m_btnTabOrder, m_btnTabEntry, m_btnTabFlatten, m_btnTabStats;
    CEdit  m_edtSL, m_edtTP;
    CButton m_btnSLS, m_btnBoth, m_btnBuy, m_btnSell;
    CEdit m_lblBalTag, m_lblBalVal;
@@ -63,7 +62,7 @@ private:
    CEdit m_lblFemTag, m_edtFem1, m_edtFem2, m_edtFem3;
    CButton m_btnFem1, m_btnFem2, m_btnFem3;
    CEdit m_lblEmaPlus1, m_lblEmaPlus2, m_lblFemPlus1, m_lblFemPlus2;
-   CButton m_btnA1,m_btnA2,m_btnA3;
+
    CEdit m_lblOsTag, m_lblOsVal, m_lblStVal;
    CEdit m_lblEqTag, m_lblPlTag;
    CEdit m_lblStatEquity, m_lblStatPL;
@@ -121,9 +120,7 @@ private:
    uint m_lastClickMs;                  // v0.75: debounce — last click timestamp
    string m_lastClickName;              // v0.75: debounce — last clicked object
    void MarkDirty() { m_dirty = true; } // v2.0: called by any UI interaction
-   void PushCmd(ENUM_DASHBOARD_CMD cmd) { if(m_cmdCount < 16) { m_cmdQueue[m_cmdCount] = cmd; m_cmdCount++; } }
-
-public:
+   void PushCmd(ENUM_DASHBOARD_CMD cmd) { if(m_cmdCount < 16) { m_cmdQueue[m_cmdCount] = cmd; m_cmdCount++; } }public:
    CDashboard();
   ~CDashboard() {}
    bool CreatePanel(long chart,string name,int subwin,int x,int y,int w,int h);
@@ -137,7 +134,6 @@ public:
    void UpdateOrderStatus(string s);
    void UpdateNYClock(string t, string ap, string d);
    void UpdateBalanceInfo(double b,double r,double rw,double l);
-   void ApplyPreset(const PresetParams &pr);
    void UpdateNews(string newsStr);
    void UpdateTimer(string timerStr);
    void UpdateMarketStatus(bool isOpen);
@@ -162,16 +158,14 @@ public:
    ENUM_DASHBOARD_CMD PopCommand() { if(m_cmdCount <= 0) return CMD_NONE; m_cmdCount--; return m_cmdQueue[m_cmdCount]; }
    void MarkDirtyPublic() { MarkDirty(); }
    void PushCmdPublic(ENUM_DASHBOARD_CMD cmd) { PushCmd(cmd); }
-   int  PresetIndex;
 private:
    bool ML(CEdit &l,string n,string t,int x,int y,int w,int h,color c=CLR_TEXT,int fs=FONT_SIZE);
    bool ME(CEdit &e,string n,string t,int x,int y,int w,int h);
    bool MB(CButton &b,string n,string t,int x,int y,int w,int h,color bg=CLR_BTN_OFF);
    void MSep(int idx,int x,int y,int w);
-   void OnSLS(); void OnBoth(); void OnBuyO(); void OnSellO();
-   void OnTrM(); void OnManP(); void OnCanA();
-   void OnToggleGlobal(); void OnToggleM2(); void OnToggleM5(); void OnToggleM15();
-   void OnTabMain(); void OnTabM2(); void OnTabM5();
+    void OnSLS(); void OnBoth(); void OnBuyO(); void OnSellO(); void OnTrM();
+   void OnToggleM2(); void OnToggleM5(); void OnToggleM15();
+   void OnTabOrder(); void OnTabEntry(); void OnTabFlatten();
    void OnRiskModeToggle(); void OnLotModeToggle();
    void OnBrkEv();
    void OnBEToggle();
@@ -194,8 +188,7 @@ private:
    void OnRtcToggle(); void UpdRtc();
    void OnBigMToggle(); void UpdBigM();
    
-   void OnTabM15(); void OnTabStats();
-   void OnA1(); void OnA2(); void OnA3();
+   void OnTabStats();
 
 
    void UpdMode(); void UpdTrail(); void UpdBE();
@@ -214,11 +207,9 @@ CDashboard::CDashboard() { m_rMode=true; m_slCandle=false; m_om=MODE_BOTH; m_tm=
    m_ema1Enabled=false; m_ema2Enabled=false; m_ema3Enabled=false;
    m_fem1Enabled=false; m_fem2Enabled=false; m_fem3Enabled=false;
    m_contAfter1st=true; m_maxSuccessOn=true; m_maxLossOn=true; m_bigMomentum=false; m_rtcOn=true;
-   m_dirty=true; m_cmdCount=0; PresetIndex=-1;
+   m_dirty=true; m_cmdCount=0;
 
    m_lastClickMs=0; m_lastClickName=""; }
-
-
 
 bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w,int h)
 {
@@ -250,15 +241,15 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
    int cx=6,cy=4,cw=w-26,rx=cx+LABEL_WIDTH+4,rw=cw-LABEL_WIDTH-4;
    int si=0;
 
-   cy+=12; // Tăng khoảng trống chỗ EA Title cho rộng ra một chút
+   cy+=12; // Increase gap for EA Title
    ML(m_lblVer,"ver","Version "+EA_VERSION+" | "+EA_BUILD_DATE,cx,cy,cw,12,CLR_TEXT_DIM,7); cy+=16;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD; // si = 0
 
    // ── MARKET ──
    ML(m_lblSym,"lSm",Symbol(),cx,cy,cw,CTRL_HEIGHT+6,CLR_SYMBOL,FONT_SIZE_BIG); cy+=CTRL_HEIGHT+8;
    ML(m_lblMktStatus,"lMk","Market Closed",cx,cy,100,16,CLR_MKT_CLOSED,8);
    ML(m_lblSpdVal,"vSp","Spread: —",cx+104,cy,cw-104,16,CLR_WARNING,8); cy+=24;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD; // si = 1
 
    // ── CLOCK ──
    ML(m_lblClkTag,"lCk","NY Time",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT,FONT_SIZE_MED);
@@ -271,244 +262,237 @@ bool CDashboard::CreatePanel(long chart,string name,int subwin,int x,int y,int w
 
    ML(m_lblTimerTag,"lTm","Countdown",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT,FONT_SIZE_MED);
    ML(m_lblTimerVal,"vTm","--:--:--",rx,cy,rw,CTRL_HEIGHT,CLR_WARNING,FONT_SIZE_MED); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD; // si = 2
    
-   // --- MAIN TOGGLES ---
+   // --- TIMEFRAME TOGGLES ---
    int thw=(cw-6)/3;
    MB(m_btnToggleM2,"bT2","2m: ON",cx,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS);
    MB(m_btnToggleM5,"bT5","5m: ON",cx+thw+3,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS);
    MB(m_btnToggleM15,"bT15","15m: ON",cx+(thw+3)*2,cy,thw,CTRL_HEIGHT+4,CLR_SUCCESS); cy+=CTRL_HEIGHT+4+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD; // si = 3
 
-   // --- TABS ---
-   int tcw=(cw-16)/5;
+   // --- TABS (Consolidated: Stats, Order, Entry, Flatten) ---
+   int tcw=(cw-12)/4;
    MB(m_btnTabStats,"bTmSt","\xF0\x9F\x92\xB8",cx,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_ON);
-   MB(m_btnTabMain,"bTmMain","Global",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM2,"bTmM2","2m",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM5,"bTmM5","5m",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
-   MB(m_btnTabM15,"bTmM15","15m",cx+(tcw+4)*4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   MB(m_btnTabOrder,"bTmOrd","ORDER",cx+tcw+4,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabEntry,"bTmEnt","ENTRY",cx+(tcw+4)*2,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF);
+   MB(m_btnTabFlatten,"bTmFlt","FLATTEN",cx+(tcw+4)*3,cy,tcw,CTRL_HEIGHT+10,CLR_BTN_OFF); cy+=CTRL_HEIGHT+10+SEC_PAD;
+   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD; // si = 4
 
    int startCy = cy;
 
-
-
-   // ── ORDER ──
-   ML(m_lblTabNotice,"lTbN","",cx,cy,cw,CTRL_HEIGHT,CLR_WARNING);
-   ML(m_lblGlobalTag,"lGbT","Global setting",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnGlobal,"bGb","ON",rx,cy,rw,CTRL_HEIGHT+2,CLR_WARNING); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblMdTag,"lMd","Order mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
+   // ── TAB: ORDER ──
+   int cyOrder = startCy;
+   ML(m_lblMdTag,"lMd","Order mode",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
    int mb=(rw-6)/3;
-   MB(m_btnBoth,"bBt","BOTH",rx,cy,mb,CTRL_HEIGHT+2,CLR_BTN_ON);
-   MB(m_btnBuy,"bBy","BUY",rx+mb+3,cy,mb,CTRL_HEIGHT+2);
-   MB(m_btnSell,"bSe","SELL",rx+(mb+3)*2,cy,mb,CTRL_HEIGHT+2); cy+=CTRL_HEIGHT+2+8+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   MB(m_btnBoth,"bBt","BOTH",rx,cyOrder,mb,CTRL_HEIGHT+2,CLR_BTN_ON);
+   MB(m_btnBuy,"bBy","BUY",rx+mb+3,cyOrder,mb,CTRL_HEIGHT+2);
+   MB(m_btnSell,"bSe","SELL",rx+(mb+3)*2,cyOrder,mb,CTRL_HEIGHT+2); cyOrder+=CTRL_HEIGHT+2+8+SEC_PAD;
+   cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 5
 
    // ── RISK ──
-   ML(m_lblBalTag,"lBa","Balance",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblBalVal,"vBa","$0.00",rx,cy,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   MB(m_btnRiskMode,"bRm","Risk %",cx,cy,55,CTRL_HEIGHT+2,CLR_BTN_ON);
-   ME(m_edtRisk,"eRk","1.0",cx+60,cy,35,CTRL_HEIGHT);
-   MB(m_btnFixLot,"bFl","Fix lot",cx+105,cy,55,CTRL_HEIGHT+2,CLR_BTN_OFF);
-   ME(m_edtFixLot,"eFl","0.1",cx+165,cy,45,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblRATag,"lRA","Risk / Reward",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblRAVal,"vRA","-$0",rx,cy,70,CTRL_HEIGHT,CLR_MONEY_RED);
-   ML(m_lblRwVal,"vRw","+$0",rx+75,cy,70,CTRL_HEIGHT,CLR_MONEY_GREEN); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblLtTag,"lLt","Lot size",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ML(m_lblLtVal,"vLt","0.00",rx,cy,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ML(m_lblBalTag,"lBa","Balance",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
+   ML(m_lblBalVal,"vBa","$0.00",rx,cyOrder,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   MB(m_btnRiskMode,"bRm","Risk %",cx,cyOrder,55,CTRL_HEIGHT+2,CLR_BTN_ON);
+   ME(m_edtRisk,"eRk","1.0",cx+60,cyOrder,35,CTRL_HEIGHT);
+   MB(m_btnFixLot,"bFl","Fix lot",cx+105,cyOrder,55,CTRL_HEIGHT+2,CLR_BTN_OFF);
+   ME(m_edtFixLot,"eFl","0.1",cx+165,cyOrder,45,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblRATag,"lRA","Risk / Reward",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
+   ML(m_lblRAVal,"vRA","-$0",rx,cyOrder,70,CTRL_HEIGHT,CLR_MONEY_RED);
+   ML(m_lblRwVal,"vRw","+$0",rx+75,cyOrder,70,CTRL_HEIGHT,CLR_MONEY_GREEN); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblLtTag,"lLt","Lot size",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
+   ML(m_lblLtVal,"vLt","0.00",rx,cyOrder,rw,CTRL_HEIGHT,CLR_TEXT_BRIGHT); cyOrder+=CTRL_HEIGHT+SEC_PAD;
+   cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 6
 
-   // ── TRAIL / BE ──
-   ML(m_lblSlTag,"lSl","SL / TP",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   ME(m_edtSL,"eSl","1500",rx,cy,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","1500",rx+59,cy,55,CTRL_HEIGHT);
-   MB(m_btnSLS,"bSs","SL by Candle",rx+120,cy,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cy+=CTRL_HEIGHT+10;
-   ML(m_lblTrTag,"lTr","Trailing mode",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnTrMode,"bTm","ON",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblTrTrig,"lTL","Trigger",cx,cy,55,CTRL_HEIGHT);
-   ME(m_edtTTr,"eTTr","1500",cx+55,cy,50,CTRL_HEIGHT);
-   ML(m_lblTrDist,"lDi","Distance",cx+108,cy,65,CTRL_HEIGHT);
-   ME(m_edtTDi,"eTDi","500",cx+173,cy,50,CTRL_HEIGHT);
-   ML(m_lblTrStep,"lStp","Step",cx+226,cy,35,CTRL_HEIGHT);
-   ME(m_edtTSt,"eTSt","1",cx+261,cy,50,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblBETag,"lBeT","Breakeven",cx,cy,LABEL_WIDTH,CTRL_HEIGHT);
-   MB(m_btnBE,"bBE","OFF",rx,cy,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblBeLine,"lBL","BE Trigger",cx,cy,85,CTRL_HEIGHT);
-   ME(m_edtBEA,"eBA","200",cx+87,cy,42,CTRL_HEIGHT);
-   ML(m_lblBELock,"lPl","+",cx+131,cy,14,CTRL_HEIGHT);
-   ME(m_edtBEL,"eBL","50",cx+147,cy,42,CTRL_HEIGHT); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   // ── SL/TP & TRAIL / BE ──
+   ML(m_lblSlTag,"lSl","SL / TP",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
+   ME(m_edtSL,"eSl","1500",rx,cyOrder,55,CTRL_HEIGHT); ME(m_edtTP,"eTp","1500",rx+59,cyOrder,55,CTRL_HEIGHT);
+   MB(m_btnSLS,"bSs","SL by Candle",rx+120,cyOrder,rw-120,CTRL_HEIGHT,CLR_BTN_ON); cyOrder+=CTRL_HEIGHT+10;
+   ML(m_lblTrTag,"lTr","Trailing mode",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
+   MB(m_btnTrMode,"bTm","ON",rx,cyOrder,rw,CTRL_HEIGHT+2,CLR_BTN_ON); cyOrder+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblTrTrig,"lTL","Trigger",cx,cyOrder,55,CTRL_HEIGHT);
+   ME(m_edtTTr,"eTTr","1500",cx+55,cyOrder,50,CTRL_HEIGHT);
+   ML(m_lblTrDist,"lDi","Distance",cx+108,cyOrder,65,CTRL_HEIGHT);
+   ME(m_edtTDi,"eTDi","500",cx+173,cyOrder,50,CTRL_HEIGHT);
+   ML(m_lblTrStep,"lStp","Step",cx+226,cyOrder,35,CTRL_HEIGHT);
+   ME(m_edtTSt,"eTSt","1",cx+261,cyOrder,50,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblBETag,"lBeT","Breakeven",cx,cyOrder,LABEL_WIDTH,CTRL_HEIGHT);
+   MB(m_btnBE,"bBE","OFF",rx,cyOrder,rw,CTRL_HEIGHT+2,CLR_BTN_OFF); cyOrder+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblBeLine,"lBL","BE Trigger",cx,cyOrder,85,CTRL_HEIGHT);
+   ME(m_edtBEA,"eBA","200",cx+87,cyOrder,42,CTRL_HEIGHT);
+   ML(m_lblBELock,"lPl","+",cx+131,cyOrder,14,CTRL_HEIGHT);
+   ME(m_edtBEL,"eBL","50",cx+147,cyOrder,42,CTRL_HEIGHT); cyOrder+=CTRL_HEIGHT+SEC_PAD;
+   cyOrder+=SEC_PAD; MSep(si++,cx,cyOrder,cw); cyOrder+=SEP_GAP+SEC_PAD; // si = 7
 
-   // ── ENTRY ──
+
+   // ── TAB: ENTRY ──
+   int cyEntry = startCy;
    int smallBtnW = rw / 3;
    int smallBtnX = rx + rw - smallBtnW;
-   ML(m_lblEntrySec,"lEnT","ENTRY",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8;
+   ML(m_lblEntrySec,"lEnT","ENTRY",cx,cyEntry,cw,CTRL_HEIGHT); cyEntry+=CTRL_HEIGHT+CTRL_GAP+8;
    
-   ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtRtc,"eRtc","1",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnRtc,"bRtc","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblRtcTag,"lRtc","Retest candle (min)",cx,cyEntry,150,CTRL_HEIGHT);
+   ME(m_edtRtc,"eRtc","1",cx+155,cyEntry,50,CTRL_HEIGHT);
+   MB(m_btnRtc,"bRtc","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cy,180,CTRL_HEIGHT);
-   MB(m_btnCont,"bCo","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblContTag,"lCo","Continue after 1st fired",cx,cyEntry,180,CTRL_HEIGHT);
+   MB(m_btnCont,"bCo","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblMaxSTag,"lMs","Max succesful order",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtMaxS,"eMs","2",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnMaxS,"bMs","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblMaxSTag,"lMs","Max succesful order",cx,cyEntry,150,CTRL_HEIGHT);
+   ME(m_edtMaxS,"eMs","2",cx+155,cyEntry,50,CTRL_HEIGHT);
+   MB(m_btnMaxS,"bMs","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblMaxLTag,"lMl","Max loss order",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtMaxL,"eMl","1",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnMaxL,"bMl","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblMaxLTag,"lMl","Max loss order",cx,cyEntry,150,CTRL_HEIGHT);
+   ME(m_edtMaxL,"eMl","1",cx+155,cyEntry,50,CTRL_HEIGHT);
+   MB(m_btnMaxL,"bMl","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblBigMTag,"lBm","Big momentum only",cx,cy,180,CTRL_HEIGHT);
-   MB(m_btnBigM,"bBm","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblBigMTag,"lBm","Big momentum only",cx,cyEntry,180,CTRL_HEIGHT);
+   MB(m_btnBigM,"bBm","OFF",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblAamTag,"lAam","Trading window (min)",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtAam,"eAam","60",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnAam,"bAam","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblAamTag,"lAam","Trading window (min)",cx,cyEntry,150,CTRL_HEIGHT);
+   ME(m_edtAam,"eAam","60",cx+155,cyEntry,50,CTRL_HEIGHT);
+   MB(m_btnAam,"bAam","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblMdrTag,"lMdr","Max dist from range",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtMdr,"eMdr","6000",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnMdr,"bMdr","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblMdrTag,"lMdr","Max dist from range",cx,cyEntry,150,CTRL_HEIGHT);
+   ME(m_edtMdr,"eMdr","6000",cx+155,cyEntry,50,CTRL_HEIGHT);
+   MB(m_btnMdr,"bMdr","ON",smallBtnX,cyEntry,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyEntry+=CTRL_HEIGHT+2+CTRL_GAP;
    
-   ML(m_lblFemTag,"lFem","Favor EMA",cx,cy,95,CTRL_HEIGHT);
-   ME(m_edtFem1,"eFm1","9",cx+124,cy,38,CTRL_HEIGHT);
-   MB(m_btnFem1,"bFm1","",cx+163,cy,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblFemPlus1,"lFp1","+",cx+189,cy,14,CTRL_HEIGHT);
-   ME(m_edtFem2,"eFm2","21",cx+205,cy,38,CTRL_HEIGHT);
-   MB(m_btnFem2,"bFm2","",cx+244,cy,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblFemPlus2,"lFp2","+",cx+270,cy,14,CTRL_HEIGHT);
-   ME(m_edtFem3,"eFm3","34",cx+286,cy,38,CTRL_HEIGHT);
-   MB(m_btnFem3,"bFm3","",cx+325,cy,24,CTRL_HEIGHT,CLR_BTN_OFF); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ML(m_lblFemTag,"lFem","Favor EMA",cx,cyEntry,95,CTRL_HEIGHT);
+   ME(m_edtFem1,"eFm1","9",cx+124,cyEntry,38,CTRL_HEIGHT);
+   MB(m_btnFem1,"bFm1","",cx+163,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF);
+   ML(m_lblFemPlus1,"lFp1","+",cx+189,cyEntry,14,CTRL_HEIGHT);
+   ME(m_edtFem2,"eFm2","21",cx+205,cyEntry,38,CTRL_HEIGHT);
+   MB(m_btnFem2,"bFm2","",cx+244,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF);
+   ML(m_lblFemPlus2,"lFp2","+",cx+270,cyEntry,14,CTRL_HEIGHT);
+   ME(m_edtFem3,"eFm3","34",cx+286,cyEntry,38,CTRL_HEIGHT);
+   MB(m_btnFem3,"bFm3","",cx+325,cyEntry,24,CTRL_HEIGHT,CLR_BTN_OFF); cyEntry+=CTRL_HEIGHT+SEC_PAD;
+   cyEntry+=SEC_PAD; MSep(si++,cx,cyEntry,cw); cyEntry+=SEP_GAP+SEC_PAD; // si = 8
 
-   // ── AUTO FLATTEN/CANCEL ALL ORDERS ──
-   ML(m_lblExpTag,"lExT","AUTO FLATTEN/CANCEL ALL ORDERS",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+8; // Thêm khoảng trống dưới title
-   ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtUfmPts,"eUfm","8000",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnUfm,"bUfm","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblTmrTag,"lTmr","Touch middle range",cx,cy,150,CTRL_HEIGHT);
-   MB(m_btnTmr,"bTmr","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtAuc,"eAuc","2",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnAuc,"bAuc","OFF",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblAfcTag,"lAfc","After filled (min)",cx,cy,150,CTRL_HEIGHT);
-   ME(m_edtAfc,"eAfc","5",cx+155,cy,50,CTRL_HEIGHT);
-   MB(m_btnAfc,"bAfc","ON",smallBtnX,cy,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cy+=CTRL_HEIGHT+2+CTRL_GAP;
-   ML(m_lblEma1Tag,"lEm1","Unfavor EMA",cx,cy,95,CTRL_HEIGHT);
+
+   // ── TAB: FLATTEN ──
+   int cyFlatten = startCy;
+   ML(m_lblExpTag,"lExT","AUTO FLATTEN/CANCEL ALL ORDERS",cx,cyFlatten,cw,CTRL_HEIGHT); cyFlatten+=CTRL_HEIGHT+CTRL_GAP+8;
+   ML(m_lblUfmTag,"lUfm","Unfavor move",cx,cyFlatten,150,CTRL_HEIGHT);
+   ME(m_edtUfmPts,"eUfm","8000",cx+155,cyFlatten,50,CTRL_HEIGHT);
+   MB(m_btnUfm,"bUfm","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblTmrTag,"lTmr","Touch middle range",cx,cyFlatten,150,CTRL_HEIGHT);
+   MB(m_btnTmr,"bTmr","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_ON); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblAucTag,"lAuc","After unfilled candles",cx,cyFlatten,150,CTRL_HEIGHT);
+   ME(m_edtAuc,"eAuc","2",cx+155,cyFlatten,50,CTRL_HEIGHT);
+   MB(m_btnAuc,"bAuc","OFF",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblAfcTag,"lAfc","After filled (min)",cx,cyFlatten,150,CTRL_HEIGHT);
+   ME(m_edtAfc,"eAfc","5",cx+155,cyFlatten,50,CTRL_HEIGHT);
+   MB(m_btnAfc,"bAfc","ON",smallBtnX,cyFlatten,smallBtnW,CTRL_HEIGHT+2,CLR_SUCCESS); cyFlatten+=CTRL_HEIGHT+2+CTRL_GAP;
+   ML(m_lblEma1Tag,"lEm1","Unfavor EMA",cx,cyFlatten,95,CTRL_HEIGHT);
    ML(m_lblEma2Tag,"lEm2","",-100,-100,10,10);
    ML(m_lblEma3Tag,"lEm3","",-100,-100,10,10);
-   ME(m_edtEma1,"eEm1","9",cx+124,cy,38,CTRL_HEIGHT);
-   MB(m_btnEma1,"bEm1","",cx+163,cy,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblEmaPlus1,"lEp1","+",cx+189,cy,14,CTRL_HEIGHT);
-   ME(m_edtEma2,"eEm2","21",cx+205,cy,38,CTRL_HEIGHT);
-   MB(m_btnEma2,"bEm2","",cx+244,cy,24,CTRL_HEIGHT,CLR_BTN_OFF);
-   ML(m_lblEmaPlus2,"lEp2","+",cx+270,cy,14,CTRL_HEIGHT);
-   ME(m_edtEma3,"eEm3","34",cx+286,cy,38,CTRL_HEIGHT);
-   MB(m_btnEma3,"bEm3","",cx+325,cy,24,CTRL_HEIGHT,CLR_BTN_OFF); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ME(m_edtEma1,"eEm1","9",cx+124,cyFlatten,38,CTRL_HEIGHT);
+   MB(m_btnEma1,"bEm1","",cx+163,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF);
+   ML(m_lblEmaPlus1,"lEp1","+",cx+189,cyFlatten,14,CTRL_HEIGHT);
+   ME(m_edtEma2,"eEm2","21",cx+205,cyFlatten,38,CTRL_HEIGHT);
+   MB(m_btnEma2,"bEm2","",cx+244,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF);
+   ML(m_lblEmaPlus2,"lEp2","+",cx+270,cyFlatten,14,CTRL_HEIGHT);
+   ME(m_edtEma3,"eEm3","34",cx+286,cyFlatten,38,CTRL_HEIGHT);
+   MB(m_btnEma3,"bEm3","",cx+325,cyFlatten,24,CTRL_HEIGHT,CLR_BTN_OFF); cyFlatten+=CTRL_HEIGHT+SEC_PAD;
+   cyFlatten+=SEC_PAD; MSep(si++,cx,cyFlatten,cw); cyFlatten+=SEP_GAP+SEC_PAD; // si = 9
 
-   // ── PRESETS ──
-   int pw=(cw-10)/3;
-   MB(m_btnA1,"bA1","Set A",cx,cy,pw,CTRL_HEIGHT+2,CLR_PRESET); 
-   MB(m_btnA2,"bA2","Set B",cx+pw+5,cy,pw,CTRL_HEIGHT+2,CLR_PRESET);
-   MB(m_btnA3,"bA3","Set C",cx+(pw+5)*2,cy,pw,CTRL_HEIGHT+2,CLR_PRESET); cy+=CTRL_HEIGHT+2+SEC_PAD;
-   m_idxSepAfterPresets = si;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
 
+   // ── TAB: STATS ──
    m_statusSepStart = si;
-   cy = startCy; // Rewind Y coordinate to render STATUS below TABS!
+   int cyStatus = startCy;
 
    // ── ORDERS (single row: 2m | 5m | 15m — no header label) ──
    int ordColW = cw / 3;
-   cy -= 3; // Shift up to equalize top and bottom padding (15px each)
+   cyStatus -= 3; // Shift up to equalize top and bottom padding
    int rowH = CTRL_HEIGHT + 4; // Increase height to prevent vertical text clipping
    
-   ML(m_lblOrdersSec,"lOrS","",cx,cy,1,rowH);
-   ML(m_lbl2mStTag,"l2sT","2m:",cx,cy,32,rowH,CLR_TEXT);
-   ML(m_lbl2mStVal,"v2sV","OFF",cx+32,cy,ordColW-32,rowH,CLR_TEXT_DIM);
-   ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cy,32,rowH,CLR_TEXT);
-   ML(m_lbl5mStVal,"v5sV","OFF",cx+ordColW+32,cy,ordColW-32,rowH,CLR_TEXT_DIM);
-   ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cy,38,rowH,CLR_TEXT);
-   ML(m_lbl15mStVal,"v15sV","OFF",cx+ordColW*2+38,cy,ordColW-38,rowH,CLR_TEXT_DIM);
+   ML(m_lblOrdersSec,"lOrS","",cx,cyStatus,1,rowH);
+   ML(m_lbl2mStTag,"l2sT","2m:",cx,cyStatus,32,rowH,CLR_TEXT);
+   ML(m_lbl2mStVal,"v2sV","OFF",cx+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
+   ML(m_lbl5mStTag,"l5sT","5m:",cx+ordColW,cyStatus,32,rowH,CLR_TEXT);
+   ML(m_lbl5mStVal,"v5sV","OFF",cx+ordColW+32,cyStatus,ordColW-32,rowH,CLR_TEXT_DIM);
+   ML(m_lbl15mStTag,"l15sT","15m:",cx+ordColW*2,cyStatus,38,rowH,CLR_TEXT);
+   ML(m_lbl15mStVal,"v15sV","OFF",cx+ordColW*2+38,cyStatus,ordColW-38,rowH,CLR_TEXT_DIM);
    
-   cy += rowH + 15; // Advance to exact position for perfectly centered separator
-   MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cyStatus += rowH + 15; // Centered separator
+   MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 10
 
-   // ── EQUITY (keep compact) ──
-   ML(m_lblEqTag,"lEqT","Equity:",cx,cy,50,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblStatEquity,"sEq","$0",cx+52,cy,85,CTRL_HEIGHT,clrWhite);
-   ML(m_lblPlTag,"lPlT","P/L:",cx+142,cy,30,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblStatPL,"sPL","+$0",cx+175,cy,75,CTRL_HEIGHT,CLR_SUCCESS);
-   cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblTotExpTag,"lTeT","Total exposed:",cx,cy,100,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblTotExpVal,"sTeV","0.00",cx+105,cy,rw,CTRL_HEIGHT,CLR_TEXT_DIM);
-   cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblRtRrTag,"lRtT","Realtime R:R",cx,cy,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblRtRrLoss,"sRtL","-$0",rx,cy,65,CTRL_HEIGHT,CLR_MONEY_RED);
-   ML(m_lblRtRrPft,"sRtP","+$0",rx+68,cy,65,CTRL_HEIGHT,CLR_MONEY_GREEN);
-   ML(m_lblRtRrRiskPc,"sRtPc","{0.0%}",cx+cw-45,cy,45,CTRL_HEIGHT,CLR_ACCENT);
-   cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   // ── EQUITY ──
+   ML(m_lblEqTag,"lEqT","Equity:",cx,cyStatus,50,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblStatEquity,"sEq","$0",cx+52,cyStatus,85,CTRL_HEIGHT,clrWhite);
+   ML(m_lblPlTag,"lPlT","P/L:",cx+142,cyStatus,30,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblStatPL,"sPL","+$0",cx+175,cyStatus,75,CTRL_HEIGHT,CLR_SUCCESS);
+   cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblTotExpTag,"lTeT","Total exposed:",cx,cyStatus,100,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblTotExpVal,"sTeV","0.00",cx+105,cyStatus,rw,CTRL_HEIGHT,CLR_TEXT_DIM);
+   cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblRtRrTag,"lRtT","Realtime R:R",cx,cyStatus,LABEL_WIDTH,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblRtRrLoss,"sRtL","-$0",rx,cyStatus,65,CTRL_HEIGHT,CLR_MONEY_RED);
+   ML(m_lblRtRrPft,"sRtP","+$0",rx+68,cyStatus,65,CTRL_HEIGHT,CLR_MONEY_GREEN);
+   ML(m_lblRtRrRiskPc,"sRtPc","{0.0%}",cx+cw-45,cyStatus,45,CTRL_HEIGHT,CLR_ACCENT);
+   cyStatus+=CTRL_HEIGHT+SEC_PAD;
+   cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 11
 
    // ── LAST DAY ENTRIES ──
-   ML(m_lblLastEntrySec,"lLeS","LAST DAY ENTRIES",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lblLastEntrySec,"lLeS","LAST DAY ENTRIES",cx,cyStatus,cw,CTRL_HEIGHT); cyStatus+=CTRL_HEIGHT+CTRL_GAP+4;
    for(int ei=0; ei<9; ei++) {
       string numId = "lEn" + IntegerToString(ei);
       string descId = "sEd" + IntegerToString(ei);
-      ML(m_lblEntryNum[ei], numId, IntegerToString(ei+1)+".", cx, cy, 18, CTRL_HEIGHT, CLR_TEXT_BRIGHT);
-      ML(m_lblEntryDesc[ei], descId, "--", cx+20, cy, cw-20, CTRL_HEIGHT, CLR_WARNING);
-      cy+=CTRL_HEIGHT+CTRL_GAP;
+      ML(m_lblEntryNum[ei], numId, IntegerToString(ei+1)+".", cx, cyStatus, 18, CTRL_HEIGHT, CLR_TEXT_BRIGHT);
+      ML(m_lblEntryDesc[ei], descId, "--", cx+20, cyStatus, cw-20, CTRL_HEIGHT, CLR_WARNING);
+      cyStatus+=CTRL_HEIGHT+CTRL_GAP;
    }
-   cy+=SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   cyStatus+=SEC_PAD;
+   cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 12
 
    // ── TOTAL P/L ──
-   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cy,cw,CTRL_HEIGHT); cy+=CTRL_HEIGHT+CTRL_GAP+4;
-   ML(m_lblNetTodayTag,"lNtT","Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblNetTodayVal,"sNtV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lblTodayWl,"sNtW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblNetWeekTag,"lNwT","Week:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblNetWeekVal,"sNwV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lblWeekWl,"sNwW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lblNetMonthTag,"lNmT","Month:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lblNetMonthVal,"sNmV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lblMonthWl,"sNmW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ML(m_lblTotalPlSec,"lTpS","TOTAL P/L",cx,cyStatus,cw,CTRL_HEIGHT); cyStatus+=CTRL_HEIGHT+CTRL_GAP+4;
+   ML(m_lblNetTodayTag,"lNtT","Last day:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetTodayVal,"sNtV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lblTodayWl,"sNtW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblNetWeekTag,"lNwT","Week:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetWeekVal,"sNwV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lblWeekWl,"sNwW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lblNetMonthTag,"lNmT","Month:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lblNetMonthVal,"sNmV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lblMonthWl,"sNmW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+SEC_PAD;
+   cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 13
 
    // ── 2m P/L ──
-   ML(m_lbl2mNtTag,"l2nT","2m Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl2mNtVal,"s2nV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl2mTodayWl,"s2nW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl2mNwTag,"l2nwT","2m Week:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl2mNwVal,"s2nwV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl2mWeekWl,"s2nwW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl2mNmTag,"l2nmT","2m Month:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl2mNmVal,"s2nmV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl2mMonthWl,"s2nmW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ML(m_lbl2mNtTag,"l2nT","2m Last day:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl2mNtVal,"s2nV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl2mTodayWl,"s2nW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl2mNwTag,"l2nwT","2m Week:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl2mNwVal,"s2nwV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl2mWeekWl,"s2nwW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl2mNmTag,"l2nmT","2m Month:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl2mNmVal,"s2nmV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl2mMonthWl,"s2nmW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+SEC_PAD;
+   cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 14
 
    // ── 5m P/L ──
-   ML(m_lbl5mNtTag,"l5nT","5m Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mNtVal,"s5nV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl5mTodayWl,"s5nW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl5mNwTag,"l5nwT","5m Week:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mNwVal,"s5nwV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl5mWeekWl,"s5nwW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl5mNmTag,"l5nmT","5m Month:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl5mNmVal,"s5nmV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl5mMonthWl,"s5nmW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+SEC_PAD;
-   cy+=SEC_PAD; MSep(si++,cx,cy,cw); cy+=SEP_GAP+SEC_PAD;
+   ML(m_lbl5mNtTag,"l5nT","5m Last day:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl5mNtVal,"s5nV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl5mTodayWl,"s5nW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl5mNwTag,"l5nwT","5m Week:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl5mNwVal,"s5nwV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl5mWeekWl,"s5nwW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl5mNmTag,"l5nmT","5m Month:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl5mNmVal,"s5nmV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl5mMonthWl,"s5nmW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+SEC_PAD;
+   cyStatus+=SEC_PAD; MSep(si++,cx,cyStatus,cw); cyStatus+=SEP_GAP+SEC_PAD; // si = 15
 
    // ── 15m P/L ──
-   ML(m_lbl15mNtTag,"l15nT","15m Last day:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl15mNtVal,"s15nV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl15mTodayWl,"s15nW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl15mNwTag,"l15nwT","15m Week:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl15mNwVal,"s15nwV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl15mWeekWl,"s15nwW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-   ML(m_lbl15mNmTag,"l15nmT","15m Month:",cx,cy,95,CTRL_HEIGHT,CLR_TEXT);
-   ML(m_lbl15mNmVal,"s15nmV","$0",cx+95,cy,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
-   ML(m_lbl15mMonthWl,"s15nmW","W/L: 0/0",cx+190,cy,100,CTRL_HEIGHT,CLR_TEXT_DIM); cy+=CTRL_HEIGHT+CTRL_GAP;
-
+   ML(m_lbl15mNtTag,"l15nT","15m Last day:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNtVal,"s15nV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl15mTodayWl,"s15nW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl15mNwTag,"l15nwT","15m Week:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNwVal,"s15nwV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl15mWeekWl,"s15nwW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP;
+   ML(m_lbl15mNmTag,"l15nmT","15m Month:",cx,cyStatus,95,CTRL_HEIGHT,CLR_TEXT);
+   ML(m_lbl15mNmVal,"s15nmV","$0",cx+95,cyStatus,90,CTRL_HEIGHT,CLR_TEXT_BRIGHT);
+   ML(m_lbl15mMonthWl,"s15nmW","W/L: 0/0",cx+190,cyStatus,100,CTRL_HEIGHT,CLR_TEXT_DIM); cyStatus+=CTRL_HEIGHT+CTRL_GAP; // si = 16
+   
    // Hidden legacy controls
    ML(m_lblOsTag,"lOs","",  -100,-100,10,10);
    ML(m_lblOsVal,"vOs","",  -100,-100,10,10);
@@ -582,8 +566,8 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    DashboardParams p;
    p.symbol = m_lblSym.Text();
    p.utcOffset = m_utcOff;
-   p.timeframe = (tab == TAB_M15) ? PERIOD_M15 : ((tab == TAB_M5) ? PERIOD_M5 : PERIOD_M2);
-   p.comment = (tab == TAB_M15) ? "orb-15m" : ((tab == TAB_M5) ? "orb-5m" : "orb-2m");
+   p.timeframe = m_config.main.timeframe;
+   p.comment = m_config.main.comment;
    p.slPoints = (int)StringToInteger(m_edtSL.Text());
    p.tpPoints=(int)StringToInteger(m_edtTP.Text());
    p.slCandle=m_slCandle;
@@ -630,41 +614,19 @@ void CDashboard::SaveTab(ENUM_TAB tab)
    p.favorEma3On=m_fem3Enabled;
    p.favorEma3Period=(int)StringToInteger(m_edtFem3.Text());
 
-
-   if (tab == TAB_MAIN) {
-        p.isActive = m_config.main.isActive;
-        p.nyHour = m_config.main.nyHour;
-        p.nyMinute = m_config.main.nyMinute;
-        p.nySecond = m_config.main.nySecond;
-        p.entryBufferPoints = m_config.main.entryBufferPoints;
-        p.tfIndex = m_config.main.tfIndex;
-        m_config.main = p;
-    } else if (tab == TAB_M2) {
-        p.isActive = m_config.m2.isActive;
-        p.entryBufferPoints = m_config.m2.entryBufferPoints;
-        p.tfIndex = m_config.m2.tfIndex;
-        m_config.m2 = p;
-    } else if (tab == TAB_M5) {
-        p.isActive = m_config.m5.isActive;
-        p.entryBufferPoints = m_config.m5.entryBufferPoints;
-        p.tfIndex = m_config.m5.tfIndex;
-        m_config.m5 = p;
-    } else if (tab == TAB_M15) {
-        p.isActive = m_config.m15.isActive;
-        p.entryBufferPoints = m_config.m15.entryBufferPoints;
-        p.tfIndex = m_config.m15.tfIndex;
-        m_config.m15 = p;
-    }
+   p.isActive = m_config.main.isActive;
+   p.nyHour = m_config.main.nyHour;
+   p.nyMinute = m_config.main.nyMinute;
+   p.nySecond = m_config.main.nySecond;
+   p.entryBufferPoints = m_config.main.entryBufferPoints;
+   p.tfIndex = m_config.main.tfIndex;
+   m_config.main = p;
 }
 
 void CDashboard::LoadTab(ENUM_TAB tab)
 {
    if(tab == TAB_STATS) return;
-   DashboardParams p;
-   if (tab == TAB_MAIN) p = m_config.main;
-   else if (tab == TAB_M2) p = m_config.m2;
-   else if (tab == TAB_M5) p = m_config.m5;
-   else if (tab == TAB_M15) p = m_config.m15;
+   DashboardParams p = m_config.main;
 
    m_slCandle = p.slCandle;
    m_btnSLS.ColorBackground(m_slCandle?CLR_BTN_ON:CLR_BTN_OFF);
@@ -748,14 +710,12 @@ bool CDashboard::HandleDirectClick(const string &objName)
    ObjectSetInteger(m_chart_id, objName, OBJPROP_STATE, false);
    m_lastClickMs = now;
    m_lastClickName = objName;
-   if(objName == m_btnGlobal.Name())        { OnToggleGlobal(); return true; }
    if(objName == m_btnToggleM2.Name())      { OnToggleM2(); return true; }
    if(objName == m_btnToggleM5.Name())      { OnToggleM5(); return true; }
    if(objName == m_btnToggleM15.Name())     { OnToggleM15(); return true; }
-   if(objName == m_btnTabMain.Name())       { OnTabMain(); return true; }
-   if(objName == m_btnTabM2.Name())         { OnTabM2(); return true; }
-   if(objName == m_btnTabM5.Name())         { OnTabM5(); return true; }
-   if(objName == m_btnTabM15.Name())        { OnTabM15(); return true; }
+   if(objName == m_btnTabOrder.Name())      { OnTabOrder(); return true; }
+   if(objName == m_btnTabEntry.Name())      { OnTabEntry(); return true; }
+   if(objName == m_btnTabFlatten.Name())    { OnTabFlatten(); return true; }
    if(objName == m_btnTabStats.Name())      { OnTabStats(); return true; }
 
    if(objName == m_btnRiskMode.Name())      { OnRiskModeToggle(); return true; }
@@ -783,9 +743,6 @@ bool CDashboard::HandleDirectClick(const string &objName)
    if(objName == m_btnMaxS.Name())          { OnMaxSToggle(); return true; }
    if(objName == m_btnMaxL.Name())          { OnMaxLToggle(); return true; }
    if(objName == m_btnBigM.Name())          { OnBigMToggle(); return true; }
-   if(objName == m_btnA1.Name()) { OnA1(); return true; }
-   if(objName == m_btnA2.Name()) { OnA2(); return true; }
-   if(objName == m_btnA3.Name()) { OnA3(); return true; }
    return false;
 }
 
@@ -799,12 +756,7 @@ void CDashboard::UpdateSymbol(string sym) { m_lblSym.Text(sym); MarkDirty(); }
 void CDashboard::UpdateMarketStatus(bool o)
 { m_lblMktStatus.Text(o?"Market Open":"Market Closed"); m_lblMktStatus.Color(o?CLR_MKT_OPEN:CLR_MKT_CLOSED); }
 
-void CDashboard::ApplyPreset(const PresetParams &pr)
-{ m_edtSL.Text(IntegerToString(pr.sl)); m_edtTP.Text(IntegerToString(pr.tp));
-  m_edtRisk.Text(DoubleToString(pr.risk,1));
-  m_edtTTr.Text(IntegerToString(pr.trailTrigger)); m_edtTDi.Text(IntegerToString(pr.trailDist));
-  m_edtTSt.Text(IntegerToString(pr.trailStep)); 
-  MarkDirty(); }
+
 string CDashboard::FormatMoneyRound(double value)
 {
    long val = (long)MathFloor(value + 0.5);
@@ -983,40 +935,97 @@ void CDashboard::UpdMaxL() { m_btnMaxL.Text(m_maxLossOn?"ON":"OFF"); m_btnMaxL.C
 
 void CDashboard::OnBigMToggle() { m_btnBigM.Pressed(false); m_bigMomentum=!m_bigMomentum; UpdBigM(); MarkDirty(); }
 void CDashboard::UpdBigM() { m_btnBigM.Text(m_bigMomentum?"ON":"OFF"); m_btnBigM.ColorBackground(m_bigMomentum?CLR_SUCCESS:CLR_BTN_OFF); }
-void CDashboard::OnToggleGlobal() { m_btnGlobal.Pressed(false); m_config.globalOverride=!m_config.globalOverride; UpdToggles(); MarkDirty(); }
-void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2.isActive=!m_config.m2.isActive; UpdToggles(); MarkDirty(); }
-void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5.isActive=!m_config.m5.isActive; UpdToggles(); MarkDirty(); }
-void CDashboard::OnToggleM15() { m_btnToggleM15.Pressed(false); m_config.m15.isActive=!m_config.m15.isActive; UpdToggles(); MarkDirty(); }
+void CDashboard::OnToggleM2() { m_btnToggleM2.Pressed(false); m_config.m2Active=!m_config.m2Active; UpdToggles(); MarkDirty(); }
+void CDashboard::OnToggleM5() { m_btnToggleM5.Pressed(false); m_config.m5Active=!m_config.m5Active; UpdToggles(); MarkDirty(); }
+void CDashboard::OnToggleM15() { m_btnToggleM15.Pressed(false); m_config.m15Active=!m_config.m15Active; UpdToggles(); MarkDirty(); }
 
 void CDashboard::UpdToggles() {
-   m_btnGlobal.Text(m_config.globalOverride ? "ON" : "OFF");
-   m_btnGlobal.ColorBackground(m_config.globalOverride ? CLR_WARNING : CLR_BTN_OFF);
-   m_btnToggleM2.Text(m_config.m2.isActive ? "2m: ON" : "2m: OFF");
-   m_btnToggleM2.ColorBackground(m_config.m2.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
-   m_btnToggleM5.Text(m_config.m5.isActive ? "5m: ON" : "5m: OFF");
-   m_btnToggleM5.ColorBackground(m_config.m5.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
-   m_btnToggleM15.Text(m_config.m15.isActive ? "15m: ON" : "15m: OFF");
-   m_btnToggleM15.ColorBackground(m_config.m15.isActive ? CLR_SUCCESS : CLR_BTN_OFF);
-   // Refresh lock state when Global changes
+   m_btnToggleM2.Text(m_config.m2Active ? "2m: ON" : "2m: OFF");
+   m_btnToggleM2.ColorBackground(m_config.m2Active ? CLR_SUCCESS : CLR_BTN_OFF);
+   m_btnToggleM5.Text(m_config.m5Active ? "5m: ON" : "5m: OFF");
+   m_btnToggleM5.ColorBackground(m_config.m5Active ? CLR_SUCCESS : CLR_BTN_OFF);
+   m_btnToggleM15.Text(m_config.m15Active ? "15m: ON" : "15m: OFF");
+   m_btnToggleM15.ColorBackground(m_config.m15Active ? CLR_SUCCESS : CLR_BTN_OFF);
+   // Refresh tab UI
    UpdTabs();
 }
 
-void CDashboard::OnTabMain() { m_btnTabMain.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_MAIN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
-void CDashboard::OnTabM2() { m_btnTabM2.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M2; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
-void CDashboard::OnTabM5() { m_btnTabM5.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M5; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
-void CDashboard::OnTabM15() { m_btnTabM15.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_M15; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabOrder() { m_btnTabOrder.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_ORDER; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabEntry() { m_btnTabEntry.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_ENTRY; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
+void CDashboard::OnTabFlatten() { m_btnTabFlatten.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_FLATTEN; LoadTab(m_activeTab); UpdTabs(); MarkDirty(); }
 void CDashboard::OnTabStats() { m_btnTabStats.Pressed(false); if(m_activeTab!=TAB_STATS) SaveTab(m_activeTab); m_activeTab=TAB_STATS; UpdTabs(); MarkDirty(); }
 
 void CDashboard::UpdTabs() {
-   m_btnTabMain.ColorBackground(m_activeTab==TAB_MAIN ? CLR_BTN_ON : CLR_BTN_OFF);
-   m_btnTabM2.ColorBackground(m_activeTab==TAB_M2 ? CLR_BTN_ON : CLR_BTN_OFF);
-   m_btnTabM5.ColorBackground(m_activeTab==TAB_M5 ? CLR_BTN_ON : CLR_BTN_OFF);
-   m_btnTabM15.ColorBackground(m_activeTab==TAB_M15 ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabOrder.ColorBackground(m_activeTab==TAB_ORDER ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabEntry.ColorBackground(m_activeTab==TAB_ENTRY ? CLR_BTN_ON : CLR_BTN_OFF);
+   m_btnTabFlatten.ColorBackground(m_activeTab==TAB_FLATTEN ? CLR_BTN_ON : CLR_BTN_OFF);
    m_btnTabStats.ColorBackground(m_activeTab==TAB_STATS ? CLR_BTN_ON : CLR_BTN_OFF);
+
+   // First, hide ALL settings & stats controls
    
-   bool isStats = (m_activeTab == TAB_STATS);
+   // --- ORDER TAB CONTROLS ---
+   CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
+   CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_btnRiskMode); CtrlHide(m_edtRisk); CtrlHide(m_btnFixLot); CtrlHide(m_edtFixLot);
+   CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
+   CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
+   CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
+   CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
+   CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
+   CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
+   CtrlHide(m_sep[5]); CtrlHide(m_sep[6]); CtrlHide(m_sep[7]);
    
-   if(isStats) {
+   // --- ENTRY TAB CONTROLS ---
+   CtrlHide(m_lblEntrySec);
+   CtrlHide(m_lblRtcTag); CtrlHide(m_edtRtc); CtrlHide(m_btnRtc);
+   CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
+   CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
+   CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
+   CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
+   CtrlHide(m_lblAamTag); CtrlHide(m_edtAam); CtrlHide(m_btnAam);
+   CtrlHide(m_lblMdrTag); CtrlHide(m_edtMdr); CtrlHide(m_btnMdr);
+   CtrlHide(m_lblFemTag); CtrlHide(m_edtFem1); CtrlHide(m_btnFem1); CtrlHide(m_edtFem2); CtrlHide(m_btnFem2); CtrlHide(m_edtFem3); CtrlHide(m_btnFem3);
+   CtrlHide(m_lblFemPlus1); CtrlHide(m_lblFemPlus2);
+   CtrlHide(m_sep[8]);
+
+   // --- FLATTEN TAB CONTROLS ---
+   CtrlHide(m_lblExpTag);
+   CtrlHide(m_lblUfmTag); CtrlHide(m_edtUfmPts); CtrlHide(m_btnUfm);
+   CtrlHide(m_lblTmrTag); CtrlHide(m_btnTmr);
+   CtrlHide(m_lblAucTag); CtrlHide(m_edtAuc); CtrlHide(m_btnAuc);
+   CtrlHide(m_lblAfcTag); CtrlHide(m_edtAfc); CtrlHide(m_btnAfc);
+   CtrlHide(m_lblEma1Tag); CtrlHide(m_edtEma1); CtrlHide(m_btnEma1);
+   CtrlHide(m_lblEmaPlus1); CtrlHide(m_lblEmaPlus2);
+   CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
+   CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
+   CtrlHide(m_sep[9]);
+
+   // --- STATS TAB CONTROLS ---
+   CtrlHide(m_lblOrdersSec);
+   CtrlHide(m_lbl2mStTag); CtrlHide(m_lbl2mStVal);
+   CtrlHide(m_lbl5mStTag); CtrlHide(m_lbl5mStVal);
+   CtrlHide(m_lbl15mStTag); CtrlHide(m_lbl15mStVal);
+   CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
+   CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
+   CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
+   CtrlHide(m_lblLastEntrySec);
+   for(int ei=0; ei<9; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
+   CtrlHide(m_lblTotalPlSec);
+   CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
+   CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
+   CtrlHide(m_lblNetMonthTag); CtrlHide(m_lblNetMonthVal); CtrlHide(m_lblMonthWl);
+   CtrlHide(m_lbl2mNtTag); CtrlHide(m_lbl2mNtVal); CtrlHide(m_lbl2mTodayWl);
+   CtrlHide(m_lbl2mNwTag); CtrlHide(m_lbl2mNwVal); CtrlHide(m_lbl2mWeekWl);
+   CtrlHide(m_lbl2mNmTag); CtrlHide(m_lbl2mNmVal); CtrlHide(m_lbl2mMonthWl);
+   CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
+   CtrlHide(m_lbl5mNwTag); CtrlHide(m_lbl5mNwVal); CtrlHide(m_lbl5mWeekWl);
+   CtrlHide(m_lbl5mNmTag); CtrlHide(m_lbl5mNmVal); CtrlHide(m_lbl5mMonthWl);
+   CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
+   CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
+   CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
+   for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
+
+   // Now, selectively SHOW the active tab
+   if(m_activeTab == TAB_STATS) {
       CtrlShow(m_lblOrdersSec);
       CtrlShow(m_lbl2mStTag); CtrlShow(m_lbl2mStVal);
       CtrlShow(m_lbl5mStTag); CtrlShow(m_lbl5mStVal);
@@ -1040,59 +1049,8 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lbl15mNwTag); CtrlShow(m_lbl15mNwVal); CtrlShow(m_lbl15mWeekWl);
       CtrlShow(m_lbl15mNmTag); CtrlShow(m_lbl15mNmVal); CtrlShow(m_lbl15mMonthWl);
       for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlShow(m_sep[i]);
-      
-      CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlHide(m_lblTabNotice);
-      CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
-      CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_btnRiskMode); CtrlHide(m_edtRisk); CtrlHide(m_btnFixLot); CtrlHide(m_edtFixLot);
-      CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
-      CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
-      CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
-      CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
-      CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
-      CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
-      CtrlHide(m_lblEntrySec); CtrlHide(m_lblRtcTag); CtrlHide(m_btnRtc); CtrlHide(m_edtRtc); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
-      CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
-      CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
-      CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
-      CtrlHide(m_lblExpTag); CtrlHide(m_lblUfmTag); CtrlHide(m_edtUfmPts); CtrlHide(m_btnUfm);
-      CtrlHide(m_lblTmrTag); CtrlHide(m_btnTmr);
-      CtrlHide(m_lblAucTag); CtrlHide(m_edtAuc); CtrlHide(m_btnAuc);
-      CtrlHide(m_lblAfcTag); CtrlHide(m_edtAfc); CtrlHide(m_btnAfc);
-      CtrlHide(m_lblAamTag); CtrlHide(m_edtAam); CtrlHide(m_btnAam);
-      CtrlHide(m_lblEma1Tag); CtrlHide(m_edtEma1); CtrlHide(m_btnEma1);
-      CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
-      CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
-      CtrlHide(m_lblMdrTag); CtrlHide(m_edtMdr); CtrlHide(m_btnMdr);
-      CtrlHide(m_lblFemTag); CtrlHide(m_edtFem1); CtrlHide(m_btnFem1); CtrlHide(m_edtFem2); CtrlHide(m_btnFem2); CtrlHide(m_edtFem3); CtrlHide(m_btnFem3);
-      CtrlHide(m_lblEmaPlus1); CtrlHide(m_lblEmaPlus2); CtrlHide(m_lblFemPlus1); CtrlHide(m_lblFemPlus2);
-      CtrlHide(m_btnA1); CtrlHide(m_btnA2); CtrlHide(m_btnA3);
-      for(int i=5; i<=m_idxSepAfterPresets; i++) CtrlHide(m_sep[i]);
-      
-   } else {
-      CtrlHide(m_lblOrdersSec);
-      CtrlHide(m_lbl2mStTag); CtrlHide(m_lbl2mStVal);
-      CtrlHide(m_lbl5mStTag); CtrlHide(m_lbl5mStVal);
-      CtrlHide(m_lbl15mStTag); CtrlHide(m_lbl15mStVal);
-      CtrlHide(m_lblEqTag); CtrlHide(m_lblStatEquity); CtrlHide(m_lblPlTag); CtrlHide(m_lblStatPL);
-      CtrlHide(m_lblTotExpTag); CtrlHide(m_lblTotExpVal);
-      CtrlHide(m_lblRtRrTag); CtrlHide(m_lblRtRrLoss); CtrlHide(m_lblRtRrPft); CtrlHide(m_lblRtRrRiskPc);
-      CtrlHide(m_lblLastEntrySec);
-      for(int ei=0; ei<9; ei++) { CtrlHide(m_lblEntryNum[ei]); CtrlHide(m_lblEntryDesc[ei]); }
-      CtrlHide(m_lblTotalPlSec);
-      CtrlHide(m_lblNetTodayTag); CtrlHide(m_lblNetTodayVal); CtrlHide(m_lblTodayWl);
-      CtrlHide(m_lblNetWeekTag); CtrlHide(m_lblNetWeekVal); CtrlHide(m_lblWeekWl);
-      CtrlHide(m_lblNetMonthTag); CtrlHide(m_lblNetMonthVal); CtrlHide(m_lblMonthWl);
-      CtrlHide(m_lbl2mNtTag); CtrlHide(m_lbl2mNtVal); CtrlHide(m_lbl2mTodayWl);
-      CtrlHide(m_lbl2mNwTag); CtrlHide(m_lbl2mNwVal); CtrlHide(m_lbl2mWeekWl);
-      CtrlHide(m_lbl2mNmTag); CtrlHide(m_lbl2mNmVal); CtrlHide(m_lbl2mMonthWl);
-      CtrlHide(m_lbl5mNtTag); CtrlHide(m_lbl5mNtVal); CtrlHide(m_lbl5mTodayWl);
-      CtrlHide(m_lbl5mNwTag); CtrlHide(m_lbl5mNwVal); CtrlHide(m_lbl5mWeekWl);
-      CtrlHide(m_lbl5mNmTag); CtrlHide(m_lbl5mNmVal); CtrlHide(m_lbl5mMonthWl);
-      CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
-      CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
-      CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
-      for(int i=m_statusSepStart; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
-      
+   }
+   else if(m_activeTab == TAB_ORDER) {
       CtrlShow(m_lblMdTag); CtrlShowBtn(m_btnBoth); CtrlShowBtn(m_btnBuy); CtrlShowBtn(m_btnSell);
       CtrlShow(m_lblBalTag); CtrlShow(m_lblBalVal); CtrlShowBtn(m_btnRiskMode); CtrlShowEdit(m_edtRisk); CtrlShowBtn(m_btnFixLot); CtrlShowEdit(m_edtFixLot);
       CtrlShow(m_lblRATag); CtrlShow(m_lblRAVal); CtrlShow(m_lblRwVal); CtrlShow(m_lblLtTag); CtrlShow(m_lblLtVal);
@@ -1101,65 +1059,34 @@ void CDashboard::UpdTabs() {
       CtrlShow(m_lblTrTrig); CtrlShowEdit(m_edtTTr); CtrlShow(m_lblTrDist); CtrlShowEdit(m_edtTDi); CtrlShow(m_lblTrStep); CtrlShowEdit(m_edtTSt);
       CtrlShow(m_lblBETag); CtrlShowBtn(m_btnBE);
       CtrlShow(m_lblBeLine); CtrlShowEdit(m_edtBEA); CtrlShow(m_lblBELock); CtrlShowEdit(m_edtBEL);
-      CtrlShow(m_lblEntrySec); CtrlShow(m_lblRtcTag); CtrlShowBtn(m_btnRtc); CtrlShowEdit(m_edtRtc); CtrlShow(m_lblContTag); CtrlShowBtn(m_btnCont);
+      CtrlShow(m_sep[5]); CtrlShow(m_sep[6]); CtrlShow(m_sep[7]);
+   }
+   else if(m_activeTab == TAB_ENTRY) {
+      CtrlShow(m_lblEntrySec);
+      CtrlShow(m_lblRtcTag); CtrlShowEdit(m_edtRtc); CtrlShowBtn(m_btnRtc);
+      CtrlShow(m_lblContTag); CtrlShowBtn(m_btnCont);
       CtrlShow(m_lblMaxSTag); CtrlShowEdit(m_edtMaxS); CtrlShowBtn(m_btnMaxS);
       CtrlShow(m_lblMaxLTag); CtrlShowEdit(m_edtMaxL); CtrlShowBtn(m_btnMaxL);
       CtrlShow(m_lblBigMTag); CtrlShowBtn(m_btnBigM);
-      CtrlShow(m_lblExpTag); CtrlShow(m_lblUfmTag); CtrlShowEdit(m_edtUfmPts); CtrlShowBtn(m_btnUfm);
+      CtrlShow(m_lblAamTag); CtrlShowEdit(m_edtAam); CtrlShowBtn(m_btnAam);
+      CtrlShow(m_lblMdrTag); CtrlShowEdit(m_edtMdr); CtrlShowBtn(m_btnMdr);
+      CtrlShow(m_lblFemTag); CtrlShowEdit(m_edtFem1); CtrlShowBtn(m_btnFem1); CtrlShowEdit(m_edtFem2); CtrlShowBtn(m_btnFem2); CtrlShowEdit(m_edtFem3); CtrlShowBtn(m_btnFem3);
+      CtrlShow(m_lblFemPlus1); CtrlShow(m_lblFemPlus2);
+      CtrlShow(m_sep[8]);
+   }
+   else if(m_activeTab == TAB_FLATTEN) {
+      CtrlShow(m_lblExpTag);
+      CtrlShow(m_lblUfmTag); CtrlShowEdit(m_edtUfmPts); CtrlShowBtn(m_btnUfm);
       CtrlShow(m_lblTmrTag); CtrlShowBtn(m_btnTmr);
       CtrlShow(m_lblAucTag); CtrlShowEdit(m_edtAuc); CtrlShowBtn(m_btnAuc);
       CtrlShow(m_lblAfcTag); CtrlShowEdit(m_edtAfc); CtrlShowBtn(m_btnAfc);
-      CtrlShow(m_lblAamTag); CtrlShowEdit(m_edtAam); CtrlShowBtn(m_btnAam);
       CtrlShow(m_lblEma1Tag); CtrlShowEdit(m_edtEma1); CtrlShowBtn(m_btnEma1);
+      CtrlShow(m_lblEmaPlus1); CtrlShow(m_lblEmaPlus2);
       CtrlShow(m_lblEma2Tag); CtrlShowEdit(m_edtEma2); CtrlShowBtn(m_btnEma2);
       CtrlShow(m_lblEma3Tag); CtrlShowEdit(m_edtEma3); CtrlShowBtn(m_btnEma3);
-      CtrlShow(m_lblMdrTag); CtrlShowEdit(m_edtMdr); CtrlShowBtn(m_btnMdr);
-      CtrlShow(m_lblFemTag); CtrlShowEdit(m_edtFem1); CtrlShowBtn(m_btnFem1); CtrlShowEdit(m_edtFem2); CtrlShowBtn(m_btnFem2); CtrlShowEdit(m_edtFem3); CtrlShowBtn(m_btnFem3);
-      CtrlShow(m_lblEmaPlus1); CtrlShow(m_lblEmaPlus2); CtrlShow(m_lblFemPlus1); CtrlShow(m_lblFemPlus2);
-      CtrlShowBtn(m_btnA1); CtrlShowBtn(m_btnA2); CtrlShowBtn(m_btnA3);
-      for(int i=5; i<=m_idxSepAfterPresets; i++) CtrlShow(m_sep[i]);
-      
-      if(m_activeTab==TAB_MAIN) {
-         m_btnA1.Text("Set mA"); m_btnA2.Text("Set mB"); m_btnA3.Text("Set mC");
-         CtrlShow(m_lblGlobalTag); CtrlShowBtn(m_btnGlobal); CtrlHide(m_lblTabNotice);
-      } else if(m_activeTab==TAB_M2) {
-         m_btnA1.Text("Set 2A"); m_btnA2.Text("Set 2B"); m_btnA3.Text("Set 2C");
-         CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
-      } else if(m_activeTab==TAB_M5) {
-         m_btnA1.Text("Set 5A"); m_btnA2.Text("Set 5B"); m_btnA3.Text("Set 5C");
-         CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
-      } else {
-         m_btnA1.Text("Set 15A"); m_btnA2.Text("Set 15B"); m_btnA3.Text("Set 15C");
-         CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlShow(m_lblTabNotice);
-      }
-      
-      // Lock/Unlock edit controls based on Global Override
-      bool locked = (m_activeTab != TAB_MAIN && m_config.globalOverride);
-      m_edtSL.ReadOnly(locked); m_edtTP.ReadOnly(locked);
-      m_edtRisk.ReadOnly(locked); m_edtFixLot.ReadOnly(locked);
-      m_edtTTr.ReadOnly(locked); m_edtTDi.ReadOnly(locked); m_edtTSt.ReadOnly(locked);
-      m_edtBEA.ReadOnly(locked); m_edtBEL.ReadOnly(locked);
-      m_edtUfmPts.ReadOnly(locked); m_edtAuc.ReadOnly(locked);
-      m_edtAfc.ReadOnly(locked); m_edtAam.ReadOnly(locked);
-      m_edtEma1.ReadOnly(locked); m_edtEma2.ReadOnly(locked); m_edtEma3.ReadOnly(locked);
-      m_edtRtc.ReadOnly(locked); m_edtMaxS.ReadOnly(locked); m_edtMaxL.ReadOnly(locked);
-      m_edtMdr.ReadOnly(locked); m_edtFem1.ReadOnly(locked); m_edtFem2.ReadOnly(locked); m_edtFem3.ReadOnly(locked);
-      
-      // Update notice text with lock status
-      if(m_activeTab != TAB_MAIN) {
-         string tfLabel = (m_activeTab==TAB_M2) ? "2m" : ((m_activeTab==TAB_M5) ? "5m" : "15m");
-         if(locked)
-            m_lblTabNotice.Text(tfLabel + " LOCKED (Global ON)");
-         else
-            m_lblTabNotice.Text(tfLabel + " setting, Global OFF");
-         m_lblTabNotice.Color(locked ? CLR_WARNING : CLR_TEXT_DIM);
-      }
+      CtrlShow(m_sep[9]);
    }
 }
-
-void CDashboard::OnA1(){ m_btnA1.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=0; else if(m_activeTab==TAB_M2) PresetIndex=3; else if(m_activeTab==TAB_M5) PresetIndex=6; else if(m_activeTab==TAB_M15) PresetIndex=9; PushCmd(CMD_PRESET); }
-void CDashboard::OnA2(){ m_btnA2.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=1; else if(m_activeTab==TAB_M2) PresetIndex=4; else if(m_activeTab==TAB_M5) PresetIndex=7; else if(m_activeTab==TAB_M15) PresetIndex=10; PushCmd(CMD_PRESET); }
-void CDashboard::OnA3(){ m_btnA3.Pressed(false); if(m_activeTab==TAB_MAIN) PresetIndex=2; else if(m_activeTab==TAB_M2) PresetIndex=5; else if(m_activeTab==TAB_M5) PresetIndex=8; else if(m_activeTab==TAB_M15) PresetIndex=11; PushCmd(CMD_PRESET); }
 
 void CDashboard::Minimize(void)
 {
@@ -1168,10 +1095,44 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lblClkTag); CtrlHide(m_lblClkVal); CtrlHide(m_lblClkAmPm); CtrlHide(m_lblClkDate);
    CtrlHide(m_lblTimerTag); CtrlHide(m_lblTimerVal);
    CtrlHide(m_btnToggleM2); CtrlHide(m_btnToggleM5); CtrlHide(m_btnToggleM15);
-   CtrlHide(m_btnTabMain); CtrlHide(m_btnTabM2); CtrlHide(m_btnTabM5); CtrlHide(m_btnTabM15); CtrlHide(m_btnTabStats);
+   CtrlHide(m_btnTabOrder); CtrlHide(m_btnTabEntry); CtrlHide(m_btnTabFlatten); CtrlHide(m_btnTabStats);
    
    for(int i=0; i<=m_statusSepEnd; i++) CtrlHide(m_sep[i]);
    
+   // --- ORDER TAB CONTROLS ---
+   CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
+   CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_btnRiskMode); CtrlHide(m_edtRisk); CtrlHide(m_btnFixLot); CtrlHide(m_edtFixLot);
+   CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
+   CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
+   CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
+   CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
+   CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
+   CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
+   
+   // --- ENTRY TAB CONTROLS ---
+   CtrlHide(m_lblEntrySec);
+   CtrlHide(m_lblRtcTag); CtrlHide(m_edtRtc); CtrlHide(m_btnRtc);
+   CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
+   CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
+   CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
+   CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
+   CtrlHide(m_lblAamTag); CtrlHide(m_edtAam); CtrlHide(m_btnAam);
+   CtrlHide(m_lblMdrTag); CtrlHide(m_edtMdr); CtrlHide(m_btnMdr);
+   CtrlHide(m_lblFemTag); CtrlHide(m_edtFem1); CtrlHide(m_btnFem1); CtrlHide(m_edtFem2); CtrlHide(m_btnFem2); CtrlHide(m_edtFem3); CtrlHide(m_btnFem3);
+   CtrlHide(m_lblFemPlus1); CtrlHide(m_lblFemPlus2);
+
+   // --- FLATTEN TAB CONTROLS ---
+   CtrlHide(m_lblExpTag);
+   CtrlHide(m_lblUfmTag); CtrlHide(m_edtUfmPts); CtrlHide(m_btnUfm);
+   CtrlHide(m_lblTmrTag); CtrlHide(m_btnTmr);
+   CtrlHide(m_lblAucTag); CtrlHide(m_edtAuc); CtrlHide(m_btnAuc);
+   CtrlHide(m_lblAfcTag); CtrlHide(m_edtAfc); CtrlHide(m_btnAfc);
+   CtrlHide(m_lblEma1Tag); CtrlHide(m_edtEma1); CtrlHide(m_btnEma1);
+   CtrlHide(m_lblEmaPlus1); CtrlHide(m_lblEmaPlus2);
+   CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
+   CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
+
+   // --- STATS TAB CONTROLS ---
    CtrlHide(m_lblOrdersSec);
    CtrlHide(m_lbl2mStTag); CtrlHide(m_lbl2mStVal);
    CtrlHide(m_lbl5mStTag); CtrlHide(m_lbl5mStVal);
@@ -1194,32 +1155,6 @@ void CDashboard::Minimize(void)
    CtrlHide(m_lbl15mNtTag); CtrlHide(m_lbl15mNtVal); CtrlHide(m_lbl15mTodayWl);
    CtrlHide(m_lbl15mNwTag); CtrlHide(m_lbl15mNwVal); CtrlHide(m_lbl15mWeekWl);
    CtrlHide(m_lbl15mNmTag); CtrlHide(m_lbl15mNmVal); CtrlHide(m_lbl15mMonthWl);
-   
-   CtrlHide(m_lblGlobalTag); CtrlHide(m_btnGlobal); CtrlHide(m_lblTabNotice);
-   CtrlHide(m_lblMdTag); CtrlHide(m_btnBoth); CtrlHide(m_btnBuy); CtrlHide(m_btnSell);
-   CtrlHide(m_lblBalTag); CtrlHide(m_lblBalVal); CtrlHide(m_btnRiskMode); CtrlHide(m_edtRisk); CtrlHide(m_btnFixLot); CtrlHide(m_edtFixLot);
-   CtrlHide(m_lblRATag); CtrlHide(m_lblRAVal); CtrlHide(m_lblRwVal); CtrlHide(m_lblLtTag); CtrlHide(m_lblLtVal);
-   CtrlHide(m_lblSlTag); CtrlHide(m_edtSL); CtrlHide(m_edtTP); CtrlHide(m_btnSLS);
-   CtrlHide(m_lblTrTag); CtrlHide(m_btnTrMode);
-   CtrlHide(m_lblTrTrig); CtrlHide(m_edtTTr); CtrlHide(m_lblTrDist); CtrlHide(m_edtTDi); CtrlHide(m_lblTrStep); CtrlHide(m_edtTSt);
-   CtrlHide(m_lblBETag); CtrlHide(m_btnBE);
-   CtrlHide(m_lblBeLine); CtrlHide(m_edtBEA); CtrlHide(m_lblBELock); CtrlHide(m_edtBEL);
-   CtrlHide(m_lblEntrySec); CtrlHide(m_lblRtcTag); CtrlHide(m_btnRtc); CtrlHide(m_edtRtc); CtrlHide(m_lblContTag); CtrlHide(m_btnCont);
-   CtrlHide(m_lblMaxSTag); CtrlHide(m_edtMaxS); CtrlHide(m_btnMaxS);
-   CtrlHide(m_lblMaxLTag); CtrlHide(m_edtMaxL); CtrlHide(m_btnMaxL);
-   CtrlHide(m_lblBigMTag); CtrlHide(m_btnBigM);
-   CtrlHide(m_lblExpTag); CtrlHide(m_lblUfmTag); CtrlHide(m_edtUfmPts); CtrlHide(m_btnUfm);
-   CtrlHide(m_lblTmrTag); CtrlHide(m_btnTmr);
-   CtrlHide(m_lblAucTag); CtrlHide(m_edtAuc); CtrlHide(m_btnAuc);
-   CtrlHide(m_lblAfcTag); CtrlHide(m_edtAfc); CtrlHide(m_btnAfc);
-   CtrlHide(m_lblAamTag); CtrlHide(m_edtAam); CtrlHide(m_btnAam);
-   CtrlHide(m_lblEma1Tag); CtrlHide(m_edtEma1); CtrlHide(m_btnEma1);
-   CtrlHide(m_lblEma2Tag); CtrlHide(m_edtEma2); CtrlHide(m_btnEma2);
-   CtrlHide(m_lblEma3Tag); CtrlHide(m_edtEma3); CtrlHide(m_btnEma3);
-   CtrlHide(m_lblMdrTag); CtrlHide(m_edtMdr); CtrlHide(m_btnMdr);
-   CtrlHide(m_lblFemTag); CtrlHide(m_edtFem1); CtrlHide(m_btnFem1); CtrlHide(m_edtFem2); CtrlHide(m_btnFem2); CtrlHide(m_edtFem3); CtrlHide(m_btnFem3);
-   CtrlHide(m_lblEmaPlus1); CtrlHide(m_lblEmaPlus2); CtrlHide(m_lblFemPlus1); CtrlHide(m_lblFemPlus2);
-   CtrlHide(m_btnA1); CtrlHide(m_btnA2); CtrlHide(m_btnA3);
 }
 
 void CDashboard::Maximize(void)
@@ -1229,7 +1164,7 @@ void CDashboard::Maximize(void)
    CtrlShow(m_lblClkTag); CtrlShow(m_lblClkVal); CtrlShow(m_lblClkAmPm); CtrlShow(m_lblClkDate);
    CtrlShow(m_lblTimerTag); CtrlShow(m_lblTimerVal);
    CtrlShow(m_btnToggleM2); CtrlShow(m_btnToggleM5); CtrlShow(m_btnToggleM15);
-   CtrlShow(m_btnTabMain); CtrlShow(m_btnTabM2); CtrlShow(m_btnTabM5); CtrlShow(m_btnTabM15); CtrlShow(m_btnTabStats);
+   CtrlShow(m_btnTabOrder); CtrlShow(m_btnTabEntry); CtrlShow(m_btnTabFlatten); CtrlShow(m_btnTabStats);
    for(int i=0; i<5; i++) CtrlShow(m_sep[i]); 
    UpdTabs(); 
 }

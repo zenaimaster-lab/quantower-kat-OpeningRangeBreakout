@@ -21,8 +21,7 @@ input int             InpNySecond          = 0;           // NY Open Second
 input int             InpUtcOffset         = -4;          // Broker UTC Offset (NY Time)
 
 input group "------------- GLOBAL SETTING -------------"
-input bool            InpGlobalOverride    = true;        // Override 2m & 5m with Global (Global Mode)
-input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Global Timeframe
+input ENUM_TIMEFRAMES InpTimeframe         = PERIOD_M2;   // Default Timeframe
 input int             InpSlPoints          = 1500;        // Stop Loss (Points)
 input int             InpTpPoints          = 15000;       // Take Profit (Points)
 input bool            InpSlCandle          = false;       // Use Candle Extremes for SL
@@ -33,42 +32,6 @@ input int             InpCustomRetestMin   = 1;           // Retest Candle Timef
 input double          InpRiskPercent       = 2.0;         // Risk per Trade (%)
 input double          InpFixLot            = 2.0;         // Fix Lot Size
 input bool            InpRiskModeOn        = true;        // Risk Management (true=Risk%, false=Fix Lot)
-
-input group "------------- 2M SETTING -------------"
-input int             Inp2MSlPoints          = 1500;        // 2m: Stop Loss (Points)
-input int             Inp2MTpPoints          = 15000;       // 2m: Take Profit (Points)
-input bool            Inp2MSlCandle          = false;       // 2m: Use Candle Extremes for SL
-input ENUM_ORDER_MODE Inp2MOrderMode         = MODE_BOTH;   // 2m: Allowed Trade Directions
-input int             Inp2MEntryBufferPoints = 5;           // 2m: Entry/SL Buffer (Points)
-input bool            Inp2MCustomRetestOn    = true;        // 2m: Use Custom Retest Candle
-input int             Inp2MCustomRetestMin   = 1;           // 2m: Retest Candle Timeframe (Min)
-input double          Inp2MRiskPercent       = 2.0;         // 2m: Risk per Trade (%)
-input double          Inp2MFixLot            = 2.0;         // 2m: Fix Lot Size
-input bool            Inp2MRiskModeOn        = true;        // 2m: Risk Management (true=Risk%, false=Fix Lot)
-
-input group "------------- 5M SETTING -------------"
-input int             Inp5MSlPoints          = 1500;        // 5m: Stop Loss (Points)
-input int             Inp5MTpPoints          = 15000;       // 5m: Take Profit (Points)
-input bool            Inp5MSlCandle          = false;       // 5m: Use Candle Extremes for SL
-input ENUM_ORDER_MODE Inp5MOrderMode         = MODE_BOTH;   // 5m: Allowed Trade Directions
-input int             Inp5MEntryBufferPoints = 5;           // 5m: Entry/SL Buffer (Points)
-input bool            Inp5MCustomRetestOn    = true;        // 5m: Use Custom Retest Candle
-input int             Inp5MCustomRetestMin   = 1;           // 5m: Retest Candle Timeframe (Min)
-input double          Inp5MRiskPercent       = 2.0;         // 5m: Risk per Trade (%)
-input double          Inp5MFixLot            = 2.0;         // 5m: Fix Lot Size
-input bool            Inp5MRiskModeOn        = true;        // 5m: Risk Management (true=Risk%, false=Fix Lot)
-
-input group "------------- 15M SETTING -------------"
-input int             Inp15MSlPoints          = 1500;        // 15m: Stop Loss (Points)
-input int             Inp15MTpPoints          = 15000;       // 15m: Take Profit (Points)
-input bool            Inp15MSlCandle          = false;       // 15m: Use Candle Extremes for SL
-input ENUM_ORDER_MODE Inp15MOrderMode         = MODE_BOTH;   // 15m: Allowed Trade Directions
-input int             Inp15MEntryBufferPoints = 5;           // 15m: Entry/SL Buffer (Points)
-input bool            Inp15MCustomRetestOn    = true;        // 15m: Use Custom Retest Candle
-input int             Inp15MCustomRetestMin   = 1;           // 15m: Retest Candle Timeframe (Min)
-input double          Inp15MRiskPercent       = 2.0;         // 15m: Risk per Trade (%)
-input double          Inp15MFixLot            = 2.0;         // 15m: Fix Lot Size
-input bool            Inp15MRiskModeOn        = true;        // 15m: Risk Management (true=Risk%, false=Fix Lot)
 
 input group "------------- TRAIL -------------"
 input ENUM_TRAIL_MODE InpTrailMode         = TM_CHASE;    // Trailing Stop Mode
@@ -83,70 +46,6 @@ input group "------------- AUTO CANCEL -------------"
 input bool            InpExpireEnabled     = false;       // Enable Expiration by Candles
 input int             InpExpireCandles     = 2;           // Cancel after N Unfilled Candles
 
-input group "------------- BIG MOMENTUM -------------"
-sinput string         sep_big_m            = "--------------------------------"; // --------------------------------
-
-input group "------------- PRESETS -------------"
-sinput string         sep_preset_mA        = "---------- SET mA ----------"; // ---------- SET mA ----------
-input int             InpmA_SL             = 1500;        // Set mA: Stop Loss
-input int             InpmA_TP             = 15000;       // Set mA: Take Profit
-input double          InpmA_Risk           = 1.0;         // Set mA: Risk %
-input int             InpmA_TrTrig         = 1500;        // Set mA: Trail Trigger
-input int             InpmA_TrDist         = 500;         // Set mA: Trail Distance
-input int             InpmA_TrStep         = 1;           // Set mA: Trail Step
-input ENUM_TIMEFRAMES InpmA_TF             = PERIOD_M2;   // Set mA: Timeframe
-
-sinput string         sep_preset_mB        = "---------- SET mB ----------"; // ---------- SET mB ----------
-input int             InpmB_SL             = 300;         // Set mB: Stop Loss
-input int             InpmB_TP             = 600;         // Set mB: Take Profit
-input double          InpmB_Risk           = 0.5;         // Set mB: Risk %
-input int             InpmB_TrTrig         = 20;          // Set mB: Trail Trigger
-input int             InpmB_TrDist         = 15;          // Set mB: Trail Distance
-input int             InpmB_TrStep         = 3;           // Set mB: Trail Step
-input ENUM_TIMEFRAMES InpmB_TF             = PERIOD_M1;   // Set mB: Timeframe
-
-sinput string         sep_preset_mC        = "---------- SET mC ----------"; // ---------- SET mC ----------
-input int             InpmC_SL             = 800;         // Set mC: Stop Loss
-input int             InpmC_TP             = 1600;        // Set mC: Take Profit
-input double          InpmC_Risk           = 2.0;         // Set mC: Risk %
-input int             InpmC_TrTrig         = 50;          // Set mC: Trail Trigger
-input int             InpmC_TrDist         = 30;          // Set mC: Trail Distance
-input int             InpmC_TrStep         = 10;          // Set mC: Trail Step
-input ENUM_TIMEFRAMES InpmC_TF             = PERIOD_M5;   // Set mC: Timeframe
-
-sinput string         sep_preset_2A        = "---------- SET 2A ----------"; // ---------- SET 2A ----------
-input int             Inp2A_SL             = 1500;        // Set 2A: Stop Loss
-input int             Inp2A_TP             = 15000;       // Set 2A: Take Profit
-input double          Inp2A_Risk           = 1.0;         // Set 2A: Risk %
-input int             Inp2A_TrTrig         = 1500;        // Set 2A: Trail Trigger
-input int             Inp2A_TrDist         = 500;         // Set 2A: Trail Distance
-input int             Inp2A_TrStep         = 1;           // Set 2A: Trail Step
-input ENUM_TIMEFRAMES Inp2A_TF             = PERIOD_M2;   // Set 2A: Timeframe
-
-sinput string         sep_preset_2B        = "---------- SET 2B ----------"; // ---------- SET 2B ----------
-input int             Inp2B_SL             = 300;         // Set 2B: Stop Loss
-input int             Inp2B_TP             = 600;         // Set 2B: Take Profit
-input double          Inp2B_Risk           = 0.5;         // Set 2B: Risk %
-input int             Inp2B_TrTrig         = 20;          // Set 2B: Trail Trigger
-input int             Inp2B_TrDist         = 15;          // Set 2B: Trail Distance
-input int             Inp2B_TrStep         = 3;           // Set 2B: Trail Step
-input ENUM_TIMEFRAMES Inp2B_TF             = PERIOD_M2;   // Set 2B: Timeframe
-
-sinput string         sep_preset_2C        = "---------- SET 2C ----------"; // ---------- SET 2C ----------
-input int             Inp2C_SL             = 800;         // Set 2C: Stop Loss
-input int             Inp2C_TP             = 1600;        // Set 2C: Take Profit
-input double          Inp2C_Risk           = 2.0;         // Set 2C: Risk %
-input int             Inp2C_TrTrig         = 50;          // Set 2C: Trail Trigger
-input int             Inp2C_TrDist         = 30;          // Set 2C: Trail Distance
-input int             Inp2C_TrStep         = 10;          // Set 2C: Trail Step
-input ENUM_TIMEFRAMES Inp2C_TF             = PERIOD_M2;   // Set 2C: Timeframe
-
-sinput string         sep_preset_5A        = "---------- SET 5A ----------"; // ---------- SET 5A ----------
-input int             Inp5A_SL             = 1500;        // Set 5A: Stop Loss
-input int             Inp5A_TP             = 15000;       // Set 5A: Take Profit
-input double          Inp5A_Risk           = 1.0;         // Set 5A: Risk %
-input int             Inp5A_TrTrig         = 1500;        // Set 5A: Trail Trigger
-input int             Inp5A_TrDist         = 500;         // Set 5A: Trail Distance
 input int             Inp5A_TrStep         = 1;           // Set 5A: Trail Step
 input ENUM_TIMEFRAMES Inp5A_TF             = PERIOD_M5;   // Set 5A: Timeframe
 
@@ -215,7 +114,7 @@ struct CORBRunner
 };
 
 CGlobalState  g_gs;
-PresetParams g_presets[12];
+// Presets removed
 CDashboard    g_dashboard;
 CTimeManager  g_timeMgr;
 CRiskManager  g_riskMgr;
@@ -267,15 +166,7 @@ int TimeDayOfWeek(datetime t){ MqlDateTime d; TimeToStruct(t,d); return d.day_of
 //+------------------------------------------------------------------+
 DashboardParams BuildRunnerParams(const SystemConfig &cfg, int runnerIdx, string sym)
 {
-   DashboardParams p;
-   if(cfg.globalOverride)
-      p = cfg.main;
-   else if(runnerIdx == 0)
-      p = cfg.m2;
-   else if(runnerIdx == 1)
-      p = cfg.m5;
-   else
-      p = cfg.m15;
+   DashboardParams p = cfg.main;
    p.symbol    = sym;
    if(runnerIdx == 0)      p.timeframe = PERIOD_M2;
    else if(runnerIdx == 1) p.timeframe = PERIOD_M5;
@@ -302,26 +193,11 @@ int OnInit()
 
    g_newsMgr.SetNYO(InpNyHour, InpNyMinute, InpNySecond, InpUtcOffset);
 
-   // Presets
-   InitPreset(g_presets[0], InpmA_SL,InpmA_TP,InpmA_Risk,InpmA_TrTrig,InpmA_TrDist,InpmA_TrStep,InpmA_TF);
-   InitPreset(g_presets[1], InpmB_SL,InpmB_TP,InpmB_Risk,InpmB_TrTrig,InpmB_TrDist,InpmB_TrStep,InpmB_TF);
-   InitPreset(g_presets[2], InpmC_SL,InpmC_TP,InpmC_Risk,InpmC_TrTrig,InpmC_TrDist,InpmC_TrStep,InpmC_TF);
-   InitPreset(g_presets[3], Inp2A_SL,Inp2A_TP,Inp2A_Risk,Inp2A_TrTrig,Inp2A_TrDist,Inp2A_TrStep,Inp2A_TF);
-   InitPreset(g_presets[4], Inp2B_SL,Inp2B_TP,Inp2B_Risk,Inp2B_TrTrig,Inp2B_TrDist,Inp2B_TrStep,Inp2B_TF);
-   InitPreset(g_presets[5], Inp2C_SL,Inp2C_TP,Inp2C_Risk,Inp2C_TrTrig,Inp2C_TrDist,Inp2C_TrStep,Inp2C_TF);
-   InitPreset(g_presets[6], Inp5A_SL,Inp5A_TP,Inp5A_Risk,Inp5A_TrTrig,Inp5A_TrDist,Inp5A_TrStep,Inp5A_TF);
-   InitPreset(g_presets[7], Inp5B_SL,Inp5B_TP,Inp5B_Risk,Inp5B_TrTrig,Inp5B_TrDist,Inp5B_TrStep,Inp5B_TF);
-   InitPreset(g_presets[8], Inp5C_SL,Inp5C_TP,Inp5C_Risk,Inp5C_TrTrig,Inp5C_TrDist,Inp5C_TrStep,Inp5C_TF);
-   InitPreset(g_presets[9], Inp15A_SL,Inp15A_TP,Inp15A_Risk,Inp15A_TrTrig,Inp15A_TrDist,Inp15A_TrStep,Inp15A_TF);
-   InitPreset(g_presets[10], Inp15B_SL,Inp15B_TP,Inp15B_Risk,Inp15B_TrTrig,Inp15B_TrDist,Inp15B_TrStep,Inp15B_TF);
-   InitPreset(g_presets[11], Inp15C_SL,Inp15C_TP,Inp15C_Risk,Inp15C_TrTrig,Inp15C_TrDist,Inp15C_TrStep,Inp15C_TF);
-
    string pn = EA_NAME + "_" + IntegerToString(ChartID());
    if(!g_dashboard.CreatePanel(0,pn,0,PANEL_X,PANEL_Y,PANEL_WIDTH,PANEL_HEIGHT))
    { Print("[Main] Dashboard creation FAILED"); return INIT_FAILED; }
 
    SystemConfig cfg;
-   cfg.globalOverride = InpGlobalOverride;
    cfg.main.nyHour=InpNyHour; cfg.main.nyMinute=InpNyMinute; cfg.main.nySecond=InpNySecond;
    cfg.main.utcOffset=InpUtcOffset;
    cfg.main.timeframe=InpTimeframe;
@@ -335,29 +211,9 @@ int OnInit()
    cfg.main.trailDistance=InpTrailDistance; cfg.main.trailStep=InpTrailStep;
    cfg.main.beActivatePoints=InpBeActivatePts; cfg.main.beLockPoints=InpBeLockPts; cfg.main.beEnabled=InpBeEnabled;
 
-   cfg.m2 = cfg.main;
-   cfg.m2.timeframe = PERIOD_M2; cfg.m2.comment = "orb-2m";
-   cfg.m2.slPoints=Inp2MSlPoints; cfg.m2.tpPoints=Inp2MTpPoints;
-   cfg.m2.slCandle=Inp2MSlCandle; cfg.m2.entryBufferPoints=Inp2MEntryBufferPoints;
-   cfg.m2.orderMode=Inp2MOrderMode;
-   cfg.m2.customRetestOn=Inp2MCustomRetestOn; cfg.m2.customRetestMin=Inp2MCustomRetestMin;
-   cfg.m2.riskPercent=Inp2MRiskPercent; cfg.m2.fixLot=Inp2MFixLot; cfg.m2.riskModeOn=Inp2MRiskModeOn;
-
-   cfg.m5 = cfg.main;
-   cfg.m5.timeframe = PERIOD_M5; cfg.m5.comment = "orb-5m";
-   cfg.m5.slPoints=Inp5MSlPoints; cfg.m5.tpPoints=Inp5MTpPoints;
-   cfg.m5.slCandle=Inp5MSlCandle; cfg.m5.entryBufferPoints=Inp5MEntryBufferPoints;
-   cfg.m5.orderMode=Inp5MOrderMode;
-   cfg.m5.customRetestOn=Inp5MCustomRetestOn; cfg.m5.customRetestMin=Inp5MCustomRetestMin;
-   cfg.m5.riskPercent=Inp5MRiskPercent; cfg.m5.fixLot=Inp5MFixLot; cfg.m5.riskModeOn=Inp5MRiskModeOn;
-
-   cfg.m15 = cfg.main;
-   cfg.m15.timeframe = PERIOD_M15; cfg.m15.comment = "orb-15m";
-   cfg.m15.slPoints=Inp15MSlPoints; cfg.m15.tpPoints=Inp15MTpPoints;
-   cfg.m15.slCandle=Inp15MSlCandle; cfg.m15.entryBufferPoints=Inp15MEntryBufferPoints;
-   cfg.m15.orderMode=Inp15MOrderMode;
-   cfg.m15.customRetestOn=Inp15MCustomRetestOn; cfg.m15.customRetestMin=Inp15MCustomRetestMin;
-   cfg.m15.riskPercent=Inp15MRiskPercent; cfg.m15.fixLot=Inp15MFixLot; cfg.m15.riskModeOn=Inp15MRiskModeOn;
+   cfg.m2Active = true;
+   cfg.m5Active = true;
+   cfg.m15Active = true;
 
    g_dashboard.SetInitialParams(cfg);
    g_dashboard.Run();
@@ -386,7 +242,7 @@ void OnTick()
 
    for(int i = 0; i < 3; i++)
    {
-      if((i == 0 && cfg.m2.isActive) || (i == 1 && cfg.m5.isActive) || (i == 2 && cfg.m15.isActive))
+      if((i == 0 && cfg.m2Active) || (i == 1 && cfg.m5Active) || (i == 2 && cfg.m15Active))
       {
          DashboardParams p = BuildRunnerParams(cfg, i, sym);
          g_runners[i].order.CheckAutoFlatten(p, g_timeMgr.GetTargetTime());
@@ -688,7 +544,7 @@ void UpdateDashboardExposure(const string &sym, double riskAmount, double riskPe
 //+------------------------------------------------------------------+
 void RunORBRunners(const SystemConfig &cfg, const DashboardParams &p, datetime nyoTime)
 {
-   bool active[3] = { cfg.m2.isActive, cfg.m5.isActive, cfg.m15.isActive };
+   bool active[3] = { cfg.m2Active, cfg.m5Active, cfg.m15Active };
    for(int i = 0; i < 3; i++)
    {
       if(active[i])
@@ -773,25 +629,6 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
    if(id == CHARTEVENT_OBJECT_ENDEDIT)
       g_dashboard.MarkDirtyPublic();
 
-   SystemConfig cfg = g_dashboard.GetParams();
-   DashboardParams p = cfg.main;
-   string sym = (p.symbol != "") ? p.symbol : Symbol();
-
-   while(g_dashboard.HasCommand())
-   {
-      ENUM_DASHBOARD_CMD cmd = g_dashboard.PopCommand();
-      switch(cmd)
-      {
-         case CMD_PRESET:
-         {
-            int idx = g_dashboard.PresetIndex;
-            if(idx >= 0 && idx < 12) g_dashboard.ApplyPreset(g_presets[idx]);
-            g_dashboard.UpdateStatus("Preset applied ✓");
-            break;
-         }
-         default: break;
-      }
-   }
 }
 
 //+------------------------------------------------------------------+
