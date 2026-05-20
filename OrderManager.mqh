@@ -1265,7 +1265,7 @@ void COrderManager::DrawTradeLines(string symbol, ENUM_TIMEFRAMES tf, int dir, d
 
    string textE = nameE + "_TXT";
    ObjectCreate(0, textE, OBJ_TEXT, 0, tEnd, entry);
-   ObjectSetString(0, textE, OBJPROP_TEXT, prefix + ((dir == 1) ? "Buy Stop" : "Sell Stop"));
+   ObjectSetString(0, textE, OBJPROP_TEXT, prefix + ((dir == 1) ? "Buy" : "Sell"));
    ObjectSetInteger(0, textE, OBJPROP_COLOR, colEntry);
    ObjectSetInteger(0, textE, OBJPROP_ANCHOR, ANCHOR_LEFT_LOWER);
    ObjectSetInteger(0, textE, OBJPROP_FONTSIZE, 8);

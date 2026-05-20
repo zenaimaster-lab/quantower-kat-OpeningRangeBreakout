@@ -7,7 +7,7 @@
 #define __DEFINES_MQH__
 
 #define EA_NAME           "KAT Opening Range Breakout"
-#define EA_VERSION        "1.70"
+#define EA_VERSION        "1.71"
 #define EA_BUILD_DATE     "21 May 2026"
 #define EA_COMMENT_PREFIX "KAT_ORB_"
 
