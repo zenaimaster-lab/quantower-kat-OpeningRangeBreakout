@@ -18,11 +18,7 @@ namespace KatORB
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Magic Number", 10)]
-        public int InpMagicNumber = 202605011;
-
-        [Category("1. GENERAL & SCHEDULE")]
-        [InputParameter("EA Mode (0=Auto, 1=Man)", 20)]
-        public int InpEaMode = 0; // 0=Auto, 1=Manual
+        public int InpMagicNumber = 1618;
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Broker UTC Offset", 30)]
@@ -50,33 +46,17 @@ namespace KatORB
         public bool Inp30mActive = false;
 
         [Category("2. TIMEFRAMES")]
-        [InputParameter("Use Custom Retest", 80)]
-        public bool InpCustomRetestOn = true;
-
-        [Category("2. TIMEFRAMES")]
-        [InputParameter(" -> Retest (Min)", 90)]
+        [InputParameter("Retest TF candle (min)", 90)]
         public int InpCustomRetestMin = 1;
 
         //--- Order Settings
         [Category("3. ORDER SETTINGS")]
-        [InputParameter("Stop Loss (Pts)", 100)]
-        public int InpSlPoints = 1500;
+        [InputParameter("Stop Loss (Ticks)", 100)]
+        public int InpSlTicks = 60;
 
         [Category("3. ORDER SETTINGS")]
-        [InputParameter("Take Profit (Pts)", 110)]
-        public int InpTpPoints = 15000;
-
-        [Category("3. ORDER SETTINGS")]
-        [InputParameter("Use Candle SL", 120)]
-        public bool InpSlCandle = false;
-
-        [Category("3. ORDER SETTINGS")]
-        [InputParameter("Trade Dir (0=Both, 1=B, 2=S)", 130)]
-        public int InpOrderMode = 0; // 0=Both, 1=Buy, 2=Sell
-
-        [Category("3. ORDER SETTINGS")]
-        [InputParameter("Entry Buffer (Pts)", 140)]
-        public int InpEntryBufferPoints = 5;
+        [InputParameter("Take Profit (Ticks)", 110)]
+        public int InpTpTicks = 600;
 
         [Category("3. ORDER SETTINGS")]
         [InputParameter("Cont. After 1st Entry", 150)]
@@ -85,7 +65,7 @@ namespace KatORB
         //--- Risk & Contracts
         [Category("4. RISK & CONTRACTS")]
         [InputParameter("Fix Contract", 160)]
-        public double InpFixContract = 1.0;
+        public int InpFixContract = 1;
 
         //--- Safeguards & Limits
         [Category("5. SAFEGUARDS & LIMITS")]
@@ -105,28 +85,24 @@ namespace KatORB
         public int InpMaxLoss = 1;
 
         [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter("Limit Boundary Dist", 210)]
-        public bool InpMaxDistRangeOn = true;
-
-        [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter(" -> Max Boundary Dist (Pts)", 220)]
-        public int InpMaxDistRange = 6000;
+        [InputParameter("Max Boundary Dist (Ticks)", 220)]
+        public int InpMaxDistRange = 240;
 
         //--- Trailing Settings
         [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Mode (0=Off, 1=Ch, 2-4=Cd)", 230)]
+        [InputParameter("Trail Mode (0=Off, 1=Chase)", 230)]
         public int InpTrailMode = 1; // 1 = TM_CHASE
         
         [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Trigger (Pts)", 240)]
-        public int InpTrailTrigger = 1500;
+        [InputParameter("Trail Trigger (Ticks)", 240)]
+        public int InpTrailTrigger = 60;
 
         [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Distance (Pts)", 250)]
-        public int InpTrailDistance = 500;
+        [InputParameter("Trail Distance (Ticks)", 250)]
+        public int InpTrailDistance = 20;
 
         [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Step (Pts)", 260)]
+        [InputParameter("Trail Step (Ticks)", 260)]
         public int InpTrailStep = 1;
 
         //--- Auto-Flatten Conditions
@@ -155,12 +131,8 @@ namespace KatORB
         public int InpAfterMinutes = 60;
 
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Flatten on Bad Move", 330)]
-        public bool InpUnfavorMoveOn = true;
-
-        [Category("7. FLATTEN & CANCEL")]
-        [InputParameter(" -> Bad Move (Pts)", 340)]
-        public int InpUnfavorMovePts = 8000;
+        [InputParameter("Flatten on Bad Move (Ticks)", 340)]
+        public int InpUnfavorMoveTicks = 320;
 
         [Category("7. FLATTEN & CANCEL")]
         [InputParameter("Flatten on Mid Touch", 350)]
@@ -179,23 +151,10 @@ namespace KatORB
         [InputParameter("Favor EMA 34 (Entry)", 380)]
         public bool InpFavorEma34On = false;
 
-        //--- Active Trailing EMA Trend Filters
-        [Category("8. EMA TREND FILTERS")]
-        [InputParameter("Trail EMA 9 (Exit)", 390)]
-        public bool InpTrailEma9On = false;
-
-        [Category("8. EMA TREND FILTERS")]
-        [InputParameter("Trail EMA 21 (Exit)", 400)]
-        public bool InpTrailEma21On = false;
-
-        [Category("8. EMA TREND FILTERS")]
-        [InputParameter("Trail EMA 34 (Exit)", 410)]
-        public bool InpTrailEma34On = false;
-
         //--- Obstacles Settings
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Max Obstacle Dist (Pts)", 420)]
-        public int InpObsMaxDist = 1600;
+        [InputParameter("Max Obstacle Dist (Ticks)", 420)]
+        public int InpObsMaxDist = 64;
 
         [Category("9. OBSTACLE FILTERS")]
         [InputParameter("Block 5m Obstacle", 430)]
@@ -260,7 +219,7 @@ namespace KatORB
 
         public int MagicNumber => InpMagicNumber;
 
-        public void Log(string message, StrategyLoggingLevel level = StrategyLoggingLevel.Info)
+        public new void Log(string message, StrategyLoggingLevel level = StrategyLoggingLevel.Info)
         {
             base.Log(message, level);
         }
@@ -303,16 +262,9 @@ namespace KatORB
             this.historicalDataM30 = this.CurrentSymbol.GetHistory(Period.MIN30, loadFrom);
             this.dailyHistory = this.CurrentSymbol.GetHistory(Period.DAY1, loadFrom);
 
-            // Subscribe to the custom retest timeframe if enabled and different
-            if (InpCustomRetestOn)
-            {
-                Period retestPeriod = MapMinutesToPeriod(InpCustomRetestMin);
-                this.historicalDataRetest = this.CurrentSymbol.GetHistory(retestPeriod, loadFrom);
-            }
-            else
-            {
-                this.historicalDataRetest = this.historicalDataM2; // fallback
-            }
+            // Subscribe to the custom retest timeframe (always active)
+            Period retestPeriod = MapMinutesToPeriod(InpCustomRetestMin);
+            this.historicalDataRetest = this.CurrentSymbol.GetHistory(retestPeriod, loadFrom);
 
             //--- Initialize the runners for active timeframes
             this.runners.Clear();
@@ -393,7 +345,7 @@ namespace KatORB
         public HistoricalData GetM1History() => this.historicalDataM1;
         public HistoricalData GetM2History() => this.historicalDataM2;
         public HistoricalData GetDailyHistory() => this.dailyHistory;
-        public HistoricalData? GetRetestHistory() => InpCustomRetestOn ? this.historicalDataRetest : null;
+        public HistoricalData? GetRetestHistory() => this.historicalDataRetest;
 
         public static Period MapMinutesToPeriod(int minutes)
         {
@@ -608,7 +560,7 @@ namespace KatORB
             if (this.OrdersActive) return;
 
             // Subscription lists check
-            var retestHistory = strategy.InpCustomRetestOn ? strategy.GetRetestHistory() : (HistoricalData?)this.History;
+            var retestHistory = strategy.GetRetestHistory();
             if (retestHistory == null || retestHistory.Count < 2) return;
 
             // Retrieve last closed bar on retest timeframe
@@ -621,11 +573,11 @@ namespace KatORB
             double lowPrice = lastClosedBar.Low;
 
             double tickSize = strategy.CurrentSymbol.TickSize;
-            int buffer = strategy.InpEntryBufferPoints;
+            int buffer = 1;
             double spread = strategy.CurrentSymbol.Ask - strategy.CurrentSymbol.Bid;
 
             //--- Break UP (Bullish Retest Validation)
-            if (this.BreakDir == 1 && strategy.InpOrderMode != 2) // not sell only
+            if (this.BreakDir == 1)
             {
                 // Opposite color candle (bearish: close < open) touching or penetrating the broken high range
                 if (closePrice < openPrice && lowPrice <= this.RangeHigh)
@@ -634,16 +586,13 @@ namespace KatORB
                     entryPrice = Math.Round(entryPrice / tickSize) * tickSize;
 
                     // Obstacle/EMA Filter Validation
-                    if (strategy.InpMaxDistRangeOn)
+                    double dist = (entryPrice - this.RangeHigh) / tickSize;
+                    if (dist > strategy.InpMaxDistRange)
                     {
-                        double dist = (entryPrice - this.RangeHigh) / tickSize;
-                        if (dist > strategy.InpMaxDistRange)
-                        {
-                            strategy.Log($"[{Comment}] Buy Entry skipped. Distance {dist} pts > max {strategy.InpMaxDistRange}.");
-                            this.CancelReason = $"Max dist reached ({dist} > {strategy.InpMaxDistRange})";
-                            this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
-                            return;
-                        }
+                        strategy.Log($"[{Comment}] Buy Entry skipped. Distance {dist} ticks > max {strategy.InpMaxDistRange}.");
+                        this.CancelReason = $"Max dist reached ({dist} > {strategy.InpMaxDistRange})";
+                        this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
+                        return;
                     }
 
                     string obsReason = "";
@@ -656,7 +605,7 @@ namespace KatORB
                     }
 
                     string filterReason = "";
-                    if (!CheckEmaFilters(1, out filterReason, true))
+                    if (!CheckEmaFilters(1, out filterReason))
                     {
                         strategy.Log($"[{Comment}] Buy Entry skipped: {filterReason}");
                         this.CancelReason = filterReason;
@@ -665,12 +614,11 @@ namespace KatORB
                     }
 
                     // Risk Sizing
-                    double sl = strategy.InpSlCandle ? (lowPrice - buffer * tickSize) : (entryPrice - strategy.InpSlPoints * tickSize);
-                    double tp = strategy.InpTpPoints > 0 ? (entryPrice + strategy.InpTpPoints * tickSize) : 0;
+                    double sl = entryPrice - strategy.InpSlTicks * tickSize;
+                    double tp = strategy.InpTpTicks > 0 ? (entryPrice + strategy.InpTpTicks * tickSize) : 0;
                     sl = Math.Round(sl / tickSize) * tickSize;
                     tp = Math.Round(tp / tickSize) * tickSize;
 
-                    int slPointsCalculated = (int)Math.Max(50, Math.Abs(entryPrice - sl) / tickSize);
                     double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
@@ -710,7 +658,7 @@ namespace KatORB
                 }
             }
             //--- Break DOWN (Bearish Retest Validation)
-            else if (this.BreakDir == -1 && strategy.InpOrderMode != 1) // not buy only
+            else if (this.BreakDir == -1)
             {
                 // Opposite color candle (bullish: close > open) touching or penetrating the broken low range
                 if (closePrice > openPrice && highPrice >= this.RangeLow)
@@ -719,16 +667,13 @@ namespace KatORB
                     entryPrice = Math.Round(entryPrice / tickSize) * tickSize;
 
                     // Obstacle/EMA Filter Validation
-                    if (strategy.InpMaxDistRangeOn)
+                    double dist = (this.RangeLow - entryPrice) / tickSize;
+                    if (dist > strategy.InpMaxDistRange)
                     {
-                        double dist = (this.RangeLow - entryPrice) / tickSize;
-                        if (dist > strategy.InpMaxDistRange)
-                        {
-                            strategy.Log($"[{Comment}] Sell Entry skipped. Distance {dist} pts > max {strategy.InpMaxDistRange}.");
-                            this.CancelReason = $"Max dist reached ({dist} > {strategy.InpMaxDistRange})";
-                            this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
-                            return;
-                        }
+                        strategy.Log($"[{Comment}] Sell Entry skipped. Distance {dist} ticks > max {strategy.InpMaxDistRange}.");
+                        this.CancelReason = $"Max dist reached ({dist} > {strategy.InpMaxDistRange})";
+                        this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
+                        return;
                     }
 
                     string obsReason = "";
@@ -741,7 +686,7 @@ namespace KatORB
                     }
 
                     string filterReason = "";
-                    if (!CheckEmaFilters(-1, out filterReason, true))
+                    if (!CheckEmaFilters(-1, out filterReason))
                     {
                         strategy.Log($"[{Comment}] Sell Entry skipped: {filterReason}");
                         this.CancelReason = filterReason;
@@ -750,12 +695,11 @@ namespace KatORB
                     }
 
                     // Risk Sizing
-                    double sl = strategy.InpSlCandle ? (highPrice + (buffer * tickSize) + spread) : (entryPrice + strategy.InpSlPoints * tickSize);
-                    double tp = strategy.InpTpPoints > 0 ? (entryPrice - strategy.InpTpPoints * tickSize) : 0;
+                    double sl = entryPrice + strategy.InpSlTicks * tickSize;
+                    double tp = strategy.InpTpTicks > 0 ? (entryPrice - strategy.InpTpTicks * tickSize) : 0;
                     sl = Math.Round(sl / tickSize) * tickSize;
                     tp = Math.Round(tp / tickSize) * tickSize;
 
-                    int slPointsCalculated = (int)Math.Max(50, Math.Abs(entryPrice - sl) / tickSize);
                     double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
@@ -901,7 +845,7 @@ namespace KatORB
             double bid = strategy.CurrentSymbol.Bid;
             double ask = strategy.CurrentSymbol.Ask;
 
-            if (!shouldFlatten && (strategy.InpTouchMidOn || strategy.InpUnfavorMoveOn))
+            if (!shouldFlatten)
             {
                 // Check pending orders bounds
                 foreach (var order in activeOrders)
@@ -909,7 +853,7 @@ namespace KatORB
                     double open = order.Price;
                     if (order.Side == Side.Buy)
                     {
-                        if (strategy.InpUnfavorMoveOn && bid <= open - strategy.InpUnfavorMovePts * tickSize)
+                        if (bid <= open - strategy.InpUnfavorMoveTicks * tickSize)
                         {
                             shouldFlatten = true;
                             reason = "Unfavor move (Buy Stop)";
@@ -924,7 +868,7 @@ namespace KatORB
                     }
                     else if (order.Side == Side.Sell)
                     {
-                        if (strategy.InpUnfavorMoveOn && ask >= open + strategy.InpUnfavorMovePts * tickSize)
+                        if (ask >= open + strategy.InpUnfavorMoveTicks * tickSize)
                         {
                             shouldFlatten = true;
                             reason = "Unfavor move (Sell Stop)";
@@ -947,7 +891,7 @@ namespace KatORB
                         double open = pos.OpenPrice;
                         if (pos.Side == Side.Buy)
                         {
-                            if (strategy.InpUnfavorMoveOn && bid <= open - strategy.InpUnfavorMovePts * tickSize)
+                            if (bid <= open - strategy.InpUnfavorMoveTicks * tickSize)
                             {
                                 shouldFlatten = true;
                                 reason = "Unfavor move (Buy Position)";
@@ -962,7 +906,7 @@ namespace KatORB
                         }
                         else if (pos.Side == Side.Sell)
                         {
-                            if (strategy.InpUnfavorMoveOn && ask >= open + strategy.InpUnfavorMovePts * tickSize)
+                            if (ask >= open + strategy.InpUnfavorMoveTicks * tickSize)
                             {
                                 shouldFlatten = true;
                                 reason = "Unfavor move (Sell Position)";
@@ -974,36 +918,6 @@ namespace KatORB
                                 reason = "Price touched mid-range (Sell Position)";
                                 break;
                             }
-                        }
-                    }
-                }
-            }
-
-            // 4. Indicator EMA cancel/flatten validations
-            if (!shouldFlatten)
-            {
-                string filterReason = "";
-                foreach (var order in activeOrders)
-                {
-                    int dir = order.Side == Side.Buy ? 1 : -1;
-                    if (!CheckEmaFilters(dir, out filterReason, false))
-                    {
-                        shouldFlatten = true;
-                        reason = filterReason;
-                        break;
-                    }
-                }
-
-                if (!shouldFlatten)
-                {
-                    foreach (var pos in activePositions)
-                    {
-                        int dir = pos.Side == Side.Buy ? 1 : -1;
-                        if (!CheckEmaFilters(dir, out filterReason, false))
-                        {
-                            shouldFlatten = true;
-                            reason = filterReason;
-                            break;
                         }
                     }
                 }
@@ -1064,29 +978,14 @@ namespace KatORB
             return count;
         }
 
-        public bool CheckEmaFilters(int direction, out string outReason, bool isEntry)
+        public bool CheckEmaFilters(int direction, out string outReason)
         {
             outReason = "";
             double currentPrice = direction == 1 ? strategy.CurrentSymbol.Bid : strategy.CurrentSymbol.Ask;
 
-            bool[] emaOn = new bool[3];
-            int[] emaPeriod = new int[3];
-            string label;
-
-            if (isEntry)
-            {
-                emaOn[0] = strategy.InpFavorEma9On; emaPeriod[0] = 9;
-                emaOn[1] = strategy.InpFavorEma21On; emaPeriod[1] = 21;
-                emaOn[2] = strategy.InpFavorEma34On; emaPeriod[2] = 34;
-                label = "Favor EMA";
-            }
-            else
-            {
-                emaOn[0] = strategy.InpTrailEma9On; emaPeriod[0] = 9;
-                emaOn[1] = strategy.InpTrailEma21On; emaPeriod[1] = 21;
-                emaOn[2] = strategy.InpTrailEma34On; emaPeriod[2] = 34;
-                label = "Price < EMA";
-            }
+            bool[] emaOn = new bool[] { strategy.InpFavorEma9On, strategy.InpFavorEma21On, strategy.InpFavorEma34On };
+            int[] emaPeriod = new int[] { 9, 21, 34 };
+            string label = "Favor EMA";
 
             for (int i = 0; i < 3; i++)
             {
@@ -1252,12 +1151,12 @@ namespace KatORB
 
                     if (Math.Abs(entryPrice - prevHigh) / tickSize < strategy.InpObsMaxDist)
                     {
-                        outReason = $"Prev Day High obstacle (Dist={Math.Abs(entryPrice - prevHigh) / tickSize} pts)";
+                        outReason = $"Prev Day High obstacle (Dist={Math.Abs(entryPrice - prevHigh) / tickSize} ticks)";
                         return true;
                     }
                     if (Math.Abs(entryPrice - prevLow) / tickSize < strategy.InpObsMaxDist)
                     {
-                        outReason = $"Prev Day Low obstacle (Dist={Math.Abs(entryPrice - prevLow) / tickSize} pts)";
+                        outReason = $"Prev Day Low obstacle (Dist={Math.Abs(entryPrice - prevLow) / tickSize} ticks)";
                         return true;
                     }
                 }
@@ -1415,9 +1314,9 @@ namespace KatORB
             this.strategy = strategy;
         }
 
-        public double CalcLotSize(double riskPercent, int slPoints)
+        public double CalcLotSize(double riskPercent, int slTicks)
         {
-            if (riskPercent <= 0 || slPoints <= 0) return NormalizeLot(strategy.InpFixContract);
+            if (riskPercent <= 0 || slTicks <= 0) return NormalizeLot(strategy.InpFixContract);
 
             double balance = strategy.CurrentAccount.Balance;
             double riskAmt = balance * (riskPercent / 100.0);
@@ -1429,8 +1328,7 @@ namespace KatORB
             if (tickValue <= 0 || tickSize <= 0) return NormalizeLot(strategy.InpFixContract);
 
             // Dynamic loss per lot size
-            double valuePerPoint = tickValue / tickSize * tickSize;
-            double lossPerLot = slPoints * valuePerPoint;
+            double lossPerLot = slTicks * tickValue;
 
             if (lossPerLot <= 0) return NormalizeLot(strategy.InpFixContract);
 
@@ -1521,7 +1419,7 @@ namespace KatORB
 
         public void Process(ORBRunner runner)
         {
-            if (strategy.InpTrailMode == 0) return;
+            if (strategy.InpTrailMode != 1) return;
             if (string.IsNullOrEmpty(runner.LastOrderTag)) return;
 
             // Process Trail Stop modifiers on active positions
@@ -1531,19 +1429,11 @@ namespace KatORB
 
             foreach (var pos in matchingPositions)
             {
-                if (strategy.InpTrailMode == 1) // Chase Trail Stop
-                {
-                    ManageChaseTrailing(pos, strategy.InpTrailTrigger, strategy.InpTrailDistance, strategy.InpTrailStep);
-                }
-                else if (strategy.InpTrailMode >= 2 && strategy.InpTrailMode <= 4) // Candle extreme trail shifts
-                {
-                    int shift = strategy.InpTrailMode - 1; // Candle1 = shift 1, Candle2 = shift 2, etc.
-                    ManageCandleTrailing(pos, runner.History, shift);
-                }
+                ManageChaseTrailing(pos, strategy.InpTrailTrigger, strategy.InpTrailDistance, strategy.InpTrailStep);
             }
         }
 
-        private void ManageChaseTrailing(Position pos, int triggerPts, int distancePts, int stepPts)
+        private void ManageChaseTrailing(Position pos, int triggerTicks, int distanceTicks, int stepTicks)
         {
             var slOrder = pos.StopLoss;
             if (slOrder == null) return;
@@ -1551,9 +1441,9 @@ namespace KatORB
             double slPrice = slOrder.TriggerPrice;
             double tickSize = strategy.CurrentSymbol.TickSize;
 
-            double triggerDist = triggerPts * tickSize;
-            double trailDist = distancePts * tickSize;
-            double stepDist = stepPts * tickSize;
+            double triggerDist = triggerTicks * tickSize;
+            double trailDist = distanceTicks * tickSize;
+            double stepDist = stepTicks * tickSize;
 
             double open = pos.OpenPrice;
 
@@ -1590,46 +1480,6 @@ namespace KatORB
                 }
             }
         }
-
-        private void ManageCandleTrailing(Position pos, HistoricalData historyStream, int shift)
-        {
-            if (historyStream == null || historyStream.Count < shift + 2) return;
-
-            var slOrder = pos.StopLoss;
-            if (slOrder == null) return;
-
-            double slPrice = slOrder.TriggerPrice;
-            double tickSize = strategy.CurrentSymbol.TickSize;
-
-            // shift 1 = historyStream[historyStream.Count - 2]
-            var targetBar = (HistoryItemBar)historyStream[historyStream.Count - 1 - shift];
-
-            if (pos.Side == Side.Buy)
-            {
-                double newSL = targetBar.Low - tickSize;
-                newSL = Math.Round(newSL / tickSize) * tickSize;
-
-                if (newSL > slPrice || slPrice == 0)
-                {
-                    if (Math.Abs(newSL - slPrice) > tickSize)
-                    {
-                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, newSL, newSL, slOrder.TrailOffset);
-                    }
-                }
-            }
-            else if (pos.Side == Side.Sell)
-            {
-                double newSL = targetBar.High + tickSize;
-                newSL = Math.Round(newSL / tickSize) * tickSize;
-
-                if (newSL < slPrice || slPrice == 0)
-                {
-                    if (Math.Abs(slPrice - newSL) > tickSize)
-                    {
-                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, newSL, newSL, slOrder.TrailOffset);
-                    }
-                }
-            }
-        }
     }
 }
+
