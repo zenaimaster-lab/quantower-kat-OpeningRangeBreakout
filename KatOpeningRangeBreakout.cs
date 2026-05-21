@@ -256,6 +256,8 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
+        public const string STRATEGY_VERSION = "0.01";
+
         public int MagicNumber => InpMagicNumber;
 
         public void Log(string message, StrategyLoggingLevel level = StrategyLoggingLevel.Info)
@@ -265,7 +267,7 @@ namespace KatORB
 
         public KatOpeningRangeBreakout()
         {
-            this.Name = "KAT Opening Range Breakout";
+            this.Name = $"KAT Opening Range Breakout v{STRATEGY_VERSION}";
             this.Description = "Automated Break & Retest range strategy on 2m/5m/15m/30m NYO candles";
         }
 
@@ -319,7 +321,7 @@ namespace KatORB
             if (Inp15mActive) this.runners.Add(new ORBRunner(this, Period.MIN15, 2, "orb-15m", this.historicalDataM15));
             if (Inp30mActive) this.runners.Add(new ORBRunner(this, Period.MIN30, 3, "orb-30m", this.historicalDataM30));
 
-            this.Log($"KAT ORB Initialized. Active Runners count: {this.runners.Count}");
+            this.Log($"KAT ORB Initialized (v{STRATEGY_VERSION}). Active Runners count: {this.runners.Count}");
 
             // Subscribe to real-time quote updates
             this.CurrentSymbol.NewQuote += CurrentSymbol_NewQuote;
