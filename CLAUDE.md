@@ -17,13 +17,13 @@ Whenever you make any changes to the C# source code (`KatOpeningRangeBreakout.cs
    - Copy the compiled Release binaries from:
      `c:\Users\kieuanhtuan\Documents\all. Coding\quantower-kat-OpeningRangeBreakout\bin\Release\net8.0-windows\`
    - To the Quantower strategy scripts directory:
-     `C:\Quantower\TradingPlatform\v1.145.17\bin\Scripts\Strategies\`
+     `C:\Quantower\Settings\Scripts\Strategies\`
    - Copy both files:
      - `KatOpeningRangeBreakout.dll`
      - `KatOpeningRangeBreakout.pdb`
    - Use this PowerShell command to safely copy them:
      ```powershell
-     Copy-Item -Path "bin\Release\net8.0-windows\KatOpeningRangeBreakout.dll", "bin\Release\net8.0-windows\KatOpeningRangeBreakout.pdb" -Destination "C:\Quantower\TradingPlatform\v1.145.17\bin\Scripts\Strategies\" -Force
+     Copy-Item -Path "bin\Release\net8.0-windows\KatOpeningRangeBreakout.dll", "bin\Release\net8.0-windows\KatOpeningRangeBreakout.pdb" -Destination "C:\Quantower\Settings\Scripts\Strategies\" -Force
      ```
 
 3. **Synchronize with Git & GitHub**
