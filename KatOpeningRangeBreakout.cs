@@ -1121,6 +1121,7 @@ namespace KatORB
         {
             outReason = "";
             double tickSize = strategy.CurrentSymbol.TickSize;
+            int dir = this.BreakDir; // 1 = Buy, -1 = Sell
 
             // 1. Range 5m Obstacle
             if (strategy.InpObsRange5mOn && TfIndex != 1)
@@ -1128,11 +1129,21 @@ namespace KatORB
                 double rHigh = 0, rLow = 0;
                 if (GetOtherTimeframeRange(Period.MIN5, nyoTime, out rHigh, out rLow))
                 {
-                    if (Math.Abs(entryPrice - rHigh) / tickSize < strategy.InpObsMaxDist ||
-                        Math.Abs(entryPrice - rLow) / tickSize < strategy.InpObsMaxDist)
+                    if (dir == 1) // Buy
                     {
-                        outReason = "5m Range boundary obstacle";
-                        return true;
+                        if (rHigh > entryPrice && (rHigh - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"5m Range High obstacle (Dist={Math.Round((rHigh - entryPrice) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
+                    else if (dir == -1) // Sell
+                    {
+                        if (rLow < entryPrice && (entryPrice - rLow) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"5m Range Low obstacle (Dist={Math.Round((entryPrice - rLow) / tickSize, 1)} ticks)";
+                            return true;
+                        }
                     }
                 }
             }
@@ -1143,11 +1154,21 @@ namespace KatORB
                 double rHigh = 0, rLow = 0;
                 if (GetOtherTimeframeRange(Period.MIN15, nyoTime, out rHigh, out rLow))
                 {
-                    if (Math.Abs(entryPrice - rHigh) / tickSize < strategy.InpObsMaxDist ||
-                        Math.Abs(entryPrice - rLow) / tickSize < strategy.InpObsMaxDist)
+                    if (dir == 1) // Buy
                     {
-                        outReason = "15m Range boundary obstacle";
-                        return true;
+                        if (rHigh > entryPrice && (rHigh - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"15m Range High obstacle (Dist={Math.Round((rHigh - entryPrice) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
+                    else if (dir == -1) // Sell
+                    {
+                        if (rLow < entryPrice && (entryPrice - rLow) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"15m Range Low obstacle (Dist={Math.Round((entryPrice - rLow) / tickSize, 1)} ticks)";
+                            return true;
+                        }
                     }
                 }
             }
@@ -1158,11 +1179,21 @@ namespace KatORB
                 double rHigh = 0, rLow = 0;
                 if (GetOtherTimeframeRange(Period.MIN30, nyoTime, out rHigh, out rLow))
                 {
-                    if (Math.Abs(entryPrice - rHigh) / tickSize < strategy.InpObsMaxDist ||
-                        Math.Abs(entryPrice - rLow) / tickSize < strategy.InpObsMaxDist)
+                    if (dir == 1) // Buy
                     {
-                        outReason = "30m Range boundary obstacle";
-                        return true;
+                        if (rHigh > entryPrice && (rHigh - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"30m Range High obstacle (Dist={Math.Round((rHigh - entryPrice) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
+                    else if (dir == -1) // Sell
+                    {
+                        if (rLow < entryPrice && (entryPrice - rLow) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"30m Range Low obstacle (Dist={Math.Round((entryPrice - rLow) / tickSize, 1)} ticks)";
+                            return true;
+                        }
                     }
                 }
             }
@@ -1177,15 +1208,21 @@ namespace KatORB
                     double prevHigh = prevDayBar.High;
                     double prevLow = prevDayBar.Low;
 
-                    if (Math.Abs(entryPrice - prevHigh) / tickSize < strategy.InpObsMaxDist)
+                    if (dir == 1) // Buy
                     {
-                        outReason = $"Prev Day High obstacle (Dist={Math.Abs(entryPrice - prevHigh) / tickSize} ticks)";
-                        return true;
+                        if (prevHigh > entryPrice && (prevHigh - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"Prev Day High obstacle (Dist={Math.Round((prevHigh - entryPrice) / tickSize, 1)} ticks)";
+                            return true;
+                        }
                     }
-                    if (Math.Abs(entryPrice - prevLow) / tickSize < strategy.InpObsMaxDist)
+                    else if (dir == -1) // Sell
                     {
-                        outReason = $"Prev Day Low obstacle (Dist={Math.Abs(entryPrice - prevLow) / tickSize} ticks)";
-                        return true;
+                        if (prevLow < entryPrice && (entryPrice - prevLow) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"Prev Day Low obstacle (Dist={Math.Round((entryPrice - prevLow) / tickSize, 1)} ticks)";
+                            return true;
+                        }
                     }
                 }
             }
@@ -1199,30 +1236,72 @@ namespace KatORB
                 if (strategy.InpObsEma250On)
                 {
                     double emaVal = CalculateEMA(m2History, 250, targetIdx);
-                    if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                    if (emaVal > 0)
                     {
-                        outReason = "M2 EMA 250 obstacle";
-                        return true;
+                        if (dir == 1) // Buy
+                        {
+                            if (emaVal > entryPrice && (emaVal - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                            {
+                                outReason = $"M2 EMA 250 obstacle (Dist={Math.Round((emaVal - entryPrice) / tickSize, 1)} ticks)";
+                                return true;
+                            }
+                        }
+                        else if (dir == -1) // Sell
+                        {
+                            if (emaVal < entryPrice && (entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                            {
+                                outReason = $"M2 EMA 250 obstacle (Dist={Math.Round((entryPrice - emaVal) / tickSize, 1)} ticks)";
+                                return true;
+                            }
+                        }
                     }
                 }
 
                 if (strategy.InpObsEma255On)
                 {
                     double emaVal = CalculateEMA(m2History, 255, targetIdx);
-                    if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                    if (emaVal > 0)
                     {
-                        outReason = "M2 EMA 255 obstacle";
-                        return true;
+                        if (dir == 1) // Buy
+                        {
+                            if (emaVal > entryPrice && (emaVal - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                            {
+                                outReason = $"M2 EMA 255 obstacle (Dist={Math.Round((emaVal - entryPrice) / tickSize, 1)} ticks)";
+                                return true;
+                            }
+                        }
+                        else if (dir == -1) // Sell
+                        {
+                            if (emaVal < entryPrice && (entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                            {
+                                outReason = $"M2 EMA 255 obstacle (Dist={Math.Round((entryPrice - emaVal) / tickSize, 1)} ticks)";
+                                return true;
+                            }
+                        }
                     }
                 }
 
                 if (strategy.InpObsEma34On)
                 {
                     double emaVal = CalculateEMA(m2History, 34, targetIdx);
-                    if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                    if (emaVal > 0)
                     {
-                        outReason = "M2 EMA 34 obstacle";
-                        return true;
+                        if (dir == 1) // Buy
+                        {
+                            if (emaVal > entryPrice && (emaVal - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                            {
+                                outReason = $"M2 EMA 34 obstacle (Dist={Math.Round((emaVal - entryPrice) / tickSize, 1)} ticks)";
+                                return true;
+                            }
+                        }
+                        else if (dir == -1) // Sell
+                        {
+                            if (emaVal < entryPrice && (entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                            {
+                                outReason = $"M2 EMA 34 obstacle (Dist={Math.Round((entryPrice - emaVal) / tickSize, 1)} ticks)";
+                                return true;
+                            }
+                        }
                     }
                 }
             }
@@ -1232,10 +1311,24 @@ namespace KatORB
             if (strategy.InpObsDayVwapOn)
             {
                 double dVwapVal = CalculateVWAP(strategy.GetM1History(), startDay);
-                if (dVwapVal > 0 && Math.Abs(entryPrice - dVwapVal) / tickSize < strategy.InpObsMaxDist)
+                if (dVwapVal > 0)
                 {
-                    outReason = "Day VWAP obstacle";
-                    return true;
+                    if (dir == 1) // Buy
+                    {
+                        if (dVwapVal > entryPrice && (dVwapVal - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"Day VWAP obstacle (Dist={Math.Round((dVwapVal - entryPrice) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
+                    else if (dir == -1) // Sell
+                    {
+                        if (dVwapVal < entryPrice && (entryPrice - dVwapVal) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"Day VWAP obstacle (Dist={Math.Round((entryPrice - dVwapVal) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
                 }
             }
 
@@ -1246,10 +1339,24 @@ namespace KatORB
                 DateTime startWeek = nowServer.AddDays(-diff).Date;
 
                 double wVwapVal = CalculateVWAP(strategy.GetM1History(), startWeek);
-                if (wVwapVal > 0 && Math.Abs(entryPrice - wVwapVal) / tickSize < strategy.InpObsMaxDist)
+                if (wVwapVal > 0)
                 {
-                    outReason = "Week VWAP obstacle";
-                    return true;
+                    if (dir == 1) // Buy
+                    {
+                        if (wVwapVal > entryPrice && (wVwapVal - entryPrice) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"Week VWAP obstacle (Dist={Math.Round((wVwapVal - entryPrice) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
+                    else if (dir == -1) // Sell
+                    {
+                        if (wVwapVal < entryPrice && (entryPrice - wVwapVal) / tickSize < strategy.InpObsMaxDist)
+                        {
+                            outReason = $"Week VWAP obstacle (Dist={Math.Round((entryPrice - wVwapVal) / tickSize, 1)} ticks)";
+                            return true;
+                        }
+                    }
                 }
             }
 
