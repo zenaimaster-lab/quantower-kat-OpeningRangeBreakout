@@ -58,22 +58,20 @@ namespace KatORB
         [InputParameter("Take Profit", 110)]
         public int InpTpTicks = 600;
 
-        [Category("3. ORDER SETTINGS")]
-        [InputParameter("Cont. After 1st Entry", 150)]
         public bool InpContAfter1st = true;
 
         //--- Risk & Contracts
         [Category("4. RISK & CONTRACTS")]
-        [InputParameter("Fix Contract", 160)]
+        [InputParameter("Contract", 160)]
         public int InpFixContract = 1;
 
         //--- Safeguards & Limits
         [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter("Max Wins Value", 180)]
+        [InputParameter("Max Wins", 180)]
         public int InpMaxSuccess = 2;
 
         [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter("Max Losses Value", 200)]
+        [InputParameter("Max Losses", 200)]
         public int InpMaxLoss = 1;
 
         [Category("5. SAFEGUARDS & LIMITS")]
@@ -81,8 +79,6 @@ namespace KatORB
         public int InpMaxDistRange = 240;
 
         //--- Trailing Settings
-        [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Mode (0=Off, 1=Chase)", 230)]
         public int InpTrailMode = 1; // 1 = TM_CHASE
         
         [Category("6. TRAILING STOPLOSS")]
@@ -100,12 +96,10 @@ namespace KatORB
         [InputParameter("Cancel pending if unfilled (candle)", 280)]
         public int InpUnfilledCandles = 2;
 
-        [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Flatten after X Mins", 290)]
         public bool InpAfterFilledMinutesOn = true;
 
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter(" -> Max Filled Mins", 300)]
+        [InputParameter("Flatten if not hit Trigger, after (min)", 300)]
         public int InpAfterFilledMinutes = 5;
 
         [Category("7. FLATTEN & CANCEL")]
@@ -139,39 +133,39 @@ namespace KatORB
         public int InpObsMaxDist = 64;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block 5m Obstacle", 430)]
+        [InputParameter("To 5m H/L", 430)]
         public bool InpObsRange5mOn = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block 15m Obstacle", 440)]
+        [InputParameter("To 15m H/L", 440)]
         public bool InpObsRange15mOn = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block 30m Obstacle", 450)]
+        [InputParameter("To 30m H/L", 450)]
         public bool InpObsRange30mOn = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block Prev Day H/L", 460)]
+        [InputParameter("To Prev Day H/L", 460)]
         public bool InpObsPrevDayHLOn = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block VWAP (Day)", 470)]
+        [InputParameter("To VWAP (day) line", 470)]
         public bool InpObsDayVwapOn = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block VWAP (Week)", 480)]
+        [InputParameter("To VWAP (week) line", 480)]
         public bool InpObsWeekVwapOn = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block EMA 250 (M2)", 490)]
+        [InputParameter("To EMA 250 line", 490)]
         public bool InpObsEma250On = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block EMA 255 (M2)", 500)]
+        [InputParameter("To EMA 255 line", 500)]
         public bool InpObsEma255On = true;
 
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Block EMA 34 (M2)", 510)]
+        [InputParameter("To EMA 34 line", 510)]
         public bool InpObsEma34On = true;
 
         //--- Core State Variables
@@ -197,7 +191,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "0.03";
+        public const string STRATEGY_VERSION = "0.04";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -381,6 +375,7 @@ namespace KatORB
         public string EntryReason { get; set; } = "";
         public string CancelReason { get; set; } = "";
         public int EntryBreakDir { get; set; } = 0;
+        public bool TrailTriggerHit { get; set; } = false;
 
         private DateTime lastNYOTime = DateTime.MinValue;
 
@@ -406,6 +401,7 @@ namespace KatORB
             this.EntryReason = "";
             this.CancelReason = "";
             this.EntryBreakDir = 0;
+            this.TrailTriggerHit = false;
         }
 
         public void Process(DateTime nyoTime, DateTime serverTime)
@@ -423,6 +419,37 @@ namespace KatORB
 
             // Maintain order active synchronization using actual position/order checks
             SyncOrderAndPositionStatus();
+
+            // Update trail trigger hit state if position is active
+            if (this.OrdersActive && !this.TrailTriggerHit)
+            {
+                var activePositions = Core.Instance.Positions.Where(p => p.Symbol == strategy.CurrentSymbol && p.Comment == this.LastOrderTag).ToList();
+                if (activePositions.Count > 0)
+                {
+                    var pos = activePositions[0];
+                    double open = pos.OpenPrice;
+                    double tickSize = strategy.CurrentSymbol.TickSize;
+                    double triggerDist = strategy.InpTrailTrigger * tickSize;
+                    if (pos.Side == Side.Buy)
+                    {
+                        double bid = strategy.CurrentSymbol.Bid;
+                        if (bid - open >= triggerDist)
+                        {
+                            this.TrailTriggerHit = true;
+                            strategy.Log($"[{Comment}] Trail trigger hit: Buy Price reached/exceeded trigger distance.");
+                        }
+                    }
+                    else if (pos.Side == Side.Sell)
+                    {
+                        double ask = strategy.CurrentSymbol.Ask;
+                        if (open - ask >= triggerDist)
+                        {
+                            this.TrailTriggerHit = true;
+                            strategy.Log($"[{Comment}] Trail trigger hit: Sell Price reached/exceeded trigger distance.");
+                        }
+                    }
+                }
+            }
 
             // Check safeguards and trade window limits
             if (!this.OrdersActive)
@@ -744,6 +771,7 @@ namespace KatORB
                 {
                     this.OrdersActive = false;
                     this.LastOrderTag = "";
+                    this.TrailTriggerHit = false;
 
                     // Calculate stats by tracking account updates
                     UpdateWinLossCounter();
@@ -800,14 +828,17 @@ namespace KatORB
                 }
             }
 
-            // 1.b After filled minutes check (close positions after X minutes)
+            // 1.b After filled minutes check (close positions after X minutes if trail trigger not hit)
             if (!shouldFlatten && strategy.InpAfterFilledMinutesOn && hasPosition)
             {
                 var oldestPos = activePositions.OrderBy(x => x.OpenTime).FirstOrDefault();
                 if (oldestPos != null && serverTime >= oldestPos.OpenTime.AddMinutes(strategy.InpAfterFilledMinutes))
                 {
-                    shouldFlatten = true;
-                    reason = $"No TP hit after {strategy.InpAfterFilledMinutes} minutes";
+                    if (!this.TrailTriggerHit)
+                    {
+                        shouldFlatten = true;
+                        reason = $"Trigger not hit after {strategy.InpAfterFilledMinutes} minutes";
+                    }
                 }
             }
 
