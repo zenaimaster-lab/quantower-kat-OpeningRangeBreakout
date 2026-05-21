@@ -215,7 +215,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "0.01";
+        public const string STRATEGY_VERSION = "0.02";
 
         public int MagicNumber => InpMagicNumber;
 
