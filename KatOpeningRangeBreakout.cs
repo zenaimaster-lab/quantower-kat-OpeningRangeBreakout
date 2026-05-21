@@ -51,11 +51,11 @@ namespace KatORB
 
         //--- Order Settings
         [Category("3. ORDER SETTINGS")]
-        [InputParameter("Stop Loss (Ticks)", 100)]
+        [InputParameter("Stop Loss", 100)]
         public int InpSlTicks = 60;
 
         [Category("3. ORDER SETTINGS")]
-        [InputParameter("Take Profit (Ticks)", 110)]
+        [InputParameter("Take Profit", 110)]
         public int InpTpTicks = 600;
 
         [Category("3. ORDER SETTINGS")]
@@ -69,23 +69,15 @@ namespace KatORB
 
         //--- Safeguards & Limits
         [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter("Limit Max Wins Today", 170)]
-        public bool InpMaxSuccessOn = true;
-        
-        [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter(" -> Max Wins Value", 180)]
+        [InputParameter("Max Wins Value", 180)]
         public int InpMaxSuccess = 2;
 
         [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter("Limit Max Losses Today", 190)]
-        public bool InpMaxLossOn = true;
-
-        [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter(" -> Max Losses Value", 200)]
+        [InputParameter("Max Losses Value", 200)]
         public int InpMaxLoss = 1;
 
         [Category("5. SAFEGUARDS & LIMITS")]
-        [InputParameter("Max Boundary Dist (Ticks)", 220)]
+        [InputParameter("Max Boundary Distance", 220)]
         public int InpMaxDistRange = 240;
 
         //--- Trailing Settings
@@ -94,24 +86,18 @@ namespace KatORB
         public int InpTrailMode = 1; // 1 = TM_CHASE
         
         [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Trigger (Ticks)", 240)]
+        [InputParameter("Trail Trigger", 240)]
         public int InpTrailTrigger = 60;
 
         [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Distance (Ticks)", 250)]
+        [InputParameter("Trail Distance", 250)]
         public int InpTrailDistance = 20;
 
-        [Category("6. TRAILING STOPLOSS")]
-        [InputParameter("Trail Step (Ticks)", 260)]
-        public int InpTrailStep = 1;
+        public const int InpTrailStep = 1;
 
         //--- Auto-Flatten Conditions
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Cancel if Unfilled", 270)]
-        public bool InpUnfilledCandlesOn = false;
-
-        [Category("7. FLATTEN & CANCEL")]
-        [InputParameter(" -> Max Unfilled Bars", 280)]
+        [InputParameter("Cancel pending if unfilled (candle)", 280)]
         public int InpUnfilledCandles = 2;
 
         [Category("7. FLATTEN & CANCEL")]
@@ -123,15 +109,11 @@ namespace KatORB
         public int InpAfterFilledMinutes = 5;
 
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Flatten at End Session", 310)]
-        public bool InpAfterMinutesOn = true;
-
-        [Category("7. FLATTEN & CANCEL")]
-        [InputParameter(" -> Session Limit (Mins)", 320)]
+        [InputParameter("Stop trading after (min)", 320)]
         public int InpAfterMinutes = 60;
 
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Flatten on Bad Move (Ticks)", 340)]
+        [InputParameter("Flatten on Bad Move", 340)]
         public int InpUnfavorMoveTicks = 320;
 
         [Category("7. FLATTEN & CANCEL")]
@@ -153,7 +135,7 @@ namespace KatORB
 
         //--- Obstacles Settings
         [Category("9. OBSTACLE FILTERS")]
-        [InputParameter("Max Obstacle Dist (Ticks)", 420)]
+        [InputParameter("Max Obstacle Distance", 420)]
         public int InpObsMaxDist = 64;
 
         [Category("9. OBSTACLE FILTERS")]
@@ -215,7 +197,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "0.02";
+        public const string STRATEGY_VERSION = "0.03";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -445,8 +427,8 @@ namespace KatORB
             // Check safeguards and trade window limits
             if (!this.OrdersActive)
             {
-                bool limitHit = (strategy.InpMaxSuccessOn && strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
-                             || (strategy.InpMaxLossOn   && strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
+                bool limitHit = (strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
+                             || (strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
                 if (limitHit && this.State != ORBState.ORB_DONE && this.State != ORBState.ORB_STOPPED)
                 {
                     this.State = ORBState.ORB_DONE;
@@ -456,7 +438,7 @@ namespace KatORB
 
             // Exceeded daily trading session window check
             int tfSeconds = (int)this.Period.Duration.TotalSeconds;
-            if (!this.OrdersActive && strategy.InpAfterMinutesOn && serverTime >= nyoTime.AddMinutes(strategy.InpAfterMinutes))
+            if (!this.OrdersActive && serverTime >= nyoTime.AddMinutes(strategy.InpAfterMinutes))
             {
                 if (this.State != ORBState.ORB_STOPPED && this.State != ORBState.ORB_DONE)
                 {
@@ -766,8 +748,8 @@ namespace KatORB
                     // Calculate stats by tracking account updates
                     UpdateWinLossCounter();
 
-                    bool limitHit = (strategy.InpMaxSuccessOn && strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
-                                 || (strategy.InpMaxLossOn   && strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
+                    bool limitHit = (strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
+                                 || (strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
                     this.State = (strategy.InpContAfter1st && !limitHit) ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
                     strategy.Log($"[{Comment}] Active trades closed. Resuming ORB breakout scan.");
                 }
@@ -808,7 +790,7 @@ namespace KatORB
             bool hasPosition = activePositions.Count > 0;
 
             // 1. Unfilled candles check (for pending stop orders only)
-            if (strategy.InpUnfilledCandlesOn && hasPending && !hasPosition && this.PlacedTime > DateTime.MinValue)
+            if (hasPending && !hasPosition && this.PlacedTime > DateTime.MinValue)
             {
                 int barsPassed = CalculateBarsShift(this.PlacedTime);
                 if (barsPassed >= strategy.InpUnfilledCandles)
@@ -826,16 +808,6 @@ namespace KatORB
                 {
                     shouldFlatten = true;
                     reason = $"No TP hit after {strategy.InpAfterFilledMinutes} minutes";
-                }
-            }
-
-            // 2. Max session minutes passed check
-            if (!shouldFlatten && strategy.InpAfterMinutesOn && nyoTime > DateTime.MinValue)
-            {
-                if (serverTime >= nyoTime.AddMinutes(strategy.InpAfterMinutes))
-                {
-                    shouldFlatten = true;
-                    reason = $"Trading session active window closed ({strategy.InpAfterMinutes} min)";
                 }
             }
 
@@ -929,15 +901,15 @@ namespace KatORB
                 this.CancelReason = reason;
                 FlattenAll();
 
-                bool sessionClosed = strategy.InpAfterMinutesOn && serverTime >= nyoTime.AddMinutes(strategy.InpAfterMinutes);
+                bool sessionClosed = serverTime >= nyoTime.AddMinutes(strategy.InpAfterMinutes);
                 if (sessionClosed)
                 {
                     this.State = ORBState.ORB_STOPPED;
                 }
                 else
                 {
-                    bool limitHit = (strategy.InpMaxSuccessOn && strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
-                                 || (strategy.InpMaxLossOn   && strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
+                    bool limitHit = (strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
+                                 || (strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
                     this.State = (strategy.InpContAfter1st && !limitHit) ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
                 }
             }
@@ -1429,7 +1401,7 @@ namespace KatORB
 
             foreach (var pos in matchingPositions)
             {
-                ManageChaseTrailing(pos, strategy.InpTrailTrigger, strategy.InpTrailDistance, strategy.InpTrailStep);
+                ManageChaseTrailing(pos, strategy.InpTrailTrigger, strategy.InpTrailDistance, 1);
             }
         }
 
