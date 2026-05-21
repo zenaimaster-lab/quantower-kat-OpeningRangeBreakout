@@ -1,229 +1,237 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 using TradingPlatform.BusinessLayer;
 
 namespace KatORB
 {
     public class KatOpeningRangeBreakout : Strategy
     {
+        [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 1)]
         public Symbol CurrentSymbol { get; set; }
 
+        [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Account", 2)]
         public Account CurrentAccount { get; set; }
 
-        //--- Instance Settings
+        [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Magic Number", 10)]
         public int InpMagicNumber = 202605011;
 
-        [InputParameter("EA Operating Mode (0=Auto, 1=Manual)", 20)]
+        [Category("1. GENERAL & SCHEDULE")]
+        [InputParameter("EA Mode (0=Auto, 1=Man)", 20)]
         public int InpEaMode = 0; // 0=Auto, 1=Manual
 
-        //--- Schedule Settings
-        [InputParameter("NY Open Hour (NY Time)", 30)]
-        public int InpNyHour = 9;
-
-        [InputParameter("NY Open Minute", 40)]
-        public int InpNyMinute = 30;
-
-        [InputParameter("NY Open Second", 50)]
-        public int InpNySecond = 0;
-
-        [InputParameter("Broker UTC Offset (NY Time)", 60)]
+        [Category("1. GENERAL & SCHEDULE")]
+        [InputParameter("Broker UTC Offset", 30)]
         public int InpUtcOffset = -4; // NY standard daylight offset
 
+        private const int InpNyHour = 9;
+        private const int InpNyMinute = 30;
+        private const int InpNySecond = 0;
+
         //--- Timeframe Toggles
-        [InputParameter("Run 2m Timeframe", 70)]
+        [Category("2. TIMEFRAMES")]
+        [InputParameter("Run 2m", 40)]
         public bool Inp2mActive = true;
         
-        [InputParameter("Run 5m Timeframe", 80)]
+        [Category("2. TIMEFRAMES")]
+        [InputParameter("Run 5m", 50)]
         public bool Inp5mActive = true;
 
-        [InputParameter("Run 15m Timeframe", 90)]
-        public bool Inp15mActive = true;
+        [Category("2. TIMEFRAMES")]
+        [InputParameter("Run 15m", 60)]
+        public bool Inp15mActive = false;
 
-        [InputParameter("Run 30m Timeframe", 100)]
-        public bool Inp30mActive = true;
+        [Category("2. TIMEFRAMES")]
+        [InputParameter("Run 30m", 70)]
+        public bool Inp30mActive = false;
 
-        [InputParameter("Default Stop Loss (Points)", 110)]
-        public int InpSlPoints = 1500;
-
-        [InputParameter("Default Take Profit (Points)", 120)]
-        public int InpTpPoints = 15000;
-
-        [InputParameter("Use Candle Extremes for SL", 130)]
-        public bool InpSlCandle = false;
-
-        [InputParameter("Allowed Trade Directions (0=Both, 1=BuyOnly, 2=SellOnly)", 140)]
-        public int InpOrderMode = 0; // 0=Both, 1=Buy, 2=Sell
-
-        [InputParameter("Entry/SL Buffer (Points)", 150)]
-        public int InpEntryBufferPoints = 5;
-
-        [InputParameter("Use Custom Retest Candle", 160)]
+        [Category("2. TIMEFRAMES")]
+        [InputParameter("Use Custom Retest", 80)]
         public bool InpCustomRetestOn = true;
 
-        [InputParameter("Retest Candle Timeframe (Min)", 170)]
+        [Category("2. TIMEFRAMES")]
+        [InputParameter(" -> Retest (Min)", 90)]
         public int InpCustomRetestMin = 1;
 
-        [InputParameter("Risk per Trade (%)", 180)]
-        public double InpRiskPercent = 2.0;
+        //--- Order Settings
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Stop Loss (Pts)", 100)]
+        public int InpSlPoints = 1500;
 
-        [InputParameter("Fix Lot Size", 190)]
-        public double InpFixLot = 2.0;
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Take Profit (Pts)", 110)]
+        public int InpTpPoints = 15000;
 
-        [InputParameter("Risk Management (true=Risk%, false=Fix Lot)", 200)]
-        public bool InpRiskModeOn = true;
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Use Candle SL", 120)]
+        public bool InpSlCandle = false;
 
-        [InputParameter("Allow Entry Continue After 1st", 205)]
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Trade Dir (0=Both, 1=B, 2=S)", 130)]
+        public int InpOrderMode = 0; // 0=Both, 1=Buy, 2=Sell
+
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Entry Buffer (Pts)", 140)]
+        public int InpEntryBufferPoints = 5;
+
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Cont. After 1st Entry", 150)]
         public bool InpContAfter1st = true;
 
-        [InputParameter("Max Success Wins Today", 206)]
+        //--- Risk & Contracts
+        [Category("4. RISK & CONTRACTS")]
+        [InputParameter("Fix Contract", 160)]
+        public double InpFixContract = 1.0;
+
+        //--- Safeguards & Limits
+        [Category("5. SAFEGUARDS & LIMITS")]
+        [InputParameter("Limit Max Wins Today", 170)]
         public bool InpMaxSuccessOn = true;
         
-        [InputParameter("Max Success Value", 207)]
+        [Category("5. SAFEGUARDS & LIMITS")]
+        [InputParameter(" -> Max Wins Value", 180)]
         public int InpMaxSuccess = 2;
 
-        [InputParameter("Max Losses Today", 208)]
+        [Category("5. SAFEGUARDS & LIMITS")]
+        [InputParameter("Limit Max Losses Today", 190)]
         public bool InpMaxLossOn = true;
 
-        [InputParameter("Max Losses Value", 209)]
+        [Category("5. SAFEGUARDS & LIMITS")]
+        [InputParameter(" -> Max Losses Value", 200)]
         public int InpMaxLoss = 1;
 
-        [InputParameter("Max Entry Dist from Boundary (Points)", 210)]
+        [Category("5. SAFEGUARDS & LIMITS")]
+        [InputParameter("Limit Boundary Dist", 210)]
         public bool InpMaxDistRangeOn = true;
 
-        [InputParameter("Max Entry Dist Value", 211)]
+        [Category("5. SAFEGUARDS & LIMITS")]
+        [InputParameter(" -> Max Boundary Dist (Pts)", 220)]
         public int InpMaxDistRange = 6000;
 
-        //--- Trailing settings
-        [InputParameter("Trailing Stop Mode (0=Off, 1=Chase, 2=Candle1, 3=Candle2, 4=Candle3)", 220)]
+        //--- Trailing Settings
+        [Category("6. TRAILING STOPLOSS")]
+        [InputParameter("Trail Mode (0=Off, 1=Ch, 2-4=Cd)", 230)]
         public int InpTrailMode = 1; // 1 = TM_CHASE
         
-        [InputParameter("Trailing Trigger (Points)", 230)]
+        [Category("6. TRAILING STOPLOSS")]
+        [InputParameter("Trail Trigger (Pts)", 240)]
         public int InpTrailTrigger = 1500;
 
-        [InputParameter("Trailing Distance (Points)", 240)]
+        [Category("6. TRAILING STOPLOSS")]
+        [InputParameter("Trail Distance (Pts)", 250)]
         public int InpTrailDistance = 500;
 
-        [InputParameter("Trailing Step (Points)", 250)]
+        [Category("6. TRAILING STOPLOSS")]
+        [InputParameter("Trail Step (Pts)", 260)]
         public int InpTrailStep = 1;
 
-        [InputParameter("Breakeven Activation (Points)", 260)]
-        public int InpBeActivatePts = 200;
-
-        [InputParameter("Breakeven Lock Profit (Points)", 270)]
-        public int InpBeLockPts = 50;
-
-        [InputParameter("Enable Breakeven", 280)]
-        public bool InpBeEnabled = false;
-
         //--- Auto-Flatten Conditions
-        [InputParameter("Touch Mid Auto-Flatten", 281)]
-        public bool InpTouchMidOn = true;
-
-        [InputParameter("Unfavor Move Auto-Flatten", 282)]
-        public bool InpUnfavorMoveOn = true;
-
-        [InputParameter("Unfavor Move Distance (Points)", 283)]
-        public int InpUnfavorMovePts = 8000;
-
-        [InputParameter("Unfilled Candles Auto-Flatten", 284)]
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Cancel if Unfilled", 270)]
         public bool InpUnfilledCandlesOn = false;
 
-        [InputParameter("Unfilled Candles Count", 285)]
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter(" -> Max Unfilled Bars", 280)]
         public int InpUnfilledCandles = 2;
 
-        [InputParameter("After Filled Minutes Flatten", 286)]
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Flatten after X Mins", 290)]
         public bool InpAfterFilledMinutesOn = true;
 
-        [InputParameter("After Filled Minutes", 287)]
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter(" -> Max Filled Mins", 300)]
         public int InpAfterFilledMinutes = 5;
 
-        [InputParameter("After Session Minutes Flatten", 288)]
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Flatten at End Session", 310)]
         public bool InpAfterMinutesOn = true;
 
-        [InputParameter("After Session Minutes", 289)]
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter(" -> Session Limit (Mins)", 320)]
         public int InpAfterMinutes = 60;
 
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Flatten on Bad Move", 330)]
+        public bool InpUnfavorMoveOn = true;
+
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter(" -> Bad Move (Pts)", 340)]
+        public int InpUnfavorMovePts = 8000;
+
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Flatten on Mid Touch", 350)]
+        public bool InpTouchMidOn = true;
+
         //--- Favor EMA Trend Filters
-        [InputParameter("Favor EMA 1 Filter", 291)]
-        public bool InpFavorEma1On = false;
+        [Category("8. EMA TREND FILTERS")]
+        [InputParameter("Favor EMA 9 (Entry)", 360)]
+        public bool InpFavorEma9On = false;
 
-        [InputParameter("Favor EMA 1 Period", 292)]
-        public int InpFavorEma1Period = 9;
+        [Category("8. EMA TREND FILTERS")]
+        [InputParameter("Favor EMA 21 (Entry)", 370)]
+        public bool InpFavorEma21On = false;
 
-        [InputParameter("Favor EMA 2 Filter", 293)]
-        public bool InpFavorEma2On = false;
-
-        [InputParameter("Favor EMA 2 Period", 294)]
-        public int InpFavorEma2Period = 21;
-
-        [InputParameter("Favor EMA 3 Filter", 295)]
-        public bool InpFavorEma3On = false;
-
-        [InputParameter("Favor EMA 3 Period", 296)]
-        public int InpFavorEma3Period = 34;
+        [Category("8. EMA TREND FILTERS")]
+        [InputParameter("Favor EMA 34 (Entry)", 380)]
+        public bool InpFavorEma34On = false;
 
         //--- Active Trailing EMA Trend Filters
-        [InputParameter("Active Price < EMA 1 Flatten", 297)]
-        public bool InpEma1On = false;
+        [Category("8. EMA TREND FILTERS")]
+        [InputParameter("Trail EMA 9 (Exit)", 390)]
+        public bool InpTrailEma9On = false;
 
-        [InputParameter("Active EMA 1 Period", 298)]
-        public int InpEma1Period = 9;
+        [Category("8. EMA TREND FILTERS")]
+        [InputParameter("Trail EMA 21 (Exit)", 400)]
+        public bool InpTrailEma21On = false;
 
-        [InputParameter("Active Price < EMA 2 Flatten", 299)]
-        public bool InpEma2On = false;
-
-        [InputParameter("Active EMA 2 Period", 300)]
-        public int InpEma2Period = 21;
-
-        [InputParameter("Active Price < EMA 3 Flatten", 301)]
-        public bool InpEma3On = false;
-
-        [InputParameter("Active EMA 3 Period", 302)]
-        public int InpEma3Period = 34;
+        [Category("8. EMA TREND FILTERS")]
+        [InputParameter("Trail EMA 34 (Exit)", 410)]
+        public bool InpTrailEma34On = false;
 
         //--- Obstacles Settings
-        [InputParameter("Max dist to obstacle (Points)", 310)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Max Obstacle Dist (Pts)", 420)]
         public int InpObsMaxDist = 1600;
 
-        [InputParameter("Block on 5m Range obstacle", 320)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block 5m Obstacle", 430)]
         public bool InpObsRange5mOn = true;
 
-        [InputParameter("Block on 15m Range obstacle", 330)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block 15m Obstacle", 440)]
         public bool InpObsRange15mOn = true;
 
-        [InputParameter("Block on 30m Range obstacle", 340)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block 30m Obstacle", 450)]
         public bool InpObsRange30mOn = true;
 
-        [InputParameter("Block on Prev Day H/L obstacle", 350)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block Prev Day H/L", 460)]
         public bool InpObsPrevDayHLOn = true;
 
-        [InputParameter("Block on Day VWAP obstacle", 360)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block VWAP (Day)", 470)]
         public bool InpObsDayVwapOn = true;
 
-        [InputParameter("Block on Week VWAP obstacle", 370)]
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block VWAP (Week)", 480)]
         public bool InpObsWeekVwapOn = true;
 
-        [InputParameter("Block on EMA 1 obstacle", 380)]
-        public bool InpObsEma1On = true;
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block EMA 250 (M2)", 490)]
+        public bool InpObsEma250On = true;
 
-        [InputParameter("EMA 1 Period (M2)", 390)]
-        public int InpObsEma1Period = 250;
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block EMA 255 (M2)", 500)]
+        public bool InpObsEma255On = true;
 
-        [InputParameter("Block on EMA 2 obstacle", 400)]
-        public bool InpObsEma2On = true;
-
-        [InputParameter("EMA 2 Period (M2)", 410)]
-        public int InpObsEma2Period = 255;
-
-        [InputParameter("Block on EMA 3 obstacle", 420)]
-        public bool InpObsEma3On = true;
-
-        [InputParameter("EMA 3 Period (M2)", 430)]
-        public int InpObsEma3Period = 34;
+        [Category("9. OBSTACLE FILTERS")]
+        [InputParameter("Block EMA 34 (M2)", 510)]
+        public bool InpObsEma34On = true;
 
         //--- Core State Variables
         private TimeManager timeManager;
@@ -381,6 +389,7 @@ namespace KatORB
 
         //--- Helper methods for historical access
         public HistoricalData GetM1History() => this.historicalDataM1;
+        public HistoricalData GetM2History() => this.historicalDataM2;
         public HistoricalData GetDailyHistory() => this.dailyHistory;
         public HistoricalData? GetRetestHistory() => InpCustomRetestOn ? this.historicalDataRetest : null;
 
@@ -660,9 +669,7 @@ namespace KatORB
                     tp = Math.Round(tp / tickSize) * tickSize;
 
                     int slPointsCalculated = (int)Math.Max(50, Math.Abs(entryPrice - sl) / tickSize);
-                    double lot = strategy.InpRiskModeOn
-                        ? strategy.RiskManager.CalcLotSize(strategy.InpRiskPercent, slPointsCalculated)
-                        : strategy.RiskManager.NormalizeLot(strategy.InpFixLot);
+                    double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
                     {
@@ -747,9 +754,7 @@ namespace KatORB
                     tp = Math.Round(tp / tickSize) * tickSize;
 
                     int slPointsCalculated = (int)Math.Max(50, Math.Abs(entryPrice - sl) / tickSize);
-                    double lot = strategy.InpRiskModeOn
-                        ? strategy.RiskManager.CalcLotSize(strategy.InpRiskPercent, slPointsCalculated)
-                        : strategy.RiskManager.NormalizeLot(strategy.InpFixLot);
+                    double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
                     {
@@ -1068,16 +1073,16 @@ namespace KatORB
 
             if (isEntry)
             {
-                emaOn[0] = strategy.InpFavorEma1On; emaPeriod[0] = strategy.InpFavorEma1Period;
-                emaOn[1] = strategy.InpFavorEma2On; emaPeriod[1] = strategy.InpFavorEma2Period;
-                emaOn[2] = strategy.InpFavorEma3On; emaPeriod[2] = strategy.InpFavorEma3Period;
+                emaOn[0] = strategy.InpFavorEma9On; emaPeriod[0] = 9;
+                emaOn[1] = strategy.InpFavorEma21On; emaPeriod[1] = 21;
+                emaOn[2] = strategy.InpFavorEma34On; emaPeriod[2] = 34;
                 label = "Favor EMA";
             }
             else
             {
-                emaOn[0] = strategy.InpEma1On; emaPeriod[0] = strategy.InpEma1Period;
-                emaOn[1] = strategy.InpEma2On; emaPeriod[1] = strategy.InpEma2Period;
-                emaOn[2] = strategy.InpEma3On; emaPeriod[2] = strategy.InpEma3Period;
+                emaOn[0] = strategy.InpTrailEma9On; emaPeriod[0] = 9;
+                emaOn[1] = strategy.InpTrailEma21On; emaPeriod[1] = 21;
+                emaOn[2] = strategy.InpTrailEma34On; emaPeriod[2] = 34;
                 label = "Price < EMA";
             }
 
@@ -1104,7 +1109,12 @@ namespace KatORB
 
         public double CalculateEMA(int period, int targetIdx)
         {
-            if (this.History == null || this.History.Count < period || targetIdx < 0 || targetIdx >= this.History.Count)
+            return CalculateEMA(this.History, period, targetIdx);
+        }
+
+        public double CalculateEMA(HistoricalData historyStream, int period, int targetIdx)
+        {
+            if (historyStream == null || historyStream.Count < period || targetIdx < 0 || targetIdx >= historyStream.Count)
                 return 0;
 
             double multiplier = 2.0 / (period + 1);
@@ -1116,14 +1126,14 @@ namespace KatORB
 
             for (int i = 0; i < period; i++)
             {
-                sum += ((HistoryItemBar)this.History[startIdx + i]).Close;
+                sum += ((HistoryItemBar)historyStream[startIdx + i]).Close;
             }
             double ema = sum / period;
 
             // Recurse to find precise EMA at the target index
             for (int i = startIdx + period; i <= targetIdx; i++)
             {
-                double close = ((HistoryItemBar)this.History[i]).Close;
+                double close = ((HistoryItemBar)historyStream[i]).Close;
                 ema = (close - ema) * multiplier + ema;
             }
 
@@ -1252,33 +1262,39 @@ namespace KatORB
             }
 
             // M2 EMAs Obstacle
-            if (strategy.InpObsEma1On && strategy.InpObsEma1Period > 0)
+            var m2History = strategy.GetM2History();
+            if (m2History != null && m2History.Count > 0)
             {
-                double emaVal = CalculateEMA(strategy.InpObsEma1Period, this.History.Count - 2);
-                if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
-                {
-                    outReason = $"M2 EMA {strategy.InpObsEma1Period} obstacle";
-                    return true;
-                }
-            }
+                int targetIdx = m2History.Count - 2;
 
-            if (strategy.InpObsEma2On && strategy.InpObsEma2Period > 0)
-            {
-                double emaVal = CalculateEMA(strategy.InpObsEma2Period, this.History.Count - 2);
-                if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                if (strategy.InpObsEma250On)
                 {
-                    outReason = $"M2 EMA {strategy.InpObsEma2Period} obstacle";
-                    return true;
+                    double emaVal = CalculateEMA(m2History, 250, targetIdx);
+                    if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                    {
+                        outReason = "M2 EMA 250 obstacle";
+                        return true;
+                    }
                 }
-            }
 
-            if (strategy.InpObsEma3On && strategy.InpObsEma3Period > 0)
-            {
-                double emaVal = CalculateEMA(strategy.InpObsEma3Period, this.History.Count - 2);
-                if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                if (strategy.InpObsEma255On)
                 {
-                    outReason = $"M2 EMA {strategy.InpObsEma3Period} obstacle";
-                    return true;
+                    double emaVal = CalculateEMA(m2History, 255, targetIdx);
+                    if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                    {
+                        outReason = "M2 EMA 255 obstacle";
+                        return true;
+                    }
+                }
+
+                if (strategy.InpObsEma34On)
+                {
+                    double emaVal = CalculateEMA(m2History, 34, targetIdx);
+                    if (emaVal > 0 && Math.Abs(entryPrice - emaVal) / tickSize < strategy.InpObsMaxDist)
+                    {
+                        outReason = "M2 EMA 34 obstacle";
+                        return true;
+                    }
                 }
             }
 
@@ -1399,7 +1415,7 @@ namespace KatORB
 
         public double CalcLotSize(double riskPercent, int slPoints)
         {
-            if (riskPercent <= 0 || slPoints <= 0) return NormalizeLot(strategy.InpFixLot);
+            if (riskPercent <= 0 || slPoints <= 0) return NormalizeLot(strategy.InpFixContract);
 
             double balance = strategy.CurrentAccount.Balance;
             double riskAmt = balance * (riskPercent / 100.0);
@@ -1408,13 +1424,13 @@ namespace KatORB
             double tickValue = strategy.CurrentSymbol.TickSize * strategy.CurrentSymbol.LotSize;
             double tickSize = strategy.CurrentSymbol.TickSize;
 
-            if (tickValue <= 0 || tickSize <= 0) return NormalizeLot(strategy.InpFixLot);
+            if (tickValue <= 0 || tickSize <= 0) return NormalizeLot(strategy.InpFixContract);
 
             // Dynamic loss per lot size
             double valuePerPoint = tickValue / tickSize * tickSize;
             double lossPerLot = slPoints * valuePerPoint;
 
-            if (lossPerLot <= 0) return NormalizeLot(strategy.InpFixLot);
+            if (lossPerLot <= 0) return NormalizeLot(strategy.InpFixContract);
 
             double lot = riskAmt / lossPerLot;
             return NormalizeLot(lot);
@@ -1503,45 +1519,10 @@ namespace KatORB
 
         public void Process(ORBRunner runner)
         {
-            if (strategy.InpTrailMode == 0 && !strategy.InpBeEnabled) return;
+            if (strategy.InpTrailMode == 0) return;
             if (string.IsNullOrEmpty(runner.LastOrderTag)) return;
 
-            double tickSize = strategy.CurrentSymbol.TickSize;
-
-            // 1. Process Global Volume-Weighted Average Breakeven
-            if (strategy.InpBeEnabled)
-            {
-                var aggregate = new PositionAggregate();
-                PositionAggregator.Collect(strategy.CurrentSymbol, strategy.MagicNumber, runner.Comment, aggregate);
-
-                if (aggregate.TotalQuantity > 0 && aggregate.TicketCount > 0)
-                {
-                    double activateDist = strategy.InpBeActivatePts * tickSize;
-                    double lockDist = strategy.InpBeLockPts * tickSize;
-                    double avgEntry = aggregate.WeightedEntry;
-                    bool triggered = false;
-
-                    double bid = strategy.CurrentSymbol.Bid;
-                    double ask = strategy.CurrentSymbol.Ask;
-
-                    if (aggregate.DominantSide == Side.Buy)
-                        triggered = (bid - avgEntry >= activateDist);
-                    else
-                        triggered = (avgEntry - ask >= activateDist);
-
-                    if (triggered)
-                    {
-                        double newSL = aggregate.DominantSide == Side.Buy
-                            ? (avgEntry + lockDist)
-                            : (avgEntry - lockDist);
-
-                        newSL = Math.Round(newSL / tickSize) * tickSize;
-                        ApplyAggregateSL(aggregate, newSL);
-                    }
-                }
-            }
-
-            // 2. Process Trail Stop modifiers on active positions
+            // Process Trail Stop modifiers on active positions
             var matchingPositions = Core.Instance.Positions
                 .Where(p => p.Symbol == strategy.CurrentSymbol && p.Comment == runner.LastOrderTag)
                 .ToList();
@@ -1560,35 +1541,12 @@ namespace KatORB
             }
         }
 
-        private void ApplyAggregateSL(PositionAggregate aggregate, double newSL)
-        {
-            double tickSize = strategy.CurrentSymbol.TickSize;
-            foreach (var pos in aggregate.Positions)
-            {
-                var slOrder = pos.StopLoss;
-                double slPrice = slOrder != null ? slOrder.TriggerPrice : 0;
-
-                bool shouldMove = false;
-                if (pos.Side == Side.Buy)
-                    shouldMove = (newSL > slPrice || slPrice == 0);
-                else
-                    shouldMove = (newSL < slPrice || slPrice == 0);
-
-                if (shouldMove && Math.Abs(slPrice - newSL) > tickSize)
-                {
-                    var res = Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, newSL, newSL, slOrder.TrailOffset);
-                    if (res.Status == TradingOperationResultStatus.Failure)
-                    {
-                        strategy.Log($"[{aggregate.DominantSide} BE Modify failed on position {pos.Id}]: {res.Message}", StrategyLoggingLevel.Error);
-                    }
-                }
-            }
-        }
-
         private void ManageChaseTrailing(Position pos, int triggerPts, int distancePts, int stepPts)
         {
             var slOrder = pos.StopLoss;
-            double slPrice = slOrder != null ? slOrder.TriggerPrice : 0;
+            if (slOrder == null) return;
+
+            double slPrice = slOrder.TriggerPrice;
             double tickSize = strategy.CurrentSymbol.TickSize;
 
             double triggerDist = triggerPts * tickSize;
@@ -1636,7 +1594,9 @@ namespace KatORB
             if (historyStream == null || historyStream.Count < shift + 2) return;
 
             var slOrder = pos.StopLoss;
-            double slPrice = slOrder != null ? slOrder.TriggerPrice : 0;
+            if (slOrder == null) return;
+
+            double slPrice = slOrder.TriggerPrice;
             double tickSize = strategy.CurrentSymbol.TickSize;
 
             // shift 1 = historyStream[historyStream.Count - 2]
