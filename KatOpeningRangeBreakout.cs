@@ -46,7 +46,7 @@ namespace KatORB
         public bool Inp30mActive = false;
 
         [Category("2. TIMEFRAMES")]
-        [InputParameter("Retest TF candle (min)", 90)]
+        [InputParameter("Retest TF candle min", 90)]
         public int InpCustomRetestMin = 1;
 
         //--- Order Settings
@@ -99,11 +99,11 @@ namespace KatORB
         public bool InpAfterFilledMinutesOn = true;
 
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Flatten if not hit Trigger, after (min)", 300)]
+        [InputParameter("Flatten if not hit Trigger, after min", 300)]
         public int InpAfterFilledMinutes = 5;
 
         [Category("7. FLATTEN & CANCEL")]
-        [InputParameter("Stop trading after (min)", 320)]
+        [InputParameter("Stop trading after min", 320)]
         public int InpAfterMinutes = 60;
 
         [Category("7. FLATTEN & CANCEL")]
@@ -191,7 +191,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "0.04";
+        public const string STRATEGY_VERSION = "0.05";
 
         public int MagicNumber => InpMagicNumber;
 
