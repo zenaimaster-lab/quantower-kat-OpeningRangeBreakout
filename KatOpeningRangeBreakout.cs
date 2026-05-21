@@ -230,7 +230,7 @@ namespace KatORB
             }
 
             //--- Subscriptions to required historical data streams
-            DateTime loadFrom = DateTime.UtcNow.AddDays(-5);
+            DateTime loadFrom = Core.Instance.TimeUtils.DateTimeUtcNow.AddDays(-5);
             this.historicalDataM1 = this.CurrentSymbol.GetHistory(Period.MIN1, loadFrom);
             this.historicalDataM2 = this.CurrentSymbol.GetHistory(Period.MIN2, loadFrom);
             this.historicalDataM5 = this.CurrentSymbol.GetHistory(Period.MIN5, loadFrom);
@@ -513,6 +513,22 @@ namespace KatORB
             int tfSeconds = (int)this.Period.Duration.TotalSeconds;
             if (serverTime >= nyoTime.AddSeconds(tfSeconds))
             {
+                // 1. Ưu tiên tìm trực tiếp nến đã đóng trong lịch sử của runner
+                if (this.History != null && this.History.Count > 0)
+                {
+                    var targetBar = this.History.Cast<HistoryItemBar>().FirstOrDefault(b => b.TimeLeft == nyoTime);
+                    if (targetBar != null)
+                    {
+                        this.RangeHigh = targetBar.High;
+                        this.RangeLow = targetBar.Low;
+                        this.CandleTime = nyoTime;
+                        this.State = ORBState.ORB_WAIT_BREAK;
+                        strategy.Log($"[{Comment}] Range Formed (from own TF): High={RangeHigh}, Low={RangeLow}");
+                        return;
+                    }
+                }
+
+                // 2. Fallback sang M1 nếu nến chính chưa kịp cập nhật hoặc bị trễ dữ liệu
                 var m1History = strategy.GetM1History();
                 if (m1History == null || m1History.Count == 0) return;
 
@@ -522,22 +538,26 @@ namespace KatORB
                     .Cast<HistoryItemBar>()
                     .ToList();
 
-                // Wait for strict bar synchronization to ensure M1 closed candles match exactly
-                if (rangeBars.Count < expectedBars) return;
-
-                double maxH = double.MinValue;
-                double minL = double.MaxValue;
-                foreach (var bar in rangeBars)
+                if (rangeBars.Count > 0)
                 {
-                    if (bar.High > maxH) maxH = bar.High;
-                    if (bar.Low < minL) minL = bar.Low;
-                }
+                    // Cho phép tạo Range nếu đã qua thời gian tạo nến hoặc đủ số nến
+                    if (serverTime >= nyoTime.AddSeconds(tfSeconds + 10) || rangeBars.Count >= expectedBars)
+                    {
+                        double maxH = double.MinValue;
+                        double minL = double.MaxValue;
+                        foreach (var bar in rangeBars)
+                        {
+                            if (bar.High > maxH) maxH = bar.High;
+                            if (bar.Low < minL) minL = bar.Low;
+                        }
 
-                this.RangeHigh = maxH;
-                this.RangeLow = minL;
-                this.CandleTime = nyoTime;
-                this.State = ORBState.ORB_WAIT_BREAK;
-                strategy.Log($"[{Comment}] Range Formed: High={RangeHigh}, Low={RangeLow}");
+                        this.RangeHigh = maxH;
+                        this.RangeLow = minL;
+                        this.CandleTime = nyoTime;
+                        this.State = ORBState.ORB_WAIT_BREAK;
+                        strategy.Log($"[{Comment}] Range Formed (Fallback M1): High={RangeHigh}, Low={RangeLow}, Bars={rangeBars.Count}/{expectedBars}");
+                    }
+                }
             }
         }
 
@@ -588,8 +608,10 @@ namespace KatORB
             //--- Break UP (Bullish Retest Validation)
             if (this.BreakDir == 1)
             {
+                double midPrice = (this.RangeHigh + this.RangeLow) / 2.0;
                 // Opposite color candle (bearish: close < open) touching or penetrating the broken high range
-                if (closePrice < openPrice && lowPrice <= this.RangeHigh)
+                // and the candle low must not penetrate below the range mid-point
+                if (closePrice < openPrice && lowPrice <= this.RangeHigh && lowPrice >= midPrice)
                 {
                     double entryPrice = highPrice + (buffer * tickSize) + spread;
                     entryPrice = Math.Round(entryPrice / tickSize) * tickSize;
@@ -669,8 +691,10 @@ namespace KatORB
             //--- Break DOWN (Bearish Retest Validation)
             else if (this.BreakDir == -1)
             {
+                double midPrice = (this.RangeHigh + this.RangeLow) / 2.0;
                 // Opposite color candle (bullish: close > open) touching or penetrating the broken low range
-                if (closePrice > openPrice && highPrice >= this.RangeLow)
+                // and the candle high must not penetrate above the range mid-point
+                if (closePrice > openPrice && highPrice >= this.RangeLow && highPrice <= midPrice)
                 {
                     double entryPrice = lowPrice - (buffer * tickSize);
                     entryPrice = Math.Round(entryPrice / tickSize) * tickSize;
@@ -1021,21 +1045,21 @@ namespace KatORB
             if (historyStream == null || historyStream.Count < period || targetIdx < 0 || targetIdx >= historyStream.Count)
                 return 0;
 
+            if (targetIdx < period - 1)
+                return 0;
+
             double multiplier = 2.0 / (period + 1);
 
-            // Starting SMA seed
+            // Starting SMA seed (average of the first 'period' bars: index 0 to period - 1)
             double sum = 0;
-            int startIdx = targetIdx - period + 1;
-            if (startIdx < 0) return 0;
-
             for (int i = 0; i < period; i++)
             {
-                sum += ((HistoryItemBar)historyStream[startIdx + i]).Close;
+                sum += ((HistoryItemBar)historyStream[i]).Close;
             }
             double ema = sum / period;
 
-            // Recurse to find precise EMA at the target index
-            for (int i = startIdx + period; i <= targetIdx; i++)
+            // Recurse from index 'period' to targetIdx to get fully smoothed EMA
+            for (int i = period; i <= targetIdx; i++)
             {
                 double close = ((HistoryItemBar)historyStream[i]).Close;
                 ema = (close - ema) * multiplier + ema;
@@ -1070,20 +1094,21 @@ namespace KatORB
             var dailyHistory = strategy.GetDailyHistory();
             if (dailyHistory == null || dailyHistory.Count < period) return 0;
 
-            double multiplier = 2.0 / (period + 1);
             int targetIdx = dailyHistory.Count - 2; // last closed daily bar
+            if (targetIdx < period - 1) return 0;
 
+            double multiplier = 2.0 / (period + 1);
+
+            // Starting SMA seed (average of the first 'period' bars: index 0 to period - 1)
             double sum = 0;
-            int startIdx = targetIdx - period + 1;
-            if (startIdx < 0) return 0;
-
             for (int i = 0; i < period; i++)
             {
-                sum += ((HistoryItemBar)dailyHistory[startIdx + i]).Close;
+                sum += ((HistoryItemBar)dailyHistory[i]).Close;
             }
             double ema = sum / period;
 
-            for (int i = startIdx + period; i <= targetIdx; i++)
+            // Recurse to targetIdx to get fully smoothed EMA
+            for (int i = period; i <= targetIdx; i++)
             {
                 double close = ((HistoryItemBar)dailyHistory[i]).Close;
                 ema = (close - ema) * multiplier + ema;
@@ -1245,7 +1270,11 @@ namespace KatORB
                 .Cast<HistoryItemBar>()
                 .ToList();
 
-            if (bars.Count < minutes) return false;
+            if (bars.Count == 0) return false;
+
+            // Cho phép tính toán nếu đã qua thời điểm tạo xong nến hoặc đã đủ số nến
+            DateTime serverTime = strategy.TimeManager.GetServerTime();
+            if (serverTime < nyoTime.AddSeconds(seconds) && bars.Count < minutes) return false;
 
             double maxH = double.MinValue;
             double minL = double.MaxValue;
@@ -1274,7 +1303,7 @@ namespace KatORB
             var conn = Core.Instance.Connections.Connected.FirstOrDefault();
             if (conn != null)
                 return conn.ServerTime;
-            return Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(DateTime.UtcNow);
+            return Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(Core.Instance.TimeUtils.DateTimeUtcNow);
         }
 
         public DateTime GetTargetTime() => targetTimeServer;
@@ -1292,15 +1321,14 @@ namespace KatORB
             if (utcHour >= 24) { utcHour -= 24; dayAdjust = 1; }
             if (utcHour < 0) { utcHour += 24; dayAdjust = -1; }
 
-            DateTime utcNow = DateTime.UtcNow;
+            // Tạo targetUtc sử dụng năm/tháng/ngày của serverNow để không bị lệch múi giờ
             DateTime targetUtc = new DateTime(
-                utcNow.Year, utcNow.Month, utcNow.Day,
+                serverNow.Year, serverNow.Month, serverNow.Day,
                 utcHour, nyMin, nySec, DateTimeKind.Utc
             ).AddDays(dayAdjust);
 
-            // Server target time = Target UTC time + server-to-UTC offset
-            TimeSpan serverToUtcOffset = serverNow - DateTime.UtcNow;
-            targetTimeServer = targetUtc + serverToUtcOffset;
+            // Chuyển đổi trực tiếp thông qua Quantower API mà không cần tự tính offset
+            targetTimeServer = Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(targetUtc);
             lastCalculatedDay = serverNow.Day;
         }
     }
@@ -1354,59 +1382,6 @@ namespace KatORB
         }
     }
 
-    //+------------------------------------------------------------------+
-    //| PositionAggregator — average statistics aggregator               |
-    //+------------------------------------------------------------------+
-    public class PositionAggregate
-    {
-        public double TotalQuantity { get; set; } = 0;
-        public double WeightedEntry { get; set; } = 0;
-        public double BuyQuantity { get; set; } = 0;
-        public double SellQuantity { get; set; } = 0;
-        public int TicketCount { get; set; } = 0;
-        public Side DominantSide { get; set; } = Side.Buy;
-        public List<Position> Positions { get; } = new List<Position>();
-    }
-
-    public static class PositionAggregator
-    {
-        public static void Collect(Symbol symbol, int magic, string strategyTagPrefix, PositionAggregate aggregate)
-        {
-            aggregate.TotalQuantity = 0;
-            aggregate.WeightedEntry = 0;
-            aggregate.BuyQuantity = 0;
-            aggregate.SellQuantity = 0;
-            aggregate.TicketCount = 0;
-            aggregate.Positions.Clear();
-
-            // Filters active positions matching Symbol and Strategy Comment Tag
-            var matching = Core.Instance.Positions
-                .Where(p => p.Symbol == symbol && !string.IsNullOrEmpty(p.Comment) && p.Comment.StartsWith(strategyTagPrefix))
-                .ToList();
-
-            foreach (var pos in matching)
-            {
-                double qty = pos.Quantity;
-                double price = pos.OpenPrice;
-
-                if (pos.Side == Side.Buy)
-                    aggregate.BuyQuantity += qty;
-                else
-                    aggregate.SellQuantity += qty;
-
-                aggregate.TotalQuantity += qty;
-                aggregate.WeightedEntry += price * qty;
-                aggregate.TicketCount++;
-                aggregate.Positions.Add(pos);
-            }
-
-            if (aggregate.TotalQuantity > 0)
-            {
-                aggregate.WeightedEntry /= aggregate.TotalQuantity;
-                aggregate.DominantSide = aggregate.BuyQuantity >= aggregate.SellQuantity ? Side.Buy : Side.Sell;
-            }
-        }
-    }
 
     //+------------------------------------------------------------------+
     //| TrailManager — handles trailing stop and breakeven              |
