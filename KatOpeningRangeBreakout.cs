@@ -378,6 +378,7 @@ namespace KatORB
         public bool TrailTriggerHit { get; set; } = false;
 
         private DateTime lastNYOTime = DateTime.MinValue;
+        private DateTime lastHistoryWarningTime = DateTime.MinValue;
 
         public ORBRunner(KatOpeningRangeBreakout strategy, Period period, int tfIndex, string comment, HistoricalData history)
         {
@@ -402,6 +403,7 @@ namespace KatORB
             this.CancelReason = "";
             this.EntryBreakDir = 0;
             this.TrailTriggerHit = false;
+            this.lastHistoryWarningTime = DateTime.MinValue;
         }
 
         public void Process(DateTime nyoTime, DateTime serverTime)
@@ -530,7 +532,15 @@ namespace KatORB
 
                 // 2. Fallback sang M1 nếu nến chính chưa kịp cập nhật hoặc bị trễ dữ liệu
                 var m1History = strategy.GetM1History();
-                if (m1History == null || m1History.Count == 0) return;
+                if (m1History == null || m1History.Count == 0)
+                {
+                    if (serverTime - this.lastHistoryWarningTime >= TimeSpan.FromSeconds(10))
+                    {
+                        strategy.Log($"[{Comment}] Waiting for M1 history to initialize (currently null or empty)");
+                        this.lastHistoryWarningTime = serverTime;
+                    }
+                    return;
+                }
 
                 int expectedBars = tfSeconds / 60;
                 var rangeBars = m1History
@@ -538,26 +548,30 @@ namespace KatORB
                     .Cast<HistoryItemBar>()
                     .ToList();
 
-                if (rangeBars.Count > 0)
+                if (rangeBars.Count < expectedBars)
                 {
-                    // Cho phép tạo Range nếu đã qua thời gian tạo nến hoặc đủ số nến
-                    if (serverTime >= nyoTime.AddSeconds(tfSeconds + 10) || rangeBars.Count >= expectedBars)
+                    if (serverTime - this.lastHistoryWarningTime >= TimeSpan.FromSeconds(10))
                     {
-                        double maxH = double.MinValue;
-                        double minL = double.MaxValue;
-                        foreach (var bar in rangeBars)
-                        {
-                            if (bar.High > maxH) maxH = bar.High;
-                            if (bar.Low < minL) minL = bar.Low;
-                        }
-
-                        this.RangeHigh = maxH;
-                        this.RangeLow = minL;
-                        this.CandleTime = nyoTime;
-                        this.State = ORBState.ORB_WAIT_BREAK;
-                        strategy.Log($"[{Comment}] Range Formed (Fallback M1): High={RangeHigh}, Low={RangeLow}, Bars={rangeBars.Count}/{expectedBars}");
+                        strategy.Log($"[{Comment}] Waiting for complete M1 history (Copied {rangeBars.Count}/{expectedBars} bars)");
+                        this.lastHistoryWarningTime = serverTime;
                     }
+                    return;
                 }
+
+                // Calculate range safely with complete history
+                double maxH = double.MinValue;
+                double minL = double.MaxValue;
+                foreach (var bar in rangeBars)
+                {
+                    if (bar.High > maxH) maxH = bar.High;
+                    if (bar.Low < minL) minL = bar.Low;
+                }
+
+                this.RangeHigh = maxH;
+                this.RangeLow = minL;
+                this.CandleTime = nyoTime;
+                this.State = ORBState.ORB_WAIT_BREAK;
+                strategy.Log($"[{Comment}] Range Formed (Fallback M1): High={RangeHigh}, Low={RangeLow}, Bars={rangeBars.Count}/{expectedBars}");
             }
         }
 
@@ -615,6 +629,15 @@ namespace KatORB
                 {
                     double entryPrice = highPrice + (buffer * tickSize) + spread;
                     entryPrice = Math.Round(entryPrice / tickSize) * tickSize;
+
+                    // Safety Guard: Check if Entry Price is inside the Range
+                    if (entryPrice <= this.RangeHigh)
+                    {
+                        strategy.Log($"[{Comment}] Buy Entry skipped. Entry price {entryPrice} is inside range (<= High {this.RangeHigh}).");
+                        this.CancelReason = $"Entry price inside range ({entryPrice} <= {this.RangeHigh})";
+                        this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
+                        return;
+                    }
 
                     // Obstacle/EMA Filter Validation
                     double dist = (entryPrice - this.RangeHigh) / tickSize;
@@ -698,6 +721,15 @@ namespace KatORB
                 {
                     double entryPrice = lowPrice - (buffer * tickSize);
                     entryPrice = Math.Round(entryPrice / tickSize) * tickSize;
+
+                    // Safety Guard: Check if Entry Price is inside the Range
+                    if (entryPrice >= this.RangeLow)
+                    {
+                        strategy.Log($"[{Comment}] Sell Entry skipped. Entry price {entryPrice} is inside range (>= Low {this.RangeLow}).");
+                        this.CancelReason = $"Entry price inside range ({entryPrice} >= {this.RangeLow})";
+                        this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
+                        return;
+                    }
 
                     // Obstacle/EMA Filter Validation
                     double dist = (this.RangeLow - entryPrice) / tickSize;

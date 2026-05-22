@@ -200,11 +200,12 @@ namespace KatORB
             // 2. Fallback to M1 history if own TF doesn't have it (or low liquidity gaps)
             else if (this.historicalDataM1 != null && this.historicalDataM1.Count > 0)
             {
+                int expectedBars = tfSeconds / 60;
                 var rangeBars = this.historicalDataM1.Cast<HistoryItemBar>()
                     .Where(b => b.TimeLeft >= targetTimeServer && b.TimeLeft < targetTimeServer.AddSeconds(tfSeconds))
                     .ToList();
 
-                if (rangeBars.Count > 0)
+                if (rangeBars.Count >= expectedBars)
                 {
                     double maxH = double.MinValue;
                     double minL = double.MaxValue;
