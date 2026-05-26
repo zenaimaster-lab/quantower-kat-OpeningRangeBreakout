@@ -420,7 +420,7 @@ namespace KatORB
             if (serverTime < nyoTime) return;
 
             // Maintain order active synchronization using actual position/order checks
-            SyncOrderAndPositionStatus();
+            SyncOrderAndPositionStatus(serverTime);
 
             // Update trail trigger hit state if position is active
             if (this.OrdersActive && !this.TrailTriggerHit)
@@ -518,7 +518,12 @@ namespace KatORB
                 // 1. Ưu tiên tìm trực tiếp nến đã đóng trong lịch sử của runner
                 if (this.History != null && this.History.Count > 0)
                 {
-                    var targetBar = this.History.Cast<HistoryItemBar>().FirstOrDefault(b => b.TimeLeft == nyoTime);
+                    var targetBar = this.History.Cast<HistoryItemBar>().FirstOrDefault(b => 
+                        b.TimeLeft.Year == nyoTime.Year &&
+                        b.TimeLeft.Month == nyoTime.Month &&
+                        b.TimeLeft.Day == nyoTime.Day &&
+                        b.TimeLeft.Hour == nyoTime.Hour &&
+                        b.TimeLeft.Minute == nyoTime.Minute);
                     if (targetBar != null)
                     {
                         this.RangeHigh = targetBar.High;
@@ -679,15 +684,32 @@ namespace KatORB
                     {
                         this.LastOrderTag = $"{Comment}_{strategy.MagicNumber}_{new Random().Next(1000, 9999)}";
                         
+                        double currentAsk = strategy.CurrentSymbol.Ask;
+                        string orderType = OrderType.Stop;
+                        double limitPrice = 0;
+                        double triggerPrice = 0;
+
+                        if (entryPrice > currentAsk)
+                        {
+                            orderType = OrderType.Stop;
+                            triggerPrice = entryPrice;
+                        }
+                        else
+                        {
+                            orderType = OrderType.Limit;
+                            limitPrice = entryPrice;
+                            strategy.Log($"[{Comment}] Price is already past entry (Ask={currentAsk} >= Entry={entryPrice}). Placing BUY LIMIT instead of BUY STOP.");
+                        }
+
                         var request = new PlaceOrderRequestParameters
                         {
                             Account = strategy.CurrentAccount,
                             Symbol = strategy.CurrentSymbol,
                             Side = Side.Buy,
-                            OrderTypeId = OrderType.Stop,
+                            OrderTypeId = orderType,
                             Quantity = lot,
-                            Price = entryPrice,
-                            TriggerPrice = entryPrice,
+                            Price = limitPrice,
+                            TriggerPrice = triggerPrice,
                             StopLoss = SlTpHolder.CreateSL(sl, PriceMeasurement.Absolute),
                             TakeProfit = tp > 0 ? SlTpHolder.CreateTP(tp, PriceMeasurement.Absolute) : null,
                             Comment = this.LastOrderTag,
@@ -701,12 +723,14 @@ namespace KatORB
                             this.OrdersActive = true;
                             this.PlacedTime = serverTime;
                             this.EntryBreakDir = 1;
-                            this.EntryReason = $"Up breakout retest confirmed on custom timeframe";
-                            strategy.Log($"[{Comment}] BUY PENDING PLACED: Entry={entryPrice}, SL={sl}, TP={tp}, Lot={lot}");
+                            this.EntryReason = $"Up breakout retest confirmed on custom timeframe ({(orderType == OrderType.Limit ? "LIMIT" : "STOP")})";
+                            strategy.Log($"[{Comment}] BUY PENDING PLACED: Type={orderType}, Entry={entryPrice}, SL={sl}, TP={tp}, Lot={lot}");
                         }
                         else
                         {
                             strategy.Log($"[{Comment}] BUY PLACEMENT FAILED: {result.Message}", StrategyLoggingLevel.Error);
+                            this.CancelReason = $"Placement failed: {result.Message}";
+                            this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
                         }
                     }
                 }
@@ -771,15 +795,32 @@ namespace KatORB
                     {
                         this.LastOrderTag = $"{Comment}_{strategy.MagicNumber}_{new Random().Next(1000, 9999)}";
 
+                        double currentBid = strategy.CurrentSymbol.Bid;
+                        string orderType = OrderType.Stop;
+                        double limitPrice = 0;
+                        double triggerPrice = 0;
+
+                        if (entryPrice < currentBid)
+                        {
+                            orderType = OrderType.Stop;
+                            triggerPrice = entryPrice;
+                        }
+                        else
+                        {
+                            orderType = OrderType.Limit;
+                            limitPrice = entryPrice;
+                            strategy.Log($"[{Comment}] Price is already past entry (Bid={currentBid} <= Entry={entryPrice}). Placing SELL LIMIT instead of SELL STOP.");
+                        }
+
                         var request = new PlaceOrderRequestParameters
                         {
                             Account = strategy.CurrentAccount,
                             Symbol = strategy.CurrentSymbol,
                             Side = Side.Sell,
-                            OrderTypeId = OrderType.Stop,
+                            OrderTypeId = orderType,
                             Quantity = lot,
-                            Price = entryPrice,
-                            TriggerPrice = entryPrice,
+                            Price = limitPrice,
+                            TriggerPrice = triggerPrice,
                             StopLoss = SlTpHolder.CreateSL(sl, PriceMeasurement.Absolute),
                             TakeProfit = tp > 0 ? SlTpHolder.CreateTP(tp, PriceMeasurement.Absolute) : null,
                             Comment = this.LastOrderTag,
@@ -793,19 +834,21 @@ namespace KatORB
                             this.OrdersActive = true;
                             this.PlacedTime = serverTime;
                             this.EntryBreakDir = -1;
-                            this.EntryReason = $"Down breakout retest confirmed on custom timeframe";
-                            strategy.Log($"[{Comment}] SELL PENDING PLACED: Entry={entryPrice}, SL={sl}, TP={tp}, Lot={lot}");
+                            this.EntryReason = $"Down breakout retest confirmed on custom timeframe ({(orderType == OrderType.Limit ? "LIMIT" : "STOP")})";
+                            strategy.Log($"[{Comment}] SELL PENDING PLACED: Type={orderType}, Entry={entryPrice}, SL={sl}, TP={tp}, Lot={lot}");
                         }
                         else
                         {
                             strategy.Log($"[{Comment}] SELL PLACEMENT FAILED: {result.Message}", StrategyLoggingLevel.Error);
+                            this.CancelReason = $"Placement failed: {result.Message}";
+                            this.State = strategy.InpContAfter1st ? ORBState.ORB_WAIT_BREAK : ORBState.ORB_DONE;
                         }
                     }
                 }
             }
         }
 
-        private void SyncOrderAndPositionStatus()
+        private void SyncOrderAndPositionStatus(DateTime serverTime)
         {
             if (string.IsNullOrEmpty(this.LastOrderTag)) return;
 
@@ -825,6 +868,13 @@ namespace KatORB
                 // Both order and position resolved (either profit taken, stop hit, or cancelled)
                 if (this.OrdersActive)
                 {
+                    // Introduce a grace period (e.g., 5 seconds) to prevent race conditions
+                    // before the broker confirms the order placement
+                    if (serverTime - this.PlacedTime < TimeSpan.FromSeconds(5))
+                    {
+                        return;
+                    }
+
                     this.OrdersActive = false;
                     this.LastOrderTag = "";
                     this.TrailTriggerHit = false;
@@ -888,12 +938,16 @@ namespace KatORB
             if (!shouldFlatten && strategy.InpAfterFilledMinutesOn && hasPosition)
             {
                 var oldestPos = activePositions.OrderBy(x => x.OpenTime).FirstOrDefault();
-                if (oldestPos != null && serverTime >= oldestPos.OpenTime.AddMinutes(strategy.InpAfterFilledMinutes))
+                if (oldestPos != null)
                 {
-                    if (!this.TrailTriggerHit)
+                    DateTime openTimeSelected = Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(oldestPos.OpenTime.ToUniversalTime());
+                    if (serverTime >= openTimeSelected.AddMinutes(strategy.InpAfterFilledMinutes))
                     {
-                        shouldFlatten = true;
-                        reason = $"Trigger not hit after {strategy.InpAfterFilledMinutes} minutes";
+                        if (!this.TrailTriggerHit)
+                        {
+                            shouldFlatten = true;
+                            reason = $"Trigger not hit after {strategy.InpAfterFilledMinutes} minutes";
+                        }
                     }
                 }
             }
@@ -1439,9 +1493,8 @@ namespace KatORB
 
         public DateTime GetServerTime()
         {
-            var conn = Core.Instance.Connections.Connected.FirstOrDefault();
-            if (conn != null)
-                return conn.ServerTime;
+            // Always return time in platform Selected TimeZone to align perfectly with charts and history bars.
+            // Core.Instance.TimeUtils.DateTimeUtcNow is automatically mocked in backtesting.
             return Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(Core.Instance.TimeUtils.DateTimeUtcNow);
         }
 
