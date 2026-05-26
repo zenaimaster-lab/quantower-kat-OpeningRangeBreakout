@@ -59,6 +59,10 @@ namespace KatORB
         public int InpTpTicks = 600;
 
         public bool InpContAfter1st = true;
+        
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Max Chase Ticks (Market Entry)", 120)]
+        public int InpMaxChaseTicks = 10;
 
         //--- Risk & Contracts
         [Category("4. RISK & CONTRACTS")]
@@ -673,11 +677,6 @@ namespace KatORB
                     }
 
                     // Risk Sizing
-                    double sl = entryPrice - strategy.InpSlTicks * tickSize;
-                    double tp = strategy.InpTpTicks > 0 ? (entryPrice + strategy.InpTpTicks * tickSize) : 0;
-                    sl = Math.Round(sl / tickSize) * tickSize;
-                    tp = Math.Round(tp / tickSize) * tickSize;
-
                     double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
@@ -688,18 +687,36 @@ namespace KatORB
                         string orderType = OrderType.Stop;
                         double limitPrice = 0;
                         double triggerPrice = 0;
+                        double entryReferencePrice = entryPrice; // Will be entryPrice for Stop/Limit, currentAsk for Market
 
                         if (entryPrice > currentAsk)
                         {
+                            // State 3: Stop Order (Normal breakout waiting)
                             orderType = OrderType.Stop;
                             triggerPrice = entryPrice;
+                            entryReferencePrice = entryPrice;
+                        }
+                        else if (currentAsk - entryPrice <= strategy.InpMaxChaseTicks * tickSize)
+                        {
+                            // State 1: Market Order (Within Max Chase Ticks - execute immediately to avoid missing wave)
+                            orderType = OrderType.Market;
+                            entryReferencePrice = currentAsk;
+                            strategy.Log($"[{Comment}] Price slightly past entry (Ask={currentAsk} >= Entry={entryPrice}, within {strategy.InpMaxChaseTicks} ticks). Placing BUY MARKET order.");
                         }
                         else
                         {
+                            // State 2: Limit Order (Price has run too far - place limit at breakout level and wait for pullback)
                             orderType = OrderType.Limit;
                             limitPrice = entryPrice;
-                            strategy.Log($"[{Comment}] Price is already past entry (Ask={currentAsk} >= Entry={entryPrice}). Placing BUY LIMIT instead of BUY STOP.");
+                            entryReferencePrice = entryPrice;
+                            strategy.Log($"[{Comment}] Price is too far past entry (Ask={currentAsk} >= Entry={entryPrice}, > {strategy.InpMaxChaseTicks} ticks). Placing BUY LIMIT at original entry to wait for pullback.");
                         }
+
+                        // Risk Sizing based on the correct reference price (either entryPrice or currentAsk)
+                        double sl = entryReferencePrice - strategy.InpSlTicks * tickSize;
+                        double tp = strategy.InpTpTicks > 0 ? (entryReferencePrice + strategy.InpTpTicks * tickSize) : 0;
+                        sl = Math.Round(sl / tickSize) * tickSize;
+                        tp = Math.Round(tp / tickSize) * tickSize;
 
                         var request = new PlaceOrderRequestParameters
                         {
@@ -723,8 +740,8 @@ namespace KatORB
                             this.OrdersActive = true;
                             this.PlacedTime = serverTime;
                             this.EntryBreakDir = 1;
-                            this.EntryReason = $"Up breakout retest confirmed on custom timeframe ({(orderType == OrderType.Limit ? "LIMIT" : "STOP")})";
-                            strategy.Log($"[{Comment}] BUY PENDING PLACED: Type={orderType}, Entry={entryPrice}, SL={sl}, TP={tp}, Lot={lot}");
+                            this.EntryReason = $"Up breakout retest confirmed on custom timeframe (Type={orderType})";
+                            strategy.Log($"[{Comment}] BUY PENDING PLACED: Type={orderType}, EntryRef={entryReferencePrice}, SL={sl}, TP={tp}, Lot={lot}");
                         }
                         else
                         {
@@ -783,12 +800,6 @@ namespace KatORB
                         return;
                     }
 
-                    // Risk Sizing
-                    double sl = entryPrice + strategy.InpSlTicks * tickSize;
-                    double tp = strategy.InpTpTicks > 0 ? (entryPrice - strategy.InpTpTicks * tickSize) : 0;
-                    sl = Math.Round(sl / tickSize) * tickSize;
-                    tp = Math.Round(tp / tickSize) * tickSize;
-
                     double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
@@ -799,18 +810,36 @@ namespace KatORB
                         string orderType = OrderType.Stop;
                         double limitPrice = 0;
                         double triggerPrice = 0;
+                        double entryReferencePrice = entryPrice; // Will be entryPrice for Stop/Limit, currentBid for Market
 
                         if (entryPrice < currentBid)
                         {
+                            // State 3: Stop Order (Normal breakout waiting)
                             orderType = OrderType.Stop;
                             triggerPrice = entryPrice;
+                            entryReferencePrice = entryPrice;
+                        }
+                        else if (entryPrice - currentBid <= strategy.InpMaxChaseTicks * tickSize)
+                        {
+                            // State 1: Market Order (Within Max Chase Ticks - execute immediately to avoid missing wave)
+                            orderType = OrderType.Market;
+                            entryReferencePrice = currentBid;
+                            strategy.Log($"[{Comment}] Price slightly past entry (Bid={currentBid} <= Entry={entryPrice}, within {strategy.InpMaxChaseTicks} ticks). Placing SELL MARKET order.");
                         }
                         else
                         {
+                            // State 2: Limit Order (Price has run too far - place limit at breakout level and wait for pullback)
                             orderType = OrderType.Limit;
                             limitPrice = entryPrice;
-                            strategy.Log($"[{Comment}] Price is already past entry (Bid={currentBid} <= Entry={entryPrice}). Placing SELL LIMIT instead of SELL STOP.");
+                            entryReferencePrice = entryPrice;
+                            strategy.Log($"[{Comment}] Price is too far past entry (Bid={currentBid} <= Entry={entryPrice}, > {strategy.InpMaxChaseTicks} ticks). Placing SELL LIMIT at original entry to wait for pullback.");
                         }
+
+                        // Risk Sizing based on the correct reference price (either entryPrice or currentBid)
+                        double sl = entryReferencePrice + strategy.InpSlTicks * tickSize;
+                        double tp = strategy.InpTpTicks > 0 ? (entryReferencePrice - strategy.InpTpTicks * tickSize) : 0;
+                        sl = Math.Round(sl / tickSize) * tickSize;
+                        tp = Math.Round(tp / tickSize) * tickSize;
 
                         var request = new PlaceOrderRequestParameters
                         {
@@ -834,8 +863,8 @@ namespace KatORB
                             this.OrdersActive = true;
                             this.PlacedTime = serverTime;
                             this.EntryBreakDir = -1;
-                            this.EntryReason = $"Down breakout retest confirmed on custom timeframe ({(orderType == OrderType.Limit ? "LIMIT" : "STOP")})";
-                            strategy.Log($"[{Comment}] SELL PENDING PLACED: Type={orderType}, Entry={entryPrice}, SL={sl}, TP={tp}, Lot={lot}");
+                            this.EntryReason = $"Down breakout retest confirmed on custom timeframe (Type={orderType})";
+                            strategy.Log($"[{Comment}] SELL PENDING PLACED: Type={orderType}, EntryRef={entryReferencePrice}, SL={sl}, TP={tp}, Lot={lot}");
                         }
                         else
                         {
