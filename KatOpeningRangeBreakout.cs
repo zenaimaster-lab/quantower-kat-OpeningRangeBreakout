@@ -8,12 +8,28 @@ namespace KatORB
 {
     public class KatOpeningRangeBreakout : Strategy
     {
+        [Category("0. METADATA & SYSTEM INFO")]
+        [InputParameter("Bot Description", 0)]
+        public string InpBotDescription = "Automated Break & Retest range strategy on 2m/5m/15m/30m NYO candles";
+
+        [Category("0. METADATA & SYSTEM INFO")]
+        [InputParameter("Strategy Version", 1)]
+        public string InpStrategyVersion = "1.1";
+
+        [Category("0. METADATA & SYSTEM INFO")]
+        [InputParameter("Adapter Version", 2)]
+        public string InpAdapterVersion = "v1.145.17";
+
+        [Category("0. METADATA & SYSTEM INFO")]
+        [InputParameter("Last Updated (UTC)", 3)]
+        public string InpLastUpdated = "2026-05-27 09:17:06";
+
         [Category("1. GENERAL & SCHEDULE")]
-        [InputParameter("Symbol", 1)]
+        [InputParameter("Symbol", 5)]
         public Symbol CurrentSymbol;
 
         [Category("1. GENERAL & SCHEDULE")]
-        [InputParameter("Account", 2)]
+        [InputParameter("Account", 6)]
         public Account CurrentAccount;
 
         [Category("1. GENERAL & SCHEDULE")]
@@ -195,7 +211,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.0";
+        public const string STRATEGY_VERSION = "1.1";
 
         public int MagicNumber => InpMagicNumber;
 
