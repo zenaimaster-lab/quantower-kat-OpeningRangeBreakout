@@ -10,11 +10,11 @@ namespace KatORB
     {
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 1)]
-        public Symbol CurrentSymbol { get; set; }
+        public Symbol CurrentSymbol;
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Account", 2)]
-        public Account CurrentAccount { get; set; }
+        public Account CurrentAccount;
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Magic Number", 10)]
@@ -229,7 +229,13 @@ namespace KatORB
         {
             if (this.CurrentSymbol == null)
             {
-                this.Log("ERROR: Symbol is null. Strategy cannot start.", StrategyLoggingLevel.Error);
+                this.Log("ERROR: Symbol is null. Strategy cannot start. Please make sure a Symbol is selected in settings.", StrategyLoggingLevel.Error);
+                return;
+            }
+
+            if (this.CurrentAccount == null)
+            {
+                this.Log("ERROR: Account is null. Strategy cannot start. Please make sure an Account is selected in settings.", StrategyLoggingLevel.Error);
                 return;
             }
 
