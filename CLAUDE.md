@@ -54,3 +54,25 @@ Whenever you make any changes to the C# source code (`KatOpeningRangeBreakout.cs
   - Keep EMA inputs clean. Hardcode default/important EMA periods (9, 21, 34, 250, 255) as quick-access checkbox fields rather than generic text boxes if possible.
 - **Error Handling**: Use robust `try-catch` blocks for trading operations, logging detailed messages using the built-in `Log(...)` system.
 - **Readability**: Ensure all original XML comments, region structures, and strategy descriptions are maintained.
+
+---
+
+## Mandatory Behavioral Guidelines (Karpathy Guidelines)
+
+All development in this repository **must** strictly adhere to the Karpathy Guidelines (https://github.com/multica-ai/andrej-karpathy-skills) to reduce common AI coding mistakes:
+
+1. **Think Before Coding**:
+   - State assumptions explicitly before modifying code.
+   - If a requirement or behavior is ambiguous or unclear, stop and ask the user. Do not make silent assumptions.
+   - Surface tradeoffs and propose simpler approaches when possible.
+2. **Simplicity First**:
+   - Write the minimum amount of code required to solve the problem. Avoid speculative features, unnecessary configurability, or premature abstractions.
+   - If code can be simplified or condensed significantly, refactor/rewrite it to be clean and concise.
+3. **Surgical Changes**:
+   - Touch only what is necessary to fulfill the request.
+   - Do not perform "drive-by" refactoring or reformat adjacent code/comments/styles that are unrelated to your task. Maintain existing code styling.
+   - Clean up any imports, variables, or functions that your changes made unused. Do not remove pre-existing unused elements unless asked.
+4. **Goal-Driven Execution**:
+   - Translate tasks into clear, verifiable success criteria (e.g. reproducing a bug with a test first, or validating exact outputs).
+   - For multi-step tasks, state a clear, bite-sized step-by-step plan with verification checks for each step, and verify at each point.
+
