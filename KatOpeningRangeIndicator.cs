@@ -164,17 +164,18 @@ namespace KatORB
                 int dailyIdx = -1;
                 for (int i = this.dailyHistory.Count - 1; i >= 0; i--)
                 {
-                    var bar = (HistoryItemBar)this.dailyHistory[i, SeekOriginHistory.Begin];
-                    if (bar.TimeLeft.Date < barDate)
+                    if (this.dailyHistory[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                     {
-                        dailyIdx = i;
-                        break;
+                        if (bar.TimeLeft.Date < barDate)
+                        {
+                            dailyIdx = i;
+                            break;
+                        }
                     }
                 }
 
-                if (dailyIdx >= 0)
+                if (dailyIdx >= 0 && this.dailyHistory[dailyIdx, SeekOriginHistory.Begin] is HistoryItemBar prevDailyBar)
                 {
-                    var prevDailyBar = (HistoryItemBar)this.dailyHistory[dailyIdx, SeekOriginHistory.Begin];
                     this.SetValue(prevDailyBar.High, 9, 0);
                     this.SetValue(prevDailyBar.Low, 10, 0);
                 }
@@ -269,17 +270,26 @@ namespace KatORB
 
             // Starting SMA seed (average of the first 'period' bars: index 0 to period - 1)
             double sum = 0;
+            int validBars = 0;
             for (int i = 0; i < period; i++)
             {
-                sum += ((HistoryItemBar)historyStream[i, SeekOriginHistory.Begin]).Close;
+                if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
+                {
+                    sum += bar.Close;
+                    validBars++;
+                }
             }
+            if (validBars < period) return 0;
             double ema = sum / period;
 
             // Recurse to targetIdx to get fully smoothed EMA
             for (int i = period; i <= targetIdx; i++)
             {
-                double close = ((HistoryItemBar)historyStream[i, SeekOriginHistory.Begin]).Close;
-                ema = (close - ema) * multiplier + ema;
+                if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
+                {
+                    double close = bar.Close;
+                    ema = (close - ema) * multiplier + ema;
+                }
             }
 
             return ema;
@@ -295,7 +305,7 @@ namespace KatORB
 
             for (int i = historyStream.Count - 1; i >= 0; i--)
             {
-                var bar = (HistoryItemBar)historyStream[i, SeekOriginHistory.Begin];
+                if (!(historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)) continue;
                 if (bar.TimeLeft < startDay) break;
 
                 double typicalPrice = (bar.High + bar.Low + bar.Close) / 3.0;
