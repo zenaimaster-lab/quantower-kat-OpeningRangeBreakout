@@ -20,28 +20,27 @@ namespace KatORB
 
         public DateTime GetTargetTime() => targetTimeServer;
 
-        public void UpdateTargetTime(int nyHour, int nyMin, int nySec, int utcOffset)
+        public void UpdateTargetTime(int nyHour, int nyMin, int nySec, int utcOffset, int sessionDurationMinutes)
         {
-            DateTime serverNow = GetServerTime();
-            if (serverNow.Day == lastCalculatedDay && targetTimeServer > DateTime.MinValue) return;
+            DateTime utcNow = Core.Instance.TimeUtils.DateTimeUtcNow;
+            DateTime nyNow = utcNow.AddHours(utcOffset);
 
-            // Target NY time in UTC: NY = UTC + offset -> UTC = NY - offset
-            // utcOffset is negative for NY (e.g. -4), so subtracting negative adds offset hours
-            int utcHour = nyHour - utcOffset;
-            int dayAdjust = 0;
+            // Compute NY Open time on today's NY date
+            DateTime nyOpenLocal = nyNow.Date.AddHours(nyHour).AddMinutes(nyMin).AddSeconds(nySec);
+            
+            // Check if we are past the end of the session for today's NY date
+            DateTime nySessionEndLocal = nyOpenLocal.AddMinutes(sessionDurationMinutes);
+            DateTime activeSessionDate = nyNow >= nySessionEndLocal ? nyNow.Date.AddDays(1) : nyNow.Date;
 
-            if (utcHour >= 24) { utcHour -= 24; dayAdjust = 1; }
-            if (utcHour < 0) { utcHour += 24; dayAdjust = -1; }
+            // Target NY open time for the active session date
+            DateTime targetNyOpenLocal = activeSessionDate.AddHours(nyHour).AddMinutes(nyMin).AddSeconds(nySec);
+            
+            // Convert NY time to UTC: UTC = NY - offset
+            DateTime targetUtc = targetNyOpenLocal.AddHours(-utcOffset);
 
-            // Tạo targetUtc sử dụng năm/tháng/ngày của serverNow để không bị lệch múi giờ
-            DateTime targetUtc = new DateTime(
-                serverNow.Year, serverNow.Month, serverNow.Day,
-                utcHour, nyMin, nySec, DateTimeKind.Utc
-            ).AddDays(dayAdjust);
-
-            // Chuyển đổi trực tiếp thông qua Quantower API mà không cần tự tính offset
+            // Convert to platform Selected TimeZone
             targetTimeServer = Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(targetUtc);
-            lastCalculatedDay = serverNow.Day;
+            lastCalculatedDay = activeSessionDate.Day;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.3";
+        public string InpStrategyVersion = "1.4";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 01:50:00";
+        public string InpLastUpdated = "2026-06-06 02:07:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -211,7 +211,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.3";
+        public const string STRATEGY_VERSION = "1.4";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -259,21 +259,39 @@ namespace KatORB
             DateTime loadFrom = Core.Instance.TimeUtils.DateTimeUtcNow.AddDays(-5);
             this.historicalDataM1 = this.CurrentSymbol.GetHistory(Period.MIN1, loadFrom);
             this.historicalDataM2 = this.CurrentSymbol.GetHistory(Period.MIN2, loadFrom);
-            this.historicalDataM5 = this.CurrentSymbol.GetHistory(Period.MIN5, loadFrom);
-            this.historicalDataM15 = this.CurrentSymbol.GetHistory(Period.MIN15, loadFrom);
-            this.historicalDataM30 = this.CurrentSymbol.GetHistory(Period.MIN30, loadFrom);
+            
+            if (Inp5mActive || InpObsRange5mOn)
+                this.historicalDataM5 = this.CurrentSymbol.GetHistory(Period.MIN5, loadFrom);
+            
+            if (Inp15mActive || InpObsRange15mOn)
+                this.historicalDataM15 = this.CurrentSymbol.GetHistory(Period.MIN15, loadFrom);
+            
+            if (Inp30mActive || InpObsRange30mOn)
+                this.historicalDataM30 = this.CurrentSymbol.GetHistory(Period.MIN30, loadFrom);
+                
             this.dailyHistory = this.CurrentSymbol.GetHistory(Period.DAY1, loadFrom);
 
             // Subscribe to the custom retest timeframe (always active)
             Period retestPeriod = MapMinutesToPeriod(InpCustomRetestMin);
-            this.historicalDataRetest = this.CurrentSymbol.GetHistory(retestPeriod, loadFrom);
+            if (retestPeriod == Period.MIN1)
+                this.historicalDataRetest = this.historicalDataM1;
+            else if (retestPeriod == Period.MIN2)
+                this.historicalDataRetest = this.historicalDataM2;
+            else if (retestPeriod == Period.MIN5 && this.historicalDataM5 != null)
+                this.historicalDataRetest = this.historicalDataM5;
+            else if (retestPeriod == Period.MIN15 && this.historicalDataM15 != null)
+                this.historicalDataRetest = this.historicalDataM15;
+            else if (retestPeriod == Period.MIN30 && this.historicalDataM30 != null)
+                this.historicalDataRetest = this.historicalDataM30;
+            else
+                this.historicalDataRetest = this.CurrentSymbol.GetHistory(retestPeriod, loadFrom);
 
             //--- Initialize the runners for active timeframes
             this.runners.Clear();
             if (Inp2mActive)  this.runners.Add(new ORBRunner(this, Period.MIN2, 0, "orb-2m", this.historicalDataM2));
-            if (Inp5mActive)  this.runners.Add(new ORBRunner(this, Period.MIN5, 1, "orb-5m", this.historicalDataM5));
-            if (Inp15mActive) this.runners.Add(new ORBRunner(this, Period.MIN15, 2, "orb-15m", this.historicalDataM15));
-            if (Inp30mActive) this.runners.Add(new ORBRunner(this, Period.MIN30, 3, "orb-30m", this.historicalDataM30));
+            if (Inp5mActive)  this.runners.Add(new ORBRunner(this, Period.MIN5, 1, "orb-5m", this.historicalDataM5!));
+            if (Inp15mActive) this.runners.Add(new ORBRunner(this, Period.MIN15, 2, "orb-15m", this.historicalDataM15!));
+            if (Inp30mActive) this.runners.Add(new ORBRunner(this, Period.MIN30, 3, "orb-30m", this.historicalDataM30!));
 
             this.Log($"kat-ORB {STRATEGY_VERSION} Initialized. Active Runners count: {this.runners.Count}");
 
@@ -322,7 +340,7 @@ namespace KatORB
             if (this.runners.Count == 0) return;
 
             DateTime serverTime = this.timeManager.GetServerTime();
-            this.timeManager.UpdateTargetTime(InpNyHour, InpNyMinute, InpNySecond, InpUtcOffset);
+            this.timeManager.UpdateTargetTime(InpNyHour, InpNyMinute, InpNySecond, InpUtcOffset, InpAfterMinutes);
             DateTime nyoServerTime = this.timeManager.GetTargetTime();
 
             // Daily stats reset at NY Open

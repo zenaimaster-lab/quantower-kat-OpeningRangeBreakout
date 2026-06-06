@@ -47,6 +47,24 @@ namespace KatORB
         private DateTime lastNYOTime = DateTime.MinValue;
         private DateTime lastHistoryWarningTime = DateTime.MinValue;
 
+        // Caching structures for performance optimizations
+        private class EmaCache
+        {
+            public int LastIndex = -1;
+            public double LastValue = 0;
+        }
+
+        private class VwapCache
+        {
+            public DateTime StartDay = DateTime.MinValue;
+            public int LastIndex = -1;
+            public double SumPV = 0;
+            public double SumV = 0;
+        }
+
+        private readonly Dictionary<string, EmaCache> emaCaches = new Dictionary<string, EmaCache>();
+        private readonly Dictionary<string, VwapCache> vwapCaches = new Dictionary<string, VwapCache>();
+
         public ORBRunner(KatOpeningRangeBreakout strategy, Period period, int tfIndex, string comment, HistoricalData history)
         {
             this.strategy = strategy;
@@ -74,6 +92,8 @@ namespace KatORB
             this.pendingStatsTag = "";
             this.statsCheckStartTime = DateTime.MinValue;
             this.lastHistoryWarningTime = DateTime.MinValue;
+            this.emaCaches.Clear();
+            this.vwapCaches.Clear();
         }
 
         public void Process(DateTime nyoTime, DateTime serverTime)
@@ -857,54 +877,172 @@ namespace KatORB
             if (targetIdx < period - 1)
                 return 0;
 
+            string cacheKey = historyStream.GetHashCode().ToString() + "_" + period;
+            if (!emaCaches.TryGetValue(cacheKey, out var cache))
+            {
+                cache = new EmaCache();
+                emaCaches[cacheKey] = cache;
+            }
+
             double multiplier = 2.0 / (period + 1);
 
-            // Starting SMA seed (average of the first 'period' bars: index 0 to period - 1)
-            double sum = 0;
-            int validBars = 0;
-            for (int i = 0; i < period; i++)
-            {
-                if (historyStream[i] is HistoryItemBar bar)
-                {
-                    sum += bar.Close;
-                    validBars++;
-                }
-            }
-            if (validBars < period) return 0;
-            double ema = sum / period;
+            bool isFormingBar = (targetIdx == historyStream.Count - 1);
+            int baseIdx = isFormingBar ? targetIdx - 1 : targetIdx;
 
-            // Recurse from index 'period' to targetIdx to get fully smoothed EMA
-            for (int i = period; i <= targetIdx; i++)
+            if (baseIdx < period - 1)
             {
-                if (historyStream[i] is HistoryItemBar bar)
+                double sum = 0;
+                int validBars = 0;
+                for (int i = 0; i < period; i++)
                 {
-                    double close = bar.Close;
-                    ema = (close - ema) * multiplier + ema;
+                    if (historyStream[i] is HistoryItemBar bar)
+                    {
+                        sum += bar.Close;
+                        validBars++;
+                    }
                 }
+                return validBars < period ? 0 : sum / period;
             }
 
-            return ema;
+            double baseEma = 0;
+            if (cache.LastIndex != -1 && cache.LastIndex <= baseIdx && baseIdx < historyStream.Count)
+            {
+                baseEma = cache.LastValue;
+                for (int i = cache.LastIndex + 1; i <= baseIdx; i++)
+                {
+                    if (historyStream[i] is HistoryItemBar bar)
+                    {
+                        baseEma = (bar.Close - baseEma) * multiplier + baseEma;
+                    }
+                }
+                cache.LastIndex = baseIdx;
+                cache.LastValue = baseEma;
+            }
+            else
+            {
+                double sum = 0;
+                int validBars = 0;
+                for (int i = 0; i < period; i++)
+                {
+                    if (historyStream[i] is HistoryItemBar bar)
+                    {
+                        sum += bar.Close;
+                        validBars++;
+                    }
+                }
+                if (validBars < period) return 0;
+                baseEma = sum / period;
+
+                for (int i = period; i <= baseIdx; i++)
+                {
+                    if (historyStream[i] is HistoryItemBar bar)
+                    {
+                        baseEma = (bar.Close - baseEma) * multiplier + baseEma;
+                    }
+                }
+                cache.LastIndex = baseIdx;
+                cache.LastValue = baseEma;
+            }
+
+            if (isFormingBar)
+            {
+                if (historyStream[targetIdx] is HistoryItemBar bar)
+                {
+                    return (bar.Close - baseEma) * multiplier + baseEma;
+                }
+            }
+
+            return baseEma;
         }
 
         public double CalculateVWAP(HistoricalData historyStream, DateTime startDay)
         {
             if (historyStream == null || historyStream.Count == 0) return 0;
 
-            double sumPV = 0;
-            double sumV = 0;
-
-            for (int i = historyStream.Count - 1; i >= 0; i--)
+            string cacheKey = historyStream.GetHashCode().ToString() + "_" + startDay.Ticks;
+            if (!vwapCaches.TryGetValue(cacheKey, out var cache))
             {
-                if (!(historyStream[i] is HistoryItemBar bar)) continue;
-                if (bar.TimeLeft < startDay) break;
-
-                double typicalPrice = (bar.High + bar.Low + bar.Close) / 3.0;
-                double vol = bar.Volume;
-                sumPV += typicalPrice * vol;
-                sumV += vol;
+                cache = new VwapCache { StartDay = startDay };
+                vwapCaches[cacheKey] = cache;
             }
 
-            return sumV > 0 ? sumPV / sumV : 0;
+            int count = historyStream.Count;
+            int baseIdx = count - 2;
+
+            if (cache.LastIndex == -1 || cache.StartDay != startDay)
+            {
+                cache.StartDay = startDay;
+                double sumPV = 0;
+                double sumV = 0;
+                
+                int startIdx = -1;
+                for (int i = 0; i <= baseIdx; i++)
+                {
+                    if (historyStream[i] is HistoryItemBar bar && bar.TimeLeft >= startDay)
+                    {
+                        startIdx = i;
+                        break;
+                    }
+                }
+
+                if (startIdx != -1)
+                {
+                    for (int i = startIdx; i <= baseIdx; i++)
+                    {
+                        if (historyStream[i] is HistoryItemBar bar)
+                        {
+                            double typicalPrice = (bar.High + bar.Low + bar.Close) / 3.0;
+                            double vol = bar.Volume;
+                            sumPV += typicalPrice * vol;
+                            sumV += vol;
+                        }
+                    }
+                }
+
+                cache.LastIndex = baseIdx;
+                cache.SumPV = sumPV;
+                cache.SumV = sumV;
+            }
+            else if (cache.LastIndex < baseIdx)
+            {
+                double sumPV = cache.SumPV;
+                double sumV = cache.SumV;
+
+                for (int i = cache.LastIndex + 1; i <= baseIdx; i++)
+                {
+                    if (historyStream[i] is HistoryItemBar bar && bar.TimeLeft >= startDay)
+                    {
+                        double typicalPrice = (bar.High + bar.Low + bar.Close) / 3.0;
+                        double vol = bar.Volume;
+                        sumPV += typicalPrice * vol;
+                        sumV += vol;
+                    }
+                }
+
+                cache.LastIndex = baseIdx;
+                cache.SumPV = sumPV;
+                cache.SumV = sumV;
+            }
+            else if (cache.LastIndex > baseIdx)
+            {
+                cache.LastIndex = -1;
+                cache.SumPV = 0;
+                cache.SumV = 0;
+                return CalculateVWAP(historyStream, startDay);
+            }
+
+            double finalSumPV = cache.SumPV;
+            double finalSumV = cache.SumV;
+
+            if (count - 1 >= 0 && historyStream[count - 1] is HistoryItemBar currentBar && currentBar.TimeLeft >= startDay)
+            {
+                double typicalPrice = (currentBar.High + currentBar.Low + currentBar.Close) / 3.0;
+                double vol = currentBar.Volume;
+                finalSumPV += typicalPrice * vol;
+                finalSumV += vol;
+            }
+
+            return finalSumV > 0 ? finalSumPV / finalSumV : 0;
         }
 
         public double GetPrevDayEMA(int period)
