@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.1";
+        public string InpStrategyVersion = "1.2";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,15 +22,15 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-05-27 09:17:06";
+        public string InpLastUpdated = "2026-06-06 01:37:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
-        public Symbol CurrentSymbol;
+        public Symbol CurrentSymbol = default!;
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Account", 6)]
-        public Account CurrentAccount;
+        public Account CurrentAccount = default!;
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Magic Number", 10)]
@@ -189,29 +189,29 @@ namespace KatORB
         public bool InpObsEma34On = true;
 
         //--- Core State Variables
-        private TimeManager timeManager;
-        private RiskManager riskManager;
-        private TrailManager trailManager;
-        private List<ORBRunner> runners;
+        private TimeManager timeManager = default!;
+        private RiskManager riskManager = default!;
+        private TrailManager trailManager = default!;
+        private List<ORBRunner> runners = default!;
 
         public TimeManager TimeManager => timeManager;
         public RiskManager RiskManager => riskManager;
         public TrailManager TrailManager => trailManager;
 
-        private HistoricalData historicalDataM1;
-        private HistoricalData historicalDataM2;
-        private HistoricalData historicalDataM5;
-        private HistoricalData historicalDataM15;
-        private HistoricalData historicalDataM30;
-        private HistoricalData historicalDataRetest;
-        private HistoricalData dailyHistory;
+        private HistoricalData historicalDataM1 = default!;
+        private HistoricalData historicalDataM2 = default!;
+        private HistoricalData historicalDataM5 = default!;
+        private HistoricalData historicalDataM15 = default!;
+        private HistoricalData historicalDataM30 = default!;
+        private HistoricalData historicalDataRetest = default!;
+        private HistoricalData dailyHistory = default!;
 
         // Trade tracking for stats (wins/losses per timeframe)
         private Dictionary<int, int> winsToday = new Dictionary<int, int>();
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.1";
+        public const string STRATEGY_VERSION = "1.2";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -289,13 +289,25 @@ namespace KatORB
             }
 
             // Clean up resources and unsubscribe
-            if (this.historicalDataM1 != null) this.historicalDataM1.Dispose();
-            if (this.historicalDataM2 != null) this.historicalDataM2.Dispose();
-            if (this.historicalDataM5 != null) this.historicalDataM5.Dispose();
-            if (this.historicalDataM15 != null) this.historicalDataM15.Dispose();
-            if (this.historicalDataM30 != null) this.historicalDataM30.Dispose();
-            if (this.dailyHistory != null) this.dailyHistory.Dispose();
-            if (this.historicalDataRetest != null && this.historicalDataRetest != this.historicalDataM2) this.historicalDataRetest.Dispose();
+            if (this.historicalDataM1 != null) { this.historicalDataM1.Dispose(); this.historicalDataM1 = null!; }
+            if (this.historicalDataM2 != null) { this.historicalDataM2.Dispose(); this.historicalDataM2 = null!; }
+            if (this.historicalDataM5 != null) { this.historicalDataM5.Dispose(); this.historicalDataM5 = null!; }
+            if (this.historicalDataM15 != null) { this.historicalDataM15.Dispose(); this.historicalDataM15 = null!; }
+            if (this.historicalDataM30 != null) { this.historicalDataM30.Dispose(); this.historicalDataM30 = null!; }
+            if (this.dailyHistory != null) { this.dailyHistory.Dispose(); this.dailyHistory = null!; }
+
+            if (this.historicalDataRetest != null)
+            {
+                if (this.historicalDataRetest != this.historicalDataM1 &&
+                    this.historicalDataRetest != this.historicalDataM2 &&
+                    this.historicalDataRetest != this.historicalDataM5 &&
+                    this.historicalDataRetest != this.historicalDataM15 &&
+                    this.historicalDataRetest != this.historicalDataM30)
+                {
+                    this.historicalDataRetest.Dispose();
+                }
+                this.historicalDataRetest = null!;
+            }
 
             this.Log("KAT ORB Stopped.");
         }
@@ -402,7 +414,10 @@ namespace KatORB
         public string CancelReason { get; set; } = "";
         public int EntryBreakDir { get; set; } = 0;
         public bool TrailTriggerHit { get; set; } = false;
+        public bool HasBeenFilled { get; set; } = false;
 
+        private string pendingStatsTag = "";
+        private DateTime statsCheckStartTime = DateTime.MinValue;
         private DateTime lastNYOTime = DateTime.MinValue;
         private DateTime lastHistoryWarningTime = DateTime.MinValue;
 
@@ -429,12 +444,38 @@ namespace KatORB
             this.CancelReason = "";
             this.EntryBreakDir = 0;
             this.TrailTriggerHit = false;
+            this.HasBeenFilled = false;
+            this.pendingStatsTag = "";
+            this.statsCheckStartTime = DateTime.MinValue;
             this.lastHistoryWarningTime = DateTime.MinValue;
         }
 
         public void Process(DateTime nyoTime, DateTime serverTime)
         {
             if (nyoTime == DateTime.MinValue || serverTime == DateTime.MinValue) return;
+
+            // Poll for closed position stats if we have a pending stats check tag
+            if (!string.IsNullOrEmpty(this.pendingStatsTag))
+            {
+                var closedPositions = Core.Instance.ClosedPositions.Where(p => p.Comment == this.pendingStatsTag).ToList();
+                if (closedPositions.Count > 0)
+                {
+                    double totalP = closedPositions.Sum(x => x.GrossPnL != null ? x.GrossPnL.Value : 0.0);
+                    if (totalP > 0)
+                        strategy.IncrementWins(TfIndex);
+                    else if (totalP < 0)
+                        strategy.IncrementLosses(TfIndex);
+
+                    strategy.Log($"[{Comment}] Stats updated for tag {this.pendingStatsTag}: PnL={totalP}. Daily Wins={strategy.GetWinsToday(TfIndex)}, Losses={strategy.GetLossesToday(TfIndex)}");
+                    this.pendingStatsTag = "";
+                }
+                else if (serverTime - this.statsCheckStartTime > TimeSpan.FromSeconds(30))
+                {
+                    // Timeout fallback - stop checking after 30 seconds
+                    strategy.Log($"[{Comment}] Stats check timeout for tag {this.pendingStatsTag}. Closed position not found in cache.");
+                    this.pendingStatsTag = "";
+                }
+            }
 
             // Reset state on a new trading day's NY Open
             if (nyoTime != this.lastNYOTime)
@@ -909,6 +950,7 @@ namespace KatORB
             if (activePosExists)
             {
                 this.OrdersActive = true;
+                this.HasBeenFilled = true;
             }
             else if (activeOrderExists)
             {
@@ -926,12 +968,16 @@ namespace KatORB
                         return;
                     }
 
+                    if (this.HasBeenFilled)
+                    {
+                        this.pendingStatsTag = this.LastOrderTag;
+                        this.statsCheckStartTime = serverTime;
+                    }
+
                     this.OrdersActive = false;
                     this.LastOrderTag = "";
                     this.TrailTriggerHit = false;
-
-                    // Calculate stats by tracking account updates
-                    UpdateWinLossCounter();
+                    this.HasBeenFilled = false;
 
                     bool limitHit = (strategy.GetWinsToday(TfIndex) >= strategy.InpMaxSuccess)
                                  || (strategy.GetLossesToday(TfIndex) >= strategy.InpMaxLoss);
@@ -1113,7 +1159,7 @@ namespace KatORB
             var pending = Core.Instance.Orders.Where(o => o.Comment == this.LastOrderTag && (o.Status == OrderStatus.Opened || o.Status == OrderStatus.PartiallyFilled)).ToList();
             foreach (var order in pending)
             {
-                Core.Instance.CancelOrder(order);
+                Core.Instance.CancelOrder((IOrder)order);
                 strategy.Log($"[{Comment}] Cancelled pending order ID: {order.Id}");
             }
 

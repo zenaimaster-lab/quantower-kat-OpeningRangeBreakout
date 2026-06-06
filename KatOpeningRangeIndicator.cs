@@ -11,7 +11,7 @@ namespace KatORB
     {
         //--- Input parameters
         [InputParameter("Broker UTC Offset", 10)]
-        public int InpBrokerUtcOffset = 30;
+        public int InpBrokerUtcOffset = -4;
 
         [InputParameter("NY Open Hour", 20, 0, 23)]
         public int InpNyOpenHour = 9;
@@ -29,9 +29,9 @@ namespace KatORB
         public bool InpDrawRangeZone = true;
 
         //--- History references
-        private HistoricalData dailyHistory;
-        private HistoricalData historicalDataM1;
-        private HistoricalData historicalDataM2;
+        private HistoricalData dailyHistory = default!;
+        private HistoricalData historicalDataM1 = default!;
+        private HistoricalData historicalDataM2 = default!;
 
         //--- Range caching by Date to maintain 100% performance
         private readonly Dictionary<DateTime, (double High, double Low, double Mid)> rangeCache = new Dictionary<DateTime, (double High, double Low, double Mid)>();
@@ -64,8 +64,30 @@ namespace KatORB
             // Initializations are handled safely in first-run block of OnUpdate
         }
 
+        public override void Dispose()
+        {
+            if (this.dailyHistory != null)
+            {
+                this.dailyHistory.Dispose();
+                this.dailyHistory = null!;
+            }
+            if (this.historicalDataM1 != null)
+            {
+                this.historicalDataM1.Dispose();
+                this.historicalDataM1 = null!;
+            }
+            if (this.historicalDataM2 != null)
+            {
+                this.historicalDataM2.Dispose();
+                this.historicalDataM2 = null!;
+            }
+            base.Dispose();
+        }
+
         protected override void OnUpdate(UpdateArgs args)
         {
+            if (this.Symbol == null) return;
+
             // Initialize history streams safely
             if (this.dailyHistory == null)
             {
@@ -104,9 +126,9 @@ namespace KatORB
             }
 
             // 2. Calculate own TF EMAs using exact strategy convergence logic
-            double ema9 = CalculateEMA(this.HistoricalData, 9, this.Count - 1);
-            double ema21 = CalculateEMA(this.HistoricalData, 21, this.Count - 1);
-            double ema34 = CalculateEMA(this.HistoricalData, 34, this.Count - 1);
+            double ema9 = CalculateEMA(this.HistoricalData, 9, this.HistoricalData.Count - 1);
+            double ema21 = CalculateEMA(this.HistoricalData, 21, this.HistoricalData.Count - 1);
+            double ema34 = CalculateEMA(this.HistoricalData, 34, this.HistoricalData.Count - 1);
 
             if (ema9 > 0) this.SetValue(ema9, 3, 0);
             if (ema21 > 0) this.SetValue(ema21, 4, 0);
@@ -185,7 +207,11 @@ namespace KatORB
             }
 
             DateTime targetTimeServer = GetNYOpenServerTime(date);
-            int tfSeconds = (int)this.HistoricalData.Aggregation.GetPeriod.Duration.TotalSeconds;
+            int tfSeconds = 0;
+            if (this.HistoricalData.Aggregation is HistoryAggregationTime timeAgg)
+                tfSeconds = (int)timeAgg.Period.Duration.TotalSeconds;
+            else
+                tfSeconds = 60;
 
             double high = 0;
             double low = 0;

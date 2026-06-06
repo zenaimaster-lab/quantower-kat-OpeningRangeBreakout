@@ -9,7 +9,7 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1",
       "id": "katopeningrangebreakout_cs",
-      "community": 5,
+      "community": 4,
       "norm_label": "katopeningrangebreakout.cs"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L7",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katorb",
-      "community": 5,
+      "community": 4,
       "norm_label": "katorb"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L9",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "community": 1,
+      "community": 0,
       "norm_label": "katopeningrangebreakout"
     },
     {
@@ -36,8 +36,35 @@
       "source_file": "",
       "source_location": "",
       "id": "strategy",
-      "community": 1,
+      "community": 0,
       "norm_label": "strategy"
+    },
+    {
+      "label": "string",
+      "file_type": "code",
+      "source_file": "KatOpeningRangeBreakout.cs",
+      "source_location": "L11",
+      "id": "string",
+      "community": 0,
+      "norm_label": "string"
+    },
+    {
+      "label": "Symbol",
+      "file_type": "code",
+      "source_file": "KatOpeningRangeBreakout.cs",
+      "source_location": "L27",
+      "id": "symbol",
+      "community": 0,
+      "norm_label": "symbol"
+    },
+    {
+      "label": "Account",
+      "file_type": "code",
+      "source_file": "KatOpeningRangeBreakout.cs",
+      "source_location": "L31",
+      "id": "account",
+      "community": 0,
+      "norm_label": "account"
     },
     {
       "label": "int",
@@ -45,7 +72,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L13",
       "id": "int",
-      "community": 4,
+      "community": 3,
       "norm_label": "int"
     },
     {
@@ -54,43 +81,43 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L25",
       "id": "bool",
-      "community": 0,
+      "community": 2,
       "norm_label": "bool"
     },
     {
       "label": "TimeManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L172",
+      "source_location": "L192",
       "id": "timemanager",
-      "community": 1,
+      "community": 0,
       "norm_label": "timemanager"
     },
     {
       "label": "RiskManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L173",
+      "source_location": "L193",
       "id": "riskmanager",
-      "community": 1,
+      "community": 0,
       "norm_label": "riskmanager"
     },
     {
       "label": "TrailManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L174",
+      "source_location": "L194",
       "id": "trailmanager",
-      "community": 1,
+      "community": 0,
       "norm_label": "trailmanager"
     },
     {
       "label": "List",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L175",
+      "source_location": "L195",
       "id": "list",
-      "community": 1,
+      "community": 0,
       "norm_label": "list"
     },
     {
@@ -99,7 +126,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L32",
       "id": "historicaldata",
-      "community": 0,
+      "community": 2,
       "norm_label": "historicaldata"
     },
     {
@@ -108,412 +135,403 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L37",
       "id": "dictionary",
-      "community": 0,
+      "community": 2,
       "norm_label": "dictionary"
     },
     {
       "label": "DateTime",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L192",
+      "source_location": "L212",
       "id": "datetime",
-      "community": 4,
+      "community": 3,
       "norm_label": "datetime"
-    },
-    {
-      "label": "string",
-      "file_type": "code",
-      "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L194",
-      "id": "string",
-      "community": 1,
-      "norm_label": "string"
     },
     {
       "label": ".Log()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L198",
+      "source_location": "L218",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "community": 2,
+      "community": 1,
       "norm_label": ".log()"
     },
     {
       "label": ".OnCreated()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L209",
+      "source_location": "L229",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_oncreated",
-      "community": 1,
+      "community": 0,
       "norm_label": ".oncreated()"
     },
     {
       "label": ".OnRun()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L224",
+      "source_location": "L244",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onrun",
-      "community": 1,
+      "community": 0,
       "norm_label": ".onrun()"
     },
     {
       "label": ".OnStop()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L258",
+      "source_location": "L284",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onstop",
-      "community": 2,
+      "community": 0,
       "norm_label": ".onstop()"
     },
     {
       "label": ".CurrentSymbol_NewQuote()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L277",
+      "source_location": "L303",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_currentsymbol_newquote",
-      "community": 4,
+      "community": 3,
       "norm_label": ".currentsymbol_newquote()"
     },
     {
       "label": ".OnQuoteUpdate()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L282",
+      "source_location": "L308",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "community": 4,
+      "community": 3,
       "norm_label": ".onquoteupdate()"
     },
     {
       "label": ".ResetStatsOnNewDay()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L301",
+      "source_location": "L327",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday",
-      "community": 4,
+      "community": 3,
       "norm_label": ".resetstatsonnewday()"
     },
     {
       "label": ".GetWinsToday()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L315",
+      "source_location": "L341",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday",
-      "community": 2,
+      "community": 1,
       "norm_label": ".getwinstoday()"
     },
     {
       "label": ".GetLossesToday()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L316",
+      "source_location": "L342",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday",
-      "community": 2,
+      "community": 1,
       "norm_label": ".getlossestoday()"
     },
     {
       "label": ".IncrementWins()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L317",
+      "source_location": "L343",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementwins",
-      "community": 1,
+      "community": 0,
       "norm_label": ".incrementwins()"
     },
     {
       "label": ".IncrementLosses()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L318",
+      "source_location": "L344",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementlosses",
-      "community": 1,
+      "community": 0,
       "norm_label": ".incrementlosses()"
     },
     {
       "label": ".GetM1History()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L321",
+      "source_location": "L347",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history",
-      "community": 3,
+      "community": 5,
       "norm_label": ".getm1history()"
     },
     {
       "label": ".GetM2History()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L322",
+      "source_location": "L348",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm2history",
-      "community": 3,
+      "community": 5,
       "norm_label": ".getm2history()"
     },
     {
       "label": ".GetDailyHistory()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L323",
+      "source_location": "L349",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory",
-      "community": 3,
+      "community": 5,
       "norm_label": ".getdailyhistory()"
     },
     {
       "label": ".GetRetestHistory()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L324",
+      "source_location": "L350",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getretesthistory",
-      "community": 3,
+      "community": 0,
       "norm_label": ".getretesthistory()"
     },
     {
       "label": ".MapMinutesToPeriod()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L326",
+      "source_location": "L352",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_mapminutestoperiod",
-      "community": 1,
+      "community": 0,
       "norm_label": ".mapminutestoperiod()"
     },
     {
       "label": "ORBRunner",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L358",
+      "source_location": "L384",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "community": 2,
+      "community": 1,
       "norm_label": "orbrunner"
     },
     {
       "label": ".ResetState()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L391",
+      "source_location": "L418",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_resetstate",
-      "community": 2,
+      "community": 1,
       "norm_label": ".resetstate()"
     },
     {
       "label": ".Process()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L407",
+      "source_location": "L435",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "community": 2,
+      "community": 1,
       "norm_label": ".process()"
     },
     {
       "label": ".HandleWaitCandle()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L511",
+      "source_location": "L539",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle",
-      "community": 2,
+      "community": 1,
       "norm_label": ".handlewaitcandle()"
     },
     {
       "label": ".HandleWaitBreak()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L564",
+      "source_location": "L609",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitbreak",
-      "community": 2,
+      "community": 1,
       "norm_label": ".handlewaitbreak()"
     },
     {
       "label": ".HandleWaitRetest()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L587",
+      "source_location": "L632",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "community": 3,
+      "community": 1,
       "norm_label": ".handlewaitretest()"
     },
     {
       "label": ".SyncOrderAndPositionStatus()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L776",
+      "source_location": "L902",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "community": 2,
+      "community": 1,
       "norm_label": ".syncorderandpositionstatus()"
     },
     {
       "label": ".UpdateWinLossCounter()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L811",
+      "source_location": "L944",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter",
-      "community": 1,
+      "community": 0,
       "norm_label": ".updatewinlosscounter()"
     },
     {
       "label": ".CheckAutoFlatten()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L831",
+      "source_location": "L964",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "community": 2,
+      "community": 1,
       "norm_label": ".checkautoflatten()"
     },
     {
       "label": ".FlattenAll()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L973",
+      "source_location": "L1110",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_flattenall",
-      "community": 2,
+      "community": 1,
       "norm_label": ".flattenall()"
     },
     {
       "label": ".CalculateBarsShift()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L994",
+      "source_location": "L1131",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatebarsshift",
-      "community": 2,
+      "community": 1,
       "norm_label": ".calculatebarsshift()"
     },
     {
       "label": ".CheckEmaFilters()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1008",
+      "source_location": "L1145",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkemafilters",
-      "community": 3,
+      "community": 1,
       "norm_label": ".checkemafilters()"
     },
     {
       "label": ".CalculateEMA()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1038",
+      "source_location": "L1175",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema",
-      "community": 3,
+      "community": 1,
       "norm_label": ".calculateema()"
     },
     {
       "label": ".CalculateVWAP()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1071",
+      "source_location": "L1208",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatevwap",
-      "community": 3,
+      "community": 5,
       "norm_label": ".calculatevwap()"
     },
     {
       "label": ".GetPrevDayEMA()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1092",
+      "source_location": "L1229",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getprevdayema",
-      "community": 3,
+      "community": 5,
       "norm_label": ".getprevdayema()"
     },
     {
       "label": ".CheckObstacles()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1120",
+      "source_location": "L1257",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "community": 3,
+      "community": 5,
       "norm_label": ".checkobstacles()"
     },
     {
       "label": ".GetOtherTimeframeRange()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1366",
+      "source_location": "L1503",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange",
-      "community": 3,
+      "community": 5,
       "norm_label": ".getothertimeframerange()"
     },
     {
       "label": "TimeManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1403",
+      "source_location": "L1540",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "community": 4,
+      "community": 3,
       "norm_label": "timemanager"
     },
     {
       "label": ".GetServerTime()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1408",
+      "source_location": "L1545",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime",
-      "community": 4,
+      "community": 3,
       "norm_label": ".getservertime()"
     },
     {
       "label": ".GetTargetTime()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1416",
+      "source_location": "L1552",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_gettargettime",
-      "community": 4,
+      "community": 3,
       "norm_label": ".gettargettime()"
     },
     {
       "label": ".UpdateTargetTime()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1418",
+      "source_location": "L1554",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_updatetargettime",
-      "community": 4,
+      "community": 3,
       "norm_label": ".updatetargettime()"
     },
     {
       "label": "RiskManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1446",
+      "source_location": "L1582",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager",
-      "community": 5,
+      "community": 4,
       "norm_label": "riskmanager"
     },
     {
       "label": ".CalcLotSize()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1455",
+      "source_location": "L1591",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_calclotsize",
-      "community": 5,
+      "community": 4,
       "norm_label": ".calclotsize()"
     },
     {
       "label": ".NormalizeLot()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1477",
+      "source_location": "L1613",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot",
-      "community": 5,
+      "community": 4,
       "norm_label": ".normalizelot()"
     },
     {
       "label": "TrailManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1496",
+      "source_location": "L1632",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager",
-      "community": 5,
+      "community": 4,
       "norm_label": "trailmanager"
     },
     {
       "label": ".Process()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1505",
+      "source_location": "L1641",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_process",
-      "community": 5,
+      "community": 4,
       "norm_label": ".process()"
     },
     {
       "label": ".ManageChaseTrailing()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L1521",
+      "source_location": "L1657",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_managechasetrailing",
-      "community": 5,
+      "community": 4,
       "norm_label": ".managechasetrailing()"
     },
     {
@@ -522,7 +540,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L1",
       "id": "katopeningrangeindicator_cs",
-      "community": 0,
+      "community": 2,
       "norm_label": "katopeningrangeindicator.cs"
     },
     {
@@ -531,7 +549,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L8",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katorb",
-      "community": 0,
+      "community": 2,
       "norm_label": "katorb"
     },
     {
@@ -540,7 +558,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L10",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "community": 0,
+      "community": 2,
       "norm_label": "katopeningrangeindicator"
     },
     {
@@ -549,7 +567,7 @@
       "source_file": "",
       "source_location": "",
       "id": "indicator",
-      "community": 0,
+      "community": 2,
       "norm_label": "indicator"
     },
     {
@@ -558,7 +576,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L62",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_oninit",
-      "community": 0,
+      "community": 2,
       "norm_label": ".oninit()"
     },
     {
@@ -567,7 +585,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L67",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate",
-      "community": 0,
+      "community": 2,
       "norm_label": ".onupdate()"
     },
     {
@@ -576,7 +594,7 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L163",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime",
-      "community": 0,
+      "community": 2,
       "norm_label": ".getnyopenservertime()"
     },
     {
@@ -585,34 +603,34 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L180",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate",
-      "community": 0,
+      "community": 2,
       "norm_label": ".getrangefordate()"
     },
     {
       "label": ".CalculateEMA()",
       "file_type": "code",
       "source_file": "KatOpeningRangeIndicator.cs",
-      "source_location": "L233",
+      "source_location": "L234",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculateema",
-      "community": 0,
+      "community": 2,
       "norm_label": ".calculateema()"
     },
     {
       "label": ".CalculateVWAP()",
       "file_type": "code",
       "source_file": "KatOpeningRangeIndicator.cs",
-      "source_location": "L262",
+      "source_location": "L263",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculatevwap",
-      "community": 0,
+      "community": 2,
       "norm_label": ".calculatevwap()"
     },
     {
       "label": ".OnPaintChart()",
       "file_type": "code",
       "source_file": "KatOpeningRangeIndicator.cs",
-      "source_location": "L284",
+      "source_location": "L285",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onpaintchart",
-      "community": 0,
+      "community": 2,
       "norm_label": ".onpaintchart()"
     },
     {
@@ -677,9 +695,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangebreakout_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katorb",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katorb"
     },
     {
       "relation": "contains",
@@ -687,9 +705,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangebreakout_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout"
     },
     {
       "relation": "contains",
@@ -697,9 +715,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L358",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangebreakout_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner"
     },
     {
       "relation": "contains",
@@ -707,9 +725,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1403",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangebreakout_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager"
     },
     {
       "relation": "contains",
@@ -717,9 +735,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1446",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangebreakout_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager"
     },
     {
       "relation": "contains",
@@ -727,9 +745,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1496",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangebreakout_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager"
     },
     {
       "relation": "inherits",
@@ -737,8 +755,41 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "strategy",
+      "target": "strategy"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "KatOpeningRangeBreakout.cs",
+      "source_location": "L194",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
+      "target": "string"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "KatOpeningRangeBreakout.cs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "context": "field",
+      "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
+      "target": "symbol",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "KatOpeningRangeBreakout.cs",
+      "source_location": "L31",
+      "weight": 1.0,
+      "context": "field",
+      "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
+      "target": "account",
       "confidence_score": 1.0
     },
     {
@@ -748,9 +799,9 @@
       "source_location": "L131",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -759,9 +810,9 @@
       "source_location": "L167",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "bool",
-      "confidence_score": 1.0
+      "target": "bool"
     },
     {
       "relation": "references",
@@ -770,9 +821,9 @@
       "source_location": "L172",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "timemanager",
-      "confidence_score": 1.0
+      "target": "timemanager"
     },
     {
       "relation": "references",
@@ -781,9 +832,9 @@
       "source_location": "L173",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "riskmanager",
-      "confidence_score": 1.0
+      "target": "riskmanager"
     },
     {
       "relation": "references",
@@ -792,9 +843,9 @@
       "source_location": "L174",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "trailmanager",
-      "confidence_score": 1.0
+      "target": "trailmanager"
     },
     {
       "relation": "references",
@@ -803,9 +854,9 @@
       "source_location": "L175",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "list",
-      "confidence_score": 1.0
+      "target": "list"
     },
     {
       "relation": "references",
@@ -814,9 +865,9 @@
       "source_location": "L187",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "historicaldata",
-      "confidence_score": 1.0
+      "target": "historicaldata"
     },
     {
       "relation": "references",
@@ -825,9 +876,9 @@
       "source_location": "L191",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "dictionary",
-      "confidence_score": 1.0
+      "target": "dictionary"
     },
     {
       "relation": "references",
@@ -836,20 +887,9 @@
       "source_location": "L192",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "datetime",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L194",
-      "weight": 1.0,
-      "context": "field",
-      "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "string",
-      "confidence_score": 1.0
+      "target": "datetime"
     },
     {
       "relation": "method",
@@ -857,9 +897,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L198",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "method",
@@ -867,9 +907,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L209",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_oncreated",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_oncreated"
     },
     {
       "relation": "method",
@@ -877,9 +917,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L224",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onrun",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onrun"
     },
     {
       "relation": "method",
@@ -887,9 +927,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L258",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onstop",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onstop"
     },
     {
       "relation": "method",
@@ -897,9 +937,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L277",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_currentsymbol_newquote",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_currentsymbol_newquote"
     },
     {
       "relation": "method",
@@ -907,9 +947,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L282",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate"
     },
     {
       "relation": "method",
@@ -917,9 +957,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L301",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday"
     },
     {
       "relation": "method",
@@ -927,9 +967,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L315",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday"
     },
     {
       "relation": "method",
@@ -937,9 +977,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L316",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday"
     },
     {
       "relation": "method",
@@ -947,9 +987,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L317",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementwins",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementwins"
     },
     {
       "relation": "method",
@@ -957,9 +997,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L318",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementlosses",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementlosses"
     },
     {
       "relation": "method",
@@ -967,9 +1007,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L321",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history"
     },
     {
       "relation": "method",
@@ -977,9 +1017,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L322",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm2history",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm2history"
     },
     {
       "relation": "method",
@@ -987,9 +1027,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L323",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory"
     },
     {
       "relation": "method",
@@ -997,9 +1037,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L324",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getretesthistory",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getretesthistory"
     },
     {
       "relation": "method",
@@ -1007,9 +1047,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L326",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_mapminutestoperiod",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_mapminutestoperiod"
     },
     {
       "relation": "references",
@@ -1018,9 +1058,9 @@
       "source_location": "L360",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout"
     },
     {
       "relation": "references",
@@ -1029,9 +1069,9 @@
       "source_location": "L1448",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout"
     },
     {
       "relation": "references",
@@ -1040,9 +1080,9 @@
       "source_location": "L1498",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout"
     },
     {
       "relation": "references",
@@ -1051,9 +1091,9 @@
       "source_location": "L1406",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -1062,9 +1102,9 @@
       "source_location": "L22",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -1073,9 +1113,9 @@
       "source_location": "L28",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "bool",
-      "confidence_score": 1.0
+      "target": "bool"
     },
     {
       "relation": "references",
@@ -1084,9 +1124,9 @@
       "source_location": "L34",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "historicaldata",
-      "confidence_score": 1.0
+      "target": "historicaldata"
     },
     {
       "relation": "references",
@@ -1095,9 +1135,9 @@
       "source_location": "L37",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "dictionary",
-      "confidence_score": 1.0
+      "target": "dictionary"
     },
     {
       "relation": "references",
@@ -1106,9 +1146,9 @@
       "source_location": "L380",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "datetime",
-      "confidence_score": 1.0
+      "target": "datetime"
     },
     {
       "relation": "references",
@@ -1117,9 +1157,9 @@
       "source_location": "L1405",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "target": "datetime",
-      "confidence_score": 1.0
+      "target": "datetime"
     },
     {
       "relation": "calls",
@@ -1128,9 +1168,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L228",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onrun",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1139,9 +1179,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L274",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onstop",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1150,9 +1190,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L311",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1161,9 +1201,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L439",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1172,9 +1212,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L526",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1183,9 +1223,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L577",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitbreak",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1194,9 +1234,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L623",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1205,9 +1245,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L806",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1216,9 +1256,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L955",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1227,9 +1267,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L980",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_flattenall",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log"
     },
     {
       "relation": "calls",
@@ -1238,9 +1278,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L242",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onrun",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_mapminutestoperiod",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_mapminutestoperiod"
     },
     {
       "relation": "calls",
@@ -1249,9 +1289,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L279",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_currentsymbol_newquote",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate"
     },
     {
       "relation": "calls",
@@ -1260,9 +1300,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L286",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime"
     },
     {
       "relation": "calls",
@@ -1271,9 +1311,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L287",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_updatetargettime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_updatetargettime"
     },
     {
       "relation": "calls",
@@ -1282,9 +1322,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L288",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_gettargettime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_gettargettime"
     },
     {
       "relation": "calls",
@@ -1293,9 +1333,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L291",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday"
     },
     {
       "relation": "calls",
@@ -1304,9 +1344,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L296",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_process",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_process"
     },
     {
       "relation": "calls",
@@ -1315,9 +1355,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L457",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday"
     },
     {
       "relation": "calls",
@@ -1326,9 +1366,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L803",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday"
     },
     {
       "relation": "calls",
@@ -1337,9 +1377,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L966",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday"
     },
     {
       "relation": "calls",
@@ -1348,9 +1388,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L458",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday"
     },
     {
       "relation": "calls",
@@ -1359,9 +1399,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L804",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday"
     },
     {
       "relation": "calls",
@@ -1370,9 +1410,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L967",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday"
     },
     {
       "relation": "calls",
@@ -1381,9 +1421,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L825",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementwins",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementwins"
     },
     {
       "relation": "calls",
@@ -1392,9 +1432,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L827",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementlosses",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementlosses"
     },
     {
       "relation": "calls",
@@ -1403,9 +1443,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L532",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history"
     },
     {
       "relation": "calls",
@@ -1414,9 +1454,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1313",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history"
     },
     {
       "relation": "calls",
@@ -1425,9 +1465,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1369",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history"
     },
     {
       "relation": "calls",
@@ -1436,9 +1476,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1231",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm2history",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm2history"
     },
     {
       "relation": "calls",
@@ -1447,9 +1487,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1094",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getprevdayema",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory"
     },
     {
       "relation": "calls",
@@ -1458,9 +1498,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1204",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory"
     },
     {
       "relation": "calls",
@@ -1469,9 +1509,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L592",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getretesthistory",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getretesthistory"
     },
     {
       "relation": "method",
@@ -1479,9 +1519,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L391",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_resetstate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_resetstate"
     },
     {
       "relation": "method",
@@ -1489,9 +1529,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L407",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process"
     },
     {
       "relation": "method",
@@ -1499,9 +1539,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L511",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle"
     },
     {
       "relation": "method",
@@ -1509,9 +1549,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L564",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitbreak",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitbreak"
     },
     {
       "relation": "method",
@@ -1519,9 +1559,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L587",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest"
     },
     {
       "relation": "method",
@@ -1529,9 +1569,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L776",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus"
     },
     {
       "relation": "method",
@@ -1539,9 +1579,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L811",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter"
     },
     {
       "relation": "method",
@@ -1549,9 +1589,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L831",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten"
     },
     {
       "relation": "method",
@@ -1559,9 +1599,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L973",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_flattenall",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_flattenall"
     },
     {
       "relation": "method",
@@ -1569,9 +1609,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L994",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatebarsshift",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatebarsshift"
     },
     {
       "relation": "method",
@@ -1579,9 +1619,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1008",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkemafilters",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkemafilters"
     },
     {
       "relation": "method",
@@ -1589,9 +1629,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1043",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema"
     },
     {
       "relation": "method",
@@ -1599,9 +1639,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1071",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatevwap",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatevwap"
     },
     {
       "relation": "method",
@@ -1609,9 +1649,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1092",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getprevdayema",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getprevdayema"
     },
     {
       "relation": "method",
@@ -1619,9 +1659,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles"
     },
     {
       "relation": "method",
@@ -1629,9 +1669,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1366",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange"
     },
     {
       "relation": "calls",
@@ -1640,9 +1680,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L414",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_resetstate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_resetstate"
     },
     {
       "relation": "calls",
@@ -1651,9 +1691,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L421",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus"
     },
     {
       "relation": "calls",
@@ -1662,9 +1702,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L473",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitcandle"
     },
     {
       "relation": "calls",
@@ -1673,9 +1713,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L497",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitbreak",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitbreak"
     },
     {
       "relation": "calls",
@@ -1684,9 +1724,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L502",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest"
     },
     {
       "relation": "calls",
@@ -1695,9 +1735,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L507",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten"
     },
     {
       "relation": "calls",
@@ -1706,9 +1746,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L630",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles"
     },
     {
       "relation": "calls",
@@ -1717,9 +1757,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L639",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkemafilters",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkemafilters"
     },
     {
       "relation": "calls",
@@ -1728,9 +1768,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L653",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_handlewaitretest",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot"
     },
     {
       "relation": "calls",
@@ -1739,9 +1779,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L801",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_syncorderandpositionstatus",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_updatewinlosscounter"
     },
     {
       "relation": "calls",
@@ -1750,9 +1790,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L847",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatebarsshift",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatebarsshift"
     },
     {
       "relation": "calls",
@@ -1761,9 +1801,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L957",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkautoflatten",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_flattenall",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_flattenall"
     },
     {
       "relation": "calls",
@@ -1772,9 +1812,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1020",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkemafilters",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema"
     },
     {
       "relation": "calls",
@@ -1783,9 +1823,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1238",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculateema"
     },
     {
       "relation": "calls",
@@ -1794,9 +1834,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1313",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatevwap",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_calculatevwap"
     },
     {
       "relation": "calls",
@@ -1805,9 +1845,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1130",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange"
     },
     {
       "relation": "calls",
@@ -1816,9 +1856,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1310",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_checkobstacles",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime"
     },
     {
       "relation": "calls",
@@ -1827,9 +1867,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1383",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_orbrunner_getothertimeframerange",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime"
     },
     {
       "relation": "method",
@@ -1837,9 +1877,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1408",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime"
     },
     {
       "relation": "method",
@@ -1847,9 +1887,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1416",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_gettargettime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_gettargettime"
     },
     {
       "relation": "method",
@@ -1857,9 +1897,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1418",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_updatetargettime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_updatetargettime"
     },
     {
       "relation": "calls",
@@ -1868,9 +1908,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1420",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_updatetargettime",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_timemanager_getservertime"
     },
     {
       "relation": "method",
@@ -1878,9 +1918,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1455",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_calclotsize",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_calclotsize"
     },
     {
       "relation": "method",
@@ -1888,9 +1928,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1477",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot"
     },
     {
       "relation": "calls",
@@ -1899,9 +1939,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1457",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_calclotsize",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_riskmanager_normalizelot"
     },
     {
       "relation": "method",
@@ -1909,9 +1949,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1505",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_process",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_process"
     },
     {
       "relation": "method",
@@ -1919,9 +1959,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1521",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_managechasetrailing",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_managechasetrailing"
     },
     {
       "relation": "calls",
@@ -1930,9 +1970,9 @@
       "source_file": "KatOpeningRangeBreakout.cs",
       "source_location": "L1517",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_process",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_managechasetrailing",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangebreakout_trailmanager_managechasetrailing"
     },
     {
       "relation": "contains",
@@ -1940,9 +1980,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangeindicator_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katorb",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katorb"
     },
     {
       "relation": "contains",
@@ -1950,9 +1990,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangeindicator_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator"
     },
     {
       "relation": "inherits",
@@ -1960,9 +2000,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "indicator",
-      "confidence_score": 1.0
+      "target": "indicator"
     },
     {
       "relation": "method",
@@ -1970,9 +2010,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_oninit",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_oninit"
     },
     {
       "relation": "method",
@@ -1980,9 +2020,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L67",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate"
     },
     {
       "relation": "method",
@@ -1990,9 +2030,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L163",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime"
     },
     {
       "relation": "method",
@@ -2000,9 +2040,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L180",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate"
     },
     {
       "relation": "method",
@@ -2010,9 +2050,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L233",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculateema",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculateema"
     },
     {
       "relation": "method",
@@ -2020,9 +2060,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L262",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculatevwap",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculatevwap"
     },
     {
       "relation": "method",
@@ -2030,9 +2070,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L284",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onpaintchart",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onpaintchart"
     },
     {
       "relation": "calls",
@@ -2041,9 +2081,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate"
     },
     {
       "relation": "calls",
@@ -2052,9 +2092,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime"
     },
     {
       "relation": "calls",
@@ -2063,9 +2103,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L107",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculateema",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculateema"
     },
     {
       "relation": "calls",
@@ -2074,9 +2114,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L132",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onupdate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculatevwap",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculatevwap"
     },
     {
       "relation": "calls",
@@ -2085,9 +2125,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L187",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime"
     },
     {
       "relation": "calls",
@@ -2096,9 +2136,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L303",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onpaintchart",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getnyopenservertime"
     },
     {
       "relation": "calls",
@@ -2107,11 +2147,11 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L298",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onpaintchart",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_getrangefordate"
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "09872044c184bed6b4c1e5ba915ae5fefcb63005"
+  "built_at_commit": "151ebc95865f65176d4c46f9fd3a66dd7d02a2ee"
 }
