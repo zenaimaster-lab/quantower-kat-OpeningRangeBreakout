@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "2.2";
+        public string InpStrategyVersion = "3.0";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 14:24:00";
+        public string InpLastUpdated = "2026-06-06 14:26:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -159,6 +159,10 @@ namespace KatORB
         [InputParameter("Flatten on Mid Touch", 350)]
         public bool InpTouchMidOn = true;
 
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Flatten all on Strategy Stop", 355)]
+        public bool InpFlattenOnStop = false;
+
         //--- Favor EMA Trend Filters
         [Category("8. EMA TREND FILTERS")]
         [InputParameter("Favor EMA 9 (Entry)", 360)]
@@ -236,7 +240,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "2.2";
+        public const string STRATEGY_VERSION = "3.0";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -362,6 +366,15 @@ namespace KatORB
             if (this.CurrentSymbol != null)
             {
                 this.CurrentSymbol.NewQuote -= CurrentSymbol_NewQuote;
+            }
+
+            // Flatten all active orders/positions if enabled on stop
+            if (InpFlattenOnStop && this.runners != null)
+            {
+                foreach (var runner in this.runners)
+                {
+                    runner.FlattenAll();
+                }
             }
 
             // Clean up resources and unsubscribe
