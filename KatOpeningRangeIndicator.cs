@@ -225,7 +225,8 @@ namespace KatORB
                 return range;
             }
 
-            DateTime targetTimeServer = GetNYOpenServerTime(date);
+            DateTime convertedTime = GetNYOpenServerTime(date);
+            DateTime targetTimeServer = new DateTime(convertedTime.Year, convertedTime.Month, convertedTime.Day, convertedTime.Hour, convertedTime.Minute, 0, DateTimeKind.Unspecified);
             int tfSeconds = 0;
             if (this.HistoricalData.Aggregation is HistoryAggregationTime timeAgg)
                 tfSeconds = (int)timeAgg.Period.Duration.TotalSeconds;
@@ -473,7 +474,8 @@ namespace KatORB
             //--- 2. Shaded zone for Opening Range (Brutalist style)
             if (InpDrawRangeZone && range.High > 0 && range.Low > 0)
             {
-                DateTime targetTimeServer = GetNYOpenServerTime(barDate);
+                DateTime convertedTime = GetNYOpenServerTime(barDate);
+                DateTime targetTimeServer = new DateTime(convertedTime.Year, convertedTime.Month, convertedTime.Day, convertedTime.Hour, convertedTime.Minute, 0, DateTimeKind.Unspecified);
                 if (barTime >= targetTimeServer)
                 {
                     double xStart = converter.GetChartX(targetTimeServer);

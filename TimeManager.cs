@@ -39,7 +39,8 @@ namespace KatORB
             DateTime targetUtc = targetNyOpenLocal.AddHours(-utcOffset);
 
             // Convert to platform Selected TimeZone
-            targetTimeServer = Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(targetUtc);
+            DateTime convertedTime = Core.Instance.TimeUtils.ConvertFromUTCToSelectedTimeZone(targetUtc);
+            targetTimeServer = new DateTime(convertedTime.Year, convertedTime.Month, convertedTime.Day, convertedTime.Hour, convertedTime.Minute, 0, DateTimeKind.Unspecified);
             lastCalculatedDay = activeSessionDate.Day;
         }
     }

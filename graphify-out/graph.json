@@ -403,7 +403,7 @@
       "label": ".CalculateEMA()",
       "file_type": "code",
       "source_file": "KatOpeningRangeIndicator.cs",
-      "source_location": "L279",
+      "source_location": "L280",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculateema",
       "community": 5,
       "norm_label": ".calculateema()"
@@ -412,7 +412,7 @@
       "label": ".CalculateVWAP()",
       "file_type": "code",
       "source_file": "KatOpeningRangeIndicator.cs",
-      "source_location": "L366",
+      "source_location": "L367",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_calculatevwap",
       "community": 5,
       "norm_label": ".calculatevwap()"
@@ -421,7 +421,7 @@
       "label": ".OnPaintChart()",
       "file_type": "code",
       "source_file": "KatOpeningRangeIndicator.cs",
-      "source_location": "L457",
+      "source_location": "L458",
       "id": "quantower_kat_openingrangebreakout_katopeningrangeindicator_katopeningrangeindicator_onpaintchart",
       "community": 5,
       "norm_label": ".onpaintchart()"
@@ -3276,5 +3276,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6094257710b13fe9bbfc68d737937105d9a1fde0"
+  "built_at_commit": "3fa268b8c536ca8b961055a8206827c2fa00ccfe"
 }

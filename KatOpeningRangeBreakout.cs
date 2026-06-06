@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.6";
+        public string InpStrategyVersion = "1.7";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 02:10:00";
+        public string InpLastUpdated = "2026-06-06 02:11:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -215,7 +215,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.6";
+        public const string STRATEGY_VERSION = "1.7";
 
         public int MagicNumber => InpMagicNumber;
 
