@@ -585,7 +585,7 @@ namespace KatORB
                 // 1. Ưu tiên tìm trực tiếp nến đã đóng trong lịch sử của runner
                 if (this.History != null && this.History.Count > 0)
                 {
-                    var targetBar = this.History.Cast<HistoryItemBar>().FirstOrDefault(b => 
+                    var targetBar = this.History.OfType<HistoryItemBar>().FirstOrDefault(b => 
                         b.TimeLeft.Year == nyoTime.Year &&
                         b.TimeLeft.Month == nyoTime.Month &&
                         b.TimeLeft.Day == nyoTime.Day &&
@@ -617,7 +617,7 @@ namespace KatORB
                 int expectedBars = tfSeconds / 60;
                 var rangeBars = m1History
                     .Where(b => b.TimeLeft >= nyoTime && b.TimeLeft < nyoTime.AddSeconds(tfSeconds))
-                    .Cast<HistoryItemBar>()
+                    .OfType<HistoryItemBar>()
                     .ToList();
 
                 if (rangeBars.Count < expectedBars)
@@ -1557,7 +1557,7 @@ namespace KatORB
 
             var bars = m1History
                 .Where(b => b.TimeLeft >= nyoTime && b.TimeLeft < nyoTime.AddSeconds(seconds))
-                .Cast<HistoryItemBar>()
+                .OfType<HistoryItemBar>()
                 .ToList();
 
             if (bars.Count == 0) return false;

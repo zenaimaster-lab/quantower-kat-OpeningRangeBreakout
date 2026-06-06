@@ -217,7 +217,7 @@ namespace KatORB
             double low = 0;
 
             // 1. Try to find the range bar in own timeframe first
-            var targetBar = this.HistoricalData.Cast<HistoryItemBar>().FirstOrDefault(b => b.TimeLeft == targetTimeServer);
+            var targetBar = this.HistoricalData.OfType<HistoryItemBar>().FirstOrDefault(b => b.TimeLeft == targetTimeServer);
             if (targetBar != null)
             {
                 high = targetBar.High;
@@ -227,7 +227,7 @@ namespace KatORB
             else if (this.historicalDataM1 != null && this.historicalDataM1.Count > 0)
             {
                 int expectedBars = tfSeconds / 60;
-                var rangeBars = this.historicalDataM1.Cast<HistoryItemBar>()
+                var rangeBars = this.historicalDataM1.OfType<HistoryItemBar>()
                     .Where(b => b.TimeLeft >= targetTimeServer && b.TimeLeft < targetTimeServer.AddSeconds(tfSeconds))
                     .ToList();
 
