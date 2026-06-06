@@ -1,11 +1,27 @@
 {
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\KatOpeningRangeBreakout.cs": {
-    "mtime": 1779830292.4734464,
-    "hash": "6f791e2c9b7cfd656a2f9e39728c3974"
+    "mtime": 1780710653.445135,
+    "hash": "735d7588008f905720c06a2c7931fdcb"
   },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\KatOpeningRangeIndicator.cs": {
-    "mtime": 1779465283.7037795,
-    "hash": "8cacffd489b7809822e1adf8d087e66d"
+    "mtime": 1780710674.569412,
+    "hash": "98a02c4cc787f0a67b330071ae426653"
+  },
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\ORBRunner.cs": {
+    "mtime": 1780710694.4068701,
+    "hash": "b9cc266e01000a2132303ff33e3e9318"
+  },
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\RiskManager.cs": {
+    "mtime": 1780710707.844694,
+    "hash": "5ddd6ff1005696ab78d065661cc2e78b"
+  },
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\TimeManager.cs": {
+    "mtime": 1780710578.8151853,
+    "hash": "5896df04c66056016bd8e86bd015cfc0"
+  },
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\TrailManager.cs": {
+    "mtime": 1780710710.3879738,
+    "hash": "5282fbb5eb22a2d8af3c7cb202e475cb"
   },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\obj\\Debug\\net8.0-windows\\KatOpeningRangeBreakout.AssemblyInfo.cs": {
     "mtime": 1779349002.3796833,
@@ -24,16 +40,20 @@
     "hash": "719aa7990b29c5fa615915fc5e76e631"
   },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\obj\\Release\\net8.0-windows\\KatOpeningRangeBreakout.AssemblyInfo.cs": {
-    "mtime": 1779830298.855513,
-    "hash": "ee7419291baf124a0b6e74d74c26bdf0"
+    "mtime": 1780710389.6791744,
+    "hash": "7f1638bf7ebf790a348299607d150536"
   },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\obj\\Release\\net8.0-windows\\KatOpeningRangeBreakout.GlobalUsings.g.cs": {
     "mtime": 1779348171.8832977,
     "hash": "719aa7990b29c5fa615915fc5e76e631"
   },
+  "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\AGENTS.md": {
+    "mtime": 1780187372.0266135,
+    "hash": "372d88dd037e216c442dcf99abd95cb8"
+  },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\CLAUDE.md": {
-    "mtime": 1779352555.3780174,
-    "hash": "d81f09a4e7e0f4c398198791eaff90bc"
+    "mtime": 1780173701.6070168,
+    "hash": "b90b3acdeef3d00775d31a8beb36b266"
   },
   "C:\\Users\\kieuanhtuan\\Documents\\all. Coding\\quantower-kat-OpeningRangeBreakout\\diary\\2026\\05\\2026-05-22.md": {
     "mtime": 1779375729.5614643,
