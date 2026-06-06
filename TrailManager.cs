@@ -59,7 +59,7 @@ namespace KatORB
                 {
                     if (slPrice == 0 || (newSL - slPrice) >= stepDist)
                     {
-                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, newSL, newSL, slOrder.TrailOffset);
+                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, slOrder.Price, newSL, slOrder.TrailOffset);
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace KatORB
                 {
                     if (slPrice == 0 || (slPrice - newSL) >= stepDist)
                     {
-                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, newSL, newSL, slOrder.TrailOffset);
+                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, slOrder.Price, newSL, slOrder.TrailOffset);
                     }
                 }
             }
