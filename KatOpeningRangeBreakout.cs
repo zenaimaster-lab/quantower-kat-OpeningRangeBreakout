@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.5";
+        public string InpStrategyVersion = "1.6";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 02:08:00";
+        public string InpLastUpdated = "2026-06-06 02:10:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -215,7 +215,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.5";
+        public const string STRATEGY_VERSION = "1.6";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -348,7 +348,7 @@ namespace KatORB
             DateTime nyoServerTime = this.timeManager.GetTargetTime();
 
             // Daily stats reset at NY Open
-            ResetStatsOnNewDay(nyoServerTime);
+            ResetStatsOnNewDay(nyoServerTime, serverTime);
 
             // Periodically refresh history counts or triggers
             foreach (var runner in this.runners)
@@ -358,9 +358,9 @@ namespace KatORB
             }
         }
 
-        private void ResetStatsOnNewDay(DateTime nyoTime)
+        private void ResetStatsOnNewDay(DateTime nyoTime, DateTime serverTime)
         {
-            if (nyoTime != this.lastStatsDate && nyoTime > DateTime.MinValue)
+            if (serverTime >= nyoTime && nyoTime.Date != this.lastStatsDate.Date && nyoTime > DateTime.MinValue)
             {
                 for (int i = 0; i < 4; i++)
                 {
@@ -368,7 +368,7 @@ namespace KatORB
                     this.lossesToday[i] = 0;
                 }
                 this.lastStatsDate = nyoTime;
-                this.Log($"New trading day detected at {nyoTime}. Strategy win/loss stats have been reset.");
+                this.Log($"New trading session started at {nyoTime}. Strategy win/loss stats have been reset.");
             }
         }
 
