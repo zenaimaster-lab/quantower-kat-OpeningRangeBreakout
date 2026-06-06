@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.9";
+        public string InpStrategyVersion = "2.0";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 14:18:00";
+        public string InpLastUpdated = "2026-06-06 14:19:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -83,6 +83,14 @@ namespace KatORB
         public int InpMaxChaseTicks = 10;
 
         //--- Risk & Contracts
+        [Category("4. RISK & CONTRACTS")]
+        [InputParameter("Use Risk Sizing", 150)]
+        public bool InpUseRiskSizing = false;
+
+        [Category("4. RISK & CONTRACTS")]
+        [InputParameter("Risk Percent", 155)]
+        public double InpRiskPercent = 1.0;
+
         [Category("4. RISK & CONTRACTS")]
         [InputParameter("Contract", 160)]
         public int InpFixContract = 1;
@@ -215,7 +223,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.9";
+        public const string STRATEGY_VERSION = "2.0";
 
         public int MagicNumber => InpMagicNumber;
 

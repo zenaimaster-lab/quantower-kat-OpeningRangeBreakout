@@ -29,6 +29,12 @@ namespace KatORB
             DateTime shiftTime = nyNow.Date.AddHours(16);
             DateTime activeSessionDate = nyNow >= shiftTime ? nyNow.Date.AddDays(1) : nyNow.Date;
 
+            // Skip weekends
+            if (activeSessionDate.DayOfWeek == DayOfWeek.Saturday)
+                activeSessionDate = activeSessionDate.AddDays(2);
+            else if (activeSessionDate.DayOfWeek == DayOfWeek.Sunday)
+                activeSessionDate = activeSessionDate.AddDays(1);
+
             // Target NY open time for the active session date
             DateTime targetNyOpenLocal = activeSessionDate.AddHours(nyHour).AddMinutes(nyMin).AddSeconds(nySec);
             

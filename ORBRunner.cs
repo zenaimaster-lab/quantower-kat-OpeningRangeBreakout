@@ -386,7 +386,9 @@ namespace KatORB
                     }
 
                     // Risk Sizing
-                    double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
+                    double lot = strategy.InpUseRiskSizing 
+                        ? strategy.RiskManager.CalcLotSize(strategy.InpRiskPercent, strategy.InpSlTicks)
+                        : strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
                     {
@@ -509,7 +511,9 @@ namespace KatORB
                         return;
                     }
 
-                    double lot = strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
+                    double lot = strategy.InpUseRiskSizing 
+                        ? strategy.RiskManager.CalcLotSize(strategy.InpRiskPercent, strategy.InpSlTicks)
+                        : strategy.RiskManager.NormalizeLot(strategy.InpFixContract);
 
                     if (lot > 0)
                     {
@@ -618,6 +622,15 @@ namespace KatORB
                     {
                         this.pendingStatsTag = this.LastOrderTag;
                         this.statsCheckStartTime = serverTime;
+                    }
+                    else
+                    {
+                        // Check if order was rejected
+                        var rejectedOrder = Core.Instance.Orders.FirstOrDefault(o => o.Comment == this.LastOrderTag && o.Status == OrderStatus.Refused);
+                        if (rejectedOrder != null)
+                        {
+                            strategy.Log($"[{Comment}] Trade failed. Order ID: {rejectedOrder.Id} was REJECTED by broker.", StrategyLoggingLevel.Error);
+                        }
                     }
 
                     this.OrdersActive = false;
