@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "2.0";
+        public string InpStrategyVersion = "2.1";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 14:19:00";
+        public string InpLastUpdated = "2026-06-06 14:22:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -120,6 +120,19 @@ namespace KatORB
         public int InpTrailDistance = 20;
 
         public const int InpTrailStep = 1;
+
+        //--- Break-Even Settings
+        [Category("6.b BREAK-EVEN")]
+        [InputParameter("Enable Break-Even", 260)]
+        public bool InpUseBreakEven = false;
+
+        [Category("6.b BREAK-EVEN")]
+        [InputParameter("Break-Even Trigger", 270)]
+        public int InpBreakEvenTrigger = 50;
+
+        [Category("6.b BREAK-EVEN")]
+        [InputParameter("Break-Even Offset", 275)]
+        public int InpBreakEvenOffset = 1;
 
         //--- Auto-Flatten Conditions
         [Category("7. FLATTEN & CANCEL")]
@@ -223,7 +236,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "2.0";
+        public const string STRATEGY_VERSION = "2.1";
 
         public int MagicNumber => InpMagicNumber;
 

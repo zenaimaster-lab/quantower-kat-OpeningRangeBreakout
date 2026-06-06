@@ -47,37 +47,81 @@ namespace KatORB
             double trailDist = distanceTicks * tickSize;
             double stepDist = stepTicks * tickSize;
 
+            double beTriggerPrice = strategy.InpBreakEvenTrigger * tickSize;
+            double beOffsetPrice = strategy.InpBreakEvenOffset * tickSize;
+
             double open = pos.OpenPrice;
+            double currentQty = pos.Quantity;
+
+            double targetSL = slPrice;
 
             if (pos.Side == Side.Buy)
             {
                 double bid = strategy.CurrentSymbol.Bid;
-                if (bid - open < triggerDist) return;
 
-                double newSL = bid - trailDist;
-                newSL = Math.Round(newSL / tickSize) * tickSize;
-
-                if (newSL > slPrice || slPrice == 0)
+                // 1. Calculate Break-Even SL
+                if (strategy.InpUseBreakEven && bid - open >= beTriggerPrice)
                 {
-                    if (slPrice == 0 || (newSL - slPrice) >= stepDist)
+                    double beSL = open + beOffsetPrice;
+                    beSL = Math.Round(beSL / tickSize) * tickSize;
+                    if (targetSL == 0 || beSL > targetSL)
                     {
-                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, slOrder.Price, newSL, slOrder.TrailOffset);
+                        targetSL = beSL;
+                    }
+                }
+
+                // 2. Calculate Trailing Stop SL
+                if (bid - open >= triggerDist)
+                {
+                    double trailSL = bid - trailDist;
+                    trailSL = Math.Round(trailSL / tickSize) * tickSize;
+                    if (targetSL == 0 || trailSL > targetSL)
+                    {
+                        targetSL = trailSL;
+                    }
+                }
+
+                // Apply modification if targetSL is better or quantity changed
+                if (targetSL > slPrice || slPrice == 0 || slOrder.TotalQuantity != currentQty)
+                {
+                    if (slPrice == 0 || (targetSL - slPrice) >= stepDist || slOrder.TotalQuantity != currentQty)
+                    {
+                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, currentQty, slOrder.Price, targetSL, slOrder.TrailOffset);
                     }
                 }
             }
             else if (pos.Side == Side.Sell)
             {
                 double ask = strategy.CurrentSymbol.Ask;
-                if (open - ask < triggerDist) return;
 
-                double newSL = ask + trailDist;
-                newSL = Math.Round(newSL / tickSize) * tickSize;
-
-                if (newSL < slPrice || slPrice == 0)
+                // 1. Calculate Break-Even SL
+                if (strategy.InpUseBreakEven && open - ask >= beTriggerPrice)
                 {
-                    if (slPrice == 0 || (slPrice - newSL) >= stepDist)
+                    double beSL = open - beOffsetPrice;
+                    beSL = Math.Round(beSL / tickSize) * tickSize;
+                    if (targetSL == 0 || beSL < targetSL)
                     {
-                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, slOrder.TotalQuantity, slOrder.Price, newSL, slOrder.TrailOffset);
+                        targetSL = beSL;
+                    }
+                }
+
+                // 2. Calculate Trailing Stop SL
+                if (open - ask >= triggerDist)
+                {
+                    double trailSL = ask + trailDist;
+                    trailSL = Math.Round(trailSL / tickSize) * tickSize;
+                    if (targetSL == 0 || trailSL < targetSL)
+                    {
+                        targetSL = trailSL;
+                    }
+                }
+
+                // Apply modification if targetSL is better or quantity changed
+                if (targetSL < slPrice || slPrice == 0 || slOrder.TotalQuantity != currentQty)
+                {
+                    if (slPrice == 0 || (slPrice - targetSL) >= stepDist || slOrder.TotalQuantity != currentQty)
+                    {
+                        Core.Instance.ModifyOrder(slOrder, slOrder.TimeInForce, currentQty, slOrder.Price, targetSL, slOrder.TrailOffset);
                     }
                 }
             }
