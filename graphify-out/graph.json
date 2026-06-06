@@ -88,7 +88,7 @@
       "label": "TimeManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L192",
+      "source_location": "L196",
       "id": "timemanager",
       "community": 1,
       "norm_label": "timemanager"
@@ -97,7 +97,7 @@
       "label": "RiskManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L193",
+      "source_location": "L197",
       "id": "riskmanager",
       "community": 1,
       "norm_label": "riskmanager"
@@ -106,7 +106,7 @@
       "label": "TrailManager",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L194",
+      "source_location": "L198",
       "id": "trailmanager",
       "community": 1,
       "norm_label": "trailmanager"
@@ -115,7 +115,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L195",
+      "source_location": "L199",
       "id": "list",
       "community": 1,
       "norm_label": "list"
@@ -151,7 +151,7 @@
       "label": ".Log()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L218",
+      "source_location": "L222",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_log",
       "community": 0,
       "norm_label": ".log()"
@@ -160,7 +160,7 @@
       "label": ".OnCreated()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L229",
+      "source_location": "L233",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_oncreated",
       "community": 1,
       "norm_label": ".oncreated()"
@@ -169,7 +169,7 @@
       "label": ".OnRun()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L244",
+      "source_location": "L248",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onrun",
       "community": 1,
       "norm_label": ".onrun()"
@@ -178,7 +178,7 @@
       "label": ".OnStop()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L302",
+      "source_location": "L306",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onstop",
       "community": 1,
       "norm_label": ".onstop()"
@@ -187,7 +187,7 @@
       "label": ".CurrentSymbol_NewQuote()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L333",
+      "source_location": "L337",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_currentsymbol_newquote",
       "community": 4,
       "norm_label": ".currentsymbol_newquote()"
@@ -196,7 +196,7 @@
       "label": ".OnQuoteUpdate()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L338",
+      "source_location": "L342",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_onquoteupdate",
       "community": 4,
       "norm_label": ".onquoteupdate()"
@@ -205,7 +205,7 @@
       "label": ".ResetStatsOnNewDay()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L357",
+      "source_location": "L361",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_resetstatsonnewday",
       "community": 4,
       "norm_label": ".resetstatsonnewday()"
@@ -214,7 +214,7 @@
       "label": ".GetWinsToday()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L371",
+      "source_location": "L375",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getwinstoday",
       "community": 0,
       "norm_label": ".getwinstoday()"
@@ -223,7 +223,7 @@
       "label": ".GetLossesToday()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L372",
+      "source_location": "L376",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getlossestoday",
       "community": 0,
       "norm_label": ".getlossestoday()"
@@ -232,7 +232,7 @@
       "label": ".IncrementWins()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L373",
+      "source_location": "L377",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementwins",
       "community": 1,
       "norm_label": ".incrementwins()"
@@ -241,7 +241,7 @@
       "label": ".IncrementLosses()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L374",
+      "source_location": "L378",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_incrementlosses",
       "community": 1,
       "norm_label": ".incrementlosses()"
@@ -250,7 +250,7 @@
       "label": ".GetM1History()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L377",
+      "source_location": "L381",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm1history",
       "community": 0,
       "norm_label": ".getm1history()"
@@ -259,7 +259,7 @@
       "label": ".GetM2History()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L378",
+      "source_location": "L382",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getm2history",
       "community": 0,
       "norm_label": ".getm2history()"
@@ -268,7 +268,7 @@
       "label": ".GetDailyHistory()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L379",
+      "source_location": "L383",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getdailyhistory",
       "community": 0,
       "norm_label": ".getdailyhistory()"
@@ -277,7 +277,7 @@
       "label": ".GetRetestHistory()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L380",
+      "source_location": "L384",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_getretesthistory",
       "community": 1,
       "norm_label": ".getretesthistory()"
@@ -286,7 +286,7 @@
       "label": ".MapMinutesToPeriod()",
       "file_type": "code",
       "source_file": "KatOpeningRangeBreakout.cs",
-      "source_location": "L382",
+      "source_location": "L386",
       "id": "quantower_kat_openingrangebreakout_katopeningrangebreakout_katopeningrangebreakout_mapminutestoperiod",
       "community": 1,
       "norm_label": ".mapminutestoperiod()"
@@ -619,7 +619,7 @@
       "label": ".GetOtherTimeframeRange()",
       "file_type": "code",
       "source_file": "ORBRunner.cs",
-      "source_location": "L1333",
+      "source_location": "L1344",
       "id": "quantower_kat_openingrangebreakout_orbrunner_orbrunner_getothertimeframerange",
       "community": 3,
       "norm_label": ".getothertimeframerange()"
@@ -1491,9 +1491,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_emacache",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -1502,9 +1502,9 @@
       "source_location": "L49",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_vwapcache",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -1513,9 +1513,9 @@
       "source_location": "L53",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_orbrunner_emacache",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -1524,9 +1524,9 @@
       "source_location": "L60",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_orbrunner_vwapcache",
-      "target": "int",
-      "confidence_score": 1.0
+      "target": "int"
     },
     {
       "relation": "references",
@@ -1590,9 +1590,9 @@
       "source_location": "L66",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_orbrunner_orbrunner",
-      "target": "dictionary",
-      "confidence_score": 1.0
+      "target": "dictionary"
     },
     {
       "relation": "references",
@@ -1601,9 +1601,9 @@
       "source_location": "L48",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_vwapcache",
-      "target": "datetime",
-      "confidence_score": 1.0
+      "target": "datetime"
     },
     {
       "relation": "references",
@@ -1623,9 +1623,9 @@
       "source_location": "L59",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_orbrunner_vwapcache",
-      "target": "datetime",
-      "confidence_score": 1.0
+      "target": "datetime"
     },
     {
       "relation": "references",
@@ -2038,9 +2038,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangeindicator_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_emacache",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_emacache"
     },
     {
       "relation": "contains",
@@ -2048,9 +2048,9 @@
       "source_file": "KatOpeningRangeIndicator.cs",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "katopeningrangeindicator_cs",
-      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_vwapcache",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_katopeningrangeindicator_vwapcache"
     },
     {
       "relation": "inherits",
@@ -2149,9 +2149,9 @@
       "source_location": "L43",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_emacache",
-      "target": "double",
-      "confidence_score": 1.0
+      "target": "double"
     },
     {
       "relation": "references",
@@ -2160,9 +2160,9 @@
       "source_location": "L51",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_katopeningrangeindicator_vwapcache",
-      "target": "double",
-      "confidence_score": 1.0
+      "target": "double"
     },
     {
       "relation": "references",
@@ -2171,9 +2171,9 @@
       "source_location": "L54",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_orbrunner_emacache",
-      "target": "double",
-      "confidence_score": 1.0
+      "target": "double"
     },
     {
       "relation": "references",
@@ -2182,9 +2182,9 @@
       "source_location": "L62",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "quantower_kat_openingrangebreakout_orbrunner_vwapcache",
-      "target": "double",
-      "confidence_score": 1.0
+      "target": "double"
     },
     {
       "relation": "calls",
@@ -2289,9 +2289,9 @@
       "source_file": "ORBRunner.cs",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "orbrunner_cs",
-      "target": "quantower_kat_openingrangebreakout_orbrunner_emacache",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_orbrunner_emacache"
     },
     {
       "relation": "contains",
@@ -2299,9 +2299,9 @@
       "source_file": "ORBRunner.cs",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "orbrunner_cs",
-      "target": "quantower_kat_openingrangebreakout_orbrunner_vwapcache",
-      "confidence_score": 1.0
+      "target": "quantower_kat_openingrangebreakout_orbrunner_vwapcache"
     },
     {
       "relation": "references",
@@ -3276,5 +3276,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a4074ac28cdc8d34b9bd8e8983b37021f44b94e4"
+  "built_at_commit": "8e3d7cab586707c34565a1d8f989440d39746726"
 }

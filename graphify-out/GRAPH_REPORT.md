@@ -1,7 +1,7 @@
 # Graph Report - quantower-kat-OpeningRangeBreakout  (2026-06-06)
 
 ## Corpus Check
-- 12 files · ~10,761 words
+- 12 files · ~10,813 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a4074ac2`
+- Built from commit: `8e3d7cab`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

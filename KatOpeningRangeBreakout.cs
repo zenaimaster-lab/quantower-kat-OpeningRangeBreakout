@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.4";
+        public string InpStrategyVersion = "1.5";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 02:07:00";
+        public string InpLastUpdated = "2026-06-06 02:08:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -74,6 +74,8 @@ namespace KatORB
         [InputParameter("Take Profit", 110)]
         public int InpTpTicks = 600;
 
+        [Category("3. ORDER SETTINGS")]
+        [InputParameter("Continue After First Trade", 115)]
         public bool InpContAfter1st = true;
         
         [Category("3. ORDER SETTINGS")]
@@ -116,6 +118,8 @@ namespace KatORB
         [InputParameter("Cancel pending if unfilled (candle)", 280)]
         public int InpUnfilledCandles = 2;
 
+        [Category("7. FLATTEN & CANCEL")]
+        [InputParameter("Flatten if not hit Trigger (Enable)", 290)]
         public bool InpAfterFilledMinutesOn = true;
 
         [Category("7. FLATTEN & CANCEL")]
@@ -211,7 +215,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.4";
+        public const string STRATEGY_VERSION = "1.5";
 
         public int MagicNumber => InpMagicNumber;
 

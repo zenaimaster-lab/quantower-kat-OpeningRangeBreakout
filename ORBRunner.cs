@@ -1167,9 +1167,20 @@ namespace KatORB
             if (strategy.InpObsPrevDayHLOn)
             {
                 var dailyHistory = strategy.GetDailyHistory();
-                if (dailyHistory != null && dailyHistory.Count >= 2)
+                if (dailyHistory != null && dailyHistory.Count >= 1)
                 {
-                    if (dailyHistory[dailyHistory.Count - 2] is HistoryItemBar prevDayBar)
+                    DateTime today = strategy.TimeManager.GetServerTime().Date;
+                    HistoryItemBar? prevDayBar = null;
+                    for (int i = dailyHistory.Count - 1; i >= 0; i--)
+                    {
+                        if (dailyHistory[i] is HistoryItemBar bar && bar.TimeLeft.Date < today)
+                        {
+                            prevDayBar = bar;
+                            break;
+                        }
+                    }
+
+                    if (prevDayBar != null)
                     {
                         double prevHigh = prevDayBar.High;
                         double prevLow = prevDayBar.Low;
