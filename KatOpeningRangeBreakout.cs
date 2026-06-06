@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "2.1";
+        public string InpStrategyVersion = "2.2";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 14:22:00";
+        public string InpLastUpdated = "2026-06-06 14:24:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -236,7 +236,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "2.1";
+        public const string STRATEGY_VERSION = "2.2";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -279,6 +279,15 @@ namespace KatORB
                 this.Log("ERROR: Account is null. Strategy cannot start. Please make sure an Account is selected in settings.", StrategyLoggingLevel.Error);
                 return;
             }
+
+            if (this.CurrentSymbol.ConnectionId != this.CurrentAccount.ConnectionId)
+            {
+                this.Log("ERROR: Symbol Connection ID does not match Account Connection ID. Please verify your settings.", StrategyLoggingLevel.Error);
+                return;
+            }
+
+            // Ensure symbol is populated with full data context
+            this.CurrentSymbol = Core.Instance.GetSymbol(this.CurrentSymbol.CreateInfo());
 
             //--- Subscriptions to required historical data streams
             DateTime loadFrom = Core.Instance.TimeUtils.DateTimeUtcNow.AddDays(-5);
