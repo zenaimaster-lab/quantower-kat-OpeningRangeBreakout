@@ -298,7 +298,7 @@ namespace KatORB
             if (this.History == null || this.History.Count < 2) return;
 
             // index Count - 1 is current forming bar, Count - 2 is the last closed bar
-            if (!(this.History[this.History.Count - 2] is HistoryItemBar lastClosedBar)) return;
+            if (!(this.History[this.History.Count - 2, SeekOriginHistory.Begin] is HistoryItemBar lastClosedBar)) return;
             if (lastClosedBar.TimeLeft <= this.CandleTime) return;
 
             double closePrice = lastClosedBar.Close;
@@ -325,7 +325,7 @@ namespace KatORB
             if (retestHistory == null || retestHistory.Count < 2) return;
 
             // Retrieve last closed bar on retest timeframe
-            if (!(retestHistory[retestHistory.Count - 2] is HistoryItemBar lastClosedBar)) return;
+            if (!(retestHistory[retestHistory.Count - 2, SeekOriginHistory.Begin] is HistoryItemBar lastClosedBar)) return;
             if (lastClosedBar.TimeLeft <= this.CandleTime) return;
 
             double openPrice = lastClosedBar.Open;
@@ -826,7 +826,7 @@ namespace KatORB
             int count = 0;
             for (int i = this.History.Count - 1; i >= 0; i--)
             {
-                if (this.History[i].TimeLeft >= placeTime)
+                if (this.History[i, SeekOriginHistory.Begin].TimeLeft >= placeTime)
                     count++;
                 else
                     break;
@@ -895,7 +895,7 @@ namespace KatORB
                 int validBars = 0;
                 for (int i = 0; i < period; i++)
                 {
-                    if (historyStream[i] is HistoryItemBar bar)
+                    if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                     {
                         sum += bar.Close;
                         validBars++;
@@ -910,7 +910,7 @@ namespace KatORB
                 baseEma = cache.LastValue;
                 for (int i = cache.LastIndex + 1; i <= baseIdx; i++)
                 {
-                    if (historyStream[i] is HistoryItemBar bar)
+                    if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                     {
                         baseEma = (bar.Close - baseEma) * multiplier + baseEma;
                     }
@@ -924,7 +924,7 @@ namespace KatORB
                 int validBars = 0;
                 for (int i = 0; i < period; i++)
                 {
-                    if (historyStream[i] is HistoryItemBar bar)
+                    if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                     {
                         sum += bar.Close;
                         validBars++;
@@ -935,7 +935,7 @@ namespace KatORB
 
                 for (int i = period; i <= baseIdx; i++)
                 {
-                    if (historyStream[i] is HistoryItemBar bar)
+                    if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                     {
                         baseEma = (bar.Close - baseEma) * multiplier + baseEma;
                     }
@@ -946,7 +946,7 @@ namespace KatORB
 
             if (isFormingBar)
             {
-                if (historyStream[targetIdx] is HistoryItemBar bar)
+                if (historyStream[targetIdx, SeekOriginHistory.Begin] is HistoryItemBar bar)
                 {
                     return (bar.Close - baseEma) * multiplier + baseEma;
                 }
@@ -978,7 +978,7 @@ namespace KatORB
                 int startIdx = -1;
                 for (int i = 0; i <= baseIdx; i++)
                 {
-                    if (historyStream[i] is HistoryItemBar bar && bar.TimeLeft >= startDay)
+                    if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar && bar.TimeLeft >= startDay)
                     {
                         startIdx = i;
                         break;
@@ -989,7 +989,7 @@ namespace KatORB
                 {
                     for (int i = startIdx; i <= baseIdx; i++)
                     {
-                        if (historyStream[i] is HistoryItemBar bar)
+                        if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                         {
                             double typicalPrice = (bar.High + bar.Low + bar.Close) / 3.0;
                             double vol = bar.Volume;
@@ -1010,7 +1010,7 @@ namespace KatORB
 
                 for (int i = cache.LastIndex + 1; i <= baseIdx; i++)
                 {
-                    if (historyStream[i] is HistoryItemBar bar && bar.TimeLeft >= startDay)
+                    if (historyStream[i, SeekOriginHistory.Begin] is HistoryItemBar bar && bar.TimeLeft >= startDay)
                     {
                         double typicalPrice = (bar.High + bar.Low + bar.Close) / 3.0;
                         double vol = bar.Volume;
@@ -1034,7 +1034,7 @@ namespace KatORB
             double finalSumPV = cache.SumPV;
             double finalSumV = cache.SumV;
 
-            if (count - 1 >= 0 && historyStream[count - 1] is HistoryItemBar currentBar && currentBar.TimeLeft >= startDay)
+            if (count - 1 >= 0 && historyStream[count - 1, SeekOriginHistory.Begin] is HistoryItemBar currentBar && currentBar.TimeLeft >= startDay)
             {
                 double typicalPrice = (currentBar.High + currentBar.Low + currentBar.Close) / 3.0;
                 double vol = currentBar.Volume;
@@ -1060,7 +1060,7 @@ namespace KatORB
             int validBars = 0;
             for (int i = 0; i < period; i++)
             {
-                if (dailyHistory[i] is HistoryItemBar bar)
+                if (dailyHistory[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                 {
                     sum += bar.Close;
                     validBars++;
@@ -1072,7 +1072,7 @@ namespace KatORB
             // Recurse to targetIdx to get fully smoothed EMA
             for (int i = period; i <= targetIdx; i++)
             {
-                if (dailyHistory[i] is HistoryItemBar bar)
+                if (dailyHistory[i, SeekOriginHistory.Begin] is HistoryItemBar bar)
                 {
                     double close = bar.Close;
                     ema = (close - ema) * multiplier + ema;
@@ -1173,7 +1173,7 @@ namespace KatORB
                     HistoryItemBar? prevDayBar = null;
                     for (int i = dailyHistory.Count - 1; i >= 0; i--)
                     {
-                        if (dailyHistory[i] is HistoryItemBar bar && bar.TimeLeft.Date < today)
+                        if (dailyHistory[i, SeekOriginHistory.Begin] is HistoryItemBar bar && bar.TimeLeft.Date < today)
                         {
                             prevDayBar = bar;
                             break;

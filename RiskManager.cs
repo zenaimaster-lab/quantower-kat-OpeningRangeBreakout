@@ -40,6 +40,7 @@ namespace KatORB
 
         public double NormalizeLot(double lot)
         {
+            if (strategy.CurrentSymbol == null) return lot;
             double min = strategy.CurrentSymbol.MinLot;
             double max = strategy.CurrentSymbol.MaxLot;
             double step = strategy.CurrentSymbol.LotStep;

@@ -38,6 +38,8 @@ namespace KatORB
             var slOrder = pos.StopLoss;
             if (slOrder == null) return;
 
+            if (slOrder.Status != OrderStatus.Opened && slOrder.Status != OrderStatus.PartiallyFilled) return;
+
             double slPrice = slOrder.TriggerPrice;
             double tickSize = strategy.CurrentSymbol.TickSize;
 

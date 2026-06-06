@@ -14,7 +14,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Strategy Version", 1)]
-        public string InpStrategyVersion = "1.8";
+        public string InpStrategyVersion = "1.9";
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Adapter Version", 2)]
@@ -22,7 +22,7 @@ namespace KatORB
 
         [Category("0. METADATA & SYSTEM INFO")]
         [InputParameter("Last Updated (UTC)", 3)]
-        public string InpLastUpdated = "2026-06-06 02:12:00";
+        public string InpLastUpdated = "2026-06-06 14:18:00";
 
         [Category("1. GENERAL & SCHEDULE")]
         [InputParameter("Symbol", 5)]
@@ -215,7 +215,7 @@ namespace KatORB
         private Dictionary<int, int> lossesToday = new Dictionary<int, int>();
         private DateTime lastStatsDate = DateTime.MinValue;
 
-        public const string STRATEGY_VERSION = "1.8";
+        public const string STRATEGY_VERSION = "1.9";
 
         public int MagicNumber => InpMagicNumber;
 
@@ -292,10 +292,34 @@ namespace KatORB
 
             //--- Initialize the runners for active timeframes
             this.runners.Clear();
-            if (Inp2mActive)  this.runners.Add(new ORBRunner(this, Period.MIN2, 0, "orb-2m", this.historicalDataM2));
-            if (Inp5mActive)  this.runners.Add(new ORBRunner(this, Period.MIN5, 1, "orb-5m", this.historicalDataM5!));
-            if (Inp15mActive) this.runners.Add(new ORBRunner(this, Period.MIN15, 2, "orb-15m", this.historicalDataM15!));
-            if (Inp30mActive) this.runners.Add(new ORBRunner(this, Period.MIN30, 3, "orb-30m", this.historicalDataM30!));
+            if (Inp2mActive)
+            {
+                if (this.historicalDataM2 != null)
+                    this.runners.Add(new ORBRunner(this, Period.MIN2, 0, "orb-2m", this.historicalDataM2));
+                else
+                    this.Log("ERROR: Could not load 2m historical data. 2m runner disabled.", StrategyLoggingLevel.Error);
+            }
+            if (Inp5mActive)
+            {
+                if (this.historicalDataM5 != null)
+                    this.runners.Add(new ORBRunner(this, Period.MIN5, 1, "orb-5m", this.historicalDataM5));
+                else
+                    this.Log("ERROR: Could not load 5m historical data. 5m runner disabled.", StrategyLoggingLevel.Error);
+            }
+            if (Inp15mActive)
+            {
+                if (this.historicalDataM15 != null)
+                    this.runners.Add(new ORBRunner(this, Period.MIN15, 2, "orb-15m", this.historicalDataM15));
+                else
+                    this.Log("ERROR: Could not load 15m historical data. 15m runner disabled.", StrategyLoggingLevel.Error);
+            }
+            if (Inp30mActive)
+            {
+                if (this.historicalDataM30 != null)
+                    this.runners.Add(new ORBRunner(this, Period.MIN30, 3, "orb-30m", this.historicalDataM30));
+                else
+                    this.Log("ERROR: Could not load 30m historical data. 30m runner disabled.", StrategyLoggingLevel.Error);
+            }
 
             this.Log($"kat-ORB {STRATEGY_VERSION} Initialized. Active Runners count: {this.runners.Count}");
 
